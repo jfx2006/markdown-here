@@ -88,8 +88,6 @@ function onLoad() {
 
     forgotToRenderCheckEnabled.checked = prefs['forgot-to-render-check-enabled'];
 
-    headerAnchorsEnabled.checked = prefs['header-anchors-enabled'];
-
     gfmLineBreaksEnabled.checked = prefs['gfm-line-breaks-enabled'];
 
     // Start watching for changes to the styles.
