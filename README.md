@@ -94,13 +94,11 @@ browser such as Firefox or any other e-mail software.
     styles must be explicitly applied to all elements -- stylesheets get stripped.)
 
 
-## Building the Extension Bundles
+## Building
 
-```
-cd utils
-node build.js
-```
-
+Use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/),
+mostly the same as you would for Firefox. A config file is included to make it
+use Thunderbird.
 
 
 ## Feedback
