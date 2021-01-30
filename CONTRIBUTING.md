@@ -1,4 +1,8 @@
+#  THIS FILE IS NOT UPDATED OR CURRENT
+
 # Contributing.md
+
+
 
 * Project page: https://github.com/adam-p/markdown-here
 * Google Group: https://groups.google.com/forum/#!forum/markdown-here

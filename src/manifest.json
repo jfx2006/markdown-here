@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_app_name__",
+  "version": "3.0.1",
+  "description": "__MSG_app_slogan__",
+  "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
+  "default_locale": "en",
+  "icons": {
+    "16": "images/rocmarkdown.svg",
+    "32": "images/rocmarkdown.svg",
+    "48": "images/rocmarkdown.svg",
+    "128": "images/rocmarkdown.svg",
+    "512": "images/rocmarkdown.svg"
+  },
+  "permissions": ["compose", "storage"],
+  "background": {"page": "background.html"},
+  "compose_action": {
+    "browser_style": true,
+    "default_area": "formattoolbar",
+    "default_icon": {
+      "16": "images/rocmarkdown.svg",
+      "19": "images/rocmarkdown.svg",
+      "32": "images/rocmarkdown.svg",
+      "64": "images/rocmarkdown.svg"
+    },
+    "default_title": "__MSG_toggle_button_tooltip__"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "applications": {
+    "gecko": {
+      "id": "markdown-here-revival@xul.calypsoblue.org",
+      "strict_min_version": "78.5"
+    }
+  }
+}
