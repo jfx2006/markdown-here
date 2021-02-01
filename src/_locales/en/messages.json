@@ -1,50 +1,50 @@
 {
   "app_name": {
-    "message": "Markdown Here",
-    "description": "the name of the extension",
-    "inMozDTD": true
+    "message": "Markdown Here Revival",
+    "description": "This is the name of the extension, the placeholder $APPNAME$ is used the remaining strings."
   },
   "app_slogan": {
-    "message": "Write your email in Markdown, then make it pretty.",
-    "description": "shown as subtitle for Markdown Here in the browser extensions list"
+    "message": "Markdown emails for Mozilla Thunderbird"
   },
-  "toggle_button_text":{
+  "toggle_button_text": {
     "message": "MD Toggle",
-    "description": "Text shown underneath the render toggle button. Make it as short as possible.",
-    "inMozDTD": true
+    "description": "Text shown underneath the render toggle button. Make it as short as possible."
   },
   "toggle_button_tooltip": {
     "message": "Click to toggle Markdown rendering",
-    "description": "text shown when user hovers mouse over Markdown Toggle button",
-    "inMozDTD": true
+    "description": "text shown when user hovers mouse over Markdown Toggle button"
   },
   "toggle_button_tooltip_disabled": {
     "message": "The selected field is not valid for Markdown rendering",
-    "description": "text shown when user hover mouse over disabled Markdown Toggle button",
-    "inMozDTD": true
+    "description": "text shown when user hover mouse over disabled Markdown Toggle button"
   },
   "context_menu_item": {
     "message": "Markdown Toggle",
-    "description": "Text shown on the context menu.",
-    "inMozDTD": true
+    "description": "Text shown on the context menu."
   },
   "moz_options_dlg_title": {
-    "message": "Markdown Here Options",
-    "description": "In Thunderbird, in order to open the options tab we first have to open a temporary dialog box. This is the title for that box.",
-    "inMozDTD": true
+    "message": "$APPNAME$ Options",
+    "placeholders": {
+      "appname": { "content": "Markdown Here Revival" }
+    }
   },
   "moz_options_dlg_instruction": {
-    "message": "Click the 'OK' button to open the Markdown Here Options tab",
+    "message": "Click the 'OK' button to open the $APPNAME$ Options tab",
     "description": "In Thunderbird, in order to open the options tab we first have to open a temporary dialog box. This is the text in that box telling the user what to do. Please use the same translation for 'OK' that the application uses.",
-    "inMozDTD": true
+    "placeholders": {
+      "appname": { "content": "Markdown Here Revival" }
+    }
   },
   "invalid_field": {
     "message": "The selected field is not valid for Markdown rendering. Please use a rich editor.",
     "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered"
   },
   "plain_text_compose": {
-    "message": "You are using a plain-text compose editor. You must change to a rich editor to use Markdown Here.",
-    "description": "Shown in an alert dialog if the user has their email compose app set to plain text"
+    "message": "You are using a plain-text compose editor. You must change to a rich editor to use $APPNAME$.",
+    "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
+    "placeholders": {
+      "appname": { "content": "Markdown Here Revival" }
+    }
   },
   "cursor_into_compose": {
     "message": "Please put the cursor into the compose box."
@@ -63,21 +63,22 @@
   },
   "forgot_to_render_back_button": {
     "message": "Back",
-    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
-    "inMozDTD": true
+    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
   },
   "forgot_to_render_send_button": {
     "message": "Send",
-    "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
-    "inMozDTD": true
+    "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
   },
   "forgot_to_render_prompt_close_hover": {
     "message": "Dismiss this notification",
     "description": "Text that shows when the user hovers over the 'X' that will close the prompt"
   },
   "upgrade_notification_text": {
-    "message": "Markdown Here updated",
-    "description": "Text on the notification shown when Markdown Here has been updated"
+    "message": "$APPNAME$ updated",
+    "description": "Text on the notification shown when Markdown Here has been updated",
+    "placeholders": {
+      "appname": { "content": "Markdown Here Revival" }
+    }
   },
   "upgrade_notification_changes_tooltip": {
     "message": "Click to see the changes in this release",
@@ -96,7 +97,10 @@
     "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed."
   },
   "options_page__page_title": {
-    "message": "Markdown Here Options"
+    "message": "$APPNAME$ Options",
+    "placeholders": {
+      "appname": { "content": "Markdown Here Revival" }
+    }
   },
   "options_page__basic_usage": {
     "message": "Basic Usage"
@@ -139,22 +143,6 @@
   },
   "options_page__next_steps": {
     "message": "If you're interested in what the future holds for Markdown Here, check out the <a href=\"https://github.com/adam-p/markdown-here#next-steps\" target=\"_blank\">Next Steps section</a> of the README."
-  },
-  "options_page__donate_plea_1": {
-    "message": "Once you decide Markdown Here is pretty sweet, please help me to buy some flowers for my wife so she's not too upset about how much time I spend working on it. <strong>Thank you!</strong>"
-  },
-  "options_page__donate_plea_2": {
-    "message": "<strong>Help make Markdown Here better!</strong>"
-  },
-  "options_page__donate_plea_3": {
-    "message": "<strong>Help support the development of Markdown Here!</strong>"
-  },
-  "options_page__donate_plea_4": {
-    "message": "You know what makes it easier to keep Markdown Here working on Chrome, Firefox, Thunderbird, Postbox, Safari, Opera, Gmail, Yahoo, Hotmail, Blogger, Evernote, etc.? <strong>Coffee!</strong>"
-  },
-  "options_page__other_donation_options": {
-    "message": "Other donation options",
-    "description": "Link to a page that provides other ways to donate"
   },
   "options_page__primary_css_title": {
     "message": "Primary Styling CSS",
@@ -314,17 +302,23 @@
     "description": "A section title"
   },
   "options_page__contributing_1": {
-    "message": "<strong>If you have ever put a code block into an email, then you can help make Markdown Here better.</strong> <a href=\"https://github.com/adam-p/markdown-here/blob/master/CONTRIBUTING.md\" target=\"_blank\">CONTRIBUTING.md</a>"
+    "message": "Everything is on the $LINK$.",
+    "placeholders": {
+      "link": { "content": "<a href=\"https://gitlab.com/jfx2006/markdown-here-revival\">GitLab</a>" }
+    }
   },
   "options_page__contributing_2": {
-    "message": "Help make Markdown Here available in your language. <a href=\"https://github.com/adam-p/markdown-here/blob/master/CONTRIBUTING.md#translation\" target=\"_blank\">Translations are welcome.</a>"
+    "message": ""
   },
   "options_page__footer_1": {
-    "message": "<em>Markdown Here</em> is open source. To ask questions, report bugs, request features, or contribute, visit the <a target=\"_blank\" href=\"https://github.com/adam-p/markdown-here\">Github project page</a> or the <a target=\"_blank\" href=\"https://groups.google.com/forum/?fromgroups=#!forum/markdown-here\">\"markdown-here\" Google Group</a>.",
-    "description": "part of the page footer text"
+    "message": "$APPNAME$ is <a href=\"https://gitlab.com/jfx2006/markdown-here-revival\">open source software</a>.",
+    "description": "part of the page footer text",
+    "placeholders": {
+      "appname": { "content": "<em>Markdown Here Revival</em>" }
+    }
   },
   "options_page__footer_2": {
-    "message": "Created by <a target=\"_blank\" href=\"http://adam-p.github.com/\">Adam Pritchard</a>.",
+    "message": "",
     "description": "part of the page footer text"
   },
   "options_page__changes_saved": {
@@ -332,7 +326,7 @@
     "description": "message that shows when user changes have been saved"
   },
   "options_page__preview_markdown": {
-    "message": "```javascript<br>\nfunction syntaxHighlighting() {<br>\n&nbsp; var n = 33;<br>\n&nbsp; var s = \"hello, こんにちは\";<br>\n&nbsp; console.log(s);<br>\n}<br>\n```<br>\n<br>\n* plain<br>\n* *emphasis*<br>\n&nbsp; * **strong emphasis**<br>\n&nbsp; &nbsp; * ~~strikethrough~~<br>\n* `inline code`<br>\n<br>\n1. Numbered list<br>\n&nbsp;&nbsp;&nbsp;1. Numbered sub-list<br>\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Numbered sub-sub-list<br>\n2. [Link](https://www.google.com)<br>\n<br>\n<br>\nAn image: ![Markdown Here logo](https:\/\/raw.githubusercontent.com\/adam-p\/markdown-here\/master\/src\/common\/images\/icon24.png)\n<br>\n<br>\n> Block quote.&nbsp; <br>\n> *With* **some** `markdown`.<br>\n<br>\nIf **TeX Math** support is enabled, this is the quadratic equation:&nbsp;<br>\n$$-b \\pm \\sqrt{b^2 - 4ac} \\over 2a$$<br>\n<br>\n# Header 1<br>\n## Header 2<br>\n### Header 3<br>\n#### Header 4<br>\n##### Header 5<br>\n###### Header 6<br>\n&nbsp; <br>\n| Tables        | Are           | Cool  |<br>\n| ------------- |:-------------:| -----:|<br>\n| column 3 is   | right-aligned | $$1600 |<br>\n| column 2 is   | centered      |   $$12 |<br>\n| zebra stripes | are neat      |    $$1 |<br>\n<br>\nHere's a horizontal rule:<br>\n<br>\n---<br>\n<br>\n```<br>\ncode block<br>\nwith no highlighting<br>\n```<br>\n<br>\n",
+    "message": "```javascript<br>\nfunction syntaxHighlighting() {<br>\n&nbsp; var n = 33;<br>\n&nbsp; var s = \"hello, こんにちは\";<br>\n&nbsp; console.log(s);<br>\n}<br>\n```<br>\n<br>\n* plain<br>\n* *emphasis*<br>\n&nbsp; * **strong emphasis**<br>\n&nbsp; &nbsp; * ~~strikethrough~~<br>\n* `inline code`<br>\n<br>\n1. Numbered list<br>\n&nbsp;&nbsp;&nbsp;1. Numbered sub-list<br>\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Numbered sub-sub-list<br>\n2. [Link](https://www.google.com)<br>\n<br>\n<br>\nAn image: ![Markdown Here logo](https://raw.githubusercontent.com/adam-p/markdown-here/master/src/common/images/icon24.png)\n<br>\n<br>\n> Block quote.&nbsp; <br>\n> *With* **some** `markdown`.<br>\n<br>\nIf **TeX Math** support is enabled, this is the quadratic equation:&nbsp;<br>\n$$-b \\pm \\sqrt{b^2 - 4ac} \\over 2a$$<br>\n<br>\n# Header 1<br>\n## Header 2<br>\n### Header 3<br>\n#### Header 4<br>\n##### Header 5<br>\n###### Header 6<br>\n&nbsp; <br>\n| Tables        | Are           | Cool  |<br>\n| ------------- |:-------------:| -----:|<br>\n| column 3 is   | right-aligned | $$1600 |<br>\n| column 2 is   | centered      |   $$12 |<br>\n| zebra stripes | are neat      |    $$1 |<br>\n<br>\nHere's a horizontal rule:<br>\n<br>\n---<br>\n<br>\n```<br>\ncode block<br>\nwith no highlighting<br>\n```<br>\n<br>\n",
     "description": "This doesn't need to be translated, unless you want to make it more relevant to your language. The raw Markdown used for previewing user styling changes. Also shows users what can be done with Markdown. Please note that the double dollar signs ($$) are needed to make a single dollar sign in the application."
   },
   "currently_in_use": {
@@ -356,5 +350,7 @@
   "options_page__gfm_line_breaks_enabled_label": {
     "message": "<b>Enable GFM line breaks.</b>",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
-  }
+  },
+
+  "__WET_LOCALE__": { "message": "en" }
 }
