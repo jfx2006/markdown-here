@@ -15,7 +15,7 @@
 
 var cssEdit, cssSyntaxEdit, cssSyntaxSelect, rawMarkdownIframe, savedMsg,
   mathEnable, mathEdit, hotkeyShift, hotkeyCtrl, hotkeyAlt, hotkeyKey,
-  forgotToRenderCheckEnabled, headerAnchorsEnabled, gfmLineBreaksEnabled;
+  forgotToRenderCheckEnabled, gfmLineBreaksEnabled;
 var loaded = false;
 
 function onLoad() {
@@ -39,7 +39,6 @@ function onLoad() {
   hotkeyAlt = document.getElementById('hotkey-alt');
   hotkeyKey = document.getElementById('hotkey-key');
   forgotToRenderCheckEnabled = document.getElementById('forgot-to-render-check-enabled');
-  headerAnchorsEnabled = document.getElementById('header-anchors-enabled');
   gfmLineBreaksEnabled = document.getElementById('gfm-line-breaks-enabled');
 
   //
@@ -99,8 +98,6 @@ function onLoad() {
   // Load the changelist section
   loadChangelist();
 
-  showDonatePlea();
-
   // Special effort is required to open the test page in these clients.
   if (navigator.userAgent.indexOf('Thunderbird') >= 0 ||
       navigator.userAgent.indexOf('Icedove') >= 0 ||
@@ -147,7 +144,6 @@ document.addEventListener('options-iframe-loaded', previewIframeLoaded);
 
 
 function localize() {
-  Utils.registerStringBundleLoadListener(function localizeHelper() {
     $('[data-i18n]').each(function() {
       var messageID = 'options_page__' + $(this).data('i18n');
       if (this.tagName.toUpperCase() === 'TITLE') {
@@ -157,29 +153,6 @@ function localize() {
         Utils.saferSetInnerHTML(this, Utils.getMessage(messageID));
       }
     });
-
-    // Take this opportunity to show appropriate size images for the pixel
-    // density. This saves us from having to make the `img` tags in the
-    // translated content more complex.
-    // TODO: Change to media queries (and so use background-image style).
-    if (window.devicePixelRatio === 2) {
-      $('img[src="images/icon16.png"]')
-        .css('width', '16px')
-        .attr('src', 'images/icon32.png');
-      $('img[src="images/icon16-button.png"]')
-        .css('width', '16px')
-        .attr('src', 'images/icon32-button.png');
-      $('img[src="images/icon16-monochrome.png"]')
-        .css('width', '16px')
-        .attr('src', 'images/icon32-monochrome.png');
-      $('img[src="images/icon16-button-monochrome.png"]')
-        .css('width', '16px')
-        .attr('src', 'images/icon32-button-monochrome.png');
-      $('img[src="images/icon16-button-disabled.png"]')
-        .css('width', '16px')
-        .attr('src', 'images/icon32-button-disabled.png');
-    }
-  });
 }
 
 
@@ -215,7 +188,7 @@ function checkChange() {
         cssEdit.value + cssSyntaxEdit.value +
         mathEnable.checked + mathEdit.value +
         hotkeyShift.checked + hotkeyCtrl.checked + hotkeyAlt.checked + hotkeyKey.value +
-        forgotToRenderCheckEnabled.checked + headerAnchorsEnabled.checked +
+        forgotToRenderCheckEnabled.checked +
         gfmLineBreaksEnabled.checked;
 
   if (newOptions !== lastOptions) {
@@ -246,7 +219,6 @@ function checkChange() {
                       key: hotkeyKey.value
                     },
           'forgot-to-render-check-enabled': forgotToRenderCheckEnabled.checked,
-          'header-anchors-enabled': headerAnchorsEnabled.checked,
           'gfm-line-breaks-enabled': gfmLineBreaksEnabled.checked
         },
         function() {
