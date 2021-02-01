@@ -553,52 +553,6 @@ function triggerStringBundleLoadListeners() {
 }
 
 
-// Must only be called from a privileged Mozilla script
-function getMozStringBundle() {
-  if (typeof(Components) === 'undefined' || typeof(Components.classes) === 'undefined') {
-    return false;
-  }
-
-  // Return a cached bundle, if we have one
-  if (typeof(g_mozStringBundle) !== 'undefined' &&
-      Object.keys(g_mozStringBundle).length > 0) {
-    return g_mozStringBundle;
-  }
-
-  // Adapted from: https://developer.mozilla.org/en-US/docs/Code_snippets/Miscellaneous#Using_string_bundles_from_JavaScript
-  // and: https://developer.mozilla.org/en-US/docs/Using_nsISimpleEnumerator
-
-  var stringBundleObj = {}, stringBundle, stringBundleEnum, property;
-
-  // First load the English fallback strings
-
-  stringBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                        .getService(Components.interfaces.nsIStringBundleService)
-                        // Notice the explicit locale in this path:
-                        .createBundle("resource://markdown_here_locale/en/strings.properties");
-
-  stringBundleEnum = stringBundle.getSimpleEnumeration();
-  while (stringBundleEnum.hasMoreElements()) {
-    property = stringBundleEnum.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
-    stringBundleObj[property.key] = property.value;
-  }
-
-  // Then load the strings that are overridden for the current locale
-
-  stringBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                        .getService(Components.interfaces.nsIStringBundleService)
-                        .createBundle("chrome://markdown_here/locale/strings.properties");
-
-  stringBundleEnum = stringBundle.getSimpleEnumeration();
-  while (stringBundleEnum.hasMoreElements()) {
-    property = stringBundleEnum.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
-    stringBundleObj[property.key] = property.value;
-  }
-
-  return stringBundleObj;
-}
-
-
 
 // Get the translated string indicated by `messageID`.
 // Note that there's no support for placeholders as yet.
