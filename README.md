@@ -1,4 +1,4 @@
-# Markdown Here Revival
+# ![logo][logo] Markdown Here Revival
 
 *Markdown Here Revival* is a fork of Markdown Here, the popular browser extension
 specifically targeting modern Thunderbird versions
@@ -15,12 +15,17 @@ the author of Markdown Here have been unsuccessful.
 **[Troubleshooting](#troubleshooting)**<br>
 **[Compatibility](#compatibility)**<br>
 **[Notes and Miscellaneous](#notes-and-miscellaneous)**<br>
-**[Building the Extension Bundles](#building-the-extension-bundles)**<br>
-**[Next Steps, Credits, Feedback, License](#next-steps)**<br>
+**[Building](#building)**<br>
+**[Feedback](#feedback)**<br>
+**[License](#license)**<br>
 
 ## Installation Instructions
 
-**Info coming soon!**
+The plan is to publish on [ATN](https://addons.thunderbird.net) once I finish
+up the rebranding and get the vendored libraries updated.
+
+In the meantime, I will have previews in 
+[Releases](https://gitlab.com/jfx2006/markdown-here-revival/-/releases).
 
 
 ## Usage Instructions
@@ -78,7 +83,7 @@ browser such as Firefox or any other e-mail software.
 
 ## Notes and Miscellaneous
 
-* *Markdown Here* uses [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/).
+* *Markdown Here Revival* uses [Github Flavored Markdown](http://github.github.com/github-flavored-markdown/).
 
 * Available languages for syntax highlighting will soon be listed on the options
   page.
@@ -111,11 +116,7 @@ All ideas, bugs, plans, complaints, and dreams will end up in one of those two p
 
 ### Code
 
-MIT License: http://adampritchard.mit-license.org/ or see [the `LICENSE` file](https://github.com/adam-p/markdown-here/blob/master/LICENSE).
-
-### Logo
-
-Copyright 2015, [Austin Anderson](http://protractor.ninja/). Licensed to Markdown Here under the [MDH contributor license agreement](https://github.com/adam-p/markdown-here/blob/master/CLA-individual.md).
+MIT License: See [the LICENSE file](LICENSE).
 
 ### Other images
 
@@ -123,3 +124,4 @@ Copyright 2015, [Austin Anderson](http://protractor.ninja/). Licensed to Markdow
 
 ---
 
+[logo]: src/images/rocmarkdown.svg
