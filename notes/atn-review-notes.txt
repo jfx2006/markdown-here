@@ -1,0 +1,110 @@
+This extension is used to manipulate the content of email before sending.
+The HTML editor must be enabled.
+
+You write email in Markdown, then click the button in the format toolbar
+and the content of the email will be replaced with a rendered-HTML version
+of the Markdown you had written.
+
+If you select a subset of your email and then "Markdown Toggle", only
+that selection will be rendered/converted.
+
+The Markdown is "Github-flavored". Syntax highlighting is supported. So,
+for example, you can use fenced code blocks with the language name
+specified, like so:
+
+```javascript
+var i = 0;
+```
+
+
+For complete info, see the project page:
+https://gitlab.com/jfx2006/markdown-here-revival
+
+This project is a fork of Markdown Here which has not worked on Thunderbird
+since Thunderbird 60. Support for browser-based email and other mail clients
+is being dropped to focus on giving Thunderbird first class Markdown
+support going forward.
+
+Please don't hesitate to contact
+me with questions.
+
+
+A more formal test methodology, if desired:
+
+1. Make sure HTML composing is enabled.
+
+2. Write a bit of Markdown. (Example below)
+
+3. Click the toggle button.
+
+Test #1:
+The entire email should be converted to HTML, in accordance with Markdown
+syntax. The sample MD should have H1, H3, UL, and PRE/CODE elements, with
+some bold and code inline.
+
+4. Click "Markdown Toggle" again.
+
+Test #2:
+The email should be reverted back the original raw Markdown.
+
+5. Select a few lines (but don't split the code block). Then click
+"Markdown Toggle".
+
+Test #3:
+Only the selected lines should be rendered to HTML.
+
+6. Click "Markdown Toggle" again.
+
+Test #4:
+The  email should be reverted back to original Markdown.
+
+7. Render the email again (either entirely or partially) and send it
+(to yourself or someone else).
+
+Test #5:
+The recipient of the email should see it pretty much as it was before you
+sent it.
+
+Test done.
+
+
+
+A few secondary features that can be tested if desired:
+
+- The rendered email
+
+- Options: Should open after
+installation (and restart). Should open after upgrade. Should auto-save.
+Should sync settings.
+- Signatures should be excluded from the conversion.
+Sigs must be preceded by the standard-ish '-- ' (note the trailing space).
+
+- Images embedded in the email before conversion (Gmail and Thunderbird)
+should be retained by the conversion.
+- Quoted reply text should be
+excluded by the conversion.
+- TeX mathematical formulae should be rendered
+if and only if that functionality is enabled in the options.
+
+
+---
+
+# Markdown Sample (H1)
+
+### Smaller header (H3)
+
+* Bullet **with bold**
+* Bullet with `inline code`
+
+```javascript
+var s = 'code block';
+
+console.log(s);
+```
+
+This is the quadratic equation in TeX (rendered if
+enabled):
+$-b \pm \sqrt{b^2 - 4ac} \over 2a$
+
+(Note this feature is annoying as it sends an email with remote content!
+I intend to fix that in a later release.)

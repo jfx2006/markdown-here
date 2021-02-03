@@ -1,0 +1,47 @@
+Markdown Here Revival lets you write email in Markdown and render it (make
+it pretty!) before sending.
+
+This is great for anyone who doesn't like fiddling around with formatting
+buttons while writing an email. It's especially good for programmers who
+write email with code in them -- it even supports syntax highlighting.
+And for the mathematicians among us: Markdown Here will render TeX formulae
+as well.
+
+Totally simple to use:
+1. Make sure you've set "Compose messages in HTML format"
+2. Compose an email in Markdown. For example:
+
+   <pre>
+   **Hello** `world`.
+
+   ```javascript
+   alert('Hello syntax highlighting.');
+   ```
+   </pre>
+
+3. Click the button that appears in the format toolbar.
+4. Your email is now pretty! (That is, it's been rendered to HTML.)
+5. If you like the way it looks, just send it. If you want to change or
+   add something, click "Markdown Toggle" again to get back to your
+   original Markdown.
+6. Repeat as necessary.
+7. Send your awesome email to everyone you know. It will appear to them
+   the same way it looks to you.
+
+Markdown Here Revival is a fork of Markdown Here for modern Thunderbird
+as the original addon is no longer maintained,
+
+Syntax highlighting note: Use fenced code blocks and specify the language
+name. See the project page for an example.
+
+Privacy: Markdown Here accesses and modifies emails in the compose window.
+The default configuration makes no Internet requests whatsoever. Your data
+is modified when and where you choose, and does not leave your computer.
+
+If the TeX formulae feature is enabled, a request is sent to Google to
+render the formula as as image. The rendering URL is customizable.
+
+This is an open source project. Visit Markdown Here Revival's GitLab page
+for full instructions, more information, bug reports, or to contribute.
+
+https://gitlab.com/jfx2006/markdown-here-revival

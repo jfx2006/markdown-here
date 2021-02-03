@@ -1,0 +1,17 @@
+Highlightjs is used for syntax highlighting source code in the rendered
+HTML.
+It's not the easiest thing to download and customize what languages are
+supported, so I wrote tools/get-highlightjs.sh to build from source.
+That script also generates a styles.json file which is used in the
+options page in the syntax style selection.
+
+marked.js
+I downloaded from the git repository since the Marked.js
+documentation says to download from a CDN.... Version 1.2.8 is the latest
+as of January 2021.
+https://raw.githubusercontent.com/markedjs/marked/v1.2.8/lib/marked.js
+
+jsHtmlToText.js
+I cannot locate a current version of this library, so this is the same
+one from the markdown-here repository. There are several candidates to
+replace it.
