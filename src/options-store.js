@@ -11,11 +11,10 @@
 
 // Common defaults
 var DEFAULTS = {
-  'math-enabled': true,
-  'math-value': '<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
+  'math-enabled': false,
+  'math-value': `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
   'hotkey': { shiftKey: false, ctrlKey: true, altKey: true, key: 'M' },
-  'forgot-to-render-check-enabled': false,
-  'header-anchors-enabled': false,
+  'forgot-to-render-check-enabled': true,
   'gfm-line-breaks-enabled': true
 };
 
@@ -116,12 +115,11 @@ var ChromeOptionsStore = {
   // The default values or URLs for our various options.
   defaults: {
     'main-css': {'__defaultFromFile__': '/default.css', '__mimeType__': 'text/css'},
-    'syntax-css': {'__defaultFromFile__': '/highlightjs/styles/github.css', '__mimeType__': 'text/css'},
+    'syntax-css': {'__defaultFromFile__': '/highlightjs/styles/nnfx.css', '__mimeType__': 'text/css'},
     'math-enabled': DEFAULTS['math-enabled'],
     'math-value': DEFAULTS['math-value'],
     'hotkey': DEFAULTS['hotkey'],
     'forgot-to-render-check-enabled': DEFAULTS['forgot-to-render-check-enabled'],
-    'header-anchors-enabled': DEFAULTS['header-anchors-enabled'],
     'gfm-line-breaks-enabled': DEFAULTS['gfm-line-breaks-enabled']
   },
 
