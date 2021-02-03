@@ -1,12 +1,8 @@
 Change Log
 ==========
 
-2021-01-30:
-
+* Update highlightjs and marked to current versions
 * Rip out browser variants of Markdown Here, rebrand as Markdown Here Revival.
-
-2020-12-31: 
-
 * Port Thunderbird support to mail extensions to support Thunderbird 78.5+
 
 
