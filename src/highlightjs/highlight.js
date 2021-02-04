@@ -37,7 +37,7 @@ var hljs = (function () {
     deepFreezeEs6.default = _default;
 
     class Response {
-
+      
       constructor(mode) {
         // eslint-disable-next-line no-undefined
         if (mode.data === undefined) mode.data = {};

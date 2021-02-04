@@ -47,7 +47,7 @@ import json
 def mkname(n):
      n=os.path.splitext(n)[0]
      n=n.replace('-', ' ')
-     words=["{}{}".format(n[0].upper(), n[1:]) for w in n.split(' ')]
+     words=["{}{}".format(w[0].upper(), w[1:]) for w in n.split(' ')]
      n=" ".join(words)
      return n
 
@@ -58,7 +58,7 @@ for c in css_files:
     name=mkname(c)
     res[name]=c
 
-with open("highlightjs/styles/styles.js", "w") as fp:
+with open("highlightjs/styles/styles.json", "w") as fp:
     json.dump(res, fp, indent=2, sort_keys=True)
 _EOF_
 
