@@ -39,22 +39,6 @@ function markdownRender(mdText, userprefs, marked, hljs) {
     return text.toLowerCase().replace(/[^\w]+/g, '-');
   };
 
-  var defaultHeadingRenderer = markedRenderer.heading;
-  markedRenderer.heading = function (text, level, raw) {
-    if (userprefs['header-anchors-enabled']) {
-      // Add an anchor right above the heading. See MDH issue #93.
-      var sanitizedText = sanitizeLinkForAnchor(text);
-      var anchorLink = '<a href="#" name="' + sanitizedText + '"></a>';
-      return '<h' + level + '>' +
-             anchorLink +
-             text +
-             '</h' + level + '>\n';
-    }
-    else {
-      return defaultHeadingRenderer.call(this, text, level, raw);
-    }
-  };
-
   var defaultLinkRenderer = markedRenderer.link;
   markedRenderer.link = function(href, title, text) {
     // Added to fix MDH issue #57: MD links should automatically add scheme.

@@ -22,7 +22,6 @@ describe('Markdown-Render', function() {
       userprefs = {
         'math-value': null,
         'math-enabled': false,
-        'header-anchors-enabled': false,
         'gfm-line-breaks-enabled': true
       };
     });
@@ -96,37 +95,6 @@ describe('Markdown-Render', function() {
       // Make sure we haven't broken multi-character forumlae
       md = '$xx$';
       target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
-    });
-
-    it('should not add anchors to headers if option is disabled', function() {
-      userprefs['header-anchors-enabled'] = false;
-      var md = '# Header Number 1\n\n###### Header Number 6';
-      var target = '<h1 id="header-number-1">Header Number 1</h1>\n<h6 id="header-number-6">Header Number 6</h6>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
-    });
-
-    // Test issue #93: Add support for anchor links: https://github.com/adam-p/markdown-here/issues/93
-    it('should add anchors to headers if enabled', function() {
-      userprefs['header-anchors-enabled'] = true;
-      var md = '# Header Number 1\n\n###### Header Number 6';
-      var target = '<h1><a href="#" name="header-number-1"></a>Header Number 1</h1>\n<h6><a href="#" name="header-number-6"></a>Header Number 6</h6>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
-    });
-
-    // Test issue #93: Add support for anchor links: https://github.com/adam-p/markdown-here/issues/93
-    it('should convert anchor links to point to header auto-anchors', function() {
-      userprefs['header-anchors-enabled'] = true;
-      var md = '[H1](#Header Number 1)\n[H6](#Header Number 6)';
-      var target = '<p><a href="#header-number-1">H1</a><br><a href="#header-number-6">H6</a></p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
-    });
-
-    // Test issue #93: Add support for anchor links: https://github.com/adam-p/markdown-here/issues/93
-    it('should handle non-alphanumeric characters in headers', function() {
-      userprefs['header-anchors-enabled'] = true;
-      var md = '[H1](#a&b!c*d_f)\n# a&b!c*d_f';
-      var target = '<p><a href="#a-amp-b-c-d_f">H1</a></p>\n<h1><a href="#" name="a-amp-b-c-d_f"></a>a&amp;b!c*d_f</h1>\n';
       expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
     });
 
