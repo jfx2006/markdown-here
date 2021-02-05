@@ -109,7 +109,7 @@ use Thunderbird.
 ## Feedback
 
 See the [issues list](https://gitlab.com/jfx2006/markdown-here-revival/-/issues)
-and the [Wiki](hhttps://gitlab.com/jfx2006/markdown-here-revival/-/wikis/home).
+and the [Wiki](https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/home).
 All ideas, bugs, plans, complaints, and dreams will end up in one of those two places.
 
 ## License
@@ -120,7 +120,7 @@ MIT License: See [the LICENSE file](LICENSE).
 
 ### Other images
 
-[Creative Commons Attribution 3.0 Unported (CC BY 3.0) License](http://creativecommons.org/licenses/by/3.0/)
+[Creative Commons Attribution 3.0 Unported (CC BY 3.0) License](https://creativecommons.org/licenses/by/3.0/)
 
 ---
 
