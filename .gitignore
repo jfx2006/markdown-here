@@ -4,9 +4,12 @@ Thumbs.db
 
 *.sublime-project
 *.sublime-workspace
+.idea
 
 # Build directory
-dist
+web-ext-artifacts
 
 # Extension stub file
 markdown-here@adam.pritchard
+
+testing_profile
