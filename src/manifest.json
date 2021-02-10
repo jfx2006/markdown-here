@@ -4,6 +4,12 @@
   "version": "3.0.2",
   "description": "__MSG_app_slogan__",
   "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
+  "applications": {
+    "gecko": {
+      "id": "markdown-here-revival@xul.calypsoblue.org",
+      "strict_min_version": "78.5.0"
+    }
+  },
   "default_locale": "en",
   "icons": {
     "16": "images/rocmarkdown.svg",
@@ -28,11 +34,5 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
-  },
-  "applications": {
-    "gecko": {
-      "id": "markdown-here-revival@xul.calypsoblue.org",
-      "strict_min_version": "78.5"
-    }
   }
 }
