@@ -33,30 +33,57 @@ function markdownRender(mdText, userprefs, marked, hljs) {
   }
 
   // Hook into some of Marked's renderer customizations
-  var markedRenderer = new marked.Renderer();
+  const markedRenderer = new marked.Renderer();
 
-  var sanitizeLinkForAnchor = function(text) {
-    return text.toLowerCase().replace(/[^\w]+/g, '-');
-  };
-
-  var defaultLinkRenderer = markedRenderer.link;
+  const defaultLinkRenderer = markedRenderer.link;
   markedRenderer.link = function(href, title, text) {
     // Added to fix MDH issue #57: MD links should automatically add scheme.
     // Note that the presence of a ':' is used to indicate a scheme, so port
     // numbers will defeat this.
     href = href.replace(/^(?!#)([^:]+)$/, 'http://$1');
 
-    if (userprefs['header-anchors-enabled']) {
-      // Add an anchor right above the heading. See MDH issue #93.
-      if (href.indexOf('#') === 0) {
-        href = '#' + sanitizeLinkForAnchor(href.slice(1).toLowerCase());
-      }
-    }
-
     return defaultLinkRenderer.call(this, href, title, text);
   };
 
-  var markedOptions = {
+  function mathsExpression(expr) {
+    if (userprefs['math-enabled']) {
+      if (expr.match(/^\$\$[\s\S]*\$\$$/)) {
+        expr = expr.substr(2, expr.length - 4);
+        const math_rendered = mathify(expr);
+        return `
+                <div style="display:block;text-align:center;">
+                  ${math_rendered}
+                </div>`;
+      } else if (expr.match(/^\$[\s\S]*\$$/)) {
+        expr = expr.substr(1, expr.length - 2);
+        return mathify(expr);
+      }
+    } else {
+      return false;
+    }
+  }
+
+  const defaultCodeRenderer = markedRenderer.code;
+  markedRenderer.code = function(code, lang, escaped) {
+    if (!lang) {
+      const math = mathsExpression(code);
+      if (math) {
+        return math;
+      }
+    }
+    return defaultCodeRenderer.call(this, code, lang, escaped);
+  };
+
+  const defaultCodespanRenderer = markedRenderer.codespan;
+  markedRenderer.codespan = function(text) {
+    const math = mathsExpression(text);
+    if (math) {
+      return math;
+    }
+    return defaultCodespanRenderer.call(this, text);
+  };
+
+  const markedOptions = {
     renderer: markedRenderer,
     gfm: true,
     pedantic: false,
@@ -68,7 +95,6 @@ function markdownRender(mdText, userprefs, marked, hljs) {
     // Bit of a hack: highlight.js uses a `hljs` class to style the code block,
     // so we'll add it by sneaking it into this config field.
     langPrefix: 'hljs language-',
-    math: userprefs['math-enabled'] ? mathify : null,
     highlight: function(codeText, codeLanguage) {
         if (codeLanguage &&
             hljs.getLanguage(codeLanguage.toLowerCase())) {
@@ -79,7 +105,7 @@ function markdownRender(mdText, userprefs, marked, hljs) {
       }
     };
 
-  var renderedMarkdown = marked(mdText, markedOptions);
+  const renderedMarkdown = marked(mdText, markedOptions);
 
   return renderedMarkdown;
 }
