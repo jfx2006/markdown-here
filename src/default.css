@@ -19,7 +19,6 @@
 /* .markdown-here-wrapper[data-md-url*="mail.yahoo."] ul { color: red; } */
 
 pre, code {
-  font-size: 0.85em;
   font-family: Consolas, Inconsolata, Courier, monospace;
 }
 
@@ -27,8 +26,8 @@ code {
   margin: 0 0.15em;
   padding: 0 0.3em;
   white-space: pre-wrap;
-  border: 1px solid #EAEAEA;
-  background-color: #F8F8F8;
+  color: #dc5275;
+  background-color: rgba(119,119,119,.3);
   border-radius: 3px;
   display: inline; /* added to fix Yahoo block display of inline code */
 }
@@ -119,7 +118,7 @@ dl dd {
 }
 
 blockquote, q {
-  border-left: 4px solid #DDD;
+  border-left: 4px solid #3375dd;
   padding: 0 1em;
   color: #777;
   quotes: none;
@@ -137,12 +136,12 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 1.6em;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 2px solid #777;
 }
 
 h2 {
   font-size: 1.4em;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #777;
 }
 
 h3 {
@@ -167,7 +166,6 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   font-size: 1em;
-  font: inherit;
   border: 0;
 }
 
@@ -179,24 +177,23 @@ tbody {
 
 table tr {
   border: 0;
-  border-top: 1px solid #CCC;
-  background-color: white;
+  border-top: 1px solid #777;
   margin: 0;
   padding: 0;
 }
 
 table tr:nth-child(2n) {
-  background-color: #F8F8F8;
+  background-color: rgba(119,119,119,.5);
 }
 
 table tr th, table tr td {
   font-size: 1em;
-  border: 1px solid #CCC;
+  border: 1px solid #777;
   margin: 0;
   padding: 0.5em 1em;
 }
 
 table tr th {
  font-weight: bold;
-  background-color: #F0F0F0;
+ background-color: rgba(0,26,191,.3);
 }
