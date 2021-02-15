@@ -144,17 +144,17 @@ document.addEventListener('options-iframe-loaded', previewIframeLoaded);
 
 
 function localize() {
-    $('[data-i18n]').each(function() {
-      var messageID = 'options_page__' + $(this).data('i18n');
-      if (this.tagName.toUpperCase() === 'TITLE') {
-        this.innerText = Utils.getMessage(messageID);
-      }
-      else {
-        Utils.saferSetInnerHTML(this, Utils.getMessage(messageID));
-      }
-    });
+  const elements = document.querySelectorAll("[data-i18n]");
+  elements.forEach(el => {
+    const messageId = `options_page__${el.getAttribute("data-i18n")}`;
+    const message = Utils.getMessage(messageId);
+    if (el.tagName.toUpperCase() === "TITLE") {
+      el.innerText = message;
+    } else {
+      Utils.saferSetInnerHTML(el, message);
+    }
+  });
 }
-
 
 // Shows/hide page elements depending on the current platform.
 // E.g., not all usage instructions apply to all clients.
