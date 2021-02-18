@@ -34,5 +34,15 @@
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
+  },
+  "experiment_apis": {
+    "notificationbar": {
+      "schema": "experiments/notificationbar_schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["notificationbar"]],
+        "script": "experiments/notificationbar.js"
+      }
+    }
   }
 }

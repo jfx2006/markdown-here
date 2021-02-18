@@ -15,3 +15,7 @@ jsHtmlToText.js
 I cannot locate a current version of this library, so this is the same
 one from the markdown-here repository. There are several candidates to
 replace it.
+
+Use of mailextension experiments:
+The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
+is used.
