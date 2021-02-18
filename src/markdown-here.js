@@ -601,25 +601,35 @@ function markdownHere(document, markdownRenderer, logger, renderComplete) {
   // If we've found wrappers, then we're reverting.
   // Otherwise, we're rendering.
   if (wrappers && wrappers.length > 0) {
-    var yesToAll = false;
+    let modified = false;
     for (i = 0; i < wrappers.length; i++) {
       // Has the content been modified by the user since rendering
-      if (wrappers[i].getAttribute('markdown-here-wrapper-content-modified') &&
-          !yesToAll) {
-
-          if (wrappers[i].ownerDocument.defaultView.confirm(Utils.getMessage('unrendering_modified_markdown_warning'))) {
-            yesToAll = true;
-          }
-          else {
-            break;
-          }
+      if (wrappers[i].getAttribute('markdown-here-wrapper-content-modified')) {
+        modified = true;
+        break;
       }
-
-      unrenderMarkdown(wrappers[i]);
     }
-
-    if (renderComplete) {
-      renderComplete(focusedElem, false);
+    if (modified) {
+      let response = messenger.runtime.sendMessage({
+        action: "get-unrender-markdown-warning"
+      });
+      response.then((msg) => {
+        if (msg === "ok") {
+          for (let wrapper of wrappers) {
+            unrenderMarkdown(wrapper);
+          }
+          if (renderComplete) {
+            renderComplete(focusedElem, false);
+          }
+        }
+      });
+    } else {
+      for (let wrapper of wrappers) {
+        unrenderMarkdown(wrapper);
+      }
+      if (renderComplete) {
+        renderComplete(focusedElem, false);
+      }
     }
   }
   else {

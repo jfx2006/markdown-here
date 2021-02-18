@@ -62,6 +62,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
       typeof(sender.tab.id) === 'undefined' || sender.tab.id < 0) {
     return false;
   }
+  if (!request.action && request.popupCloseMode) {
+    return false;
+  }
 
   if (request.action === 'render') {
     OptionsStore.get(function(prefs) {
@@ -130,6 +133,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
     });
     return false;
   }
+  else if (request.action === 'get-unrender-markdown-warning') {
+    return openNotification(sender.tab.windowId,
+      Utils.getMessage('unrendering_modified_markdown_warning'),
+      messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+      ["Unrender", "Cancel"]
+      );
+  }
   else if (request.action === 'test-request') {
     responseCallback('test-request-good');
     return false;
@@ -140,9 +150,59 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
   }
 });
 
+// Defining a onDismissed listener
+messenger.notificationbar.onDismissed.addListener((windowId, notificationId) => {
+  console.log(`notification ${notificationId} in window ${windowId} was dismissed`);
+});
+
+
+async function openNotification(windowId, message, priority, button_labels) {
+  async function notificationClose(notificationId) {
+    return new Promise(resolve => {
+      let notificationResponse = "cancel";
+
+      // Defining a onClosed listener
+      function onClosedListener(closeWinId, closeNotificationId, closedByUser) {
+        if (closeNotificationId === notificationId) {
+          messenger.notificationbar.onClosed.removeListener(onClosedListener);
+          messenger.notificationbar.onButtonClicked.removeListener(onButtonClickListener);
+          resolve(notificationResponse);
+        }
+      }
+
+      function onButtonClickListener(closeWinId, closeNotificationId, buttonId) {
+        if (closeNotificationId === notificationId && buttonId) {
+          if (["btn-ok"].includes(buttonId)) {
+            notificationResponse = "ok";
+          }
+        }
+      }
+      messenger.notificationbar.onClosed.addListener(onClosedListener);
+      messenger.notificationbar.onButtonClicked.addListener(onButtonClickListener);
+    });
+  }
+  let notificationId = await messenger.notificationbar.create({
+    windowId: windowId,
+    priority: priority,
+    label: message,
+    buttons: [
+      {
+        id: "btn-ok",
+        label: button_labels[0]
+      },
+      {
+        id: "btn-cancel",
+        label: button_labels[1]
+      }
+    ]
+  });
+  return await notificationClose(notificationId);
+}
+
+
 // Add the composeAction (the button in the format toolbar) listener.
-actionButton.onClicked.addListener(function(tab) {
-  chrome.tabs.sendMessage(tab.id, {action: 'button-click', });
+actionButton.onClicked.addListener(tab => {
+  chrome.tabs.sendMessage(tab.id, { action: 'button-click', });
 });
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
