@@ -459,9 +459,12 @@ function setFocus(elem) {
 // Gets the URL of the top window that elem belongs to.
 // May recurse up through iframes.
 function getTopURL(win, justHostname) {
-  let url = win.navigator.userAgent.match(/Thunderbird'/);
-  if (url) {
-    url = url[0];
+  let url;
+  if (justHostname) {
+    url = win.location.hostname;
+  }
+  else {
+    url = win.location.href;
   }
   return url;
 }
