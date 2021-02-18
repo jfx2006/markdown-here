@@ -144,6 +144,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
     responseCallback('test-request-good');
     return false;
   }
+  else if (request.action === 'update-hotkey') {
+    updateHotKey();
+    return false;
+  }
   else {
     console.log('unmatched request action', request.action);
     throw 'unmatched request action: ' + request.action;
@@ -218,6 +222,48 @@ messenger.composeScripts.register({
     {file: "contentscript.js"}
   ]
 });
+
+function updateHotKey() {
+  messenger.runtime.getPlatformInfo()
+    .then(platinfo => {
+      const isMac = (platinfo.os === "mac");
+      OptionsStore.get(function(prefs) {
+        let hotkey = []
+        if (prefs.hotkey.shiftKey) {
+          hotkey.push("Shift")
+        }
+        if (prefs.hotkey.ctrlKey) {
+          if (isMac) {
+            hotkey.push("MacCtrl")
+          }
+          else {
+            hotkey.push("Ctrl")
+          }
+        }
+        if (prefs.hotkey.altKey) {
+          hotkey.push("Alt")
+        }
+        hotkey.push(prefs.hotkey.key)
+        messenger.commands.update({
+          "name": "toggle-markdown",
+          "shortcut": hotkey.join("+"),
+        });
+      });
+    });
+}
+messenger.commands.onCommand.addListener(function(command) {
+  if (command === "toggle-markdown") {
+    messenger.windows.getAll({populate: true, windowTypes: ["messageCompose"]})
+      .then(wins => {
+        for (const win of wins) {
+          if (win.focused) {
+            chrome.tabs.sendMessage(win.tabs[0].id, { action: 'hotkey', });
+          }
+        }
+
+      })
+  }
+})
 
 /*
 Showing an notification after upgrade is complicated by the fact that the

@@ -23,9 +23,6 @@ function onLoad() {
 
   localize();
 
-  // Show/hide elements depending on platform
-  showPlatformElements();
-
   // Set up our control references.
   cssEdit = document.getElementById('css-edit');
   cssSyntaxEdit = document.getElementById('css-syntax-edit');
@@ -98,31 +95,14 @@ function onLoad() {
   // Load the changelist section
   loadChangelist();
 
-  // Special effort is required to open the test page in these clients.
-  if (navigator.userAgent.indexOf('Thunderbird') >= 0 ||
-      navigator.userAgent.indexOf('Icedove') >= 0 ||
-      navigator.userAgent.indexOf('Postbox') >= 0 ||
-      navigator.userAgent.indexOf('Zotero') >= 0) {
-    $('#tests-link').click(function(event) {
-      event.preventDefault();
-      Utils.makeRequestToPrivilegedScript(
-        document,
-        { action: 'open-tab', url: $('#tests-link a').prop('href') });
-    });
+  const test_link = document.getElementById("tests-link");
+  test_link.onclick = function(event) {
+    event.preventDefault();
+    Utils.makeRequestToPrivilegedScript(
+      document,
+      { action: 'open-tab', url: test_link.querySelector("a").href }
+    )
   }
-
-  // Hide the tests link if the page isn't available. It may be stripped out
-  // of extension packages.
-
-  // Check if our test file exists.
-  Utils.getLocalFile('./test/index.html', 'text/html', function(_, err) {
-    // The test files aren't present, so hide the button.
-    if (err) {
-      // The test files aren't present, so hide the button.
-      $('#tests-link').hide();
-    }
-  });
-
   loaded = true;
 }
 document.addEventListener('DOMContentLoaded', onLoad, false);
@@ -154,26 +134,6 @@ function localize() {
       Utils.saferSetInnerHTML(el, message);
     }
   });
-}
-
-// Shows/hide page elements depending on the current platform.
-// E.g., not all usage instructions apply to all clients.
-function showPlatformElements() {
-  // (This if-structure is ugly to work around the preprocessor logic.)
-  var matched = false;
-  /*? if (platform!=='firefox' && platform!=='thunderbird') { */
-  if (typeof(chrome) !== 'undefined' && typeof(chrome.extension) !== 'undefined') {
-    matched = true;
-    // Webkit-derived platforms
-    $('#need-page-reload').css('display', 'none');
-  }
-  /*? } else { */
-  if (!matched) {
-    matched = true;
-    // Mozilla-derived platforms
-    $('#need-page-reload').css('display', '');
-  }
-  /*? } */
 }
 
 
@@ -223,6 +183,8 @@ function checkChange() {
         },
         function() {
           updateMarkdownRender();
+
+          Utils.makeRequestToPrivilegedScript(document,{action: 'update-hotkey'});
 
           // Show the "saved changes" message, unless this is the first save
           // (i.e., the one when the user first opens the options window).
@@ -370,9 +332,9 @@ function loadChangelist() {
 
       changes = marked(changes, markedOptions);
 
-      Utils.saferSetInnerHTML($('#changelist').get(0), changes);
+      Utils.saferSetInnerHTML(document.getElementById("changelist"), changes);
 
-      var prevVer = location.search ? location.search.match(/prevVer=([0-9\.]+)/) : null;
+/*      var prevVer = location.search ? location.search.match(/prevVer=([0-9\.]+)/) : null;
       if (prevVer) {
         prevVer = prevVer[1]; // capture group
 
@@ -384,7 +346,7 @@ function loadChangelist() {
 
         // Move the changelist section up in the page
         $('#changelist-container').insertAfter('#pagehead');
-      }
+      }*/
     }
   };
   xhr.send();
@@ -407,13 +369,14 @@ document.getElementById('math-reset-button').addEventListener('click', resetMath
 // in other languages and/or on other keyboards might be different.
 function hotkeyChangeHandler() {
   // Check for a valid key value.
-  var regex = new RegExp('^[a-zA-Z0-9]+$');
+  var regex = new RegExp('^[a-zA-Z0-9]$');
   var value = hotkeyKey.value;
+  const hotkeywarning = document.getElementById("hotkey-key-warning");
   if (value.length && !regex.test(value)) {
-    $('#hotkey-key-warning').removeClass('hidden');
+    hotkeywarning.classList.remove("hidden");
   }
   else {
-    $('#hotkey-key-warning').addClass('hidden');
+    hotkeywarning.classList.add("hidden");
   }
 
   // Set any representations of the hotkey to the new value.
@@ -424,7 +387,7 @@ function hotkeyChangeHandler() {
   if (hotkeyAlt.checked) hotkeyPieces.push(Utils.getMessage('options_page__hotkey_alt_key'));
   if (hotkeyKey.value) hotkeyPieces.push(hotkeyKey.value.toString().toUpperCase());
 
-  $('.hotkey-display').each(function() {
+  /*$('.hotkey-display').each(function() {
     var $hotkeyElem = $(this);
     if (hotkeyKey.value) {
       if ($hotkeyElem.parent().hasClass('hotkey-display-wrapper')) {
@@ -446,7 +409,7 @@ function hotkeyChangeHandler() {
       }
       $hotkeyElem.css({display: 'none'});
     }
-  });
+  });*/
 }
 document.getElementById('hotkey-key').addEventListener('keyup', hotkeyChangeHandler, false);
 document.getElementById('hotkey-shift').addEventListener('click', hotkeyChangeHandler, false);

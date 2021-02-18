@@ -31,6 +31,15 @@
     },
     "default_title": "__MSG_toggle_button_tooltip__"
   },
+  "commands": {
+    "toggle-markdown": {
+      "suggested_key": {
+        "default": "Ctrl+Alt+M",
+        "mac": "MacCtrl+Ctrl+M"
+      },
+      "description": "__MSG_toggle_button_tooltip__"
+    }
+  },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true

@@ -160,70 +160,6 @@ function buttonIntervalCheck(focusedElem) {
 }
 
 
-/*
- * Hotkey support
- */
-
-// Default the hotkey check to a no-op until we get the necessary info from the
-// user options.
-var hotkeyIntervalCheck = function(focusedElem) {};
-var hotkeyGetOptionsHandler = function(prefs) {
-  // If the background script isn't properly loaded, it can happen that the
-  // `prefs` argument is undefined. Detect this and try again.
-  if (typeof(prefs) === 'undefined') {
-    Utils.makeRequestToPrivilegedScript(
-      document,
-      { action: 'get-options' },
-      hotkeyGetOptionsHandler);
-    return;
-  }
-
-  // Only add a listener if a key is set
-  if (prefs.hotkey.key.length === 1) {
-
-    // HACK: In Chrome, we have to add a keydown listener to every iframe of interest,
-    // otherwise the handler will only fire on the topmost window. It's difficult
-    // to iterate (recursively) through iframes and add listeners to them (especially
-    // for Yahoo, where there isn't a page change when the compose window appears,
-    // so this content script doesn't get re-run). Instead we're going to use the
-    // dirty hack of checking every few seconds if the user has focused a new iframe
-    // and adding a handler to it.
-    // Note that this will result in addEventListener being called on the same
-    // iframe/document repeatedly, but that's okay -- duplicate handlers are discarded.
-    // https://developer.mozilla.org/en-US/docs/DOM/element.addEventListener#Multiple_identical_event_listeners
-
-    // The actual hotkey event handler.
-    var hotkeyHandler = function(event) {
-      if (event.shiftKey === prefs.hotkey.shiftKey &&
-          event.ctrlKey === prefs.hotkey.ctrlKey &&
-          event.altKey === prefs.hotkey.altKey &&
-          event.which === prefs.hotkey.key.toUpperCase().charCodeAt(0)) {
-        requestHandler({action: 'hotkey'});
-        event.preventDefault();
-        return false;
-      }
-    };
-
-    // The hotkey option is enabled, and we've created our event handler function,
-    // so now let's do real hotkey interval checking.
-    hotkeyIntervalCheck = function(focusedElem) {
-      if (focusedElem.ownerDocument) {
-        focusedElem = focusedElem.ownerDocument;
-      }
-
-      // TODO: Chrome and Mozilla: Only add a hotkey handler on pages/iframes that
-      // are valid targets. And/or let the hotkey match if the correct type of
-      // control has focus.
-
-      focusedElem.addEventListener('keydown', hotkeyHandler, true);
-    };
-  }
-  // else the hotkey is disabled and we'll leave hotkeyIntervalCheck as a no-op
-};
-Utils.makeRequestToPrivilegedScript(
-  document,
-  { action: 'get-options' },
-  hotkeyGetOptionsHandler);
 
 
 /*
@@ -240,7 +176,7 @@ function intervalCheck(elem) {
     return;
   }
 
-  hotkeyIntervalCheck(focusedElem);
+  // hotkeyIntervalCheck(focusedElem);
   buttonIntervalCheck(focusedElem);
 
   // Don't retrieve options every time. Doing so was probably causing the memory
