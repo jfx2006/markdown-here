@@ -1,6 +1,24 @@
 Change Log
 ==========
 
+2021-02-21: v3.1.0
+------------------
+* highlightjs -> 10.6.0
+* updated default CSS styles for Thunderbird in either light or dark mode
+* Math rendering works #1, syntax change! Enclose in backtick & dollar
+  `$x=y^2$` or `$$x=y^3$$`
+* Remove JQuery dependency
+* Notifications work - warning about unrendering modified html, forgot to
+  render on send #3 & #5.
+* Use MailExtension commands API for hotkey support; remove tons of legacy code
+* Use compose.onBeforeSend when checking for sending unrendered markdown;
+  remove more legacy code
+* **New permissions** - The extension will prompt for "unrestricted access"
+  due to the use of the NotificationBar API experiment.
+
+
+2021-02-05: v3.0.2
+------------------
 * Update highlightjs and marked to current versions
 * Rip out browser variants of Markdown Here, rebrand as Markdown Here Revival.
 * Port Thunderbird support to mail extensions to support Thunderbird 78.5+

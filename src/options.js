@@ -204,7 +204,7 @@ function checkChange() {
   }
 }
 
-// This function stolen entirely from contentscript.js and ff-overlay.js
+// This function stolen entirely from composescript.js and ff-overlay.js
 function requestMarkdownConversion(elem, range, callback) {
   var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem, range);
 

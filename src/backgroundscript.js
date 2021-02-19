@@ -216,7 +216,7 @@ messenger.composeScripts.register({
     {file: "marked.js"},
     {file: "mdh-html-to-text.js"},
     {file: "markdown-here.js"},
-    {file: "contentscript.js"}
+    {file: "composescript.js"}
   ]
 });
 
@@ -262,11 +262,26 @@ messenger.commands.onCommand.addListener(function(command) {
   }
 })
 
+function forgotToRenderEnabled() {
+  return new Promise(resolve => {
+    let rv = false;
+    OptionsStore.get(function(prefs) {
+      rv = prefs["forgot-to-render-check-enabled"];
+      resolve(rv);
+    });
+  });
+}
+
 messenger.compose.onBeforeSend.addListener(async function(tab) {
   let rv;
-  let renderable = await messenger.tabs.sendMessage(
+  let forgotToRenderCheckEnabled = await forgotToRenderEnabled();
+  if (!forgotToRenderCheckEnabled) {
+    return Promise.resolve();
+  }
+
+  let isMarkdown = await messenger.tabs.sendMessage(
     tab.id, { action: "check-forgot-render" })
-  if (renderable) {
+  if (isMarkdown) {
     const message = `${Utils.getMessage("forgot_to_render_prompt_info")}
           ${Utils.getMessage("forgot_to_render_prompt_question")}`;
 

@@ -6,7 +6,7 @@
 function onLoad() {
   window.LOAD_MARKDOWN_HERE_CONTENT_SCRIPT = true;
   var contentscript = document.createElement('script');
-  contentscript.src = 'contentscript.js';
+  contentscript.src = 'composescript.js';
   document.body.appendChild(contentscript);
 
   // The body of the iframe needs to have a (collapsed) selection range for

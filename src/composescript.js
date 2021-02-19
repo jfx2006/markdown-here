@@ -42,7 +42,14 @@ function requestHandler(request, sender, sendResponse) {
     }
   }
   else if (request.action === "check-forgot-render") {
-    let renderable = markdownHere.elementCanBeRendered(window.document.body);
+    function looksLikeMarkdown() {
+      let mdMaybe = new MdhHtmlToText.MdhHtmlToText(window.document.body, null, true).get();
+      return CommonLogic.probablyWritingMarkdown(mdMaybe);
+    }
+    const renderable = markdownHere.elementCanBeRendered(window.document.body);
+    if (renderable) {
+      return Promise.resolve(looksLikeMarkdown());
+    }
     return Promise.resolve(renderable);
   }
 }
