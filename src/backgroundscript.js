@@ -4,58 +4,66 @@
  */
 
 "use strict";
-/*global chrome:false, OptionsStore:false, MarkdownRender:false,
+/*global messenger:false, OptionsStore:false, MarkdownRender:false,
   marked:false, hljs:false, Utils:false, CommonLogic:false */
-/*jshint devel:true, browser:true*/
 
 /*
  * Chrome background script.
  */
 
-// On each load, check if we should show the options/changelist page.
-function onLoad() {
-  // This timeout is a dirty hack to fix bug #119: "Markdown Here Upgrade
-  // Notification every time I open Chrome". That issue on Github for details.
-  // https://github.com/adam-p/markdown-here/issues/119
-  window.setTimeout(upgradeCheck, 30000);
-}
+messenger.runtime.onInstalled.addListener(async (details) => {
+  if (details.temporary) return; // skip during development
 
-// In the interest of improved browser load performace, call `onLoad` after a tick.
-window.addEventListener('load', Utils.nextTickFn(onLoad), false);
+  function updateCallback(winId, url) {
+    const message = Utils.getMessage("upgrade_notification_text");
+    openNotification(winId,
+      message,
+      messenger.notificationbar.PRIORITY_INFO_MEDIUM,
+      ["Update Notes", "Cancel"]
+    ).then(rv => {
+      if (rv === "ok") {
+        messenger.tabs.create({
+          "url": onboardUrl.href,
+          windowId: winId,
+        });
+      }
+    });
+  }
+  function installCallback(winId, url) {
+    messenger.tabs.create({
+      "url": onboardUrl.href,
+      windowId: winId,
+    });
+  }
 
-function upgradeCheck() {
+  const appManifest = messenger.runtime.getManifest();
+  const win = await messenger.windows.getCurrent();
+  const winId = win.id;
+  let onboardUrl = new URL(messenger.runtime.getURL("/mdh-revival.html"));
+  let callback;
   OptionsStore.get(function(options) {
-    var appManifest = chrome.runtime.getManifest();
-
-    var optionsURL = 'options.html';
-
-    if (typeof(options['last-version']) === 'undefined') {
-      // Update our last version. Only when the update is complete will we take
-      // the next action, to make sure it doesn't happen every time we start up.
-      OptionsStore.set({ 'last-version': appManifest.version }, function() {
-        // This is the very first time the extensions has been run, so show the
-        // options page.
-        chrome.tabs.create({ url: chrome.extension.getURL(optionsURL) });
-      });
+    switch (details.reason) {
+      case "install":
+        callback = installCallback;
+        break;
+      case "update":
+        if (typeof(options["last-version"] !== "undefined")) {
+          onboardUrl.searchParams.set("previousVersion", options["last-version"])
+        }
+        callback = updateCallback;
+        break;
     }
-    else if (options['last-version'] !== appManifest.version) {
-      // Update our last version. Only when the update is complete will we take
-      // the next action, to make sure it doesn't happen every time we start up.
-      OptionsStore.set({ 'last-version': appManifest.version }, function() {
-        // The extension has been newly updated
-        optionsURL += '?prevVer=' + options['last-version'];
-
-        showUpgradeNotification(chrome.extension.getURL(optionsURL));
-      });
-    }
+    OptionsStore.set({ 'last-version': appManifest.version }, function() {
+      callback(winId, onboardUrl);
+    });
   });
-}
+});
 
 const actionButton = messenger.composeAction;
 
 // Handle rendering requests from the content script.
 // See the comment in markdown-render.js for why we do this.
-chrome.runtime.onMessage.addListener(function(request, sender, responseCallback) {
+messenger.runtime.onMessage.addListener(function(request, sender, responseCallback) {
   // The content script can load in a not-real tab (like the search box), which
   // has an invalid `sender.tab` value. We should just ignore these pages.
   if (typeof(sender.tab) === 'undefined' ||
@@ -117,18 +125,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, responseCallback)
       return false;
     }
   }
-  else if (request.action === 'upgrade-notification-shown') {
-    clearUpgradeNotification();
-    return false;
-  }
-  else if (request.action === 'get-forgot-to-render-prompt') {
-    CommonLogic.getForgotToRenderPromptContent(function(html) {
-      responseCallback({html: html});
-    });
-    return true;
-  }
   else if (request.action === 'open-tab') {
-    chrome.tabs.create({
+    messenger.tabs.create({
         'url': request.url
     });
     return false;
@@ -203,10 +201,9 @@ async function openNotification(windowId, message, priority, button_labels) {
   return await notificationClose(notificationId);
 }
 
-
 // Add the composeAction (the button in the format toolbar) listener.
 actionButton.onClicked.addListener(tab => {
-  chrome.tabs.sendMessage(tab.id, { action: 'button-click', });
+  messenger.tabs.sendMessage(tab.id, { action: 'button-click', });
 });
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -257,7 +254,7 @@ messenger.commands.onCommand.addListener(function(command) {
       .then(wins => {
         for (const win of wins) {
           if (win.focused) {
-            chrome.tabs.sendMessage(win.tabs[0].id, { action: 'hotkey', });
+            messenger.tabs.sendMessage(win.tabs[0].id, { action: 'hotkey', });
           }
         }
 
@@ -265,59 +262,28 @@ messenger.commands.onCommand.addListener(function(command) {
   }
 })
 
-/*
-Showing an notification after upgrade is complicated by the fact that the
-background script can't communicate with "stale" content scripts. (See https://code.google.com/p/chromium/issues/detail?id=168263)
-So, content scripts need to be reloaded before they can receive the "show
-upgrade notification message". So we're going to keep sending that message from
-the background script until a content script acknowledges it.
-*/
-var showUpgradeNotificationInterval = null;
-function showUpgradeNotification(optionsURL) {
-  // Get the content of notification element
-  CommonLogic.getUpgradeNotification(optionsURL, function(html) {
-    var tabGotTheMessage = function(gotIt) {
-      // From tabs that haven't been reloaded, this will get called with no arguments.
-      if (!gotIt) {
-        return;
-      }
+messenger.compose.onBeforeSend.addListener(async function(tab) {
+  let rv;
+  let renderable = await messenger.tabs.sendMessage(
+    tab.id, { action: "check-forgot-render" })
+  if (renderable) {
+    const message = `${Utils.getMessage("forgot_to_render_prompt_info")}
+          ${Utils.getMessage("forgot_to_render_prompt_question")}`;
 
-      // As soon as any content script gets the message, stop trying
-      // to send it.
-      // NOTE: This could result in under-showing the notification, but that's
-      // better than over-showing it (e.g., issue #109).
-      if (showUpgradeNotificationInterval !== null) {
-        clearInterval(showUpgradeNotificationInterval);
-        showUpgradeNotificationInterval = null;
-      }
-    };
-
-    var askTabsToShowNotification = function() {
-      chrome.tabs.query({windowType: 'normal'}, function(tabs) {
-        for (var i = 0; i < tabs.length; i++) {
-          chrome.tabs.sendMessage(
-            tabs[i].id,
-            { action: 'show-upgrade-notification', html: html },
-            tabGotTheMessage);
-        }
-      });
-    };
-
-    showUpgradeNotificationInterval = setInterval(askTabsToShowNotification, 5000);
-  });
-}
-
-function clearUpgradeNotification() {
-  if (showUpgradeNotificationInterval !== null) {
-    clearInterval(showUpgradeNotificationInterval);
-    showUpgradeNotificationInterval = null;
+    rv = await openNotification(tab.windowId,
+      message,
+      messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+      [
+        Utils.getMessage("forgot_to_render_send_button"),
+        Utils.getMessage("forgot_to_render_back_button")
+      ]
+    );
+  } else {
+    rv = "ok";
   }
-
-  chrome.tabs.query({windowType: 'normal'}, function(tabs) {
-    for (var i = 0; i < tabs.length; i++) {
-      chrome.tabs.sendMessage(
-        tabs[i].id,
-        { action: 'clear-upgrade-notification' });
-    }
-  });
-}
+  if (rv === "ok") {
+    return Promise.resolve();
+  } else {
+    return Promise.resolve({cancel: true})
+  }
+});
