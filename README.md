@@ -21,12 +21,7 @@ the author of Markdown Here have been unsuccessful.
 
 ## Installation Instructions
 
-The plan is to publish on [ATN](https://addons.thunderbird.net) once I finish
-up the rebranding and get the vendored libraries updated.
-
-In the meantime, I will have previews in 
-[Releases](https://gitlab.com/jfx2006/markdown-here-revival/-/releases).
-
+Download from [addons.thunderbird.net](https://addons.thunderbird.net/en-US/thunderbird/addon/markdown-here-revival/)
 
 ## Usage Instructions
 
