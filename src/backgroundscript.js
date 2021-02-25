@@ -1,6 +1,7 @@
 /*
+ * Copyright JFX 2021
  * Copyright Adam Pritchard 2016
- * MIT License : http://adampritchard.mit-license.org/
+ * MIT License
  */
 
 "use strict";
@@ -8,7 +9,7 @@
   marked:false, hljs:false, Utils:false, CommonLogic:false */
 
 /*
- * Chrome background script.
+ * Mail Extension background script.
  */
 
 messenger.runtime.onInstalled.addListener(async (details) => {
@@ -59,8 +60,6 @@ messenger.runtime.onInstalled.addListener(async (details) => {
   });
 });
 
-const actionButton = messenger.composeAction;
-
 // Handle rendering requests from the content script.
 // See the comment in markdown-render.js for why we do this.
 messenger.runtime.onMessage.addListener(function(request, sender, responseCallback) {
@@ -93,11 +92,11 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   }
   else if (request.action === 'show-toggle-button') {
     if (request.show) {
-      actionButton.enable(sender.tab.id);
-      actionButton.setTitle({
+      messenger.composeAction.enable(sender.tab.id);
+      messenger.composeAction.setTitle({
         title: Utils.getMessage('toggle_button_tooltip'),
         tabId: sender.tab.id });
-      actionButton.setIcon({
+      messenger.composeAction.setIcon({
         path: {
           "16": Utils.getLocalURL('/images/rocmarkdown.svg'),
           "19": Utils.getLocalURL('/images/rocmarkdown.svg'),
@@ -109,11 +108,11 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       return false;
     }
     else {
-      actionButton.disable(sender.tab.id);
-      actionButton.setTitle({
+      messenger.composeAction.disable(sender.tab.id);
+      messenger.composeAction.setTitle({
         title: Utils.getMessage('toggle_button_tooltip_disabled'),
         tabId: sender.tab.id });
-      actionButton.setIcon({
+      messenger.composeAction.setIcon({
         path: {
           "16": Utils.getLocalURL('/images/rocmarkdown.svg'),
           "19": Utils.getLocalURL('/images/rocmarkdown.svg'),
@@ -202,7 +201,7 @@ async function openNotification(windowId, message, priority, button_labels) {
 }
 
 // Add the composeAction (the button in the format toolbar) listener.
-actionButton.onClicked.addListener(tab => {
+messenger.composeAction.onClicked.addListener(tab => {
   messenger.tabs.sendMessage(tab.id, { action: 'button-click', });
 });
 
