@@ -73,18 +73,17 @@ A few secondary features that can be tested if desired:
 
 - The rendered email
 
-- Options: Should open after
-installation (and restart). Should open after upgrade. Should auto-save.
-Should sync settings.
+- Options: Should auto-save.
+- Notification bar on upgrade that can open an internal documentation page
+  (which is not written yet)
 - Signatures should be excluded from the conversion.
 Sigs must be preceded by the standard-ish '-- ' (note the trailing space).
 
 - Images embedded in the email before conversion (Gmail and Thunderbird)
 should be retained by the conversion.
-- Quoted reply text should be
-excluded by the conversion.
-- TeX mathematical formulae should be rendered
-if and only if that functionality is enabled in the options.
+- Quoted reply text should be excluded by the conversion.
+- TeX mathematical formulae should be rendered if and only if that
+functionality is enabled in the options.
 
 
 ---
@@ -104,7 +103,7 @@ console.log(s);
 
 This is the quadratic equation in TeX (rendered if
 enabled):
-$-b \pm \sqrt{b^2 - 4ac} \over 2a$
+`$-b \pm \sqrt{b^2 - 4ac} \over 2a$`
 
 (Note this feature is annoying as it sends an email with remote content!
 I intend to fix that in a later release.)
