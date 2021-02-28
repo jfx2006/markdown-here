@@ -5,15 +5,16 @@
  */
 
 "use strict";
-/*global messenger:false, OptionsStore:false, MarkdownRender:false,
+/*global messenger:false, MarkdownRender:false,
   marked:false, hljs:false, Utils:false, CommonLogic:false */
 
 /*
  * Mail Extension background script.
  */
+import { OptionsStore } from "./options/options-storage.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
-  if (details.temporary) return; // skip during development
+  // if (details.temporary) return; // skip during development
 
   function updateCallback(winId, url) {
     const message = Utils.getMessage("upgrade_notification_text");
@@ -42,7 +43,7 @@ messenger.runtime.onInstalled.addListener(async (details) => {
   const winId = win.id;
   let onboardUrl = new URL(messenger.runtime.getURL("/mdh-revival.html"));
   let callback;
-  OptionsStore.get(function(options) {
+  OptionsStore.getAll().then(options => {
     switch (details.reason) {
       case "install":
         callback = installCallback;
@@ -54,7 +55,7 @@ messenger.runtime.onInstalled.addListener(async (details) => {
         callback = updateCallback;
         break;
     }
-    OptionsStore.set({ 'last-version': appManifest.version }, function() {
+    OptionsStore.set({ 'last-version': appManifest.version }).then(() => {
       callback(winId, onboardUrl);
     });
   });
@@ -74,7 +75,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   }
 
   if (request.action === 'render') {
-    OptionsStore.get(function(prefs) {
+    OptionsStore.getAll().then(prefs => {
       responseCallback({
         html: MarkdownRender.markdownRender(
           request.mdText,
@@ -87,7 +88,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
     return true;
   }
   else if (request.action === 'get-options') {
-    OptionsStore.get(function(prefs) { responseCallback(prefs); });
+    OptionsStore.getAll().then(prefs => { responseCallback(prefs); });
     return true;
   }
   else if (request.action === 'show-toggle-button') {
@@ -223,7 +224,7 @@ function updateHotKey() {
   messenger.runtime.getPlatformInfo()
     .then(platinfo => {
       const isMac = (platinfo.os === "mac");
-      OptionsStore.get(function(prefs) {
+      OptionsStore.getAll().then(prefs => {
         let hotkey = []
         if (prefs.hotkey.shiftKey) {
           hotkey.push("Shift")
@@ -264,7 +265,7 @@ messenger.commands.onCommand.addListener(function(command) {
 function forgotToRenderEnabled() {
   return new Promise(resolve => {
     let rv = false;
-    OptionsStore.get(function(prefs) {
+    OptionsStore.getAll().then(prefs => {
       rv = prefs["forgot-to-render-check-enabled"];
       resolve(rv);
     });
