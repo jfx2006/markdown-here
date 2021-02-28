@@ -1,0 +1,273 @@
+:root {
+    --mdhr-background-color: var(--white);
+    --mdhr-card-background-color: var(--white);
+    --mdhr-card-border-color: rgba(0,0,0,.125);
+    --mdhr-card-header-color: #fafafa;
+    --mdhr-container-border: 1px solid #ccc;
+    --mdhr-input-active-border-color: var(--info);
+    --mdhr-input-background-color: var(--white);
+    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-border-color: #292a2a;
+    --mdhr-input-main-border-color: rgba(0,0,0,.125);
+    --mdhr-link-color: var(--green);
+    --mdhr-link-hover-color: #007053;
+    --mdhr-sidebar-background-color: #27272a;
+    --mdhr-table-border-color: rgb(222, 226, 230);
+    --mdhr-table-hover-color: #f2f2f2;
+    --mdhr-table-odd-color: #f2f2f2;
+    --mdhr-text-color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mdhr-background-color: #3b3b3d;
+        --mdhr-card-background-color: #2b2a2a;
+        --mdhr-card-border-color: #292a2a;
+        --mdhr-card-header-color: #27272a;
+        --mdhr-container-border: 1px solid #000;
+        --mdhr-input-active-border-color: var(--info);
+        --mdhr-input-background-color: #27272a;
+        --mdhr-input-border: 1px solid var(--primary);
+        --mdhr-input-border-color: #292a2a;
+        --mdhr-input-main-border-color: #3b3d3c;
+        --mdhr-link-color: var(--green);
+        --mdhr-link-hover-color: #007053;
+        --mdhr-table-border-color: #a0a0a0;
+        --mdhr-table-hover-color: #474948;
+        --mdhr-table-odd-color: #3b3b3d;
+        --mdhr-text-color: #cbcfcb;
+    }
+}
+
+/* Same colors for manual switching */
+[data-color-theme='dark'] {
+    --mdhr-background-color: #3b3b3d;
+    --mdhr-card-background-color: #2b2a2a;
+    --mdhr-card-border-color: #292a2a;
+    --mdhr-card-header-color: #27272a;
+    --mdhr-container-border: 1px solid #000;
+    --mdhr-input-active-border-color: var(--info);
+    --mdhr-input-background-color: #27272a;
+    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-border-color: #292a2a;
+    --mdhr-input-main-border-color: #3b3d3c;
+    --mdhr-link-color: var(--green);
+    --mdhr-link-hover-color: #007053;
+    --mdhr-table-border-color: #a0a0a0;
+    --mdhr-table-hover-color: #474948;
+    --mdhr-table-odd-color: #3b3b3d;
+    --mdhr-text-color: #cbcfcb;
+}
+
+[data-color-theme='light'] {
+    --mdhr-background-color: var(--white);
+    --mdhr-card-background-color: var(--white);
+    --mdhr-card-border-color: rgba(0,0,0,.125);
+    --mdhr-card-header-color: #fafafa;
+    --mdhr-container-border: 1px solid #ccc;
+    --mdhr-input-active-border-color: var(--info);
+    --mdhr-input-background-color: var(--white);
+    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-border-color: #292a2a;
+    --mdhr-input-main-border-color: rgba(0,0,0,.125);
+    --mdhr-link-color: var(--green);
+    --mdhr-link-hover-color: #007053;
+    --mdhr-sidebar-background-color: #27272a;
+    --mdhr-table-border-color: rgb(222, 226, 230);
+    --mdhr-table-hover-color: #f2f2f2;
+    --mdhr-table-odd-color: #f2f2f2;
+    --mdhr-text-color: #000;
+}
+
+
+body {
+    background-color: var(--mdhr-background-color);
+    color: var(--mdhr-text-color);
+    font-size: 1.2rem;
+    max-width: 1440px;
+}
+
+a {
+    color: var(--mdhr-link-color);
+    text-decoration: none !important;
+}
+
+a:hover {
+    color: var(--mdhr-link-hover-color);
+}
+
+pre {
+    background-color: var(--mdhr-background-color);
+    color: var(--mdhr-text-color);
+}
+
+code {
+    background-color: var(--mdhr-background-color) !important;
+    color: var(--mdhr-text-color) !important;
+}
+
+main {
+    background: var(--mdhr-background-color);
+}
+
+textarea,
+input,
+input[type="checkbox"] {
+    background-color: var(--mdhr-background-color) !important;
+    border-color: var(--mdhr-input-main-border-color) !important;
+    color: var(--mdhr-text-color) !important;
+}
+
+input[type="text"] {
+    width: 85%;
+}
+
+input.hotkey-input {
+    width: 100px;
+}
+
+textarea:active,
+input:active {
+    border-color: var(--mdhr-input-active-border-color);
+}
+
+input:invalid {
+    border: 2px solid var(--danger);
+}
+
+input[disabled] {
+    opacity: .3!important;
+}
+
+textarea {
+    height: 15em;
+    width: 100%;
+    font-family: var(--font-family-monospace);
+}
+
+footer {
+    bottom: 1rem;
+}
+
+button {
+    height: 30px;
+    margin: 10px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.show {
+    display: block;
+}
+
+select {
+    background-color: var(--mdhr-input-background-color) !important;
+    color: var(--mdhr-text-color) !important;
+}
+
+select option {
+    background-color: var(--mdhr-input-background-color);
+    color: var(--mdhr-text-color);
+}
+
+pre {
+    white-space: pre-line;
+}
+
+.close {
+    color: var(--mdhr-text-color);
+}
+
+.card {
+    background-color: var(--mdhr-card-background-color);
+    border-color: var(--mdhr-card-border-color);
+}
+
+.card-header {
+    background-color: var(--mdhr-card-header-color);
+    color: var(--mdhr-text-color);
+}
+
+.card-body {
+    background-color: var(--mdhr-card-background-color);
+    color: var(--mdhr-text-color);
+}
+
+.invalid-feedback {
+    color: var(--mdhr-link-color);
+}
+
+.invalid-feedback code {
+    color: var(--mdhr-link-hover-color) !important;
+}
+
+.sidebar {
+    background-color: var(--mdhr-sidebar-background-color) !important;
+    height: 50px;
+    bottom: 0;
+    position: fixed;
+    top: 0;
+    z-index: 100;
+}
+
+.sidebar a {
+    border: 1px solid transparent;
+}
+
+#sidebar {
+    background-color: var(--mdhr-sidebar-background-color) !important;
+}
+
+.active > a {
+    border-color: currentColor;
+    color: #a0a0a0 !important;
+}
+
+.collapse.show {
+    display: block !important;
+}
+
+.modal-content {
+    background: var(--mdhr-background-color);
+    color: var(--mdhr-text-color);
+}
+
+.input-wrapper,
+.input-wrapper > input {
+    display: flex;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#saved-msg {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: xx-large;
+    background: linear-gradient(225deg, #326b29, #357e2a);
+}
+
+#saved-msg > .toast-header {
+    background-color: transparent;
+    color: #202020;
+}
+
+#copyVersionToClipboard + span {
+    color: var(--success);
+    font-size: xx-large;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        height: auto;
+    }
+}
+
+@media (min-width: 1440px) {
+    .sidebar {
+        width: 240px;
+    }
+}
