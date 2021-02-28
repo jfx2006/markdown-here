@@ -2,6 +2,8 @@
 // license, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+/* Originally downloaded from https://github.com/ctrlxc/thunderbird-web-ext-types */
+
 interface EvListener<T extends Function> {
   addListener: (callback: T) => void;
   removeListener: (listener: T) => void;
@@ -10,9 +12,9 @@ interface EvListener<T extends Function> {
 
 type Listener<T> = EvListener<(arg: T) => void>;
 
-declare namespace browser.accounts {
+declare namespace messenger.accounts {
   type MailAccount = {
-    folders: browser.folders.MailFolder[];
+    folders: messenger.folders.MailFolder[];
     id: string;
     name: string;
     type: string; // e.g. imap, nntp, or pop3.
@@ -22,13 +24,13 @@ declare namespace browser.accounts {
   function get(accountId: string): Promise<MailAccount>;
 }
 
-declare namespace browser.addressBooks {
+declare namespace messenger.addressBooks {
   type AddressBookNode = {
     id: string;
     name: string;
     type: NodeType;
-    contacts?: browser.contacts.ContactNode[];
-    mailingLists?: browser.mailingLists.MailingListNode[];
+    contacts?: messenger.contacts.ContactNode[];
+    mailingLists?: messenger.mailingLists.MailingListNode[];
     parentId?: string;
     readOnly?: boolean;
   };
@@ -53,7 +55,7 @@ declare namespace browser.addressBooks {
   const onDeleted: Listener<string>;
 }
 
-declare namespace browser.browserAction {
+declare namespace messenger.messengerAction {
   type ColorArray = [number, number, number, number];
 
   type Details = {
@@ -90,12 +92,12 @@ declare namespace browser.browserAction {
   function openPopup(): Promise<void>;
 
   const onClicked: EvListener<(
-    tab: browser.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
+    tab: messenger.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
     info?: OnClickData // NOTE: Added in Thunderbird 74.0b2
   ) => void>;
 }
 
-declare namespace browser.cloudFile {
+declare namespace messenger.cloudFile {
   type CloudFile = {
     data: ArrayBuffer | File;
     id: number;
@@ -129,7 +131,7 @@ declare namespace browser.cloudFile {
   const onAccountDeleted: EvListener<(accountId: string) => void>;
 }
 
-declare namespace browser.commands {
+declare namespace messenger.commands {
   type Command = {
     name?: string;
     description?: string;
@@ -148,7 +150,7 @@ declare namespace browser.commands {
   const onCommand: Listener<string>;
 }
 
-declare namespace browser.compose {
+declare namespace messenger.compose {
   type ComposeDetails = {
     bcc: ComposeRecipientList;
     body: string;
@@ -173,7 +175,7 @@ declare namespace browser.compose {
   function setComposeDetails(tabId: number, details: ComposeDetails): Promise<void>; // NOTE: Added in Thunderbird 74
 
   const onBeforeSend: EvListener<(
-    tab: browser.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
+    tab: messenger.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
     details: ComposeDetails
   ) => {
     cancel?: boolean;
@@ -184,7 +186,7 @@ declare namespace browser.compose {
   }>>; // NOTE: Added in Thunderbird 74
 }
 
-declare namespace browser.composeAction {
+declare namespace messenger.composeAction {
   type ColorArray = [number, number, number, number];
 
   type Details = {
@@ -221,16 +223,31 @@ declare namespace browser.composeAction {
   function openPopup(): Promise<void>;
 
   const onClicked: EvListener<(
-    tab: browser.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
+    tab: messenger.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
     info?: OnClickData // NOTE: Added in Thunderbird 74.0b2
   ) => void>;
 }
 
-declare namespace browser.contacts {
+declare namespace messenger.composeScripts {
+  type RegisteredComposeScriptOptions = {
+    css?: ({ file: string } | { code: string })[];
+    js?: ({ file: string } | { code: string })[];
+  };
+
+  type RegisteredContentScript = {
+    unregister: () => void;
+  };
+
+  function register(
+    composeScriptOptions: RegisteredComposeScriptOptions
+  ): Promise<RegisteredComposeScript>;
+}
+
+declare namespace messenger.contacts {
   type ContactNode = {
     id: string;
     properties: ContactProperties;
-    type: browser.addressBooks.NodeType;
+    type: messenger.addressBooks.NodeType;
     parentId?: string;
     readOnly?: boolean;
   };
@@ -251,7 +268,7 @@ declare namespace browser.contacts {
   const onDeleted: EvListener<(parentId: string, id: string) => void>;
 }
 
-declare namespace browser.folders {
+declare namespace messenger.folders {
   type MailFolder = {
     accountId: string;
     path: string;
@@ -274,16 +291,16 @@ declare namespace browser.folders {
 }
 
 // NOTE: can't declare types
-// declare namespace browser.legacy { }
+// declare namespace messenger.legacy { }
 
-declare namespace browser.mailingLists {
+declare namespace messenger.mailingLists {
   type MailingListNode = {
     description: string;
     id: string;
     name: string;
     nickName: string;
-    type: browser.addressBooks.NodeType;
-    contacts?: browser.contacts.ContactNode[];
+    type: messenger.addressBooks.NodeType;
+    contacts?: messenger.contacts.ContactNode[];
     parentId?: string;
     readOnly?: boolean;
   };
@@ -305,7 +322,7 @@ declare namespace browser.mailingLists {
 
   // function delete(id: string): Promise<void>; // FIXME: reverved "delete".
   function addMember(id: string, contactId: string): Promise<void>;
-  function listMembers(id: string): Promise<browser.contacts.ContactNode[]>;
+  function listMembers(id: string): Promise<messenger.contacts.ContactNode[]>;
   function removeMember(id: string, contactId: string): Promise<void>;
 
   const onCreated: Listener<MailingListNode>;
@@ -315,10 +332,10 @@ declare namespace browser.mailingLists {
   const onMemberRemoved: EvListener<(parentId: string, id: string) => void>;
 }
 
-declare namespace browser.mailTabs {
+declare namespace messenger.mailTabs {
   type MailTab = {
     active: boolean;
-    displayedFolder: browser.folders.MailFolder;
+    displayedFolder: messenger.folders.MailFolder;
     folderPaneVisible: boolean;
     id: number;
     layout: "standard" | "wide" | "vertical";
@@ -364,7 +381,7 @@ declare namespace browser.mailTabs {
   }): Promise<MailTab[]>;
 
   function update(tabId: number, updateProperties: {
-    displayedFolder?: browser.folders.MailFolder;
+    displayedFolder?: messenger.folders.MailFolder;
     folderPaneVisible?: boolean;
     layout?: "standard" | "wide" | "vertical";
     messagePaneVisible?: boolean;
@@ -393,7 +410,7 @@ declare namespace browser.mailTabs {
   }): Promise<void>;
 
   function update(updateProperties: {
-    displayedFolder?: browser.folders.MailFolder;
+    displayedFolder?: messenger.folders.MailFolder;
     folderPaneVisible?: boolean;
     layout?: "standard" | "wide" | "vertical";
     messagePaneVisible?: boolean;
@@ -423,7 +440,7 @@ declare namespace browser.mailTabs {
 
   function getSelectedMessages(
     tabId?: number
-  ): Promise<browser.messages.MessageList>;
+  ): Promise<messenger.messages.MessageList>;
 
   function setQuickFilter(tabId: number, properties: {
     attachment?: boolean;
@@ -431,7 +448,7 @@ declare namespace browser.mailTabs {
     flagged?: boolean;
     show?: boolean;
     tags?: boolean;
-    text?: browser.mailTabs.QuickFilterTextDetail;
+    text?: messenger.mailTabs.QuickFilterTextDetail;
     unread?: boolean;
   }): Promise<void>;
 
@@ -441,7 +458,7 @@ declare namespace browser.mailTabs {
     flagged?: boolean;
     show?: boolean;
     tags?: boolean;
-    text?: browser.mailTabs.QuickFilterTextDetail;
+    text?: messenger.mailTabs.QuickFilterTextDetail;
     unread?: boolean;
   }): Promise<void>;
 
@@ -449,7 +466,7 @@ declare namespace browser.mailTabs {
   const onSelectedMessagesChanged: EvListener<() => void>
 }
 
-declare namespace browser.menus {
+declare namespace messenger.menus {
   const ACTION_MENU_TOP_LEVEL_LIMIT: number;
 
   type ContextType =
@@ -476,7 +493,7 @@ declare namespace browser.menus {
     modifiers: ModfierType[];
     button?: number;
     checked?: boolean;
-    displayedFolder?: browser.folders.MailFolder;
+    displayedFolder?: messenger.folders.MailFolder;
     frameId?: number;
     frameUrl?: string;
     linkText?: string;
@@ -484,12 +501,12 @@ declare namespace browser.menus {
     mediaType?: string;
     pageUrl?: string;
     parentMenuItemId?: number | string;
-    selectedFolder?: browser.folders.MailFolder;
-    selectedMessages?: browser.messages.MessageList;
+    selectedFolder?: messenger.folders.MailFolder;
+    selectedMessages?: messenger.messages.MessageList;
     selectionText?: string;
     srcUrl?: string;
     targetElementId?: number;
-    viewType?: browser.extension.ViewType;
+    viewType?: messenger.extension.ViewType;
     wasChecked?: boolean;
   };
 
@@ -507,12 +524,12 @@ declare namespace browser.menus {
       enabled?: boolean;
       icons?: object;
       id?: string;
-      onclick?: (info: OnClickData, tab: browser.tabs.Tab) => void;
+      onclick?: (info: OnClickData, tab: messenger.tabs.Tab) => void;
       parentId?: number | string;
       targetUrlPatterns?: string[];
       title?: string;
       type?: ItemType;
-      viewTypes?: browser.extension.ViewType[];
+      viewTypes?: messenger.extension.ViewType[];
       visible?: boolean;
     },
     callback?: () => void
@@ -526,12 +543,12 @@ declare namespace browser.menus {
       documentUrlPatterns?: string[];
       enabled?: boolean;
       icons?: object;
-      onclick?: (info: OnClickData, tab: browser.tabs.Tab) => void;
+      onclick?: (info: OnClickData, tab: messenger.tabs.Tab) => void;
       parentId?: number | string;
       targetUrlPatterns?: string[];
       title?: string;
       type?: ItemType;
-      viewTypes?: browser.extension.ViewType[];
+      viewTypes?: messenger.extension.ViewType[];
       visible?: boolean;
     }
   ): Promise<void>;
@@ -550,21 +567,21 @@ declare namespace browser.menus {
 
   function refresh(): Promise<void>;
 
-  const onClicked: EvListener<(info: OnClickData, tab?: browser.tabs.Tab) => void>;
-  const onShown: EvListener<(info: OnClickData, tab: browser.tabs.Tab) => void>;
+  const onClicked: EvListener<(info: OnClickData, tab?: messenger.tabs.Tab) => void>;
+  const onShown: EvListener<(info: OnClickData, tab: messenger.tabs.Tab) => void>;
   const onHidden: EvListener<() => void>;
 }
 
-declare namespace browser.messageDisplay {
-  function getDisplayedMessage(tabId: number): Promise<browser.messages.MessageHeader>;
+declare namespace messenger.messageDisplay {
+  function getDisplayedMessage(tabId: number): Promise<messenger.messages.MessageHeader>;
 
   const onMessageDisplayed: EvListener<(
     tabId: number,
-    message: browser.messages.MessageHeader
+    message: messenger.messages.MessageHeader
   ) => void>;
 }
 
-declare namespace browser.messageDisplayAction {
+declare namespace messenger.messageDisplayAction {
   type ColorArray = [number, number, number, number];
 
   type Details = {
@@ -601,19 +618,19 @@ declare namespace browser.messageDisplayAction {
   function openPopup(): Promise<void>;
 
   const onClicked: EvListener<(
-    tab: browser.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
+    tab: messenger.tabs.Tab, // NOTE: Added in Thunderbird 74.0b2
     info?: OnClickData // NOTE: Added in Thunderbird 74.0b2
   ) => void>;
 }
 
-declare namespace browser.messages {
+declare namespace messenger.messages {
   type MessageHeader = {
     author: string;
     bccList: string[];
     ccList: string[];
     date: Date;
     flagged: boolean;
-    folder: browser.folders.MailFolder;
+    folder: messenger.folders.MailFolder;
     id: number;
     junk: boolean; // NOTE: Added in Thunderbird 74
     junkScore: number; // NOTE: Added in Thunderbird 74
@@ -650,7 +667,7 @@ declare namespace browser.messages {
     tags: object;
   };
 
-  function list(folder: browser.folders.MailFolder): Promise<MessageList>;
+  function list(folder: messenger.folders.MailFolder): Promise<MessageList>;
   function continueList(messageListId: string): Promise<MessageList>;
   function get(messageId: number): Promise<MessageHeader>;
   function getFull(messageId: number): Promise<MessagePart>;
@@ -660,7 +677,7 @@ declare namespace browser.messages {
     author?: string;
     body?: string;
     flagged?: boolean;
-    folder?: browser.folders.MailFolder;
+    folder?: messenger.folders.MailFolder;
     fromDate?: Date;
     fromMe?: boolean;
     fullText?: string;
@@ -679,16 +696,16 @@ declare namespace browser.messages {
     tags?: string[]; // NOTE: Added in Thunderbird 74
   }): Promise<void>;
 
-  function move(messageIds: number[], destination: browser.folders.MailFolder): Promise<void>;
-  function copy(messageIds: number[], destination: browser.folders.MailFolder): Promise<void>;
+  function move(messageIds: number[], destination: messenger.folders.MailFolder): Promise<void>;
+  function copy(messageIds: number[], destination: messenger.folders.MailFolder): Promise<void>;
   // function delete(messageIds: number[], skipTrash?: boolean): Promise<void>; // FIXME: reverved "delete".
   function archive(messageIds: number[]): Promise<void>;
   function listTags(): Promise<MessageTag[]>;
 
-  const onNewMailReceived: EvListener<(folder: browser.folders.MailFolder, messages: MessageList) => void>; // NOTE: Added in Thunderbird 75
+  const onNewMailReceived: EvListener<(folder: messenger.folders.MailFolder, messages: MessageList) => void>; // NOTE: Added in Thunderbird 75
 }
 
-declare namespace browser.tabs {
+declare namespace messenger.tabs {
   const TAB_ID_NONE: number;
 
   type Tab = {
@@ -772,29 +789,29 @@ declare namespace browser.tabs {
 
   function executeScript(
     tabId: number,
-    details: browser.extensionTypes.InjectDetails
+    details: messenger.extensionTypes.InjectDetails
   ): Promise<object[]>;
 
   function executeScript(
-    details: browser.extensionTypes.InjectDetails
+    details: messenger.extensionTypes.InjectDetails
   ): Promise<object[]>;
 
   function insertCSS(
     tabId: number,
-    details: browser.extensionTypes.InjectDetailsCSS
+    details: messenger.extensionTypes.InjectDetailsCSS
   ): Promise<void>;
 
   function insertCSS(
-    details: browser.extensionTypes.InjectDetailsCSS
+    details: messenger.extensionTypes.InjectDetailsCSS
   ): Promise<void>;
 
   function removeCSS(
     tabId: number,
-    details: browser.extensionTypes.InjectDetails
+    details: messenger.extensionTypes.InjectDetails
   ): Promise<void>;
 
   function removeCSS(
-    details: browser.extensionTypes.InjectDetails
+    details: messenger.extensionTypes.InjectDetails
   ): Promise<void>;
 
   const onCreated: Listener<Tab>;
@@ -845,7 +862,7 @@ declare namespace browser.tabs {
   ) => void>;
 }
 
-declare namespace browser.windows {
+declare namespace messenger.windows {
   const WINDOW_ID_NONE: number;
   const WINDOW_ID_CURRENT: number;
 
@@ -860,7 +877,7 @@ declare namespace browser.windows {
     id?: number;
     left?: number;
     state?: WindowState;
-    tabs?: browser.tabs.Tab[];
+    tabs?: messenger.tabs.Tab[];
     title?: string;
     top?: number;
     type?: WindowType;
@@ -882,22 +899,22 @@ declare namespace browser.windows {
       populate?: boolean;
       windowTypes?: WindowType[];
     }
-  ): Promise<browser.windows.Window>;
+  ): Promise<messenger.windows.Window>;
 
   function getCurrent(getInfo?: {
     populate?: boolean;
     windowTypes?: WindowType[];
-  }): Promise<browser.windows.Window>;
+  }): Promise<messenger.windows.Window>;
 
   function getLastFocused(getInfo?: {
     populate?: boolean;
     windowTypes?: WindowType[];
-  }): Promise<browser.windows.Window>;
+  }): Promise<messenger.windows.Window>;
 
   function getAll(getInfo?: {
     populate?: boolean;
     windowTypes?: WindowType[];
-  }): Promise<browser.windows.Window[]>;
+  }): Promise<messenger.windows.Window[]>;
 
   function create(createData?: {
     allowScriptsToClose?: boolean;
@@ -912,7 +929,7 @@ declare namespace browser.windows {
     type?: CreateType;
     url?: string | string[];
     width?: number;
-  }): Promise<browser.windows.Window>;
+  }): Promise<messenger.windows.Window>;
 
   function update(
     windowId: number,
@@ -925,18 +942,18 @@ declare namespace browser.windows {
       top?: number;
       width?: number;
     }
-  ): Promise<browser.windows.Window>;
+  ): Promise<messenger.windows.Window>;
 
   function remove(windowId: number): Promise<void>;
 
-  const onCreated: Listener<browser.windows.Window>;
+  const onCreated: Listener<messenger.windows.Window>;
   const onRemoved: Listener<number>;
   const onFocusChanged: Listener<number>;
 }
 
 // The following APIs are also included and work as they do in Firefox
 
-declare namespace browser.contentScripts {
+declare namespace messenger.contentScripts {
   type RegisteredContentScriptOptions = {
     allFrames?: boolean;
     css?: ({ file: string } | { code: string })[];
@@ -958,7 +975,7 @@ declare namespace browser.contentScripts {
   ): Promise<RegisteredContentScript>;
 }
 
-declare namespace browser.extension {
+declare namespace messenger.extension {
   type ViewType = "tab" | "popup" | "sidebar"; // | "notification";
 
   const lastError: string | null;
@@ -975,7 +992,7 @@ declare namespace browser.extension {
   // unsupported: events as they are deprecated
 }
 
-declare namespace browser.extensionTypes {
+declare namespace messenger.extensionTypes {
   type ImageFormat = "jpeg" | "png";
   type ImageDetails = {
     format: ImageFormat;
@@ -993,7 +1010,7 @@ declare namespace browser.extensionTypes {
   type InjectDetailsCSS = InjectDetails & { cssOrigin?: "user" | "author" };
 }
 
-declare namespace browser.i18n {
+declare namespace messenger.i18n {
   type LanguageCode = string;
 
   function getAcceptLanguages(): Promise<LanguageCode[]>;
@@ -1013,7 +1030,7 @@ declare namespace browser.i18n {
   }>;
 }
 
-declare namespace browser.management {
+declare namespace messenger.management {
   type ExtensionInfo = {
     description: string;
     // unsupported: disabledReason: string,
@@ -1042,7 +1059,7 @@ declare namespace browser.management {
   }): Promise<void>;
 }
 
-declare namespace browser.permissions {
+declare namespace messenger.permissions {
   type Permission =
     | "activeTab"
     | "alarms"
@@ -1097,7 +1114,7 @@ declare namespace browser.permissions {
   // const onRemoved: Listener<Permissions>;
 }
 
-declare namespace browser.pkcs11 {
+declare namespace messenger.pkcs11 {
   function getModuleSlots(name: string): Promise<{name: string, token?: {
     name: string;
     manufacturer: string;
@@ -1111,7 +1128,7 @@ declare namespace browser.pkcs11 {
   function uninstallModule(name: string): Promise<void>;
 }
 
-declare namespace browser.runtime {
+declare namespace messenger.runtime {
   const lastError: string | null;
   const id: string;
 
@@ -1126,7 +1143,7 @@ declare namespace browser.runtime {
   };
 
   type MessageSender = {
-    tab?: browser.tabs.Tab;
+    tab?: messenger.tabs.Tab;
     frameId?: number;
     id?: string;
     url?: string;
@@ -1200,14 +1217,14 @@ declare namespace browser.runtime {
       [imgSize: string]: string;
     };
     incognito?: "spanning" | "split" | "not_allowed";
-    optional_permissions?: browser.permissions.Permission[];
+    optional_permissions?: messenger.permissions.Permission[];
     options_ui?: {
       page: string;
       browser_style?: boolean;
       chrome_style?: boolean;
       open_in_tab?: boolean;
     };
-    permissions?: browser.permissions.Permission[];
+    permissions?: messenger.permissions.Permission[];
     web_accessible_resources?: string[];
 
     // WebExtensionLangpackManifest
@@ -1254,7 +1271,7 @@ declare namespace browser.runtime {
         description?: string;
       };
     };
-    default_locale?: browser.i18n.LanguageCode;
+    default_locale?: messenger.i18n.LanguageCode;
     devtools_page?: string;
     omnibox?: {
       keyword: string;
@@ -1479,7 +1496,42 @@ declare namespace browser.runtime {
   const onMessageExternal: EvListener<onMessageEvent>;
 }
 
-declare namespace browser.theme {
+declare namespace messenger.storage {
+  /* storage types */
+  interface StorageChange {
+    oldValue?: any;
+    newValue?: any;
+  }
+
+  interface StorageArea {
+    get(keys?: string | string[] | { [key: string]: any }): Promise<{ [key: string]: any }>;
+    getBytesInUse?(keys?: string | string[]): Promise<number>;
+    set(items: { [key: string]: any }): Promise<void>;
+    remove(keys: string | string[]): Promise<void>;
+    clear(): Promise<void>;
+  }
+
+  interface StorageAreaSync {
+    get(keys?: string | string[] | { [key: string]: any }): Promise<{ [key: string]: any }>;
+    getBytesInUse(keys?: string | string[]): Promise<number>;
+    set(items: { [key: string]: any }): Promise<void>;
+    remove(keys: string | string[]): Promise<void>;
+    clear(): Promise<void>;
+  }
+
+  /* storage properties */
+  const sync: StorageAreaSync;
+  const local: StorageArea;
+  const managed: StorageArea;
+
+  /* storage events */
+  const onChanged: WebExtEvent<(
+    changes: { [key: string]: StorageChange },
+    areaName: string
+  ) => void>;
+}
+
+declare namespace messenger.theme {
   type Theme = {
     images: ThemeImages;
     colors: ThemeColors;
