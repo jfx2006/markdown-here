@@ -6,6 +6,9 @@ module.exports = {
         overwriteDest: true,
     },
     sourceDir: "src",
+    ignoreFiles: [
+      "src/test/**",
+    ],
     run: {
         // must be in $PATH or a full path
         firefox: "thunderbird",
