@@ -5,9 +5,11 @@ module.exports = {
     build: {
         overwriteDest: true,
     },
+    filename: "{name}-{version}.xpi",
     sourceDir: "src",
     ignoreFiles: [
-      "src/test/**",
+      "**/test",
+      "**/test/**",
     ],
     run: {
         // must be in $PATH or a full path

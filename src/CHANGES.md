@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2021-02-28: v3.1.1
+------------------
+* marked.js -> v2.0.1
+* Fix nested list rendering when composing with "body text" format
+  [#8](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/8)
+
 2021-02-21: v3.1.0
 ------------------
 * highlightjs -> 10.6.0
