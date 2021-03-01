@@ -7,9 +7,9 @@ options page in the syntax style selection.
 
 marked.js
 I downloaded from the git repository since the Marked.js
-documentation says to download from a CDN.... Version 1.2.8 is the latest
-as of January 2021.
-https://raw.githubusercontent.com/markedjs/marked/v1.2.8/lib/marked.js
+documentation says to download from a CDN.... Version 2.0.1 is the latest
+as of Feb 28 2021.
+https://raw.githubusercontent.com/markedjs/marked/v2.0.1/lib/marked.js
 
 jsHtmlToText.js
 I cannot locate a current version of this library, so this is the same
