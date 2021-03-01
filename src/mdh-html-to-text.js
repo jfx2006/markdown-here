@@ -95,33 +95,10 @@ MdhHtmlToText.prototype._preprocess = function() {
   // to remain intact.
   this.excludeTagBlocks('blockquote', true);
 
-  // Try to leave intact the line that Gmail adds that says:
-  //   On such-a-date, such-a-person <email addy> wrote:
-  this.preprocessInfo.html = this.preprocessInfo.html.replace(
-                          /&lt;<a (href="mailto:[^>]+)>([^<]*)<\/a>&gt;/ig,
-                          '&lt;&lt;a $1&gt;$2&lt;\/a&gt;&gt;');
-
   // It's a deviation from Markdown, but we'd like to leave any rendered
   // images already in the email intact. So we'll escape their tags.
   // Note that we can't use excludeTagBlocks because there's no closing tag.
   this.preprocessInfo.html = this.preprocessInfo.html.replace(/<(img[^>]*)>/ig, '&lt;$1&gt;');
-
-  // Yahoo seems to often/always/sometimes (only in Chrome?) use <p> instead
-  // of <div>. We'll replace the former with the latter so that our other rules work.
-  // This also seems to be the case in Blogger.
-  // Instead of adding URL matches, we're going to count the number of <p> and
-  // <br> elements and do some replacement if there are more of the former than
-  // the latter.
-  var brMatches = this.preprocessInfo.html.match(/<br\b/g);
-  brMatches = (brMatches ? brMatches.length : 0);
-  var pMatches = this.preprocessInfo.html.match(/<p\b/g);
-  pMatches = (pMatches ? pMatches.length : 0);
-  if (pMatches > brMatches) {
-    this.preprocessInfo.html =
-      this.preprocessInfo.html
-        .replace(/<p\b[^>]*>/ig, '<div>')
-        .replace(/<\/p\b[^>]*>/ig, '</div>');
-  }
 
   if (this.checkingIfMarkdown) {
     // If we're just checking for Markdown, strip out `<code>` blocks so that
