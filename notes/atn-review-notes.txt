@@ -93,6 +93,12 @@ functionality is enabled in the options.
 ### Smaller header (H3)
 
 * Bullet **with bold**
+    * Inner list
+    * Inner list 2
+    * Inner list 3
+        * Another inner list
+        * Yet another one
+    * Inner list 4
 * Bullet with `inline code`
 
 ```javascript

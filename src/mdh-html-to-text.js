@@ -80,9 +80,17 @@ MdhHtmlToText.prototype._preprocess = function() {
     }]
   }
   */
-  var html;
+  let html;
   if (this.range) {
-    html = Utils.getDocumentFragmentHTML(this.range.cloneContents());
+    let docFrag = this.range.cloneContents();
+    if (docFrag.childNodes[0].nodeType === Node.TEXT_NODE) {
+      const wrap_elem = document.createElement("div");
+      const wrap_frag = document.createDocumentFragment();
+      wrap_elem.appendChild(docFrag);
+      wrap_frag.appendChild(wrap_elem)
+      docFrag = wrap_frag
+    }
+    html = Utils.getDocumentFragmentHTML(docFrag);
   }
   else {
     html = this.elem.innerHTML;
