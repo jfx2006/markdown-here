@@ -459,6 +459,10 @@ function setFocus(elem) {
 // Gets the URL of the top window that elem belongs to.
 // May recurse up through iframes.
 function getTopURL(win, justHostname) {
+  if (win.frameElement) {
+    // This is the window of an iframe
+    return getTopURL(win.frameElement.ownerDocument.defaultView);
+  }
   let url;
   if (justHostname) {
     url = win.location.hostname;

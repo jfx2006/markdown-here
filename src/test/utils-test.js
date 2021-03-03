@@ -15,6 +15,7 @@
 function createDocFrag(htmlString) {
   var docFrag = document.createDocumentFragment();
   var elem = document.createElement('div');
+  // eslint-disable-next-line no-unsanitized/property
   elem.innerHTML = htmlString;
   docFrag.appendChild(elem);
   return docFrag;

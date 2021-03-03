@@ -19,3 +19,11 @@ replace it.
 Use of mailextension experiments:
 The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
 is used.
+
+Used for tests
+https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.js
+https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.css
+https://raw.githubusercontent.com/jashkenas/underscore/1.12.0/underscore.js
+https://raw.githubusercontent.com/chaijs/chai/4.3.1/chai.js
+https://code.jquery.com/jquery.slim.js
+

@@ -4,4 +4,5 @@
  */
 
 mocha.setup('bdd');
-var expect = chai.expect;
+mocha.checkLeaks();
+let expect = chai.expect;
