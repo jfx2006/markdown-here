@@ -384,13 +384,7 @@ class OptionsSync {
     */
     constructor({defaults: 
     // `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
-    defaults = {}, storageName: storageName = "options", migrations: migrations = [], logging: logging = true} = {}) {
-        Object.defineProperty(this, "storageName", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+    defaults = {}, migrations: migrations = [], logging: logging = true} = {}) {
         Object.defineProperty(this, "defaults", {
             enumerable: true,
             configurable: true,
@@ -409,7 +403,6 @@ class OptionsSync {
             writable: true,
             value: void 0
         });
-        this.storageName = storageName;
         this.defaults = defaults;
         this._handleFormInput = (delay = 300, atBegin = this._handleFormInput.bind(this), 
         void 0 === callback ? throttle(delay, atBegin, false) : throttle(delay, callback, false !== atBegin));
@@ -419,7 +412,8 @@ class OptionsSync {
         this._migrations = this._runMigrations(migrations);
     }
     /**
-    Retrieves all the options stored.
+    Retrieves all the options stored. Based on keys from the provided defaults.
+     **Not truly ALL**
 
     @returns Promise that will resolve with **all** the options stored, as an object.
 
@@ -432,7 +426,24 @@ class OptionsSync {
     }
     */    async getAll() {
         await this._migrations;
-        return this._getAll();
+        return this._get();
+    }
+    /**
+    Retrieves stored options for given keys.
+
+    @param _keys - A single string key or an array of strings of keys to retrieve
+    @returns Promise that will resolve with the options stored for the keys.
+
+    @example
+    const optionsStorage = new OptionsSync();
+    const options = await optionsStorage.get("color");
+    console.log('The user’s options are', options);
+    if (options.color) {
+        document.body.style.color = color;
+    }
+     */    async get(_keys) {
+        await this._migrations;
+        return this._get(_keys);
     }
     /**
     Overrides **all** the options stored with your `options`.
@@ -455,7 +466,7 @@ class OptionsSync {
     /**
     Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved via `messenger.storage.sync`.
 
-    @param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
+    @param form - The `<form>` that needs to be synchronized or a CSS selector (one element).
     The form fields' `name` attributes will have to match the option names.
     */    async syncForm(form) {
         this._form = form instanceof HTMLFormElement ? form : document.querySelector(form);
@@ -477,41 +488,21 @@ class OptionsSync {
     static _log(method, ...args) {
         console[method](...args);
     }
-    async _getAll() {
-        return new Promise(((resolve, reject) => {
-            messenger.storage.sync.get(this.storageName).then((result => {
-                messenger.runtime.lastError ? reject(messenger.runtime.lastError) : resolve(this._decode(result[this.storageName]));
-            }));
-        }));
+    async _get(_keys) {
+        void 0 === _keys && (_keys = Object.keys(this.defaults));
+        "string" == typeof _keys && (_keys = [ _keys ]);
+        let storage_results = await messenger.storage.sync.get(_keys);
+        for (const key of _keys) storage_results.hasOwnProperty(key) || this.defaults.hasOwnProperty(key) && (storage_results[key] = this.defaults[key]);
+        // @ts-ignore
+                return storage_results;
     }
     async _setAll(newOptions) {
         OptionsSync._log("log", "Saving options", newOptions);
         return new Promise(((resolve, reject) => {
-            messenger.storage.sync.set({
-                [this.storageName]: this._encode(newOptions)
-            }).then((() => {
+            messenger.storage.sync.set(newOptions).then((() => {
                 messenger.runtime.lastError ? reject(messenger.runtime.lastError) : resolve();
             }));
         }));
-    }
-    _encode(options) {
-        const thinnedOptions = {
-            ...options
-        };
-        for (const [key, value] of Object.entries(thinnedOptions)) this.defaults[key] === value && delete thinnedOptions[key];
-        OptionsSync._log("log", "Without the default values", thinnedOptions);
-        // return compressToEncodedURIComponent(JSON.stringify(thinnedOptions));
-                return JSON.stringify(thinnedOptions);
-    }
-    _decode(options) {
-        let decompressed = options;
-        "string" == typeof options && (
-        // decompressed = JSON.parse(decompressFromEncodedURIComponent(options)!);
-        decompressed = JSON.parse(options));
-        return {
-            ...this.defaults,
-            ...decompressed
-        };
     }
     async _runMigrations(migrations) {
         if (0 === migrations.length || !(_isExtensionContext && void 0 !== _backgroundPage && _backgroundPage === globalWindow) || !await async function() {
@@ -529,7 +520,7 @@ class OptionsSync {
                 (null === (_a = messenger.management) || void 0 === _a ? void 0 : _a.getSelf) ? messenger.management.getSelf().then((r => callback(r.installType))) : callback("unknown");
             }));
         }()) return;
-        const options = await this._getAll();
+        const options = await this._get();
         const initial = JSON.stringify(options);
         OptionsSync._log("log", "Found these stored options", {
             ...options
@@ -572,7 +563,7 @@ class OptionsSync {
         });
     }
     _handleStorageChangeOnForm(changes, areaName) {
-        "sync" !== areaName || !changes[this.storageName] || document.hasFocus() && this._form.contains(document.activeElement) || this._updateForm(this._form, this._decode(changes[this.storageName].newValue));
+        "sync" !== areaName || document.hasFocus() && this._form.contains(document.activeElement) || this._updateForm(this._form, changes.newValue);
     }
 }
 

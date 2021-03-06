@@ -3,9 +3,6 @@
  * MIT License : http://adampritchard.mit-license.org/
  */
 
-
-;(function() {
-
 "use strict";
 /*global module:false, chrome:false, Components:false*/
 
@@ -15,7 +12,8 @@ var DEFAULTS = {
   'math-value': `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
   'hotkey': { shiftKey: false, ctrlKey: true, altKey: true, key: 'M' },
   'forgot-to-render-check-enabled': true,
-  'gfm-line-breaks-enabled': true
+  'gfm-line-breaks-enabled': true,
+  'last-version': "0",
 };
 
 /*
@@ -40,7 +38,7 @@ var DEFAULTS = {
  */
 // TODO: Check for errors. See: https://code.google.com/chrome/extensions/dev/storage.html
 
-var ChromeOptionsStore = {
+var OldOptions = {
 
   // The options object will be passed to `callback`
   get: function(callback) {
@@ -120,7 +118,8 @@ var ChromeOptionsStore = {
     'math-value': DEFAULTS['math-value'],
     'hotkey': DEFAULTS['hotkey'],
     'forgot-to-render-check-enabled': DEFAULTS['forgot-to-render-check-enabled'],
-    'gfm-line-breaks-enabled': DEFAULTS['gfm-line-breaks-enabled']
+    'gfm-line-breaks-enabled': DEFAULTS['gfm-line-breaks-enabled'],
+    'last-version': DEFAULTS['last-version']
   },
 
   // Stored string pieces look like: {'key##0': 'the quick ', 'key##1': 'brown fox'}
@@ -251,15 +250,9 @@ var ChromeOptionsStore = {
   }
 };
 
-
-
-
-
 // Choose which OptionsStore engine we should use.
-this.OptionsStore = ChromeOptionsStore;
 
-
-this.OptionsStore._fillDefaults = function(prefsObj, callback) {
+OldOptions._fillDefaults = function(prefsObj, callback) {
   var that = this;
 
   var key, allKeys = [];
@@ -328,9 +321,4 @@ this.OptionsStore._fillDefaults = function(prefsObj, callback) {
   }
 };
 
-var EXPORTED_SYMBOLS = ['OptionsStore'];
-this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
-
-}).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+export default OldOptions;

@@ -10,57 +10,110 @@
 /* global messenger:false */
 
 import BSN from "../vendor/bootstrap-native.esm.js"
-import shortcutInput from "./shortcuts.js"
+import HotkeyHandler from "./shortcuts.js"
 
-import { OptionsStore } from "./options-storage.js"
+import OptionsStorePromise from "./options-storage.js"
+import { kSyntaxCSSStyles } from "./options-storage.js"
 
-async function onOptionsLoaded() {
-  const optTabs = document.getElementById("optionsTabList")
-  const optTabLinks = optTabs.getElementsByTagName("a")
-  Array.from(optTabLinks).map(tab => new BSN.Tab(tab, {}))
+(async () => {
+  window.OptionsStore = await OptionsStorePromise;
+  const hotkeyHandler = new HotkeyHandler("hotkey-input")
+  const form = document.getElementById("mdh-options-form")
+  const cssSyntaxSelect = document.getElementById("css-syntax-select")
+  const cssSyntaxEdit = document.getElementById("css-syntax-edit")
+  const SyntaxCSSStyles = await kSyntaxCSSStyles;
 
-  const savedMsgToast = new BSN.Toast("#saved-msg")
+  async function onOptionsLoaded() {
+    const optTabs = document.getElementById("optionsTabList")
+    const optTabLinks = optTabs.getElementsByTagName("a")
+    Array.from(optTabLinks).map(tab => new BSN.Tab(tab, {}))
+
+    const savedMsgToast = new BSN.Toast("#saved-msg")
     document.getElementById("saved-msg").addEventListener("shown.bs.toast",
-    function(e){
+      function(e) {
+        setTimeout(function() {
+          savedMsgToast.hide()
+        }, 5000)
+      })
+    // savedMsgToast.show()
+
+    document.getElementById("copyVersionToClipboard").addEventListener('click', function(e) {
+      e.preventDefault()
+      e.stopPropagation()
+      const copyText = document.getElementById('versionInfo').innerText
+      navigator.clipboard.writeText(copyText)
+      const check = e.target.nextElementSibling
+      check.classList.add("show")
       setTimeout(function() {
-        savedMsgToast.hide()
-      }, 5000);
-  })
-  // savedMsgToast.show();
+        check.classList.remove("show")
+      }, 5000)
+    })
 
-  document.getElementById("copyVersionToClipboard").addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const copyText = document.getElementById('versionInfo').innerText;
-    navigator.clipboard.writeText(copyText);
-    const check = e.target.nextElementSibling;
-    check.classList.add("show");
-    setTimeout(function() {
-      check.classList.remove("show");
-    }, 5000);
-  });
+    for (const [name, filename] of Object.entries(SyntaxCSSStyles)) {
+      cssSyntaxSelect.options.add(new Option(name, filename.toString()));
+    }
 
-  if (messenger !== undefined) {
-    fillSupportInfo().then();
-    // fixLinks().then();
+    cssSyntaxSelect.options.add(new Option(messenger.i18n.getMessage('currently_in_use'), ''));
+    cssSyntaxSelect.selectedIndex = cssSyntaxSelect.options.length - 1;
+    cssSyntaxSelect.addEventListener('change', cssSyntaxSelectChange);
+
+    if (messenger !== undefined) {
+      await fillSupportInfo()
+      // fixLinks().then()
+    }
+
+    form.addEventListener("hotkey", handleHotKey)
+    await OptionsStore.syncForm(form)
+    await cssSyntaxSelectChange();
+    form.addEventListener("options-sync:form-synced", savedMsgToast.show())
   }
-  await OptionsStore.syncForm("#mdh-options-form")
-}
 
-async function fillSupportInfo() {
-  const platform = await messenger.runtime.getPlatformInfo();
-  const browser_info = await messenger.runtime.getBrowserInfo();
-  const appManifest = messenger.runtime.getManifest();
-  document.getElementById("mdhrVersion").innerText = appManifest.version;
-  document.getElementById("mdhrThunderbirdVersion").innerText =
-    `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`;
-  document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
-}
+  async function fillSupportInfo() {
+    const platform = await messenger.runtime.getPlatformInfo()
+    const browser_info = await messenger.runtime.getBrowserInfo()
+    const appManifest = messenger.runtime.getManifest()
+    document.getElementById("mdhrVersion").innerText = appManifest.version
+    document.getElementById("mdhrThunderbirdVersion").innerText =
+      `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
+    document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
+  }
 
-async function fixLinks() {
-  // Open
-}
+  async function handleHotKey(e) {
+    await OptionsStore.set({ "hotkey-input": e.detail.value() });
+    await messenger.runtime.sendMessage('update-hotkey')
+    form.dispatchEvent(new CustomEvent('options-sync:form-synced', {
+      bubbles: true
+    }));
+  }
 
-window.addEventListener('load', onOptionsLoaded)
+  // The syntax hightlighting CSS combo-box selection changed.
+  async function cssSyntaxSelectChange() {
+    const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value;
+    if (!selected) {
+      // This probably indicates that the user selected the "currently in use"
+      // option, which is by definition what is in the edit box.
+      return;
+    }
+    // Remove the "currently in use" option, since it doesn't make sense anymore.
+    if (!cssSyntaxSelect.options[cssSyntaxSelect.options.length-1].value) {
+      cssSyntaxSelect.options.length -= 1;
+    }
+    // Get the CSS for the selected theme.
+    const url = messenger.runtime.getURL(`/highlightjs/styles/${selected}`)
+    try {
+      const response = await fetch(url)
+      cssSyntaxEdit.value = await response.text()
+    }
+    catch (e) {
+      console.log(`Error fetching CSS: ${selected}`)
+      console.log(e)
+    }
+  }
 
-customElements.define("hotkey-input", shortcutInput);
+  /* async function fixLinks() {
+    // Open
+  } */
+
+  // window.addEventListener('load', onOptionsLoaded)
+  await onOptionsLoaded()
+})()

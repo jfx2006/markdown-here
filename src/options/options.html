@@ -1,5 +1,6 @@
-<html><head>
-  <title>Settings | KeePassXC-Browser</title>
+<html lang="en">
+<head>
+  <title>Settings | Markdown Here Revival</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="../vendor/bootswatch.css">
@@ -106,13 +107,13 @@
             </div>
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span data-i18n="hotkey_title">Hotkey (aka keyboard shortcut)</span>
+                <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
               </div>
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                      <hotkey-input id="hotkey-input" class="form-text" name="hotkey-input"
-                      command="toggle-markdown" />
+                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="markdown-toggle"/>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="hotkey_reset_button">Reset</button>
                   </div>
                 </div>
               </div>
@@ -126,7 +127,7 @@
               </div>
               <div class="card-body">
                 <div class="form-group">
-                  <textarea id="css-edit" wrap="off"></textarea>
+                  <textarea name="main-css" id="css-edit" wrap="off"></textarea>
                 </div>
                   <div>
                     <button id="css-reset-button" class="btn btn-sm btn-primary" type="button">
@@ -142,10 +143,10 @@
               </div>
               <div class="card-body">
                 <div class="form-group">
-                  <textarea id="css-syntax-edit" wrap="off"></textarea>
+                  <textarea id="css-syntax-edit" readonly></textarea>
                   <div>
                     <span data-i18n="syntax_highlighting_theme_label">Theme:</span>
-                    <select class="form-control form-control-sm col-md-3 col-lg-2" id="css-syntax-select">
+                    <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css" id="css-syntax-select">
                     </select>
                   </div>
                 </div>

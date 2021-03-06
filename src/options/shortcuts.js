@@ -39,7 +39,6 @@ function remapKey(string) {
   if (remapKeys.hasOwnProperty(string)) {
     return remapKeys[string];
   }
-
   return string;
 }
 
@@ -80,137 +79,73 @@ function getShortcutForEvent(e) {
     .join('+');
 }
 
-export default class shortcutInput extends HTMLElement {
-  constructor(...args) {
-    super(...args)
-    // Attaches a shadow root to custom element.
-    const shadowRoot = this.attachShadow({mode: 'open'})
-    const commandName = this.getAttribute("command");
-
-    linkCSS("../vendor/bootswatch.css");
-    linkCSS("options.css");
-
-    let wrapper = document.createElement("div");
-    wrapper.classList.add("input-wrapper")
-    shadowRoot.appendChild(wrapper);
-
-    // Defines the "real" input element.
-    let inputElement = document.createElement('input');
-    inputElement.setAttribute('type', "text");
-    inputElement.setAttribute("form", this.closest("form").id)
-    inputElement.classList.add("hotkey-input")
-    inputElement.addEventListener('keydown', (e) => shortCutChanged(e));
-    this.inputElement = inputElement;
-
-    // Appends the input into the shadow root.
-    wrapper.appendChild(inputElement);
-
-    let saveBtn = addButton("Save", "hotkey_save_button", "btn-primary");
-    wrapper.appendChild(saveBtn);
-    let resetBtn = addButton("Reset", "hotkey_reset_button", "btn-danger");
-    wrapper.appendChild(resetBtn);
-    saveBtn.addEventListener('click', (e) => {
-      updateShortcut();
+export default class HotkeyHandler {
+  constructor(id) {
+    this.inputElem = document.getElementById(id);
+    this.commandName = this.inputElem.getAttribute("data-command");
+    this.form = this.inputElem.form;
+    this.resetBtn = document.getElementById(`${id}-reset`)
+    this.inputElem.addEventListener('keydown', (e) => this.shortCutChanged(e));
+    this.resetBtn.addEventListener('click', (e) => {
+      this.resetShortcut();
     });
-    resetBtn.addEventListener('click', (e) => {
-      resetShortcut();
-    });
+    this.updateEvent = new CustomEvent("hotkey", {bubbles:true, detail: {value: () => this.inputElem.value}})
+  }
 
-    function linkCSS(url) {
-      // Apply external styles to the shadow dom
-      const linkElem = document.createElement('link');
-      linkElem.setAttribute('rel', 'stylesheet');
-      linkElem.setAttribute('href', url);
-      // Attach the created element to the shadow dom
-      shadowRoot.appendChild(linkElem);
+  async shortCutChanged(e) {
+    const input = e.target;
+
+    if (e.key === 'Escape') {
+      input.blur();
+      return;
+    } else if (e.key === 'Tab') {
+      return;
     }
 
-    function addButton(text, i18n_key, btnClass) {
-      let btn = document.createElement('button');
-      for (const c of ["btn", "btn-sm", btnClass]) {
-        btn.classList.add(c);
-      }
-      btn.textContent = text;
-      btn.setAttribute("data-i18n", i18n_key);
-      return btn;
-    }
-
-    async function updateShortcut() {
-      try {
-        await browser.commands.update({
-          name: commandName,
-          shortcut: inputElement.value
-        });
-        // createBanner('success', shortcut);
-      } catch (err) {
-        console.log('Cannot change shortcut: ' + err);
-        // createBanner('danger', shortcut);
-      }
-    }
-    this.setShortcut = updateShortcut;
-
-    async function resetShortcut() {
-      await browser.commands.reset(commandName);
-      // createBanner('info', shortcut);
-      updateKeys();
-    }
-
-    async function updateKeys() {
-      const commands = await browser.commands.getAll();
-      for (const c of commands) {
-        if (c.name === commandName) {
-          inputElement.value = c.shortcut
-        }
-      }
-    }
-
-    function shortCutChanged(e) {
-      const input = e.target;
-
-      if (e.key === 'Escape') {
-        input.blur();
-        return;
-      } else if (e.key === 'Tab') {
+    if (!e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        // Avoid triggering back-navigation.
+        e.preventDefault();
+        e.currentTarget.value = '';
         return;
       }
-
-      if (!e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
-        if (e.key === 'Delete' || e.key === 'Backspace') {
-          // Avoid triggering back-navigation.
-          e.preventDefault();
-          e.currentTarget.value = '';
-          return;
-        }
-      }
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const shortcutString = getShortcutForEvent(e);
-      if (e.type === 'keyup' || !shortcutString.length) {
-        return;
-      }
-
-      e.currentTarget.value = shortcutString;
     }
+    e.preventDefault();
+    e.stopPropagation();
+
+    const shortcutString = getShortcutForEvent(e);
+    if (e.type === 'keyup' || !shortcutString.length || shortcutString.endsWith("+")) {
+      return;
+    }
+    this.inputElem.value = shortcutString;
+    await this.updateShortcut(shortcutString);
+    this.inputElem.dispatchEvent(this.updateEvent);
   }
-  get value() {
-    return this.inputElement.getAttribute("value") || "";
+  async updateShortcut(value) {
+    /*try {
+      await messenger.commands.update({
+        name: commandName,
+        shortcut: value
+      });
+      // createBanner('success', shortcut);
+    } catch (err) {
+      console.log('Cannot change shortcut: ' + err);
+      // createBanner('danger', shortcut);
+    }*/
+    console.log(`updateShortcut ${value}`)
   }
-  set value(v) {
-    this.inputElement.setAttribute("value", v);
-    return this.setShortcut();
+  async resetShortcut() {
+    // await messenger.commands.reset(commandName);
+    // createBanner('info', shortcut);
+    await this.updateKeys();
   }
-  get validity() {
-    return this.inputElement.validity;
-  }
-  get name() {
-    return this.getAttribute("name");
-  }
-  get form() {
-    return this.inputElement.form;
-  }
-  get disabled() {
-    return this.inputElement.disabled;
+  async updateKeys() {
+    // const commands = await messenger.commands.getAll();
+    const commands = [];
+    for (const c of commands) {
+      if (c.name === this.commandName) {
+        this.inputElem.value = c.shortcut;
+      }
+    }
   }
 }
