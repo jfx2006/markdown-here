@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="../vendor/bootswatch.css">
   <link rel="stylesheet" href="options.css">
+  <script src="../utils.js"></script>
   <script src="options.js" type="module"></script>
 </head>
 <body class="pt-3 pb-5" data-color-theme="system">
@@ -110,8 +111,10 @@
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="markdown-toggle"/>
-                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="hotkey_reset_button">Reset</button>
+                    <div class="input-wrapper">
+                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="options_page__reset_button">Reset</button>
+                    </div>
                   </div>
                 </div>
               </div>

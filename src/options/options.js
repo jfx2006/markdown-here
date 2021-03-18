@@ -7,7 +7,7 @@
  * Options page UI code
  */
 
-/* global messenger:false */
+/* global messenger:false, Utils:false */
 
 import BSN from "../vendor/bootstrap-native.esm.js"
 import HotkeyHandler from "./shortcuts.js"
@@ -22,20 +22,21 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
   const cssSyntaxEdit = document.getElementById("css-syntax-edit")
   const SyntaxCSSStyles = await kSyntaxCSSStyles;
+  let savedMsgToast
+
+  function showSavedMsg() {
+    savedMsgToast.show()
+    setTimeout(function() {
+      savedMsgToast.hide()
+    }, 5000)
+  }
 
   async function onOptionsLoaded() {
+    savedMsgToast = new BSN.Toast("#saved-msg")
+
     const optTabs = document.getElementById("optionsTabList")
     const optTabLinks = optTabs.getElementsByTagName("a")
     Array.from(optTabLinks).map(tab => new BSN.Tab(tab, {}))
-
-    const savedMsgToast = new BSN.Toast("#saved-msg")
-    document.getElementById("saved-msg").addEventListener("shown.bs.toast",
-      function(e) {
-        setTimeout(function() {
-          savedMsgToast.hide()
-        }, 5000)
-      })
-    // savedMsgToast.show()
 
     document.getElementById("copyVersionToClipboard").addEventListener('click', function(e) {
       e.preventDefault()
@@ -50,7 +51,8 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
     })
 
     for (const [name, filename] of Object.entries(SyntaxCSSStyles)) {
-      cssSyntaxSelect.options.add(new Option(name, filename.toString()));
+      const opt= new Option(name, filename.toString())
+      cssSyntaxSelect.options.add(opt)
     }
 
     cssSyntaxSelect.options.add(new Option(messenger.i18n.getMessage('currently_in_use'), ''));
@@ -59,7 +61,6 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
 
     if (messenger !== undefined) {
       await fillSupportInfo()
-      // fixLinks().then()
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -79,11 +80,17 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
   }
 
   async function handleHotKey(e) {
-    await OptionsStore.set({ "hotkey-input": e.detail.value() });
-    await messenger.runtime.sendMessage('update-hotkey')
-    form.dispatchEvent(new CustomEvent('options-sync:form-synced', {
-      bubbles: true
-    }));
+    let newHotKey = e.detail.value()
+    await OptionsStore.set({ "hotkey-input": newHotKey})
+    Utils.makeRequestToBGScript('update-hotkey', {"hotkey_value": newHotKey})
+      .then(() => {
+        form.dispatchEvent(
+          new CustomEvent("options-sync:form-synced", {
+            bubbles: true,
+          })
+        );
+        showSavedMsg();
+      })
   }
 
   // The syntax hightlighting CSS combo-box selection changed.
@@ -109,10 +116,6 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
       console.log(e)
     }
   }
-
-  /* async function fixLinks() {
-    // Open
-  } */
 
   // window.addEventListener('load', onOptionsLoaded)
   await onOptionsLoaded()

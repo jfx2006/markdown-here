@@ -11,7 +11,7 @@ const keyOptions = [
   e => trimPrefix(e.code), // Digit3, ArrowUp, Numpad9.
   e => trimPrefix(e.key), // Digit3, ArrowUp, Numpad9.
   e => remapKey(e.key), // Comma, Period, Space.
-];
+]
 
 // From chrome://mozapps/content/extensions/shortcuts.js
 const validKeys = new Set([
@@ -20,42 +20,42 @@ const validKeys = new Set([
   'MediaNextTrack', 'MediaPlayPause', 'MediaPrevTrack', 'MediaStop',
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
   'Up', 'Down', 'Left', 'Right', 'Comma', 'Period', 'Space'
-]);
+])
 
 // From chrome://mozapps/content/extensions/shortcuts.js
 const remapKeys = {
   ',': 'Comma',
   '.': 'Period',
   ' ': 'Space',
-};
+}
 
 // From chrome://mozapps/content/extensions/shortcuts.js
 function trimPrefix(string) {
-  return string.replace(/^(?:Digit|Numpad|Arrow)/, '');
+  return string.replace(/^(?:Digit|Numpad|Arrow)/, '')
 }
 
 // From chrome://mozapps/content/extensions/shortcuts.js
 function remapKey(string) {
   if (remapKeys.hasOwnProperty(string)) {
-    return remapKeys[string];
+    return remapKeys[string]
   }
-  return string;
+  return string
 }
 
 // Modified from chrome://mozapps/content/extensions/shortcuts.js
 function getStringForEvent(event) {
   for (const option of keyOptions) {
-    const value = option(event);
+    const value = option(event)
     if (validKeys.has(value)) {
-      return value;
+      return value
     }
   }
-  return '';
+  return ''
 }
 
 // From chrome://mozapps/content/extensions/shortcuts.js
 function getShortcutForEvent(e) {
-  let modifierMap;
+  let modifierMap
 
   if (navigator.platform === 'MacIntel') {
     modifierMap = {
@@ -63,88 +63,85 @@ function getShortcutForEvent(e) {
       Alt: e.altKey,
       Command: e.metaKey,
       Shift: e.shiftKey,
-    };
+    }
   } else {
     modifierMap = {
       Ctrl: e.ctrlKey,
       Alt: e.altKey,
       Shift: e.shiftKey,
-    };
+    }
   }
 
   return Object.entries(modifierMap)
     .filter(([ key, isDown ]) => isDown)
     .map(([ key ]) => key)
     .concat(getStringForEvent(e))
-    .join('+');
+    .join('+')
 }
 
 export default class HotkeyHandler {
   constructor(id) {
-    this.inputElem = document.getElementById(id);
-    this.commandName = this.inputElem.getAttribute("data-command");
-    this.form = this.inputElem.form;
+    this.inputElem = document.getElementById(id)
+    this.commandName = this.inputElem.getAttribute("data-command")
+    this.form = this.inputElem.form
     this.resetBtn = document.getElementById(`${id}-reset`)
-    this.inputElem.addEventListener('keydown', (e) => this.shortCutChanged(e));
+    this.inputElem.addEventListener('keydown', (e) => this.shortCutChanged(e))
     this.resetBtn.addEventListener('click', (e) => {
-      this.resetShortcut();
-    });
-    this.updateEvent = new CustomEvent("hotkey", {bubbles:true, detail: {value: () => this.inputElem.value}})
+      this.resetShortcut()
+    })
+    this.updateEvent = new CustomEvent("hotkey",
+      { bubbles:true,
+        detail: {value: () => this.inputElem.value}
+      })
   }
 
   async shortCutChanged(e) {
-    const input = e.target;
+    const input = e.target
 
     if (e.key === 'Escape') {
-      input.blur();
-      return;
+      input.blur()
+      return
     } else if (e.key === 'Tab') {
-      return;
+      return
     }
 
     if (!e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
       if (e.key === 'Delete' || e.key === 'Backspace') {
         // Avoid triggering back-navigation.
-        e.preventDefault();
-        e.currentTarget.value = '';
-        return;
+        e.preventDefault()
+        e.currentTarget.value = ''
+        return
       }
+      // Catch cases where no modifier key is given (Alt, etc)
+      e.preventDefault()
+      e.stopPropagation()
+      return
     }
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault()
+    e.stopPropagation()
 
-    const shortcutString = getShortcutForEvent(e);
+    const shortcutString = getShortcutForEvent(e)
     if (e.type === 'keyup' || !shortcutString.length || shortcutString.endsWith("+")) {
-      return;
+      return
     }
-    this.inputElem.value = shortcutString;
-    await this.updateShortcut(shortcutString);
-    this.inputElem.dispatchEvent(this.updateEvent);
-  }
-  async updateShortcut(value) {
-    /*try {
-      await messenger.commands.update({
-        name: commandName,
-        shortcut: value
-      });
-      // createBanner('success', shortcut);
-    } catch (err) {
-      console.log('Cannot change shortcut: ' + err);
-      // createBanner('danger', shortcut);
-    }*/
-    console.log(`updateShortcut ${value}`)
+    if (e.type === "keyup" && !shortcutString.find("+")) {
+      console.log(`Invalid hotkey combo: ${shortcutString}`)
+      return
+    }
+    this.inputElem.value = shortcutString
+    this.inputElem.dispatchEvent(this.updateEvent)
   }
   async resetShortcut() {
-    // await messenger.commands.reset(commandName);
-    // createBanner('info', shortcut);
-    await this.updateKeys();
+    await messenger.commands.reset(this.commandName)
+    const new_hotkey = await this.updateKeys()
+    this.inputElem.dispatchEvent(this.updateEvent)
   }
   async updateKeys() {
-    // const commands = await messenger.commands.getAll();
-    const commands = [];
+    const commands = await messenger.commands.getAll()
     for (const c of commands) {
       if (c.name === this.commandName) {
-        this.inputElem.value = c.shortcut;
+        this.inputElem.value = c.shortcut
+        return c.shortcut
       }
     }
   }

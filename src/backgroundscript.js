@@ -162,7 +162,10 @@ import OptionsStorePromise from "./options/options-storage.js"
         "test-bg-request-ok"])
     }
     else if (request.action === 'update-hotkey') {
-      return updateHotKey();
+      return messenger.commands.update({
+        "name": "toggle-markdown",
+        "shortcut": request.hotkey_value,
+      })
     }
     else {
       console.log('unmatched request action', request.action);
