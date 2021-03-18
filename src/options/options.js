@@ -16,12 +16,12 @@ import OptionsStorePromise from "./options-storage.js"
 import { kSyntaxCSSStyles } from "./options-storage.js"
 
 (async () => {
-  window.OptionsStore = await OptionsStorePromise;
+  window.OptionsStore = await OptionsStorePromise
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
   const cssSyntaxEdit = document.getElementById("css-syntax-edit")
-  const SyntaxCSSStyles = await kSyntaxCSSStyles;
+  const SyntaxCSSStyles = await kSyntaxCSSStyles
   let savedMsgToast
 
   function showSavedMsg() {
@@ -55,9 +55,9 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
       cssSyntaxSelect.options.add(opt)
     }
 
-    cssSyntaxSelect.options.add(new Option(messenger.i18n.getMessage('currently_in_use'), ''));
-    cssSyntaxSelect.selectedIndex = cssSyntaxSelect.options.length - 1;
-    cssSyntaxSelect.addEventListener('change', cssSyntaxSelectChange);
+    cssSyntaxSelect.options.add(new Option(messenger.i18n.getMessage('currently_in_use'), ''))
+    cssSyntaxSelect.selectedIndex = cssSyntaxSelect.options.length - 1
+    cssSyntaxSelect.addEventListener('change', cssSyntaxSelectChange)
 
     if (messenger !== undefined) {
       await fillSupportInfo()
@@ -65,7 +65,7 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
 
     form.addEventListener("hotkey", handleHotKey)
     await OptionsStore.syncForm(form)
-    await cssSyntaxSelectChange();
+    await cssSyntaxSelectChange()
     form.addEventListener("options-sync:form-synced", savedMsgToast.show())
   }
 
@@ -88,22 +88,22 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
           new CustomEvent("options-sync:form-synced", {
             bubbles: true,
           })
-        );
-        showSavedMsg();
+        )
+        showSavedMsg()
       })
   }
 
   // The syntax hightlighting CSS combo-box selection changed.
   async function cssSyntaxSelectChange() {
-    const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value;
+    const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value
     if (!selected) {
       // This probably indicates that the user selected the "currently in use"
       // option, which is by definition what is in the edit box.
-      return;
+      return
     }
     // Remove the "currently in use" option, since it doesn't make sense anymore.
     if (!cssSyntaxSelect.options[cssSyntaxSelect.options.length-1].value) {
-      cssSyntaxSelect.options.length -= 1;
+      cssSyntaxSelect.options.length -= 1
     }
     // Get the CSS for the selected theme.
     const url = messenger.runtime.getURL(`/highlightjs/styles/${selected}`)

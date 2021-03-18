@@ -9,8 +9,8 @@
  * Requires https://github.com/fregante/webext-options-sync
  */
 
-import OptionsSync from './mailext-options-sync.js';
-import OldOptions from "./old_options.js";
+import OptionsSync from './mailext-options-sync.js'
+import OldOptions from "./old_options.js"
 
 async function fetchExtFile(path, json=false) {
   const url = messenger.runtime.getURL(path)
@@ -41,7 +41,7 @@ export const kSyntaxCSSStyles = (async  () => {
 })()
 
 export default (async () => {
-  let DEFAULTS = Object.assign({}, kOptDefaults);
+  let DEFAULTS = Object.assign({}, kOptDefaults)
   DEFAULTS["main-css"] = await fetchExtFile("/default.css")
 
   const isMac = Boolean((await messenger.runtime.getPlatformInfo())["os"] === "mac")
@@ -51,10 +51,12 @@ export default (async () => {
     migrations: [
       // Hotkey & main css migration
       (savedOptions, currentDefaults) => {
-        const currentVersion = messenger.runtime.getManifest()["version"];
-        const lastVersion = savedOptions["last-version"];
+        /* Future use
+        const currentVersion = messenger.runtime.getManifest()["version"]
+        const lastVersion = savedOptions["last-version"] */
 
         OldOptions.get(function(oldPrefs) {
+          // console.log(oldPrefs)
           if (Object.keys(oldPrefs).length > 0) {
             console.log("Migrating oldPrefs")
             let hotkey = []
@@ -82,17 +84,17 @@ export default (async () => {
             for (const i of ["main-css", "syntax-css", "gfm-line-breaks-enabled",
               "forgot-to-render-check-enabled", "math-enabled", "math-value"]) {
               if (oldPrefs[i] !== OldOptions.defaults[i]) {
-                OldOptions.remove(i);
+                OldOptions.remove(i)
                 if (savedOptions[i] !== currentDefaults[i]) {
-                  savedOptions[i] = oldPrefs[i];
+                  savedOptions[i] = oldPrefs[i]
                 }
               }
             }
           }
-        });
+        })
       },
       OptionsSync.migrations.removeUnused
     ],
     logging: true,
-  });
+  })
 })()
