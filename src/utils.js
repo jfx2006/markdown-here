@@ -424,8 +424,6 @@ function fireMouseClick(elem) {
 var PRIVILEGED_REQUEST_EVENT_NAME = 'markdown-here-request-event';
 
 function makeRequestToPrivilegedScript(doc, requestObj, callback) {
-  var matched = false;
-  matched = true;
   // If `callback` is undefined and we pass it anyway, Chrome complains with this:
   // Uncaught Error: Invocation of form extension.sendMessage(object, undefined, null) doesn't match definition extension.sendMessage(optional string extensionId, any message, optional function responseCallback)
   if (callback) {
@@ -434,6 +432,23 @@ function makeRequestToPrivilegedScript(doc, requestObj, callback) {
   else {
     chrome.runtime.sendMessage(requestObj);
   }
+}
+
+function makeRequestToBGScript(action, args) {
+  /* Improved version of makeRequestToPrivilegedScript that doesn't know about
+     callbacks and other stuff, just promises and some arguments.
+   */
+  if (args === undefined) {
+    args = {}
+  }
+  let requestObj = {"action": action}
+  try {
+    Object.assign(requestObj, args)
+  } catch(error) {
+    console.log(error)
+    return
+  }
+  return messenger.runtime.sendMessage(requestObj);
 }
 
 // Gives focus to the element.
@@ -531,50 +546,18 @@ function nextTickFn(callback, context) {
 /*
  * i18n/l10n
  */
-
-var g_stringBundleLoadListeners = [];
-
-function registerStringBundleLoadListener(callback) {
-  // (This if-structure is ugly to work around the preprocessor logic.)
-  var matched = false;
-  if (typeof(chrome) !== 'undefined') {
-    matched = true;
-    // Already loaded
-    Utils.nextTick(callback);
-    return;
-  }
-
-  g_stringBundleLoadListeners.push(callback);
-}
-
-function triggerStringBundleLoadListeners() {
-  var listener;
-  while (g_stringBundleLoadListeners.length > 0) {
-    listener = g_stringBundleLoadListeners.pop();
-    listener();
-  }
-}
-
-
-
 // Get the translated string indicated by `messageID`.
 // Note that there's no support for placeholders as yet.
 // Throws exception if message is not found or if the platform doesn't support
 // internationalization (yet).
 function getMessage(messageID) {
-  var message = '';
-
-  // (This if-structure is ugly to work around the preprocessor logic.)
-  var matched = false;
-  if (typeof(chrome) !== 'undefined') {
-    matched = true;
-    message = chrome.i18n.getMessage(messageID);
+  let message = '';
+  if (typeof(messenger) !== 'undefined') {
+    message = messenger.i18n.getMessage(messageID);
   }
-
   if (!message) {
     throw new Error('Could not find message ID: ' + messageID);
   }
-
   return message;
 }
 
@@ -776,13 +759,13 @@ Utils.getLocalFileAsBase64 = getLocalFileAsBase64;
 Utils.fireMouseClick = fireMouseClick;
 Utils.MARKDOWN_HERE_EVENT = MARKDOWN_HERE_EVENT;
 Utils.makeRequestToPrivilegedScript = makeRequestToPrivilegedScript;
+Utils.makeRequestToBGScript = makeRequestToBGScript;
 Utils.PRIVILEGED_REQUEST_EVENT_NAME = PRIVILEGED_REQUEST_EVENT_NAME;
 Utils.consoleLog = consoleLog;
 Utils.setFocus = setFocus;
 Utils.getTopURL = getTopURL;
 Utils.nextTick = nextTick;
 Utils.nextTickFn = nextTickFn;
-Utils.registerStringBundleLoadListener = registerStringBundleLoadListener;
 Utils.getMessage = getMessage;
 Utils.utf8StringToBase64 = utf8StringToBase64;
 Utils.base64ToUTF8String = base64ToUTF8String;

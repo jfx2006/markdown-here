@@ -151,6 +151,16 @@ import OptionsStorePromise from "./options/options-storage.js"
       responseCallback('test-request-good');
       return false;
     }
+    else if (request.action === "test-bg-request") {
+      if (request.argument) {
+        return Promise.resolve(["test-bg-request",
+          "test-bg-request-ok",
+          request.argument])
+      }
+      return Promise.resolve([
+        "test-bg-request",
+        "test-bg-request-ok"])
+    }
     else if (request.action === 'update-hotkey') {
       return updateHotKey();
     }
