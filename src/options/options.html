@@ -8,9 +8,7 @@
   <script src="options.js" type="module"></script>
 </head>
 <body class="pt-3 pb-5" data-color-theme="system">
-<div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
-  <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
-</div>
+
   <div class="container-fluid">
     <div class="row">
       <nav class="col-md-3 col-lg-2 sidebar">
@@ -70,7 +68,7 @@
                   <div class="form-check">
                     <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
                     <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label">Enable "forgot-to-render" check.</label>
-                    <div data-i18n="forgot_to_render_2">
+                    <div class="text-muted" data-i18n="forgot_to_render_2">
                       When you send an email, this checks the content to see if it looks like you wrote it in Markdown,
                       but forgot to render it (i.e., click "Markdown Toggle") before sending.
                       This may need to be disabled if it interferes with your ability to send email.
@@ -93,7 +91,7 @@
                         <span data-i18n="tex_math_reset_button">Reset to Default</span>
                       </button>
                     </div>
-                    <ul>
+                    <ul class="text-muted">
                       <li data-i18n="tex_math_privacy_issue_1">
                         To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.
                       </li>
@@ -1094,6 +1092,9 @@
       </main>
 
     </div>
+  </div>
+  <div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
   </div>
 </body>
 </html>
