@@ -88,7 +88,7 @@
                     <div class="input-wrapper">
                       <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
                       <input id="math-value" class="form-text" type="text" name="math-value"/>
-                      <button id="math-reset-button" class="btn btn-sm btn-primary">
+                      <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
                         <span data-i18n="tex_math_reset_button">Reset to Default</span>
                       </button>
                     </div>
@@ -124,14 +124,14 @@
           <div role="tabpanel" class="tab-pane fade" aria-labelledby="theme-tab" id="theme">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span data-i18n="primary_css_title">Primary Styling CSS</span>
+                <label data-i18n="primary_css_title" for="css-edit">Primary Styling CSS</label>
               </div>
               <div class="card-body">
                 <div class="form-group">
-                  <textarea name="main-css" id="css-edit" wrap="off"></textarea>
+                  <textarea name="main-css" id="css-edit" spellcheck="false" wrap="off"></textarea>
                 </div>
                   <div>
-                    <button id="css-reset-button" class="btn btn-sm btn-primary" type="button">
+                    <button id="css-reset-button" class="btn btn-sm btn-primary reset-button" type="button" data-field-id="css-edit">
                       <span data-i18n="reset_primary_css">Reset to Default</span>
                     </button>
                   </div>
@@ -144,12 +144,12 @@
               </div>
               <div class="card-body">
                 <div class="form-group">
-                  <textarea id="css-syntax-edit" readonly></textarea>
                   <div>
-                    <span data-i18n="syntax_highlighting_theme_label">Theme:</span>
+                    <span data-i18n="syntax_highlighting_theme_label">Theme</span>
                     <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css" id="css-syntax-select">
                     </select>
                   </div>
+                  <textarea id="css-syntax-edit" readonly></textarea>
                 </div>
               </div>
             </div>

@@ -64,9 +64,22 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
     }
 
     form.addEventListener("hotkey", handleHotKey)
+
+    // Reset buttons
+    for (const btn of document.getElementsByClassName("reset-button")) {
+      btn.addEventListener("click", onResetButtonClicked, false)
+    }
+
     await OptionsStore.syncForm(form)
     await cssSyntaxSelectChange()
-    form.addEventListener("options-sync:form-synced", savedMsgToast.show())
+    form.addEventListener("options-sync:form-synced", showSavedMsg)
+  }
+
+  async function onResetButtonClicked(event) {
+    const btn = event.target.closest("button")
+    const input_target = document.getElementById(btn.dataset.fieldId)
+    await OptionsStore.reset(input_target.name)
+    showSavedMsg()
   }
 
   async function fillSupportInfo() {
