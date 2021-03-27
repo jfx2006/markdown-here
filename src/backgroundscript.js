@@ -165,19 +165,20 @@ import OptionsStorePromise from "./options/options-storage.js"
       return messenger.commands.update({
         "name": "toggle-markdown",
         "shortcut": request.hotkey_value,
+      }).then(() => {
+        updateActionTooltip()
       })
     }
     else {
       console.log('unmatched request action', request.action);
       throw 'unmatched request action: ' + request.action;
     }
-  });
+  })
 
 // Defining a onDismissed listener
   messenger.notificationbar.onDismissed.addListener((windowId, notificationId) => {
     console.log(`notification ${notificationId} in window ${windowId} was dismissed`);
-  });
-
+  })
 
   async function openNotification(windowId, message, priority, button_labels) {
     async function notificationClose(notificationId) {
@@ -224,9 +225,17 @@ import OptionsStorePromise from "./options/options-storage.js"
     return await notificationClose(notificationId);
   }
 
+  // Show the shortcut hotkey on the ComposeAction button
+  async function updateActionTooltip() {
+    const hotkey = await OptionsStore.get("hotkey-input")
+    const msg = messenger.i18n.getMessage("toggle_button_tooltip")
+    await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
+  }
+  await updateActionTooltip()
+
 // Add the composeAction (the button in the format toolbar) listener.
   messenger.composeAction.onClicked.addListener(tab => {
-    messenger.tabs.sendMessage(tab.id, { action: 'button-click', });
+    messenger.tabs.sendMessage(tab.id, { action: 'button-click', })
   });
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -241,16 +250,8 @@ import OptionsStorePromise from "./options/options-storage.js"
       { file: "markdown-here.js" },
       { file: "composescript.js" }
     ]
-  });
+  })
 
-  function updateHotKey() {
-    return OptionsStore.get(["hotkey-input"]).then(value => {
-      messenger.commands.update({
-        "name": "toggle-markdown",
-        "shortcut": value,
-      }).then()
-    })
-  }
 
   messenger.commands.onCommand.addListener(function(command) {
     if (command === "toggle-markdown") {
