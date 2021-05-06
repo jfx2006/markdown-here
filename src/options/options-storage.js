@@ -12,7 +12,7 @@
 import OptionsSync from './mailext-options-sync.js'
 import OldOptions from "./old_options.js"
 
-async function fetchExtFile(path, json=false) {
+export async function fetchExtFile(path, json=false) {
   const url = messenger.runtime.getURL(path)
   const response = await fetch(url)
   if (!response.ok) {

@@ -13,7 +13,7 @@ import BSN from "../vendor/bootstrap-native.esm.js"
 import HotkeyHandler from "./shortcuts.js"
 
 import OptionsStorePromise from "./options-storage.js"
-import { kSyntaxCSSStyles } from "./options-storage.js"
+import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
 
 (async () => {
   window.OptionsStore = await OptionsStorePromise
@@ -61,6 +61,9 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
 
     if (messenger !== undefined) {
       await fillSupportInfo()
+      await loadChangeList()
+      let rv = await OptionsStore.get("hotkey-input")
+      document.getElementById("hotkey-display-str").innerText = rv["hotkey-input"]
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -92,6 +95,18 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
 
+  async function loadChangeList() {
+    let changes = await fetchExtFile("/CHANGES.md")
+    let markedOptions = {
+      gfm: true,
+      pedantic: false,
+      sanitize: false }
+
+    changes = marked(changes, markedOptions)
+
+    Utils.saferSetInnerHTML(document.getElementById("mdhrChangeList"), changes)
+  }
+
   async function handleHotKey(e) {
     let newHotKey = e.detail.value()
     await OptionsStore.set({ "hotkey-input": newHotKey})
@@ -103,6 +118,7 @@ import { kSyntaxCSSStyles } from "./options-storage.js"
           })
         )
         showSavedMsg()
+        document.getElementById("hotkey-display-str").innerText = newHotKey
       })
   }
 
