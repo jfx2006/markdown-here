@@ -25,6 +25,23 @@ async function fetchExtFile(path, json=false) {
   }
 }
 
+// Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+async function sha256Digest(text) {
+  const msgUint8 = new TextEncoder().encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
+}
+
+// Sha256 Checksums for old versions of default.css
+const OLD_CSS_SUMS = [
+  "72706d3e07c403c35688760180a753552af05c4ed2d5d1906dbf89b5c649342a",
+]
+
+// Checksum of the current version of default.css
+const DEFAULT_CSS_SUM = "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069"
+
 export const kOptDefaults = {
   'main-css': "",
   'syntax-css': "nnfx.css",
@@ -49,6 +66,21 @@ export default (async () => {
   return new OptionsSync({
     defaults: DEFAULTS,
     migrations: [
+      // Update main-css to the new default IF the checksum matches an old default
+      (savedOptions, currentDefaults) => {
+        sha256Digest(savedOptions["main-css"])
+          .then(result => {
+            if (result !== DEFAULT_CSS_SUM) {
+              if (OLD_CSS_SUMS.includes(result)) {
+                console.log("Updating main-css to current default.")
+                savedOptions["main-css"] = currentDefaults["main-css"]
+              }
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
       // Hotkey & main css migration
       (savedOptions, currentDefaults) => {
         /* Future use

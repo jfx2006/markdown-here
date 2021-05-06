@@ -26,7 +26,7 @@ code {
   margin: 0 0.15em;
   padding: 0 0.3em;
   white-space: pre-wrap;
-  color: #dc5275;
+  font-weight: 550;
   background-color: rgba(119,119,119,.3);
   border-radius: 3px;
   display: inline; /* added to fix Yahoo block display of inline code */
