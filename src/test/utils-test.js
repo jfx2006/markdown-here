@@ -340,6 +340,30 @@ describe('Utils', function() {
     });
   });
 
+  describe('makeRequestToBGScript', function() {
+    it('should communicate with background script (no args)', function(done) {
+      Utils.makeRequestToBGScript(
+        "test-bg-request")
+        .then((response) => {
+          expect(response[0]).to.equal('test-bg-request');
+          expect(response[1]).to.equal('test-bg-request-ok');
+          done();
+      })
+    })
+
+    it('should communicate with background script (with arg)', function(done) {
+      const args = { "arg1": "value1" }
+      Utils.makeRequestToBGScript(
+        "test-bg-request", args)
+        .then((response) => {
+          expect(response[0]).to.equal('test-bg-request');
+          expect(response[1]).to.equal('test-bg-request-ok');
+          expect(response[2]).to.equal(args)
+          done();
+        })
+    })
+  });
+
   describe('setFocus', function() {
     it('should set focus into a contenteditable div', function() {
       var $div = $('<div contenteditable="true">').appendTo('body');
@@ -446,43 +470,6 @@ describe('Utils', function() {
     it('should throw on bad message ID', function() {
       var fn = _.partial(Utils.getMessage, 'BAADF00D');
       expect(fn).to.throw(Error);
-    });
-  });
-
-  describe('registerStringBundleLoadListener', function() {
-    it('should get called eventually', function(done) {
-      Utils.registerStringBundleLoadListener(done);
-    });
-  });
-
-  describe('getMoz/SafariStringBundle', function() {
-    it('should get the string bundle', function(done) {
-      if (typeof(chrome) !== 'undefined') {
-        // not applicable
-        done();
-        return;
-      }
-      else if (typeof(safari) !== 'undefined') {
-        Utils.getSafariStringBundle(function(data, err) {
-          expect(err).to.not.be.ok;
-          expect(data).to.be.an('object');
-          done();
-        });
-      }
-      else { // Mozilla
-        var data = Utils.getMozStringBundle();
-        if (data) {
-          expect(data).to.be.an('object');
-          done();
-        }
-        else {
-          // HACK: make a call to the privileged script
-          Utils.makeRequestToPrivilegedScript(document, {action: 'get-string-bundle'}, function(response) {
-            expect(response).to.be.an('object');
-            done();
-          });
-        }
-      }
     });
   });
 

@@ -11,5 +11,8 @@
   "extends": [
     "plugin:no-unsanitized/DOM",
     "prettier"
-  ]
+  ],
+  "rules": {
+    "semi": [2, "never"]
+  }
 }

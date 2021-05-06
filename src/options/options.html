@@ -1,0 +1,1103 @@
+<html lang="en">
+<head>
+  <title>Settings | Markdown Here Revival</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../vendor/bootswatch.css">
+  <link rel="stylesheet" href="options.css">
+  <script src="../utils.js"></script>
+  <script src="options.js" type="module"></script>
+</head>
+<body class="pt-3 pb-5" data-color-theme="system">
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-3 col-lg-2 sidebar">
+        <button class="navbar-dark navbar-toggler collapsed d-block d-md-none pt-2" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse d-none d-md-block" id="sidebar">
+          <ul id="optionsTabList" class="nav flex-column mb-2 text-uppercase" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link text-light rounded-sm active" id="options-tab" href="#options" data-toggle="tab"
+                 aria-controls="home" aria-selected="true" role="tab">
+              <span data-no_i18n="">Options</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light rounded-sm" id="theme-tab" href="#theme" data-toggle="tab"
+                 aria-controls="theme" aria-selected="false" role="tab">
+                <span data-no_i18n="">Theme</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light rounded-sm" id="docs-tab" href="#docs" data-toggle="tab"
+                 aria-controls="docs" aria-selected="false" role="tab">
+                <span data-no_i18n="">Quickstart</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light rounded-sm" id="about-tab" href="#about" data-toggle="tab"
+                 aria-controls="about" aria-selected="false" role="tab">
+                <span data-no_i18n="">About</span></a>
+            </li>
+          </ul>
+          <footer class="d-none d-md-flex px-3 mt-4 mb-1 text-uppercase position-absolute small text-muted">
+            © 2021 JFX - https://gitlab.com/jfx2006
+          </footer>
+        </div>
+      </nav>
+      <main class="col-md-9 col-lg-10 offset-md-3 offset-lg-2 px-4 mt-5 mt-md-0">
+        <form id="mdh-options-form">
+        <div>
+          <h2 data-i18n="page_title" class="pb-3 mt-0"><img class="text-align" src="../images/rocmarkdown.svg" width="96" height="96" alt="logo"/>
+          Markdown Here Revival Options</h2>
+        </div>
+
+        <div class="content">
+
+          <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab" id="options">
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-no_i18n="options_title">Options</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input id="gfm-line-breaks" class="form-check-input" type="checkbox" name="gfm-line-breaks-enabled"/>
+                    <label class="form-check-label" for="gfm-line-breaks" data-i18n="gfm_line_breaks_enabled_label">Enable GFM line breaks</label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="form-check">
+                    <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
+                    <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label">Enable "forgot-to-render" check.</label>
+                    <div class="text-muted" data-i18n="forgot_to_render_2">
+                      When you send an email, this checks the content to see if it looks like you wrote it in Markdown,
+                      but forgot to render it (i.e., click "Markdown Toggle") before sending.
+                      This may need to be disabled if it interferes with your ability to send email.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="tex_math_title">TeX Mathematical Formulae Support</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <div class="input-wrapper">
+                      <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
+                      <input id="math-value" class="form-text" type="text" name="math-value"/>
+                      <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
+                        <span data-i18n="tex_math_reset_button">Reset to Default</span>
+                      </button>
+                    </div>
+                    <ul class="text-muted">
+                      <li data-i18n="tex_math_privacy_issue_1">
+                        To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.
+                      </li>
+                      <li data-i18n="tex_math_privacy_issue_2">
+                        If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <div class="input-wrapper">
+                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="options_page__reset_button">Reset</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" aria-labelledby="theme-tab" id="theme">
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <label data-i18n="primary_css_title" for="css-edit">Primary Styling CSS</label>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <textarea name="main-css" id="css-edit" spellcheck="false" wrap="off"></textarea>
+                </div>
+                  <div>
+                    <button id="css-reset-button" class="btn btn-sm btn-primary reset-button" type="button" data-field-id="css-edit">
+                      <span data-i18n="reset_primary_css">Reset to Default</span>
+                    </button>
+                  </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="syntax_highlighting_css_title">Syntax Highlighting CSS</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div>
+                    <span data-i18n="syntax_highlighting_theme_label">Theme</span>
+                    <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css" id="css-syntax-select">
+                    </select>
+                  </div>
+                  <textarea id="css-syntax-edit" readonly></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" aria-labelledby="docs-tab" id="docs">
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="basic_usage">Basic Usage</span>
+              </div>
+              <div class="card-body">
+                <ol>
+                  <li class="my-md-2" data-i18n="start_new_message">
+                    Start a new email message.
+                  </li>
+                  <li class="my-md-2" data-i18n="type_some_markdown">
+                    Type some Markdown into the email.<br>Try this:
+                    <div class="my-3 border-secondary">
+                      <code class="p-2">_Hello_ `Markdown` **Here**!</code>
+                    </div>
+                  </li>
+                  <li class="my-md-2" data-i18n="click_toggle">
+                    Click the <img class="text-align" src="../images/icon36.png" alt=""/>
+                    compose action button on the format toolbar.<br>
+                    <span class="hotkey-display-wrapper">Or press
+                      <span id="hotkey-display-str" class="hotkey-display">
+                        <kbd>CTRL</kbd>+<kbd>ALT</kbd>+<kbd>M</kbd>
+                      </span>.
+                    </span>
+                  </li>
+                  <li class="my-md-2" data-i18n="pretty_cool">
+                    The message should now look pretty cool. Send it to your friends!
+                  </li>
+                </ol>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="resources_title">Resources and Links</span>
+              </div>
+              <div class="card-body">
+                <ul>
+                  <li class="my-md-2" data-i18n="resources_cheatsheet_link">
+                    If you're new to Markdown, the
+                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Markdown-Here-Revival-Cheatsheet"
+                       target="_blank">Markdown Here Revival Cheatsheet</a> will make you a prostar.
+                  </li>
+                  <li class="my-md-2" data-i18n="mdh_wiki">
+                    Visit the <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Home" target="_blank">
+                    Markdown Here Revival wiki</a> for
+                    <a href="https://github.com/adam-p/markdown-here/wiki/Tips-and-Tricks" target="_blank">tips and tricks</a>
+                    and more!
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" aria-labelledby="about-tab" id="about">
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span>Report bugs</span>
+              </div>
+              <div class="card-body">
+                <p>
+                  <a target="_blank" href="https://gitlab.com/jfx2006/markdown-here-revival/-/issues">
+                    <span>Create new issue on GitLab</span></a>
+                  <br><span>The following debug info can be used</span>:
+                </p>
+                <div>
+                  <p id="versionInfo">Markdown Here Revival: <span id="mdhrVersion"></span>
+                    <br>Thunderbird Version: <span id="mdhrThunderbirdVersion"></span>
+                    <br>Operating system: <span id="mdhrOS"></span>
+                  </p>
+                  <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3">
+                    Copy to clipboard
+                  </button>
+                  <span class="fade">&#10004;</span>
+                </div>
+                <div id="tests-link">
+                  <a href="../test/index.html">Run Tests</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-desktop" aria-hidden="true"></i>
+                <span>Changes</span>
+              </div>
+              <div class="card-body">
+                <div id="mdhrChangelist">
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-file-code-o" aria-hidden="true"></i>
+                <span>Licenses</span>
+              </div>
+              <div class="card-body">
+
+
+              </div>
+            </div>
+          </div>
+<!--
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showLoginFormIcon" id="usernameIconsCheckBox"
+                           value="true" checked="checked">
+                    <label class="form-check-label" for="usernameIconsCheckBox">Activate username field icons.</label>
+                    <span class="form-text text-muted">Adds an icon to username fields for filling credentials with a single mouse click.</span>
+                  </div>
+                </div>
+                <select class="form-control form-control-sm col-md-3 col-lg-2" id="colorTheme"
+                        title="Select color theme">
+                  <option value="system">System</option>
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="usePasswordGeneratorIcons"
+                           id="passwordIconsCheckBox" value="true">
+                    <label class="form-check-label" for="passwordIconsCheckBox">Activate password generator
+                      icons.</label>
+                    <span
+                      class="form-text text-muted">Adds an icon to password fields for generating a new password.</span>
+                    <span class="form-text text-muted">Passwords are generated by KeePassXC using your password generation profile.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showOTPIcon" id="totpIconsCheckBox"
+                           value="true" checked="checked">
+                    <label class="form-check-label" for="totpIconsCheckBox">Activate 2FA/OTP field icons.</label>
+                    <span
+                      class="form-text text-muted">Adds an icon to input fields that are recognized as OTP/2FA.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showNotifications" id="notificationCheckBox"
+                           value="true" checked="checked">
+                    <label class="form-check-label" for="notificationCheckBox">Show notifications.</label>
+                    <span class="form-text text-muted">Show notifications for errors and when user interaction is required.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-keyboard-o" aria-hidden="true"></i>
+                <span>Keyboard shortcuts</span>
+              </div>
+              <div class="card-body">
+                <p>
+                  <span>Fill Username and Password</span>: <span id="fill_username_password-shortcut">Alt+Shift+U</span><br>
+                  <span>Fill Password Only</span>: <span id="fill_password-shortcut">Alt+Shift+I</span><br>
+                  <span>Fill TOTP</span>: <span id="fill_totp-shortcut">Alt+Shift+O</span><br>
+                  <span>Show Password Generator</span>: <span id="show_password_generator-shortcut">Alt+Shift+G</span>
+                </p>
+                <p id="chrome-only">
+                  <button class="btn btn-sm btn-success" id="configureCommands" type="button" title="Opens a new tab">
+                    <i class="fa fa-keyboard-o" aria-hidden="true"></i><span> Configure shortcuts</span>
+                  </button>
+                </p>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span>Filling credentials</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoRetrieveCredentials"
+                           id="autoRetrieveCredentials" value="true" checked="checked">
+                    <label class="form-check-label" for="autoRetrieveCredentials">Automatically retrieve
+                      credentials.</label>
+                    <span class="form-text text-muted">KeePassXC-Browser will immediately retrieve credentials when a tab is activated.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoCompleteUsernames"
+                           id="autoCompleteUsernames" value="true" checked="checked">
+                    <label class="form-check-label" for="autoCompleteUsernames">Activate autocomplete for username
+                      fields.</label>
+                    <span class="form-text text-muted">Show a dropdown list containing available credentials for all username fields on a page.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoSubmit" id="autoSubmit" value="true">
+                    <label class="form-check-label" for="autoSubmit">Auto-submit login forms</label>
+                    <span class="form-text text-muted">Automatically submits selected credentials. This is disabled for single entry auto-fill.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoFillSingleEntry" id="autoFillSingleEntry"
+                           value="true">
+                    <label class="form-check-label" for="autoFillSingleEntry">Automatically fill in single-credential
+                      entries.</label>
+                    <span class="form-text text-muted">Let KeePassXC-Browser automatically fill in credentials if it receives only a single entry.</span>
+                    <div class="alert alert-warning mt-3 col-lg-9" role="alert">
+                      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                      <span>Warning! Using auto-fill is not safe. Use at your own risk.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoFillAndSend" id="autoFillAndSend"
+                           value="true">
+                    <label class="form-check-label" for="autoFillAndSend">Automatically fill in HTTP Basic Auth dialogs
+                      and submit them.</label>
+                    <span class="form-text text-muted">If credentials are found for a page and the login-type is an HTTP Basic Auth request, KeePassXC-Browser tries to login automatically with the first given credentials. When multiple credentials are present, the extension popup can be used to choose the correct one. Even when this feature is enabled, it is still possible to enter HTTP Basic Auth login manually.</span>
+                    <span class="form-text text-muted">An HTTP Basic Auth dialog looks like this:</span>
+                    <img src="/options/http-auth-dialog.png" class="img-fluid mt-2"
+                         alt="HTTP Basic Authentication dialog">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-save" aria-hidden="true"></i>
+                <span>Saving credentials</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showLoginNotifications"
+                           id="showLoginNotifications" value="true" checked="checked">
+                    <label class="form-check-label" for="showLoginNotifications">Show a banner on the page when new
+                      credentials can be saved to the database.</label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="defaultGroupAlwaysAsk"
+                           id="defaultGroupAlwaysAsk" value="true">
+                    <label class="form-check-label" for="defaultGroupAlwaysAsk">Always ask where to save new
+                      credentials</label>
+                    <span class="form-text text-muted">When enabled, the popup shows a group listing.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="defaultGroup">Default group for saving new passwords:</label>
+                  <div class="input-group">
+                    <input class="form-control form-control-sm col-md-8 col-lg-6" type="text" id="defaultGroup"
+                           placeholder="KeePassXC-Browser Passwords">
+                    <div class="input-group-append">
+                      <button class="btn btn-sm btn-primary" type="button" id="defaultGroupButton"><i class="fa fa-save"
+                                                                                                      aria-hidden="true"></i><span>Save</span>
+                      </button>
+                      <button class="btn btn-sm btn-danger" type="button" id="defaultGroupButtonReset"><i
+                        class="fa fa-remove" aria-hidden="true"></i><span>Reset</span></button>
+                    </div>
+                    <span class="form-text text-muted w-100">Separate the group with slashes, for example: Group/ChildGroup.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="saveDomainOnlyNewCreds"
+                           id="saveDomainOnlyNewCreds" value="true">
+                    <label class="form-check-label" for="saveDomainOnlyNewCreds">Save domain only.</label>
+                    <span class="form-text text-muted">When saving new credentials, save only the domain instead of full URL.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label id="redirectAllowanceLabel" class="font-weight-normal" for="redirectAllowance"
+                         i18n-placeholder="1">Number of allowed redirects: 1</label>
+                  <input type="range" class="form-control-range col-md-6 col-lg-4" id="redirectAllowance"
+                         name="redirectAllowance" min="1" max="11" step="1" value="1">
+                </div>
+                <span class="form-text text-muted">How many redirects are allowed until the banner disappears. Default value is 1. Maximum is infinite.</span>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                <span>Updates</span>
+              </div>
+              <div class="card-body">
+                <div class="help-block kphVersion">
+                  <p>
+                    <span>KeePassXC-Browser needs KeePassXC to retrieve credentials.</span>
+                    <br>
+                    <span
+                      i18n-placeholder="<a target='_blank' href='https://keepassxc.org/'>https://keepassxc.org/</a>">You can download the latest stable version from <a
+                      target="_blank" href="https://keepassxc.org/">https://keepassxc.org/</a></span>
+                  </p>
+                  <p>
+                    <span i18n-placeholder="<em class='yourVersion'></em>">You are running KeePassXC version: <em
+                      class="yourVersion">2.6.4</em></span>
+                  </p>
+                  <p>
+                    <span i18n-placeholder="<em class='latestVersion'></em>">Latest available version of KeePassXC: <em
+                      class="latestVersion">2.6.4</em></span>
+                  </p>
+                  <button class="btn btn-sm btn-success checkUpdateKeePassXC"><i class="fa fa-refresh"
+                                                                                 aria-hidden="true"></i><span>Check for updates</span>
+                  </button>
+                  <div class="mt-3">
+                    <div>Check for updates of KeePassXC:</div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio1"
+                             value="3" checked="checked">
+                      <label class="form-check-label" for="inlineRadio1"><span>every 3 days</span></label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio2"
+                             value="7">
+                      <label class="form-check-label" for="inlineRadio2"><span>every week</span></label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio3"
+                             value="30">
+                      <label class="form-check-label" for="inlineRadio3"><span>every month</span></label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio4"
+                             value="0">
+                      <label class="form-check-label" for="inlineRadio4"><span>never</span></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span>Advanced settings</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="useObserver" id="useObserver" value="true"
+                           checked="checked">
+                    <label class="form-check-label" for="useObserver">Use dynamic input field detection.</label>
+                    <span class="form-text text-muted">Useful with pages that use popups or dynamic dialogs. Disable the feature to reduce CPU load on slower machines. When disabled credentials can be only inserted using keyboard shortcuts, the context menu or the extension popup.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="showGroupNameInAutocomplete"
+                           id="showGroupNameInAutocomplete" value="true" checked="checked">
+                    <label class="form-check-label" for="showGroupNameInAutocomplete">Display the group name in
+                      autocomplete list when credentials are from different groups.</label>
+                    <span class="form-text text-muted">When credentials are returned from different groups, the group name will be shown.</span>
+                    <div class="alert alert-info mt-3 col-lg-9" role="alert" id="versionRequiredAlert"
+                         style="display: none;">
+                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                      <span i18n-placeholder="2.6.0">Requires KeePassXC version: 2.6.0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="autoReconnect" id="autoReconnect"
+                           value="true">
+                    <label class="form-check-label" for="autoReconnect">Automatically reconnect to KeePassXC.</label>
+                    <span class="form-text text-muted">Reconnects automatically to KeePassXC when it is detected.</span>
+                    <div class="alert alert-warning mt-3 col-lg-9" role="alert">
+                      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                      <span>Warning! This feature is experimental. Use at your own risk.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="saveDomainOnly" id="saveDomainOnly"
+                           value="true" checked="checked">
+                    <label class="form-check-label" for="saveDomainOnly">Save domain only.</label>
+                    <span class="form-text text-muted">When saving new custom login fields, save only the domain instead of full URL.</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="usePredefinedSites" id="usePredefinedSites"
+                           value="true" checked="checked">
+                    <label class="form-check-label" for="usePredefinedSites">Use predefined sites for
+                      compatibility.</label>
+                    <span class="form-text text-muted">Adds common sites that have username-only login forms to the site preferences.</span>
+                    <details id="predefinedSiteList">
+                      <summary><span>Predefined sites</span></summary>
+                      <br><span>https://accounts.google.com/*</span><br><span>https://www.paypal.com/*/signin</span><br><span>https://outlook.live.com/*</span><br><span>https://login.live.com/*</span><br><span>https://login.microsoftonline.com/*</span><br><span>https://www.amazon.com/ap/*</span><br><span>https://www.amazon.de/ap/*</span><br><span>https://www.amazon.co.uk/ap/*</span><br><span>https://signin.aws.amazon.com/*</span><br><span>https://www.upwork.com/ab/*</span><br><span>https://home.personalcapital.com/*</span><br><span>https://auth.services.adobe.com/*</span><br><span>https://idmsa.apple.com/*</span><br><span>https://secure.soundcloud.com/*</span><br><span>https://icloud.com/*</span><br><span>https://signin.ebay.de/*</span><br><span>https://signin.ebay.com/*</span><br><span>https://signin.ebay.com.au/*</span><br><span>https://signin.ebay.com.cn/*</span><br><span>https://signin.ebay.com.hk/*</span><br><span>https://signin.ebay.com.my/*</span><br><span>https://signin.ebay.com.sg/*</span><br><span>https://signin.ebay.it/*</span><br><span>https://signin.ebay.co.uk/*</span><br><span>https://signin.ebay.ca/*</span><br><span>https://signin.ebay.at/*</span><br><span>https://signin.ebay.be/*</span><br><span>https://signin.ebay.fr/*</span><br><span>https://signin.ebay.ie/*</span><br><span>https://signin.ebay.nl/*</span><br><span>https://signin.ebay.es/*</span><br><span>https://signin.ebay.ch/*</span><br><span>https://signin.ebay.in/*</span><br><span>https://signin.ebay.ph/*</span><br><span>https://login.yahoo.com/*</span><br><span>https://id.atlassian.com/*</span><br><span>https://www.fidelity.com/*</span>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-exchange fa-rotate-90" aria-hidden="true"></i>
+                <span>Import/Export settings</span>
+              </div>
+
+              <div class="card-body">
+                <div class="form-group">
+                  <button class="btn btn-sm btn-primary" id="importSettingsButton"><i class="fa fa-arrow-down"
+                                                                                      aria-hidden="true"></i><span>Import settings</span>
+                  </button>
+                  <button class="btn btn-sm btn-primary" id="exportSettingsButton"><i class="fa fa-arrow-up"
+                                                                                      aria-hidden="true"></i><span>Export settings</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="dialogImportSettings" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Import settings from external file?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                      aria-hidden="true">×</span></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Current settings will be overridden. Do you really want to import the settings file?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true"><i
+                      class="fa fa-remove" aria-hidden="true"></i><span>Cancel</span></button>
+                    <button class="btn btn-sm yes btn-success" autofocus=""><i class="fa fa-check"
+                                                                               aria-hidden="true"></i><span>Import settings</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="tab d-none" id="tab-connected-databases">
+            <h2 class="pb-3 mt-0">Connected Databases</h2>
+
+            <div class="card my-4 shadow">
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-sm table-striped table-bordered">
+                    <caption>Databases connected to KeePassXC-Browser.</caption>
+                    <thead>
+                    <tr>
+                      <th scope="col"><span>Identifier</span></th>
+                      <th scope="col"><span>Key</span></th>
+                      <th scope="col"><span>Last used</span></th>
+                      <th scope="col"><span>Created</span></th>
+                      <th scope="col"><span>Delete</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="empty" style="display: none;">
+                      <td colspan="5"><span>No connected databases found.</span></td>
+                    </tr>
+                    <tr class="clone d-none">
+                      <td class="identifier text-nowrap"></td>
+                      <td class="key text-nowrap"></td>
+                      <td class="last-used text-nowrap"></td>
+                      <td class="created text-nowrap"></td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm delete btn-danger"><i class="fa fa-remove"
+                                                                        aria-hidden="true"></i><span>Remove</span>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr class="" id="tr-cd-15f118009f0081b8e686537207daa28e3b405e5ec842ae6f41c445142bb28cd2">
+                      <td class="identifier text-nowrap">me</td>
+                      <td class="key text-nowrap">rk6CggtY**********</td>
+                      <td class="last-used text-nowrap">2/21/2021, 12:12:06 AM</td>
+                      <td class="created text-nowrap">1/28/2021</td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm delete btn-danger"><i class="fa fa-remove"
+                                                                        aria-hidden="true"></i><span>Remove</span>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <button id="connect-button" class="btn btn-sm btn-success"><i class="fa fa-link"
+                                                                                aria-hidden="true"></i><span>Connect</span>
+                  </button>
+                </div>
+
+                <div id="dialogDeleteConnectedDatabase" class="modal fade" tabindex="-1" role="dialog">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Remove identifier from database list?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                          aria-hidden="true">×</span></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><span i18n-placeholder="<strong></strong>">Do you really want to remove the following identifier from the database list: <strong></strong></span>
+                        </p>
+                        <p class="help-block">You can reconnect your database at any time.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true"><i
+                          class="fa fa-remove" aria-hidden="true"></i><span>Cancel</span></button>
+                        <button class="btn btn-sm yes btn-success" autofocus=""><i class="fa fa-check"
+                                                                                   aria-hidden="true"></i><span>Yes, remove now</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="tab d-none" id="tab-custom-fields">
+            <h2 class="pb-3 mt-0">Custom login fields</h2>
+
+            <div class="card my-4 shadow">
+              <div class="card-body">
+                <p>
+                  <span>If KeePassXC-Browser detects the wrong login fields, you are able to specify the correct fields yourself.</span>
+                  <br>
+                  <span>Go to the page and click on the KeePassXC-Browser icon, then select </span><em><span>Choose custom login fields</span></em>.
+                </p>
+                <div class="table-responsive">
+                  <table class="table table-sm table-striped table-bordered">
+                    <caption>You can manage saved custom login fields using the table.</caption>
+                    <thead>
+                    <tr>
+                      <th scope="col"><span>Page URL</span></th>
+                      <th scope="col"><span>Delete</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="empty">
+                      <td colspan="2"><span>No saved custom login fields found.</span></td>
+                    </tr>
+                    <tr class="clone d-none">
+                      <td></td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm delete btn-danger btn"><i class="fa fa-remove" aria-hidden="true"></i><span>Remove</span>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div id="dialogDeleteCustomCredentialFields" class="modal fade" tabindex="-1" role="dialog">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5>Remove saved custom login fields?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                          aria-hidden="true">×</span></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><span i18n-placeholder="<strong></strong>">Do you really want to remove the saved custom login fields on the page: <strong></strong></span>
+                        </p>
+                        <p class="help-block">KeePassXC-Browser will automatically detect the login fields next time you
+                          visit this page.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true"><i
+                          class="fa fa-remove" aria-hidden="true"></i><span>Cancel</span></button>
+                        <button class="btn btn-sm yes btn-success" autofocus=""><i class="fa fa-check"
+                                                                                   aria-hidden="true"></i><span>Yes, remove now</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="tab d-none" id="tab-site-preferences">
+            <h2 class="pb-3 mt-0">Site preferences</h2>
+
+            <div class="card my-4 shadow">
+              <div class="card-body">
+                <p>
+                  <span>Sites on this page have special handling methods associated with them.</span>
+                  <br>
+                  <span>To ignore new/modified credentials on a specific site, add them below or when using the credential banner on the page select <em>Don't ask again for this site</em>.</span>
+                  <br>
+                  <span>If a site is fully ignored (<em>Disable all features</em> is selected), then the plugin will do nothing when visiting that site.</span>
+                  <br>
+                  <span>Username-only detection allows KeePassXC-Browser to fill in login details on websites with separate pages for username and password.</span>
+                </p>
+                <hr class="mt-0">
+
+                <form class="was-validated">
+                  <div class="form-group">
+                    <label for="manualUrl">Add URL manually</label>
+                    <div class="input-group" id="manualUrlGroup">
+                      <input class="form-control form-control-sm col-lg-10" type="url" id="manualUrl"
+                             aria-label="Manual URL" pattern="ftp://.*|http://.*|https://.*" minlength="10" required="">
+                      <div class="input-group-append">
+                        <button class="btn btn-sm btn-primary" type="button" id="sitePreferencesManualAdd"><i
+                          class="fa fa-plus" aria-hidden="true"></i><span>Add</span></button>
+                      </div>
+                    </div>
+                    <span class="invalid-feedback d-block">The URL must start with either <code>https://</code>, <code>http://</code>, or <code>ftp://</code> and must be at least 10 characters long.</span>
+                  </div>
+                </form>
+
+                <div class="table-responsive">
+                  <table class="table table-sm table-striped table-bordered">
+                    <caption>You can manage saved site preferences using the table.</caption>
+                    <thead>
+                    <tr>
+                      <th scope="col"><span>Page URL</span></th>
+                      <th scope="col"><span>Ignore</span></th>
+                      <th scope="col"><span>Username-only Detection</span></th>
+                      <th scope="col"><span>Delete</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="empty">
+                      <td colspan="4"><span>No site preferences found.</span></td>
+                    </tr>
+                    <tr class="clone d-none">
+                      <td class="text-nowrap"></td>
+                      <td>
+                        <select class="form-control form-control-sm" name="ignore"
+                                title="Option to ignore extension features for the page.">
+                          <option value="ignoreNothing">Enable all features</option>
+                          <option value="ignoreNormal">Disable new/modified credentials</option>
+                          <option value="ignoreFull">Disable all features</option>
+                        </select>
+                      </td>
+                      <td><input type="checkbox" name="usernameOnly" value="false" title="Username-only Detection"></td>
+                      <td class="text-nowrap">
+                        <button class="btn btn-sm delete btn-danger btn"><i class="fa fa-remove" aria-hidden="true"></i><span>Remove</span>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div id="dialogDeleteSite" class="modal fade" tabindex="-1" role="dialog">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5>Remove site?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                          aria-hidden="true">×</span></button>
+                      </div>
+                      <div class="modal-body">
+                        <p><span i18n-placeholder="<strong></strong>">Do you really want to remove the specified site from the list: <strong></strong></span>
+                        </p>
+                        <p class="help-block">KeePassXC-Browser will enable all features for this site and remove
+                          username-only detection.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true"><i
+                          class="fa fa-remove" aria-hidden="true"></i><span>Cancel</span></button>
+                        <button class="btn btn-sm yes btn-success" autofocus=""><i class="fa fa-check"
+                                                                                   aria-hidden="true"></i><span>Yes, remove now</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="tab d-none" id="tab-about">
+            <h2 class="pb-3 mt-0">About</h2>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-desktop" aria-hidden="true"></i>
+                <span>Extension</span>
+              </div>
+              <div class="card-body">
+                <p>
+                  <a target="_blank"
+                     href="https://chrome.google.com/webstore/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk"
+                     tabindex="6" title="Opens a new tab">
+                    <span>Visit KeePassXC-Browser in the Chrome Web Store.</span></a>
+                </p>
+                <p>
+                  <a target="_blank" href="https://addons.mozilla.org/en-US/firefox/addon/keepassxc-browser/"
+                     tabindex="7" title="Opens a new tab">
+                    <span>Visit KeePassXC-Browser in the Mozilla Add-ons directory.</span></a>
+                </p>
+                <p>
+                  <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser" tabindex="8"
+                     title="Opens a new tab">
+                    <span>Visit KeePassXC-Browser on GitHub.</span></a>
+                </p>
+                <hr class="mt-0">
+                <p>
+                  <span i18n-placeholder="<em class='versionCIP'></em>">KeePassXC-Browser Version: <em
+                    class="versionCIP">1.7.6</em></span>
+                </p>
+                <p>
+                  <span i18n-placeholder="<em class='versionKPH'></em>">KeePassXC Version: <em
+                    class="versionKPH">2.6.4</em></span>
+                </p>
+                <hr class="mt-0">
+                <p>
+                  <span>Contributors</span>:<br>
+                  <a target="_blank" href="https://github.com/pfn/" tabindex="9" title="Opens a new tab">Perry
+                    Nguyen</a>,
+                  <a target="_blank" href="http://lukas-schulze.de" tabindex="10" title="Opens a new tab">Lukas
+                    Schulze</a>,
+                  <a target="_blank" href="https://github.com/smorks" tabindex="11" title="Opens a new tab">Andy
+                    Brandt</a>,
+                  <a target="_blank" href="https://github.com/varjolintu/" tabindex="12" title="Opens a new tab">Sami
+                    Vänttinen</a>,
+                  <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser" tabindex="13"
+                     title="Opens a new tab">KeePassXC Team</a>.
+                </p>
+
+                <details>
+                  <summary><span>Supporters</span></summary>
+                  <pre>                      Patreon Key supporters:
+
+                      Bart Libert
+                      David Walluscheck
+                    </pre>
+                </details>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-bug" aria-hidden="true"></i>
+                <span>Report bugs</span>
+              </div>
+              <div class="card-body">
+                <p>
+                  <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser/issues/new"
+                     tabindex="14"><span>Create new issue on GitHub</span></a>
+                  <br><span>The following debug info can be used</span>:
+                </p>
+                <p id="versionInfo" class="float-left">KeePassXC - <span class="kpxcVersion">2.6.4</span>
+                  <br>KeePassXC-Browser - <span class="kpxcbrVersion">1.7.6</span>
+                  <br>Operating system: <span class="kpxcbrOS">Linux x86_64</span>
+                  <br>Browser: <span class="kpxcbrBrowser">Mozilla Firefox 85.0</span>
+                </p>
+                <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3"><i
+                  class="fa fa-clipboard"></i></button>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <i class="fa fa-file-code-o" aria-hidden="true"></i>
+                <span>Licenses</span>
+              </div>
+              <div class="card-body">
+                <details>
+                  <summary>Bootstrap</summary>
+                  <pre>                      The MIT License (MIT)
+
+                      Copyright (c) 2011-2018 Twitter, Inc.
+                      Copyright (c) 2011-2018 The Bootstrap Authors
+
+                      Permission is hereby granted, free of charge, to any person obtaining a copy
+                      of this software and associated documentation files (the "Software"), to deal
+                      in the Software without restriction, including without limitation the rights
+                      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                      copies of the Software, and to permit persons to whom the Software is
+                      furnished to do so, subject to the following conditions:
+
+                      The above copyright notice and this permission notice shall be included in
+                      all copies or substantial portions of the Software.
+
+                      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+                      THE SOFTWARE.
+                    </pre>
+                </details>
+
+                <details>
+                  <summary>jQuery</summary>
+                  <pre>                      Copyright JS Foundation and other contributors, https://js.foundation/
+
+                      Permission is hereby granted, free of charge, to any person obtaining
+                      a copy of this software and associated documentation files (the
+                      "Software"), to deal in the Software without restriction, including
+                      without limitation the rights to use, copy, modify, merge, publish,
+                      distribute, sublicense, and/or sell copies of the Software, and to
+                      permit persons to whom the Software is furnished to do so, subject to
+                      the following conditions:
+
+                      The above copyright notice and this permission notice shall be
+                      included in all copies or substantial portions of the Software.
+
+                      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+                      EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+                      MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+                      NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+                      LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+                      OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+                      WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+                    </pre>
+                </details>
+
+                <details>
+                  <summary>Fork Awesome</summary>
+                  <pre>                      Copyright (c) 2018, Fork Awesome (https://forkawesome.github.io),
+                      with Reserved Font Name Fork Awesome.
+
+
+                      This Font Software is licensed under the SIL Open Font License, Version 1.1.
+                      This license is copied below, and is also available with a FAQ at:
+                      http://scripts.sil.org/OFL
+
+
+                      -----------------------------------------------------------
+                      SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+                      -----------------------------------------------------------
+
+                      PREAMBLE
+                      The goals of the Open Font License (OFL) are to stimulate worldwide
+                      development of collaborative font projects, to support the font creation
+                      efforts of academic and linguistic communities, and to provide a free and
+                      open framework in which fonts may be shared and improved in partnership
+                      with others.
+
+                      The OFL allows the licensed fonts to be used, studied, modified and
+                      redistributed freely as long as they are not sold by themselves. The
+                      fonts, including any derivative works, can be bundled, embedded,
+                      redistributed and/or sold with any software provided that any reserved
+                      names are not used by derivative works. The fonts and derivatives,
+                      however, cannot be released under any other type of license. The
+                      requirement for fonts to remain under this license does not apply
+                      to any document created using the fonts or their derivatives.
+
+                      DEFINITIONS
+                      "Font Software" refers to the set of files released by the Copyright
+                      Holder(s) under this license and clearly marked as such. This may
+                      include source files, build scripts and documentation.
+
+                      "Reserved Font Name" refers to any names specified as such after the
+                      copyright statement(s).
+
+                      "Original Version" refers to the collection of Font Software components as
+                      distributed by the Copyright Holder(s).
+
+                      "Modified Version" refers to any derivative made by adding to, deleting,
+                      or substituting -- in part or in whole -- any of the components of the
+                      Original Version, by changing formats or by porting the Font Software to a
+                      new environment.
+
+                      "Author" refers to any designer, engineer, programmer, technical
+                      writer or other person who contributed to the Font Software.
+
+                      PERMISSION &amp; CONDITIONS
+                      Permission is hereby granted, free of charge, to any person obtaining
+                      a copy of the Font Software, to use, study, copy, merge, embed, modify,
+                      redistribute, and sell modified and unmodified copies of the Font
+                      Software, subject to the following conditions:
+
+                      1) Neither the Font Software nor any of its individual components,
+                      in Original or Modified Versions, may be sold by itself.
+
+                      2) Original or Modified Versions of the Font Software may be bundled,
+                      redistributed and/or sold with any software, provided that each copy
+                      contains the above copyright notice and this license. These can be
+                      included either as stand-alone text files, human-readable headers or
+                      in the appropriate machine-readable metadata fields within text or
+                      binary files as long as those fields can be easily viewed by the user.
+
+                      3) No Modified Version of the Font Software may use the Reserved Font
+                      Name(s) unless explicit written permission is granted by the corresponding
+                      Copyright Holder. This restriction only applies to the primary font name as
+                      presented to the users.
+
+                      4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+                      Software shall not be used to promote, endorse or advertise any
+                      Modified Version, except to acknowledge the contribution(s) of the
+                      Copyright Holder(s) and the Author(s) or with their explicit written
+                      permission.
+
+                      5) The Font Software, modified or unmodified, in part or in whole,
+                      must be distributed entirely under this license, and must not be
+                      distributed under any other license. The requirement for fonts to
+                      remain under this license does not apply to any document created
+                      using the Font Software.
+
+                      TERMINATION
+                      This license becomes null and void if any of the above conditions are
+                      not met.
+
+                      DISCLAIMER
+                      THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+                      EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+                      MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+                      OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+                      COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+                      INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+                      DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+                      FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+                      OTHER DEALINGS IN THE FONT SOFTWARE.
+                    </pre>
+                </details>
+              </div>
+            </div>
+-->
+          </div>
+        </form>
+      </main>
+
+    </div>
+  </div>
+  <div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
+  </div>
+</body>
+</html>
