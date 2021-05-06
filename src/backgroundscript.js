@@ -44,11 +44,12 @@ import OptionsStorePromise from "./options/options-storage.js"
     const appManifest = messenger.runtime.getManifest();
     const win = await messenger.windows.getCurrent();
     const winId = win.id;
-    let onboardUrl = new URL(messenger.runtime.getURL("/mdh-revival.html"));
+    let onboardUrl = new URL(messenger.runtime.getURL("/options/options.html"));
     let callback;
     OptionsStore.getAll().then(options => {
       switch (details.reason) {
         case "install":
+          onboardUrl.searchParams.set("action", "install")
           callback = installCallback;
           break;
         case "update":

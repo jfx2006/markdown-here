@@ -157,7 +157,7 @@
     "description": "section title"
   },
   "options_page__syntax_highlighting_theme_label": {
-    "message": "Theme:",
+    "message": "Theme",
     "description": "label for the syntax highlighting theme combox box"
   },
   "options_page__preview_title": {
