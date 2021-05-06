@@ -64,6 +64,10 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
       await loadChangeList()
       let rv = await OptionsStore.get("hotkey-input")
       document.getElementById("hotkey-display-str").innerText = rv["hotkey-input"]
+      if (document.location.hash === "#quickstart") {
+        document.getElementById("options").classList.remove("active show")
+        document.getElementById("docs").classList.add("active show")
+      }
     }
 
     form.addEventListener("hotkey", handleHotKey)

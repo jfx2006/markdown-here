@@ -49,7 +49,7 @@ import OptionsStorePromise from "./options/options-storage.js"
     OptionsStore.getAll().then(options => {
       switch (details.reason) {
         case "install":
-          onboardUrl.searchParams.set("action", "install")
+          onboardUrl.hash = "#quickstart";
           callback = installCallback;
           break;
         case "update":
