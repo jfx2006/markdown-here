@@ -51,12 +51,10 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
     })
 
     for (const [name, filename] of Object.entries(SyntaxCSSStyles)) {
-      const opt= new Option(name, filename.toString())
+      const opt = new Option(name, filename.toString())
       cssSyntaxSelect.options.add(opt)
     }
 
-    cssSyntaxSelect.options.add(new Option(messenger.i18n.getMessage('currently_in_use'), ''))
-    cssSyntaxSelect.selectedIndex = cssSyntaxSelect.options.length - 1
     cssSyntaxSelect.addEventListener('change', cssSyntaxSelectChange)
 
     if (messenger !== undefined) {
@@ -126,18 +124,15 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
       })
   }
 
-  // The syntax hightlighting CSS combo-box selection changed.
+  // The syntax highlighting CSS combo-box selection changed.
   async function cssSyntaxSelectChange() {
+    if (cssSyntaxSelect.selectedIndex < 0) {
+      // This might be an upgrade from custom highlight CSS or possibly a removed
+      // color scheme, so just set a default (nnfx.css).
+      cssSyntaxSelect[65].selected = true
+    }
     const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value
-    if (!selected) {
-      // This probably indicates that the user selected the "currently in use"
-      // option, which is by definition what is in the edit box.
-      return
-    }
-    // Remove the "currently in use" option, since it doesn't make sense anymore.
-    if (!cssSyntaxSelect.options[cssSyntaxSelect.options.length-1].value) {
-      cssSyntaxSelect.options.length -= 1
-    }
+
     // Get the CSS for the selected theme.
     const url = messenger.runtime.getURL(`/highlightjs/styles/${selected}`)
     try {
