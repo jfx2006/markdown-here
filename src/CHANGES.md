@@ -1,3 +1,8 @@
+#### 2021-05-07: v3.2.1
+* Fix issue with syntax highlighting CSS when upgrading
+* Add default.css sha256 sum from v3.0.1
+* Misc update migration fixes
+
 #### 2021-05-07: v3.2.0
 * Fix accessibility issue in code blocks with default CSS
   [#14](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/14)

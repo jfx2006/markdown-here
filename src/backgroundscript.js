@@ -46,7 +46,7 @@ import OptionsStorePromise from "./options/options-storage.js"
 
     switch (details.reason) {
       case "install":
-        onboardUrl.hash = "#quickstart";
+        onboardUrl.hash = "#docs";
         callback = installCallback;
         break;
       case "update":
