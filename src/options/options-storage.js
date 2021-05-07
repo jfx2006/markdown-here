@@ -36,10 +36,14 @@ async function sha256Digest(text) {
 
 // Sha256 Checksums for old versions of default.css
 const OLD_CSS_SUMS = [
+  // 3.0.1
+  "bb5a0fd030d27ce58011d9250524c83f2cf1242b07f874496b394a7ea02c49c2",
+  // 3.1.0
   "72706d3e07c403c35688760180a753552af05c4ed2d5d1906dbf89b5c649342a",
 ]
 
 // Checksum of the current version of default.css
+// 3.2.0
 const DEFAULT_CSS_SUM = "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069"
 
 export const kOptDefaults = {
