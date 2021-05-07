@@ -1,4 +1,4 @@
-/* eslint-disable semi,no-undefined,no-param-reassign,no-shadow */
+/* eslint-disable no-undefined,no-param-reassign,no-shadow */
 /**
  * Throttle execution of a function. Especially useful for rate limiting
  * execution of handlers on events like resize and scroll.
@@ -45,14 +45,14 @@ function throttle(delay, noTrailing, callback, debounceMode) {
         var self = this;
         var elapsed = Date.now() - lastExec;
         if (!cancelled) {
-            debounceMode && !timeoutID &&
+            debounceMode && !timeoutID && 
             /*
        * Since `wrapper` is being called for the first time and
        * `debounceMode` is true (at begin), execute `callback`.
        */
             exec();
             clearExistingTimeout();
-            void 0 === debounceMode && elapsed > delay ?
+            void 0 === debounceMode && elapsed > delay ? 
             /*
        * In throttle mode, if `delay` time has been exceeded, execute
        * `callback`.
@@ -132,7 +132,7 @@ class InputReaders extends TypeRegistry {
         super(options);
         this.registerDefault((el => el.value));
         this.register("checkbox", (el => null !== el.getAttribute("value") ? el.checked ? el.getAttribute("value") : null : el.checked));
-        this.register("select", (el =>
+        this.register("select", (el => 
         /**
  * Read select values
  *
@@ -149,10 +149,10 @@ class InputReaders extends TypeRegistry {
             var max = one ? index + 1 : options.length;
             i = index < 0 ? max : one ? index : 0;
             // Loop through all the selected options
-                        for (;i < max; i++)
+                        for (;i < max; i++) 
             // Support: IE <=9 only
             // IE8-9 doesn't update selected after form reset
-            if (((option = options[i]).selected || i === index) &&
+            if (((option = options[i]).selected || i === index) && 
             // Don't return options that are disabled or in a disabled optgroup
             !option.disabled && !(option.parentNode.disabled && "optgroup" === option.parentNode.tagName.toLowerCase())) {
                 // Get the specific value for the option
@@ -189,7 +189,7 @@ var proto = "undefined" != typeof Element ? Element.prototype : {};
 
 var vendor = proto.matches || proto.matchesSelector || proto.webkitMatchesSelector || proto.mozMatchesSelector || proto.msMatchesSelector || proto.oMatchesSelector;
 
-var matchesSelector =
+var matchesSelector = 
 /**
  * Match `el` to `selector`.
  *
@@ -382,7 +382,7 @@ class OptionsSync {
     @constructor Returns an instance linked to the chosen storage.
     @param setup - Configuration for `webext-options-sync`
     */
-    constructor({defaults:
+    constructor({defaults: 
     // `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
     defaults = {}, migrations: migrations = [], logging: logging = true} = {}) {
         Object.defineProperty(this, "defaults", {
@@ -404,7 +404,7 @@ class OptionsSync {
             value: void 0
         });
         this.defaults = defaults;
-        this._handleFormInput = (delay = 300, atBegin = this._handleFormInput.bind(this),
+        this._handleFormInput = (delay = 300, atBegin = this._handleFormInput.bind(this), 
         void 0 === callback ? throttle(delay, atBegin, false) : throttle(delay, callback, false !== atBegin));
         var delay, atBegin, callback;
         this._handleStorageChangeOnForm = this._handleStorageChangeOnForm.bind(this);
@@ -510,9 +510,9 @@ class OptionsSync {
         void 0 === _keys && (_keys = Object.keys(this.defaults));
         "string" == typeof _keys && (_keys = [ _keys ]);
         const storage_results = await messenger.storage.sync.get(_keys);
-        for (const key of _keys)
+        for (const key of _keys) 
         // eslint-disable-next-line no-prototype-builtins
-        storage_results.hasOwnProperty(key) ||
+        storage_results.hasOwnProperty(key) || 
         // eslint-disable-next-line no-prototype-builtins
         this.defaults.hasOwnProperty(key) && (storage_results[key] = this.defaults[key]);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -541,13 +541,13 @@ class OptionsSync {
                 var _a;
                 const callback = installType => {
                     // Always run migrations during development #25
-                    if ("development" !== installType) {
-                        // Run migrations when the extension is installed or updated
-                        messenger.runtime.onInstalled.addListener((() => resolve(true)));
-                        // If `onInstalled` isn't fired, then migrations should not be run
-                                                setTimeout(resolve, 500, false);
-                    } else resolve(true);
-                };
+                    resolve("development" === installType || "install" === installType || "upgrade" === installType);
+                    // Run migrations when the extension is installed or updated
+                    // This broke other onInstalled functions!
+                    //messenger.runtime.onInstalled.addListener(() => resolve(true))
+                    // If `onInstalled` isn't fired, then migrations should not be run
+                    // setTimeout(resolve, 500, false)
+                                };
                 (null === (_a = messenger.management) || void 0 === _a ? void 0 : _a.getSelf) ? messenger.management.getSelf().then((r => callback(r.installType))) : callback("unknown");
             }));
         }()) return;
@@ -578,7 +578,7 @@ class OptionsSync {
         const currentFormState = this._parseForm(form);
         for (const [key, value] of Object.entries(options)) currentFormState[key] === value && delete options[key];
         const include = Object.keys(options);
-        include.length > 0 &&
+        include.length > 0 && 
         // Limits `deserialize` to only the specified fields. Without it, it will try to set the every field, even if they're missing from the supplied `options`
         deserialize(form, options, {
             include: include

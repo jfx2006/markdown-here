@@ -14,10 +14,7 @@
 import OptionsStorePromise from "./options/options-storage.js"
 
 (async () => {
-  let OptionsStore = await OptionsStorePromise;
   messenger.runtime.onInstalled.addListener(async (details) => {
-    //if (details.temporary) return; // skip during development
-
     function updateCallback(winId, url) {
       const message = Utils.getMessage("upgrade_notification_text");
       openNotification(winId,
@@ -27,7 +24,7 @@ import OptionsStorePromise from "./options/options-storage.js"
       ).then(rv => {
         if (rv === "ok") {
           messenger.tabs.create({
-            "url": onboardUrl.href,
+            "url": url.href,
             windowId: winId,
           });
         }
@@ -36,7 +33,7 @@ import OptionsStorePromise from "./options/options-storage.js"
 
     function installCallback(winId, url) {
       messenger.tabs.create({
-        "url": onboardUrl.href,
+        "url": url.href,
         windowId: winId,
       });
     }
@@ -46,22 +43,19 @@ import OptionsStorePromise from "./options/options-storage.js"
     const winId = win.id;
     let onboardUrl = new URL(messenger.runtime.getURL("/options/options.html"));
     let callback;
-    OptionsStore.getAll().then(options => {
-      switch (details.reason) {
-        case "install":
-          onboardUrl.hash = "#quickstart";
-          callback = installCallback;
-          break;
-        case "update":
-          if (typeof (options["last-version"] !== "undefined")) {
-            onboardUrl.searchParams.set("previousVersion", options["last-version"])
-          }
-          callback = updateCallback;
-          break;
-      }
-      OptionsStore.set({ 'last-version': appManifest.version }).then(() => {
-        callback(winId, onboardUrl);
-      });
+
+    switch (details.reason) {
+      case "install":
+        onboardUrl.hash = "#quickstart";
+        callback = installCallback;
+        break;
+      case "update":
+        onboardUrl.searchParams.set("previousVersion", details.previousVersion)
+        callback = updateCallback;
+        break;
+    }
+    OptionsStore.set({ 'last-version': appManifest.version }).then(() => {
+      callback(winId, onboardUrl);
     });
   });
 
@@ -176,10 +170,76 @@ import OptionsStorePromise from "./options/options-storage.js"
     }
   })
 
-// Defining a onDismissed listener
+  // Defining a onDismissed listener
   messenger.notificationbar.onDismissed.addListener((windowId, notificationId) => {
     console.log(`notification ${notificationId} in window ${windowId} was dismissed`);
   })
+
+  // Add the composeAction (the button in the format toolbar) listener.
+  messenger.composeAction.onClicked.addListener(tab => {
+    messenger.tabs.sendMessage(tab.id, { action: 'button-click', })
+  });
+
+  // Mail Extensions are not able to add composeScripts via manifest.json,
+  // they must be added via the API.
+  await messenger.composeScripts.register({
+    "js": [
+      { file: "utils.js" },
+      { file: "common-logic.js" },
+      { file: "jsHtmlToText.js" },
+      { file: "marked.js" },
+      { file: "mdh-html-to-text.js" },
+      { file: "markdown-here.js" },
+      { file: "composescript.js" }
+    ]
+  })
+
+  messenger.commands.onCommand.addListener(function(command) {
+    if (command === "toggle-markdown") {
+      messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
+        .then(wins => {
+          for (const win of wins) {
+            if (win.focused) {
+              messenger.tabs.sendMessage(win.tabs[0].id, { action: 'hotkey', });
+            }
+          }
+
+        })
+    }
+  })
+
+  messenger.compose.onBeforeSend.addListener(async function(tab) {
+    let rv;
+    let forgotToRenderCheckEnabled = await forgotToRenderEnabled();
+    if (!forgotToRenderCheckEnabled) {
+      return Promise.resolve();
+    }
+
+    let isMarkdown = await messenger.tabs.sendMessage(
+      tab.id, { action: "check-forgot-render" })
+    if (isMarkdown) {
+      const message = `${Utils.getMessage("forgot_to_render_prompt_info")}
+          ${Utils.getMessage("forgot_to_render_prompt_question")}`;
+
+      rv = await openNotification(tab.windowId,
+        message,
+        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+        [
+          Utils.getMessage("forgot_to_render_send_button"),
+          Utils.getMessage("forgot_to_render_back_button")
+        ]
+      );
+    }
+    else {
+      rv = "ok";
+    }
+    if (rv === "ok") {
+      return Promise.resolve();
+    }
+    else {
+      return Promise.resolve({ cancel: true })
+    }
+  });
 
   async function openNotification(windowId, message, priority, button_labels) {
     async function notificationClose(notificationId) {
@@ -226,47 +286,7 @@ import OptionsStorePromise from "./options/options-storage.js"
     return await notificationClose(notificationId);
   }
 
-  // Show the shortcut hotkey on the ComposeAction button
-  async function updateActionTooltip() {
-    const hotkey = await OptionsStore.get("hotkey-input")
-    const msg = messenger.i18n.getMessage("toggle_button_tooltip")
-    await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
-  }
-  await updateActionTooltip()
-
-// Add the composeAction (the button in the format toolbar) listener.
-  messenger.composeAction.onClicked.addListener(tab => {
-    messenger.tabs.sendMessage(tab.id, { action: 'button-click', })
-  });
-
-// Mail Extensions are not able to add composeScripts via manifest.json,
-// they must be added via the API.
-  messenger.composeScripts.register({
-    "js": [
-      { file: "utils.js" },
-      { file: "common-logic.js" },
-      { file: "jsHtmlToText.js" },
-      { file: "marked.js" },
-      { file: "mdh-html-to-text.js" },
-      { file: "markdown-here.js" },
-      { file: "composescript.js" }
-    ]
-  })
-
-
-  messenger.commands.onCommand.addListener(function(command) {
-    if (command === "toggle-markdown") {
-      messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
-        .then(wins => {
-          for (const win of wins) {
-            if (win.focused) {
-              messenger.tabs.sendMessage(win.tabs[0].id, { action: 'hotkey', });
-            }
-          }
-
-        })
-    }
-  })
+  let OptionsStore = await OptionsStorePromise;
 
   function forgotToRenderEnabled() {
     return new Promise(resolve => {
@@ -278,36 +298,12 @@ import OptionsStorePromise from "./options/options-storage.js"
     });
   }
 
-  messenger.compose.onBeforeSend.addListener(async function(tab) {
-    let rv;
-    let forgotToRenderCheckEnabled = await forgotToRenderEnabled();
-    if (!forgotToRenderCheckEnabled) {
-      return Promise.resolve();
-    }
+  // Show the shortcut hotkey on the ComposeAction button
+  async function updateActionTooltip() {
+    const hotkey = await OptionsStore.get("hotkey-input")
+    const msg = messenger.i18n.getMessage("toggle_button_tooltip")
+    await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
+  }
+  await updateActionTooltip();
 
-    let isMarkdown = await messenger.tabs.sendMessage(
-      tab.id, { action: "check-forgot-render" })
-    if (isMarkdown) {
-      const message = `${Utils.getMessage("forgot_to_render_prompt_info")}
-          ${Utils.getMessage("forgot_to_render_prompt_question")}`;
-
-      rv = await openNotification(tab.windowId,
-        message,
-        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-        [
-          Utils.getMessage("forgot_to_render_send_button"),
-          Utils.getMessage("forgot_to_render_back_button")
-        ]
-      );
-    }
-    else {
-      rv = "ok";
-    }
-    if (rv === "ok") {
-      return Promise.resolve();
-    }
-    else {
-      return Promise.resolve({ cancel: true })
-    }
-  });
 })();
