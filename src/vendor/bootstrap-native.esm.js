@@ -1,5 +1,5 @@
 /*!
-  * Native JavaScript for Bootstrap v3.0.14f (https://thednp.github.io/bootstrap.native/)
+  * Native JavaScript for Bootstrap v3.0.15 (https://thednp.github.io/bootstrap.native/)
   * Copyright 2015-2021 © dnp_theme
   * Licensed under MIT (https://github.com/thednp/bootstrap.native/blob/master/LICENSE)
   */
@@ -15,13 +15,14 @@ function getElementTransitionDuration(element) {
   var computedStyle = getComputedStyle(element),
       propertyValue = computedStyle[transitionProperty],
       durationValue = computedStyle[transitionDuration],
-      durationScale = durationValue.includes('ms') ? 1 : 1000,
+      durationScale = durationValue.indexOf('ms') > -1 ? 1 : 1000,
       duration = supportTransition && propertyValue && propertyValue !== 'none' 
                ? parseFloat( durationValue ) * durationScale : 0;
 
   return !isNaN(duration) ? duration : 0
 }
 
+// emulateTransitionEnd
 function emulateTransitionEnd(element,handler){ 
   var called = 0, 
       endEvent = new Event( transitionEndEvent ),
@@ -274,11 +275,9 @@ function Button(element) {
 
 var mouseHoverEvents = ('onmouseleave' in document) ? [ 'mouseenter', 'mouseleave'] : [ 'mouseover', 'mouseout' ];
 
-var addEventListener = 'addEventListener';
-
-var removeEventListener = 'removeEventListener';
-
+// determine support for passive events
 var supportPassive = (function () {
+  // Test via a getter in the options object to see if the passive property is accessed
   var result = false;
   try {
     var opts = Object.defineProperty({}, 'passive', {
@@ -286,8 +285,8 @@ var supportPassive = (function () {
         result = true;
       }
     });
-    document[addEventListener]('DOMContentLoaded', function wrap(){
-      document[removeEventListener]('DOMContentLoaded', wrap, opts);
+    document.addEventListener('DOMContentLoaded', function wrap(){
+      document.removeEventListener('DOMContentLoaded', wrap, opts);
     }, opts);
   } catch (e) {}
 
@@ -2297,7 +2296,7 @@ function removeDataAPI(lookUp) {
   }  
 }
 
-var version = "3.0.14f";
+var version = "3.0.15";
 
 var index = {
   Alert: Alert,

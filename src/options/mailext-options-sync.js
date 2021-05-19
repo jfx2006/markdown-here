@@ -520,7 +520,7 @@ class OptionsSync {
                 return storage_results;
     }
     async _setAll(newOptions) {
-        OptionsSync._log("log", "Saving options", newOptions);
+        // OptionsSync._log("log", "Saving options", newOptions)
         return new Promise(((resolve, reject) => {
             messenger.storage.sync.set(newOptions).then((() => {
                 messenger.runtime.lastError ? reject(messenger.runtime.lastError) : resolve();
@@ -528,7 +528,7 @@ class OptionsSync {
         }));
     }
     async _remove(_key) {
-        OptionsSync._log("log", "Resetting options", _key);
+        // OptionsSync._log("log", "Resetting options", _key)
         return new Promise(((resolve, reject) => {
             messenger.storage.sync.remove(_key).then((() => {
                 messenger.runtime.lastError ? reject(messenger.runtime.lastError) : resolve();
@@ -553,10 +553,8 @@ class OptionsSync {
         }()) return;
         const options = await this._get();
         const initial = JSON.stringify(options);
-        OptionsSync._log("log", "Found these stored options", {
-            ...options
-        });
-        OptionsSync._log("info", "Will run", migrations.length, 1 === migrations.length ? "migration" : " migrations");
+        //OptionsSync._log("log", "Found these stored options", { ...options })
+                OptionsSync._log("info", "Will run", migrations.length, 1 === migrations.length ? "migration" : " migrations");
         migrations.forEach((migrate => migrate(options, this.defaults)));
         // Only save to storage if there were any changes
                 initial !== JSON.stringify(options) && await this._setAll(options);
