@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+	"project": "./tsconfig.json",
+    "sourceType": "module",
+    "ecmaVersion": 11
+  },
+  "plugins": [
+	"@typescript-eslint",
+	"prettier"
+  ],
+  "extends": [
+    "plugin:no-unsanitized/DOM",
+	"eslint:recommended",
+	"plugin:@typescript-eslint/eslint-recommended",
+	"plugin:@typescript-eslint/recommended",
+	"prettier/@typescript-eslint",
+	"prettier"
+  ],
+  "rules": {
+    "semi": [2, "never"]
+  }
+}

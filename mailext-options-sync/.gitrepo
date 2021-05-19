@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/jfx2006/mailext-options-sync
+	branch = jfx
+	commit = f332e3c01e16ae91fe715419c19b0a5db5ecc566
+	parent = bff2bda9d2496f8574322736654b66ce5d1a37df
+	method = merge
+	cmdver = 0.4.3

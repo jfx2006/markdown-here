@@ -1,0 +1,13 @@
+{
+	"extends": "@sindresorhus/tsconfig",
+	"compilerOptions": {
+		"target": "es2018",
+		"module": "esnext",
+	  	"typeRoots": ["node_modules/@types"]
+	},
+	"files": [
+	    "mail-ext-types.d.ts",
+		"globals.d.ts",
+		"index.ts"
+	]
+}
