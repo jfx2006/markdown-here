@@ -22,6 +22,7 @@ is used.
 
 Options UI pages:
 https://gitlab.com/jfx2006/mailext-options-sync/-/raw/f332e3c01e16ae91fe715419c19b0a5db5ecc566/mailext-options-sync.js
+Sources uploaded as well
 https://raw.githubusercontent.com/thednp/bootstrap.native/3.0.15/dist/bootstrap-native.esm.js
 https://bootswatch.com/5/darkly/bootstrap.css
 Parts of shortcuts.js from Firefox source code:
@@ -34,3 +35,13 @@ https://raw.githubusercontent.com/jashkenas/underscore/1.12.0/underscore.js
 https://raw.githubusercontent.com/chaijs/chai/4.3.1/chai.js
 https://code.jquery.com/jquery.slim.js
 
+Building mailext-options-sync
+I use nodejs v14.16.0, npm 6.14.11
+
+- Unpack source tar file
+- cd mailext-options-sync
+- npm install
+- npm run build
+
+The build should produce mailext-options-sync.js.
+That file is copied to src/options/mailext-options-sync.js
