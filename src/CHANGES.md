@@ -1,3 +1,6 @@
+#### 2021-05-19: v3.2.2
+* ATN review comments addressed
+
 #### 2021-05-07: v3.2.1
 * Fix issue with syntax highlighting CSS when upgrading
 * Add default.css sha256 sum from v3.0.1
