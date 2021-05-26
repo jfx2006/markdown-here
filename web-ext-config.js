@@ -4,8 +4,8 @@ module.exports = {
     // Command options:
     build: {
         overwriteDest: true,
+	filename: "{name}-{version}.xpi",
     },
-    filename: "{name}-{version}.xpi",
     sourceDir: "src",
     ignoreFiles: [
       "**/test",
