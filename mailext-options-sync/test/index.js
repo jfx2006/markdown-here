@@ -1,7 +1,6 @@
-import './_fixtures';
+import './_fixtures.js';
 import test from 'ava';
-import {compressToEncodedURIComponent} from 'lz-string';
-import OptionsSync from '..';
+import OptionsSync from '../mailext-options-sync.js';
 
 OptionsSync.prototype._log = () => {};
 
@@ -9,14 +8,9 @@ function flattenInstance(setup) {
 	return JSON.parse(JSON.stringify(setup));
 }
 
-function compressOptions(options) {
-	return compressToEncodedURIComponent(JSON.stringify(options));
-}
-
 const defaultSetup = {
 	_migrations: {},
 	defaults: {},
-	storageName: 'options'
 };
 
 const simpleSetup = {
@@ -25,15 +19,15 @@ const simpleSetup = {
 		color: 'red',
 		sound: true
 	},
-	storageName: 'settings'
 };
 
 test.beforeEach(() => {
 	chrome.flush();
-	chrome.storage.sync.set.yields(undefined);
-	chrome.management.getSelf.yields({
+	chrome.storage.sync.set.resolves(undefined);
+	chrome.management.getSelf.resolves({
 		installType: 'development'
 	});
+
 });
 
 test.serial('basic usage', t => {
@@ -42,18 +36,14 @@ test.serial('basic usage', t => {
 });
 
 test.serial('getAll returns empty object when storage is empty', async t => {
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({});
+	chrome.storage.sync.get.resolves({});
 
 	const storage = new OptionsSync();
 	t.deepEqual(await storage.getAll(), {});
 });
 
 test.serial('getAll returns defaults when storage is empty', async t => {
-	chrome.storage.sync.get
-		.withArgs('settings')
-		.yields({});
+	chrome.storage.sync.get.resolves({});
 
 	const storage = new OptionsSync(simpleSetup);
 	t.deepEqual(await storage.getAll(), simpleSetup.defaults);
@@ -65,9 +55,7 @@ test.serial('getAll returns saved options', async t => {
 		people: 3
 	};
 
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({options: compressOptions(previouslySavedOptions)});
+	chrome.storage.sync.get.resolves(previouslySavedOptions);
 
 	const storage = new OptionsSync();
 	t.deepEqual(await storage.getAll(), previouslySavedOptions);
@@ -79,9 +67,7 @@ test.serial('getAll returns saved legacy options', async t => {
 		people: 3
 	};
 
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({options: previouslySavedOptions});
+	chrome.storage.sync.get.resolves(previouslySavedOptions);
 
 	const storage = new OptionsSync();
 	t.deepEqual(await storage.getAll(), previouslySavedOptions);
@@ -93,9 +79,7 @@ test.serial('getAll merges saved options with defaults', async t => {
 		people: 3
 	};
 
-	chrome.storage.sync.get
-		.withArgs('settings')
-		.yields({settings: compressOptions(previouslySavedOptions)});
+	chrome.storage.sync.get.resolves(previouslySavedOptions);
 
 	const storage = new OptionsSync(simpleSetup);
 	t.deepEqual(await storage.getAll(), {
@@ -114,45 +98,23 @@ test.serial('setAll', async t => {
 	const storage = new OptionsSync();
 	await storage.setAll(newOptions);
 	t.true(chrome.storage.sync.set.calledOnce);
-	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], {
-		options: compressOptions(newOptions)
-	});
-});
-
-test.serial('setAll skips defaults', async t => {
-	const newOptions = {
-		name: 'Rico',
-		people: 3
-	};
-
-	const storage = new OptionsSync(simpleSetup);
-	await storage.setAll({...newOptions, sound: true});
-	t.true(chrome.storage.sync.set.calledOnce);
-	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], {
-		settings: compressOptions(newOptions)
-	});
+	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], newOptions);
 });
 
 test.serial('set merges with existing data', async t => {
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({options: {size: 30}});
+	chrome.storage.sync.get.resolves({size: 30});
 
 	const storage = new OptionsSync();
 	await storage.set({sound: false});
 	t.is(chrome.storage.sync.set.callCount, 1);
 	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], {
-		options: compressOptions({
-			size: 30,
-			sound: false
-		})
+		size: 30,
+		sound: false
 	});
 });
 
 test.serial('migrations alter the stored options', async t => {
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({options: {size: 30}});
+	chrome.storage.sync.get.resolves({size: 30});
 
 	const storage = new OptionsSync({
 		migrations: [
@@ -169,16 +131,12 @@ test.serial('migrations alter the stored options', async t => {
 
 	t.is(chrome.storage.sync.set.callCount, 1);
 	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], {
-		options: compressOptions({
 			minSize: 30
-		})
-	});
+		});
 });
 
 test.serial('migrations shouldn’t trigger updates if they don’t change anything', async t => {
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({});
+	chrome.storage.sync.get.resolves({});
 
 	const storage = new OptionsSync({
 		migrations: [
@@ -192,21 +150,15 @@ test.serial('migrations shouldn’t trigger updates if they don’t change anyth
 });
 
 test.serial('migrations are completed before future get/set operations', async t => {
-	chrome.storage.sync.get
-		.withArgs('options')
-		.yields({});
+	chrome.storage.sync.get.resolves({});
 
 	const storage = new OptionsSync({
 		migrations: [
 			savedOptions => {
 				savedOptions.foo = 'bar';
-				chrome.storage.sync.get
-					.withArgs('options')
-					.yields({
-						options: {
-							foo: 'bar'
-						}
-					});
+				chrome.storage.sync.get.resolves({
+						foo: 'bar'
+						});
 			}
 		]
 	});
@@ -217,13 +169,9 @@ test.serial('migrations are completed before future get/set operations', async t
 });
 
 test.serial('removeUnused migration works', async t => {
-	chrome.storage.sync.get
-		.withArgs('settings')
-		.yields({
-			settings: {
+	chrome.storage.sync.get.resolves({
 				size: 30, // Unused
 				sound: false // Non-default
-			}
 		});
 
 	const storage = new OptionsSync(simpleSetup);
@@ -233,9 +181,8 @@ test.serial('removeUnused migration works', async t => {
 
 	t.is(chrome.storage.sync.set.callCount, 1);
 	t.deepEqual(chrome.storage.sync.set.firstCall.args[0], {
-		settings: compressOptions({
-			sound: false
-		})
+		color: 'red',
+		sound: false
 	});
 });
 
