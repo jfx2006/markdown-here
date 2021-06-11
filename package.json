@@ -1,7 +1,7 @@
 {
   "name": "markdown-here-revival",
-  "version": "3.1.1",
-  "description": "",
+  "version": "3.2.3",
+  "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build",
     "lint": "eslint ."
@@ -10,11 +10,11 @@
   "author": "JFX",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^7.2.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-no-unsanitized": "^3.1.4",
     "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "^2.2.1",
+    "prettier": "^2.3.1",
     "web-ext": "^6.1.0"
   }
 }

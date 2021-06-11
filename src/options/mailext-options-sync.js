@@ -185,27 +185,6 @@ function keySplitter(key) {
     return matches;
 }
 
-var proto = "undefined" != typeof Element ? Element.prototype : {};
-
-var vendor = proto.matches || proto.matchesSelector || proto.webkitMatchesSelector || proto.mozMatchesSelector || proto.msMatchesSelector || proto.oMatchesSelector;
-
-var matchesSelector = 
-/**
- * Match `el` to `selector`.
- *
- * @param {Element} el
- * @param {String} selector
- * @return {Boolean}
- * @api public
- */
-function(el, selector) {
-    if (!el || 1 !== el.nodeType) return false;
-    if (vendor) return vendor.call(el, selector);
-    var nodes = el.parentNode.querySelectorAll(selector);
-    for (var i = 0; i < nodes.length; i++) if (nodes[i] == el) return true;
-    return false;
-};
-
 function getElementType(el) {
     let typeAttr;
     let tagName = el.tagName;
@@ -226,7 +205,7 @@ function getInputElements(element, options) {
         let foundInExclude = -1 !== (options.exclude || []).indexOf(identifier);
         let foundInIgnored = false;
         let reject = false;
-        if (options.ignoredTypes) for (let selector of options.ignoredTypes) matchesSelector(el, selector) && (foundInIgnored = true);
+        if (options.ignoredTypes) for (let selector of options.ignoredTypes) el.matches(selector) && (foundInIgnored = true);
         reject = !foundInInclude && (!!options.include || (foundInExclude || foundInIgnored));
         return !reject;
     }));
@@ -536,7 +515,7 @@ class OptionsSync {
         }));
     }
     async _runMigrations(migrations) {
-        if (0 === migrations.length || !(_isExtensionContext && void 0 !== _backgroundPage && _backgroundPage === globalWindow) || !await async function() {
+        if (0 === migrations.length || !("1234" === global.location.host || _isExtensionContext && void 0 !== _backgroundPage && _backgroundPage === globalWindow) || !await async function() {
             return new Promise((resolve => {
                 var _a;
                 const callback = installType => {
