@@ -34,9 +34,14 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
   async function onOptionsLoaded() {
     savedMsgToast = new BSN.Toast("#saved-msg")
 
+    const tests_link = document.getElementById("tests-link")
     const optTabs = document.getElementById("optionsTabList")
     const optTabLinks = optTabs.getElementsByTagName("a")
     Array.from(optTabLinks).map(tab => new BSN.Tab(tab, {}))
+
+    tests_link.addEventListener("click", function(e) {
+      messenger.tabs.create({url: tests_link.getAttribute("href")})
+    })
 
     document.getElementById("copyVersionToClipboard").addEventListener('click', function(e) {
       e.preventDefault()
@@ -153,6 +158,5 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
     }
   }
 
-  // window.addEventListener('load', onOptionsLoaded)
   await onOptionsLoaded()
 })()

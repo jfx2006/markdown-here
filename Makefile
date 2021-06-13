@@ -1,4 +1,8 @@
 
+all: src/options/mailext-options-sync.js
+	npm install
+	npm run build
+
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
 
@@ -7,11 +11,6 @@ mailext-options-sync/mailext-options-sync.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
 
 src/options/mailext-options-sync.js: mailext-options-sync/mailext-options-sync.js
 	cp -v $< $@
-
-
-all: src/options/mailext-options-sync.js
-	npm install
-	npm run build
 
 clean:
 	rm -f mailext-options-sync/mailext-options-sync.js

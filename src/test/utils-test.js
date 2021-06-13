@@ -247,25 +247,25 @@ describe('Utils', function() {
 
   describe('getLocalFile', function() {
     it('should return correct data', function(done) {
-      // We "know" our logo file starts with this string when base64'd
-      var KNOWN_PREFIX = '<!DOCTYPE html>';
-      var callback = function(data) {
+      // We "know" our options.html file starts with this string
+      const KNOWN_PREFIX = '<html lang="en">';
+      const callback = function(data) {
         expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
         done();
       };
 
-      Utils.getLocalFile('/options.html', 'text/html', callback);
+      Utils.getLocalFile('/../options/options.html', 'text/html', callback);
     });
 
     it('should correctly handle absence of optional argument', function(done) {
       // We "know" our options.html file starts with this string
-      var KNOWN_PREFIX = '<!DOCTYPE html>';
-      var callback = function(data) {
+      const KNOWN_PREFIX = '<html lang="en">';
+      const callback = function(data) {
         expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
         done();
       };
 
-      Utils.getLocalFile('/options.html', callback);
+      Utils.getLocalFile('/../options/options.html', callback);
     });
 
     it('should supply an error arg to callback if file not found', function(done) {
@@ -303,13 +303,13 @@ describe('Utils', function() {
       // It would be tough to test otherwise without replicating the internal
       // logic of the function.
 
-      var KNOWN_PREFIX = '<!DOCTYPE html>';
-      var callback = function(data) {
+      const KNOWN_PREFIX = '<html lang="en">';
+      const callback = function(data) {
         expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
         done();
       };
 
-      var url = Utils.getLocalURL('/options.html');
+      const url = Utils.getLocalURL('/../options/options.html');
       Utils.getLocalFile(url, 'text/html', callback);
     });
   });
@@ -352,13 +352,13 @@ describe('Utils', function() {
     })
 
     it('should communicate with background script (with arg)', function(done) {
-      const args = { "arg1": "value1" }
+      const args = { "argument": "value1" }
       Utils.makeRequestToBGScript(
         "test-bg-request", args)
         .then((response) => {
           expect(response[0]).to.equal('test-bg-request');
           expect(response[1]).to.equal('test-bg-request-ok');
-          expect(response[2]).to.equal(args)
+          expect(response[2]).to.equal("value1");
           done();
         })
     })

@@ -76,7 +76,7 @@ describe('Markdown-Render', function() {
       expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
 
       md = '```\n[a](b)\n```';
-      target = '<pre><code>[a](b)\n</code></pre>';
+      target = '<pre><code>[a](b)\n</code></pre>\n';
       expect(MarkdownRender.markdownRender(md, userprefs, marked, hljs)).to.equal(target);
     });
 
@@ -280,7 +280,7 @@ describe('Markdown-Render', function() {
       expect(fullRender(md)).to.equal(target);
 
       md = '```<br>[a](b)<br>```';
-      target = '<pre><code>[a](b)\n</code></pre>';
+      target = '<pre><code>[a](b)\n</code></pre>\n';
       expect(fullRender(md)).to.equal(target);
     });
 

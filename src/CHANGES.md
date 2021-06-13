@@ -1,3 +1,12 @@
+#### 2021-06-13: v3.2.4
+* Fix the test link in the options page
+* Fix some broken tests
+* Update mailext-options-sync to 2.1.2 (fix issue with detecting background page
+  in nodejs/ava environment vs the browser/extension environment)
+
+#### 2021-06-11: v3.2.3
+* Update mailext-options-sync.js to 2.1.1 (its internal tests pass again)
+
 #### 2021-05-19: v3.2.2
 * ATN review comments addressed
 
