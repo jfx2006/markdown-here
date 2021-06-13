@@ -1,4 +1,5 @@
-/* Modified version of webext-options-sync from
+/*@license
+  Modified version of webext-options-sync from
   https://github.com/fregante/webext-options-sync
 
   Renamed chrome.* to messenger.*
@@ -6,25 +7,10 @@
   Remove lz4 compression
  */
 
-import { debounce } from "throttle-debounce"
+import {debounce} from "throttle-debounce"
 import serialize from "dom-form-serializer/lib/serialize"
 import deserialize from "dom-form-serializer/lib/deserialize"
-
-const _backgroundPage = messenger.extension.getBackgroundPage?.()
-const _isExtensionContext =
-	typeof messenger === "object" &&
-	messenger &&
-	typeof messenger.extension === "object"
-const globalWindow = typeof window === "object" ? window : undefined
-
-function isBackgroundPage(): boolean {
-	if (global.location.host==="1234") return true  // AVA tests
-	return (
-		_isExtensionContext &&
-		_backgroundPage !== undefined &&
-		_backgroundPage === globalWindow
-	)
-}
+import {isBackgroundPage} from "webext-detect-page"
 
 async function shouldRunMigrations(): Promise<boolean> {
 	return new Promise((resolve) => {
@@ -72,7 +58,7 @@ async function shouldRunMigrations(): Promise<boolean> {
 		}
 	],
 }
-*/
+ */
 export interface Setup<TOptions extends Options> {
 	logging?: boolean;
 	defaults?: TOptions;
@@ -84,7 +70,7 @@ export interface Setup<TOptions extends Options> {
 
 /**
 A map of options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-*/
+ */
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style -- Interfaces are extendable
 export interface Options {
 	[key: string]: string | number | boolean;
@@ -102,7 +88,7 @@ class OptionsSync<TOptions extends Options> {
 	public static migrations = {
 		/**
 		Helper method that removes any option that isn't defined in the defaults. It's useful to avoid leaving old options taking up space.
-		*/
+		 */
 		removeUnused(options: Options, defaults: Options) {
 			for (const key of Object.keys(options)) {
 				if (!(key in defaults)) {
@@ -121,13 +107,13 @@ class OptionsSync<TOptions extends Options> {
 	/**
 	@constructor Returns an instance linked to the chosen storage.
 	@param setup - Configuration for `webext-options-sync`
-	*/
+	 */
 	constructor({
-		// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
-		defaults = {} as TOptions,
-		migrations = [],
-		logging = true,
-	}: Setup<TOptions> = {}) {
+					// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
+					defaults = {} as TOptions,
+					migrations = [],
+					logging = true,
+				}: Setup<TOptions> = {}) {
 		this.defaults = defaults
 		this._handleFormInput = debounce(300, this._handleFormInput.bind(this))
 		this._handleStorageChangeOnForm = this._handleStorageChangeOnForm.bind(
@@ -136,7 +122,8 @@ class OptionsSync<TOptions extends Options> {
 
 		if (!logging) {
 			// eslint-disable-next-line @typescript-eslint/no-empty-function
-			OptionsSync._log = () => {}
+			OptionsSync._log = () => {
+			}
 		}
 
 		this._migrations = this._runMigrations(migrations)
@@ -155,7 +142,7 @@ class OptionsSync<TOptions extends Options> {
 	if (options.color) {
 		document.body.style.color = color;
 	}
-	*/
+	 */
 	async getAll(): Promise<TOptions> {
 		await this._migrations
 		return this._get()
@@ -184,7 +171,7 @@ class OptionsSync<TOptions extends Options> {
 	Overrides **all** the options stored with your `options`.
 
 	@param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-	*/
+	 */
 	async setAll(newOptions: TOptions): Promise<void> {
 		await this._migrations
 		return this._setAll(newOptions)
@@ -194,9 +181,9 @@ class OptionsSync<TOptions extends Options> {
 	Merges new options with the existing stored options.
 
 	@param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-	*/
+	 */
 	async set(newOptions: Partial<TOptions>): Promise<void> {
-		return this.setAll({ ...(await this.getAll()), ...newOptions })
+		return this.setAll({...(await this.getAll()), ...newOptions})
 	}
 
 	/**
@@ -222,7 +209,7 @@ class OptionsSync<TOptions extends Options> {
 
 	@param form - The `<form>` that needs to be synchronized or a CSS selector (one element).
 	The form fields' `name` attributes will have to match the option names.
-	*/
+	 */
 	async syncForm(form: string | HTMLFormElement): Promise<void> {
 		this._form =
 			form instanceof HTMLFormElement
@@ -237,7 +224,7 @@ class OptionsSync<TOptions extends Options> {
 
 	/**
 	Removes any listeners added by `syncForm`
-	*/
+	 */
 	async stopSyncForm(): Promise<void> {
 		if (this._form) {
 			this._form.removeEventListener("input", this._handleFormInput)
@@ -331,7 +318,7 @@ class OptionsSync<TOptions extends Options> {
 		}
 	}
 
-	private async _handleFormInput({ target }: Event): Promise<void> {
+	private async _handleFormInput({target}: Event): Promise<void> {
 		const field = target as HTMLInputElement
 		if (!field.name) {
 			return
@@ -361,7 +348,7 @@ class OptionsSync<TOptions extends Options> {
 		const include = Object.keys(options)
 		if (include.length > 0) {
 			// Limits `deserialize` to only the specified fields. Without it, it will try to set the every field, even if they're missing from the supplied `options`
-			deserialize(form, options, { include })
+			deserialize(form, options, {include})
 		}
 	}
 
@@ -376,7 +363,7 @@ class OptionsSync<TOptions extends Options> {
 			}
 		}
 
-		return serialize(form, { include })
+		return serialize(form, {include})
 	}
 
 	private _handleStorageChangeOnForm(

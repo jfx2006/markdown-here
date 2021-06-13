@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://gitlab.com/jfx2006/mailext-options-sync
 	branch = jfx
-	commit = d12ca2446ab2459c78f6b6f38b23d151ec8deeea
-	parent = 95d33d9d8f2f799e7495754af15ce2c6109be410
+	commit = 328f1f1dbeeedf7a4cb04f9699554617cd227411
+	parent = 269268387e9a69751230c025e993944e74a32b2f
 	method = merge
 	cmdver = 0.4.3
