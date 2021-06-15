@@ -6,9 +6,6 @@ That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
 marked.js
-I downloaded from the git repository since the Marked.js
-documentation says to download from a CDN.... Version 2.0.1 is the latest
-as of Feb 28 2021.
 https://raw.githubusercontent.com/markedjs/marked/v2.0.1/lib/marked.js
 
 jsHtmlToText.js
@@ -42,5 +39,3 @@ https://raw.githubusercontent.com/jashkenas/underscore/1.12.0/underscore.js
 https://raw.githubusercontent.com/chaijs/chai/4.3.1/chai.js
 https://code.jquery.com/jquery-3.6.0.slim.js
 
-There is a Makefile in the root of the source tar file that will build mailext-options-sync and
-then MDHR itself via "make all".
