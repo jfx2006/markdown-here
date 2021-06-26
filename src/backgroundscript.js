@@ -281,7 +281,8 @@ import OptionsStorePromise from "./options/options-storage.js"
           id: "btn-cancel",
           label: button_labels[1]
         }
-      ]
+      ],
+      placement: "bottom",
     });
     return await notificationClose(notificationId);
   }

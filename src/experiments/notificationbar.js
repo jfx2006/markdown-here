@@ -129,7 +129,7 @@ class Notification {
               element.id = "extension-notification-bottom-box";
               element.setAttribute("notificationside", "bottom");
               if (statusbar) {
-                w.document.documentElement.insertBefore(element, statusbar);
+                statusbar.parentNode.insertBefore(element, statusbar);
               } else {
                 w.document.documentElement.append(element);
               }
