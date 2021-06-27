@@ -1,15 +1,15 @@
 :root {
-    --mdhr-background-color: var(--white);
-    --mdhr-card-background-color: var(--white);
+    --mdhr-background-color: var(--bs-white);
+    --mdhr-card-background-color: var(--bs-white);
     --mdhr-card-border-color: rgba(0,0,0,.125);
     --mdhr-card-header-color: #fafafa;
     --mdhr-container-border: 1px solid #ccc;
-    --mdhr-input-active-border-color: var(--info);
-    --mdhr-input-background-color: var(--white);
-    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-active-border-color: var(--bs-info);
+    --mdhr-input-background-color: var(--bs-white);
+    --mdhr-input-border: 1px solid var(--bs-primary);
     --mdhr-input-border-color: #292a2a;
     --mdhr-input-main-border-color: rgba(0,0,0,.125);
-    --mdhr-link-color: var(--green);
+    --mdhr-link-color: var(--bs-green);
     --mdhr-link-hover-color: #007053;
     --mdhr-sidebar-background-color: #27272a;
     --mdhr-table-border-color: rgb(222, 226, 230);
@@ -25,12 +25,12 @@
         --mdhr-card-border-color: #292a2a;
         --mdhr-card-header-color: #27272a;
         --mdhr-container-border: 1px solid #000;
-        --mdhr-input-active-border-color: var(--info);
+        --mdhr-input-active-border-color: var(--bs-info);
         --mdhr-input-background-color: #27272a;
-        --mdhr-input-border: 1px solid var(--primary);
+        --mdhr-input-border: 1px solid var(--bs-primary);
         --mdhr-input-border-color: #292a2a;
         --mdhr-input-main-border-color: #3b3d3c;
-        --mdhr-link-color: var(--green);
+        --mdhr-link-color: var(--bs-green);
         --mdhr-link-hover-color: #007053;
         --mdhr-table-border-color: #a0a0a0;
         --mdhr-table-hover-color: #474948;
@@ -46,12 +46,12 @@
     --mdhr-card-border-color: #292a2a;
     --mdhr-card-header-color: #27272a;
     --mdhr-container-border: 1px solid #000;
-    --mdhr-input-active-border-color: var(--info);
+    --mdhr-input-active-border-color: var(--bs-info);
     --mdhr-input-background-color: #27272a;
-    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-border: 1px solid var(--bs-primary);
     --mdhr-input-border-color: #292a2a;
     --mdhr-input-main-border-color: #3b3d3c;
-    --mdhr-link-color: var(--green);
+    --mdhr-link-color: var(--bs-green);
     --mdhr-link-hover-color: #007053;
     --mdhr-table-border-color: #a0a0a0;
     --mdhr-table-hover-color: #474948;
@@ -60,17 +60,17 @@
 }
 
 [data-color-theme='light'] {
-    --mdhr-background-color: var(--white);
-    --mdhr-card-background-color: var(--white);
+    --mdhr-background-color: var(--bs-white);
+    --mdhr-card-background-color: var(--bs-white);
     --mdhr-card-border-color: rgba(0,0,0,.125);
     --mdhr-card-header-color: #fafafa;
     --mdhr-container-border: 1px solid #ccc;
-    --mdhr-input-active-border-color: var(--info);
-    --mdhr-input-background-color: var(--white);
-    --mdhr-input-border: 1px solid var(--primary);
+    --mdhr-input-active-border-color: var(--bs-info);
+    --mdhr-input-background-color: var(--bs-white);
+    --mdhr-input-border: 1px solid var(--bs-primary);
     --mdhr-input-border-color: #292a2a;
     --mdhr-input-main-border-color: rgba(0,0,0,.125);
-    --mdhr-link-color: var(--green);
+    --mdhr-link-color: var(--bs-green);
     --mdhr-link-hover-color: #007053;
     --mdhr-sidebar-background-color: #27272a;
     --mdhr-table-border-color: rgb(222, 226, 230);
@@ -118,6 +118,15 @@ input[type="checkbox"] {
     color: var(--mdhr-text-color) !important;
 }
 
+input[type="checkbox"] {
+    appearance: auto;
+
+}
+
+input[type="checkbox"] {
+    appearance: revert;
+}
+
 input[type="text"] {
     width: 85%;
 }
@@ -132,7 +141,7 @@ input:active {
 }
 
 input:invalid {
-    border: 2px solid var(--danger);
+    border: 2px solid var(--bs-danger);
 }
 
 input[disabled] {
@@ -142,7 +151,8 @@ input[disabled] {
 textarea {
     height: 15em;
     width: 100%;
-    font-family: var(--font-family-monospace);
+    font-family: var(--bs-font-monospace);
+    line-height: normal;
 }
 
 footer {
@@ -256,7 +266,7 @@ pre {
 }
 
 #copyVersionToClipboard + span {
-    color: var(--success);
+    color: var(--bs-success);
     font-size: xx-large;
 }
 
