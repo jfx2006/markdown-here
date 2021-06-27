@@ -11,9 +11,7 @@
 function requestHandler(request, sender, sendResponse) {
   var focusedElem, mdReturn
 
-  if (request && (request.action === 'context-click' ||
-                  request.action === 'hotkey' ||
-                  request.action === 'button-click')) {
+  if (request && (request.action === 'toggle-markdown')) {
 
     // Check if the focused element is a valid render target
     focusedElem = markdownHere.findFocusedElem(window.document)
