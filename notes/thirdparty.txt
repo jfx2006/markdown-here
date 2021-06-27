@@ -15,7 +15,7 @@ replace it.
 
 Use of mailextension experiments:
 The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
-is used.
+is used. It is patched with https://github.com/jobisoft/notificationbar-API/pull/13.
 
 Options UI pages:
 - mailext-options-sync:
