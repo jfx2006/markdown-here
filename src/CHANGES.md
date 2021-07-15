@@ -1,3 +1,9 @@
+#### 2021-07-16: v3.2.5
+* Fix notification bar error with Thunderbird 90+ [#20](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/20)
+* Fix options UI with light-color themes [#19](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/19)
+* Do not render plain text emails [#18]([#14](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/18))
+* Fix code syntax highlighting [#21](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/21)
+
 #### 2021-06-13: v3.2.4
 * Fix the test link in the options page
 * Fix some broken tests
