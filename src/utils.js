@@ -349,6 +349,16 @@ function getLocalFile(url, mimetype, callback) {
   }
 }
 
+// Pretty much same as getLocalFile, except async and uses fetch()
+async function fetchExtensionFile(path) {
+  const url = messenger.runtime.getURL(path)
+  try {
+    let response = await fetch(url)
+    return await response.text()
+  } catch (e) {
+    throw(e)
+  }
+}
 
 // Does async XHR request to get data at `url`, then passes it to `callback`
 // Base64-encoded.
@@ -759,6 +769,7 @@ Utils.getDocumentFragmentHTML = getDocumentFragmentHTML;
 Utils.isElementDescendant = isElementDescendant;
 Utils.getLocalURL = getLocalURL;
 Utils.getLocalFile = getLocalFile;
+Utils.fetchExtensionFile = fetchExtensionFile;
 Utils.getLocalFileAsBase64 = getLocalFileAsBase64;
 Utils.fireMouseClick = fireMouseClick;
 Utils.MARKDOWN_HERE_EVENT = MARKDOWN_HERE_EVENT;

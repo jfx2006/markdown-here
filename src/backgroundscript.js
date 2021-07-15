@@ -14,6 +14,8 @@
 import OptionsStorePromise from "./options/options-storage.js"
 
 (async () => {
+  let OptionsStore = await OptionsStorePromise;
+
   messenger.runtime.onInstalled.addListener(async (details) => {
     function updateCallback(winId, url) {
       const message = Utils.getMessage("upgrade_notification_text");
@@ -73,16 +75,23 @@ import OptionsStorePromise from "./options/options-storage.js"
     }
 
     if (request.action === 'render') {
-      OptionsStore.getAll().then(prefs => {
-        responseCallback({
-          html: MarkdownRender.markdownRender(
-            request.mdText,
-            prefs,
-            marked,
-            hljs),
-          css: (prefs['main-css'] + prefs['syntax-css'])
-        });
-      });
+      OptionsStore.getAll()
+        .then(prefs => {
+          Utils.fetchExtensionFile(`/highlightjs/styles/${prefs["syntax-css"]}`)
+            .then(syntaxCSS => {
+              responseCallback({
+                html: MarkdownRender.markdownRender(
+                  request.mdText,
+                  prefs,
+                  marked,
+                  hljs),
+                css: (prefs['main-css'] + syntaxCSS)
+              })
+              return true
+            })
+        }).catch(e => {
+        throw(e)
+      })
       return true;
     }
     else if (request.action === 'get-options') {
@@ -298,8 +307,6 @@ import OptionsStorePromise from "./options/options-storage.js"
     });
     return await notificationClose(notificationId);
   }
-
-  let OptionsStore = await OptionsStorePromise;
 
   function forgotToRenderEnabled() {
     return new Promise(resolve => {
