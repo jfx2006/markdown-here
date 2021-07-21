@@ -9,19 +9,17 @@
 
 /* global messenger:false, Utils:false */
 
-import BSN from "../vendor/bootstrap-native.esm.js"
-import HotkeyHandler from "./shortcuts.js"
+import BSN from '../vendor/bootstrap-native.esm.js'
+import HotkeyHandler from './shortcuts.js'
 
-import OptionsStorePromise from "./options-storage.js"
-import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
+import { fetchExtFile, getHljsStyles, getHljsStylesheet } from '../async_utils.js'
+import OptionsStore from './options-storage.js'
 
 (async () => {
-  window.OptionsStore = await OptionsStorePromise
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
   const cssSyntaxEdit = document.getElementById("css-syntax-edit")
-  const SyntaxCSSStyles = await kSyntaxCSSStyles
   let savedMsgToast
 
   function showSavedMsg() {
@@ -55,6 +53,7 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
       }, 5000)
     })
 
+    const SyntaxCSSStyles = await getHljsStyles()
     for (const [name, filename] of Object.entries(SyntaxCSSStyles)) {
       const opt = new Option(name, filename.toString())
       cssSyntaxSelect.options.add(opt)
@@ -147,15 +146,7 @@ import { kSyntaxCSSStyles, fetchExtFile } from "./options-storage.js"
     const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value
 
     // Get the CSS for the selected theme.
-    const url = messenger.runtime.getURL(`/highlightjs/styles/${selected}`)
-    try {
-      const response = await fetch(url)
-      cssSyntaxEdit.value = await response.text()
-    }
-    catch (e) {
-      console.log(`Error fetching CSS: ${selected}`)
-      console.log(e)
-    }
+    cssSyntaxEdit.value = await getHljsStylesheet(selected)
   }
 
   await onOptionsLoaded()

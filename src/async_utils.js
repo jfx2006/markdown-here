@@ -1,0 +1,32 @@
+/*
+ * Copyright JFX 2021
+ * MIT License
+ */
+
+export async function fetchExtFile(path, json=false) {
+  const url = messenger.runtime.getURL(path)
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Error fetching ${path}: ${response.status}`)
+  }
+  if (json) {
+    return await response.json()
+  } else {
+    return await response.text()
+  }
+}
+
+export const HLJS_STYLES_PATH = "/highlightjs/styles"
+
+export async function getHljsStyles() {
+  return fetchExtFile(`${HLJS_STYLES_PATH}/styles.json`, true)
+}
+
+export async function getHljsStylesheet(syntax_css) {
+  const available_styles = await getHljsStyles()
+  const syntax_values = Object.values(available_styles)
+  if (syntax_values.indexOf(syntax_css) === -1) {
+    console.log(`Invalid stylesheet ${syntax_css}.`)
+  }
+  return fetchExtFile(`${HLJS_STYLES_PATH}/${syntax_css}`)
+}

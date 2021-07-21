@@ -276,14 +276,6 @@ describe('Utils', function() {
     });
   });
 
-  describe('fetchExtensionFile', function() {
-    it('should return correct data', async function() {
-      // We "know" our options.html file starts with this string
-      const KNOWN_PREFIX = '<html lang="en">'
-      let data = await Utils.fetchExtensionFile('/options/options.html')
-      expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX)
-    })
-  })
 
   describe('getLocalFileAsBase64', function() {
     it('should return data as Base64', function(done) {
