@@ -1,3 +1,7 @@
+#### 2021-07-23: v3.2.6
+* Options migration fixes (rewrite to handle async)
+* Fixes the issues with 3.2.5 not rendering
+
 #### 2021-07-16: v3.2.5
 * Fix notification bar error with Thunderbird 90+ [#20](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/20)
 * Fix options UI with light-color themes [#19](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/19)
