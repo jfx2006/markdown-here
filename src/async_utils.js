@@ -30,3 +30,12 @@ export async function getHljsStylesheet(syntax_css) {
   }
   return fetchExtFile(`${HLJS_STYLES_PATH}/${syntax_css}`)
 }
+
+// Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+export async function sha256Digest(text) {
+  const msgUint8 = new TextEncoder().encode(text)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
+}

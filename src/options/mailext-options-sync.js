@@ -595,8 +595,7 @@ class OptionsSync {
       !(await shouldRunMigrations())
     )
       return
-    const options = await this._get()
-    const initial = JSON.stringify(options) //OptionsSync._log("log", "Found these stored options", { ...options })
+    const options = await this._get() //OptionsSync._log("log", "Found these stored options", { ...options })
 
     OptionsSync._log(
       "info",
@@ -604,8 +603,11 @@ class OptionsSync {
       migrations.length,
       1 === migrations.length ? "migration" : " migrations"
     )
-    migrations.forEach((migrate) => migrate(options, this.defaults)) // Only save to storage if there were any changes
-    initial !== JSON.stringify(options) && (await this._setAll(options))
+    let _migrateFunc
+    for (_migrateFunc of migrations) {
+      const changes = await _migrateFunc(options, this.defaults)
+      null !== changes && (await this._setAll(changes))
+    }
   }
   async _handleFormInput({ target: target }) {
     const field = target

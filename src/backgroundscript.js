@@ -13,7 +13,6 @@
  */
 import {getHljsStylesheet} from './async_utils.js'
 import OptionsStore from "./options/options-storage.js"
-import prefMigrations from './options/options_migration.js'
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
@@ -56,7 +55,8 @@ messenger.runtime.onInstalled.addListener(async (details) => {
       break
   }
 
-  await prefMigrations.doMigrations(OptionsStore)
+  // Forces migrations to run if needed
+  let last_version = await OptionsStore.get("last-version")
   callback(winId, onboardUrl)
 })
 
