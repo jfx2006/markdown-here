@@ -82,7 +82,7 @@ Handler signature for when an extension updates.
 export type Migration<TOptions extends Options> = (
 	savedOptions: TOptions,
 	defaults: TOptions
-) => void;
+) => TOptions;
 
 class OptionsSync<TOptions extends Options> {
 	public static migrations = {
@@ -299,9 +299,7 @@ class OptionsSync<TOptions extends Options> {
 		) {
 			return
 		}
-
 		const options = await this._get()
-		const initial = JSON.stringify(options)
 
 		//OptionsSync._log("log", "Found these stored options", { ...options })
 		OptionsSync._log(
@@ -310,11 +308,13 @@ class OptionsSync<TOptions extends Options> {
 			migrations.length,
 			migrations.length === 1 ? "migration" : " migrations"
 		)
-		migrations.forEach((migrate) => migrate(options, this.defaults))
 
-		// Only save to storage if there were any changes
-		if (initial !== JSON.stringify(options)) {
-			await this._setAll(options)
+		let _migrateFunc: Migration<TOptions>
+		for (_migrateFunc of migrations) {
+			const changes: TOptions = await _migrateFunc(options, this.defaults)
+			if (changes !== null) {
+				await this._setAll(changes)
+			}
 		}
 	}
 

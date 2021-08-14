@@ -1,6 +1,6 @@
 {
 	"name": "@jfx2006/mailext-options-sync",
-	"version": "2.1.2",
+	"version": "2.1.4",
 	"description": "Helps you manage and autosave your extension's options.",
 	"keywords": [
 		"extension",
