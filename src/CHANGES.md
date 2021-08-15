@@ -1,3 +1,7 @@
+#### 2021-08-15: v3.2.7
+* Async migrations work moved to mailext-options-sync
+* Some tests written to verify migrations work
+
 #### 2021-07-23: v3.2.6
 * Options migration fixes (rewrite to handle async)
 * Fixes the issues with 3.2.5 not rendering
