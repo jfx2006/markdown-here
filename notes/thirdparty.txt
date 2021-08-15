@@ -21,7 +21,7 @@ Options UI pages:
 - mailext-options-sync:
   This is a project that I forked and removed some functionality from. The final built
   file that's included in the extension can be downloaded from:
-  https://gitlab.com/jfx2006/mailext-options-sync/-/blob/v2.1.2/mailext-options-sync.js
+  https://gitlab.com/jfx2006/mailext-options-sync/-/raw/v2.1.4/mailext-options-sync.js
 
   Additionally, the source for the included version is in the uploaded tar file.
   The MDHR Makefile will build mailext-options-sync and copy it into src/options.
