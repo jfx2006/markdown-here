@@ -18,4 +18,4 @@ module.exports = {
         // profile does not persist, use --keep-profile-changes to update it
         firefoxProfile: "./testing_profile"
     },
-};
+}

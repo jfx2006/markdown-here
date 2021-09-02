@@ -30,6 +30,7 @@ import OptionsStore from './options-storage.js'
   }
 
   async function onOptionsLoaded() {
+    await localizePage()
     savedMsgToast = new BSN.Toast("#saved-msg")
 
     const tests_link = document.getElementById("tests-link")
@@ -149,5 +150,23 @@ import OptionsStore from './options-storage.js'
     cssSyntaxEdit.value = await getHljsStylesheet(selected)
   }
 
+  const SUBS = {"__APP_NAME": messenger.i18n.getMessage("app_name")}
+  async function localizePage() {
+    const page_prefix = "options_page"
+    const nodes = document.body.querySelectorAll("[data-i18n]")
+    for (let n of nodes) {
+      let key = `${page_prefix}__${n.dataset.i18n}`
+      let arg_str = n.dataset.i18nArg
+      let arg = null
+      if (arg_str !== undefined) {
+        if (arg_str.startsWith("__")) {
+          arg = SUBS[arg_str]
+        } else {
+          arg = arg_str
+        }
+      }
+      n.textContent = messenger.i18n.getMessage(key, arg)
+    }
+  }
   await onOptionsLoaded()
 })()

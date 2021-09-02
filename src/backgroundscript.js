@@ -16,8 +16,9 @@ import OptionsStore from "./options/options-storage.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
+  const APP_NAME = messenger.i18n.getMessage("app_name")
   function updateCallback(winId, url) {
-    const message = Utils.getMessage("upgrade_notification_text")
+    const message = messenger.i18n.getMessage("upgrade_notification_text", APP_NAME)
     openNotification(winId,
       message,
       messenger.notificationbar.PRIORITY_INFO_MEDIUM,

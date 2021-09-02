@@ -31,7 +31,7 @@
             <li class="nav-item">
               <a class="nav-link text-light rounded-sm" id="theme-tab" href="#theme" data-toggle="tab"
                  aria-controls="theme" aria-selected="false" role="tab">
-                <span data-no_i18n="">Theme</span></a>
+                <span data-i18n="syntax_highlighting_theme_label">Theme</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-light rounded-sm" id="about-tab" href="#about" data-toggle="tab"
@@ -47,8 +47,8 @@
       <main class="col-md-9 col-lg-10 offset-md-3 offset-lg-2 px-4 mt-5 mt-md-0">
         <form id="mdh-options-form">
         <div>
-          <h2 data-i18n="page_title" class="pb-3 mt-0"><img class="text-align" src="../images/rocmarkdown.svg" width="96" height="96" alt="logo"/>
-          Markdown Here Revival Options</h2>
+          <h2 class="pb-3 mt-0"><img class="text-align" src="../images/rocmarkdown.svg" width="96" height="96" alt="logo"/>
+          <span data-i18n="page_title" data-i18n-arg="__APP_NAME">Markdown Here Revival Options</span></h2>
         </div>
 
         <div class="content">
@@ -63,18 +63,17 @@
                   <li class="my-md-2" data-i18n="start_new_message">
                     Start a new email message.
                   </li>
-                  <li class="my-md-2" data-i18n="type_some_markdown">
-                    Type some Markdown into the email.<br>Try this:
+                  <li class="my-md-2">
+                    <span data-i18n="type_some_markdown">Type some Markdown into the email. Try this:</span>
                     <div class="my-3 border-secondary">
-                      <code class="p-2">_Hello_ `Markdown` **Here**!</code>
+                      <code data-i18n="short_markdown_example" class="p-2">_Hello_ `Markdown` **Here**!</code>
                     </div>
                   </li>
-                  <li class="my-md-2" data-i18n="click_toggle">
-                    Click the <img class="text-align" src="../images/icon36.png" alt=""/>
-                    compose action button on the format toolbar.<br>
-                    <span class="hotkey-display-wrapper">Or press
-                      <span id="hotkey-display-str" class="hotkey-display"></span>
-                    </span>
+                  <li class="my-md-2">
+                    <span data-i18n="click_toggle2">Click the compose action button on the format toolbar.</span>
+                    <img class="text-align" src="../images/icon36.png" alt=""/><br>
+                    <span data-i18n="toggle_hotkey" class="hotkey-display-wrapper">Or use the hotkey:</span>
+                    <span id="hotkey-display-str" class="hotkey-display"></span>
                   </li>
                   <li class="my-md-2" data-i18n="pretty_cool">
                     The message should now look pretty cool. Send it to your friends!
@@ -88,16 +87,17 @@
               </div>
               <div class="card-body">
                 <ul>
-                  <li class="my-md-2" data-i18n="resources_cheatsheet_link">
-                    If you're new to Markdown, the
+                  <li class="my-md-2">
                     <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Markdown-Here-Revival-Cheatsheet"
-                       target="_blank">Markdown Here Revival Cheatsheet</a> will make you a prostar.
+                       target="_blank" data-i18n="resources_cheatsheet_link">Markdown Here Revival Cheatsheet</a>
                   </li>
-                  <li class="my-md-2" data-i18n="mdh_wiki">
-                    Visit the <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Home" target="_blank">
-                    Markdown Here Revival wiki</a> for
-                    <a href="https://github.com/adam-p/markdown-here/wiki/Tips-and-Tricks" target="_blank">tips and tricks</a>
-                    and more!
+                  <li class="my-md-2">
+                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Home" target="_blank" data-i18n="mdhr_wiki">
+                    Markdown Here Revival wiki</a>
+                  </li>
+                  <li class="my-md-2">
+                    <a href="https://github.com/adam-p/markdown-here/wiki/Tips-and-Tricks" target="_blank" data-i18n="tips_tricks_link">
+                      Tips and Tricks</a>
                   </li>
                 </ul>
               </div>
@@ -108,7 +108,7 @@
           <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab" id="options">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span data-no_i18n="options_title">Options</span>
+                <span data-i18n="options_title">Options</span>
               </div>
               <div class="card-body">
                 <div class="form-group">
@@ -120,7 +120,7 @@
                 <div class="form-group">
                   <div class="form-check">
                     <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
-                    <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label">Enable "forgot-to-render" check.</label>
+                    <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label2">Enable "forgot-to-render" check.</label>
                     <div class="text-muted" data-i18n="forgot_to_render_2">
                       When you send an email, this checks the content to see if it looks like you wrote it in Markdown,
                       but forgot to render it (i.e., click "Markdown Toggle") before sending.
@@ -128,30 +128,13 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="card my-4 shadow">
-              <div class="card-header h4 rounded-0">
-                <span data-i18n="tex_math_title">TeX Mathematical Formulae Support</span>
-              </div>
-              <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
-                      <input id="math-value" class="form-text" type="text" name="math-value"/>
-                      <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
-                        <span data-i18n="tex_math_reset_button">Reset to Default</span>
-                      </button>
+                    <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
+                    <label class="form-check-label" for="math-enabled" data-i18n="tex_math_title">TeX Mathematical Formulae Support</label>
+                    <div class="text-muted" data-i18n="tex_math_description">
+                      Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.
                     </div>
-                    <ul class="text-muted">
-                      <li data-i18n="tex_math_privacy_issue_1">
-                        To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.
-                      </li>
-                      <li data-i18n="tex_math_privacy_issue_2">
-                        If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
-                      </li>
-                    </ul>
                   </div>
                 </div>
               </div>
@@ -165,7 +148,7 @@
                   <div class="form-check">
                     <div class="input-wrapper">
                       <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
-                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="options_page__reset_button">Reset</button>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
                     </div>
                   </div>
                 </div>
@@ -184,8 +167,8 @@
                   <textarea name="main-css" id="css-edit" spellcheck="false" wrap="off"></textarea>
                 </div>
                   <div>
-                    <button id="css-reset-button" class="btn btn-sm btn-primary reset-button" type="button" data-field-id="css-edit">
-                      <span data-i18n="reset_primary_css">Reset to Default</span>
+                    <button id="css-reset-button" class="btn btn-sm btn-danger reset-button" type="button" data-i18n="reset_button" data-field-id="css-edit">
+                      Reset
                     </button>
                   </div>
               </div>
@@ -193,15 +176,16 @@
 
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span data-i18n="syntax_highlighting_css_title">Syntax Highlighting CSS</span>
+                <label data-i18n="syntax_highlighting_css_title">Syntax Highlighting CSS</label>
               </div>
               <div class="card-body">
                 <div class="form-group">
                   <div>
-                    <span data-i18n="syntax_highlighting_theme_label">Theme</span>
+                    <label for="css-syntax-select" data-i18n="syntax_highlighting_theme_label">Theme</label>
                     <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css" id="css-syntax-select">
                     </select>
                   </div>
+                  <label for="css-syntax-edit"></label>
                   <textarea id="css-syntax-edit" readonly></textarea>
                 </div>
               </div>
@@ -212,20 +196,20 @@
           <div role="tabpanel" class="tab-pane fade" aria-labelledby="about-tab" id="about">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span>Report bugs</span>
+                <label data-i18n="report_bugs_title">Report bugs</label>
               </div>
               <div class="card-body">
                 <p>
                   <a target="_blank" href="https://gitlab.com/jfx2006/markdown-here-revival/-/issues">
-                    <span>Create new issue on GitLab</span></a>
-                  <br><span>The following debug info can be used</span>:
+                    <span data-i18n="create_gitlab_issue">Create new issue on GitLab</span></a>
+                  <br><span data-i18n="issue_debug_info">The following debug info can be used</span>:
                 </p>
                 <div>
                   <p id="versionInfo">Markdown Here Revival: <span id="mdhrVersion"></span>
                     <br>Thunderbird Version: <span id="mdhrThunderbirdVersion"></span>
                     <br>Operating system: <span id="mdhrOS"></span>
                   </p>
-                  <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3">
+                  <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3" data-i18n="debug_copy_clipboard">
                     Copy to clipboard
                   </button>
                   <span class="fade">&#10004;</span>
@@ -239,7 +223,7 @@
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
                 <i class="fa fa-desktop" aria-hidden="true"></i>
-                <span>Changes</span>
+                <span data-i18n="changelog_title">Changelog</span>
               </div>
               <div class="card-body">
                 <div id="mdhrChangeList">
