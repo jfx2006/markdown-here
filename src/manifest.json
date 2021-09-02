@@ -18,7 +18,7 @@
     "128": "images/rocmarkdown.svg",
     "512": "images/rocmarkdown.svg"
   },
-  "permissions": ["compose", "storage"],
+  "permissions": ["compose", "storage", "menus"],
   "background": {"page": "background.html"},
   "compose_action": {
     "browser_style": true,

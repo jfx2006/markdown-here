@@ -1,3 +1,6 @@
+####
+* Context menu in compose window is back!
+
 #### 2021-08-15: v3.2.7
 * Async migrations work moved to mailext-options-sync
 * Some tests written to verify migrations work

@@ -103,6 +103,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   else if (request.action === 'show-toggle-button') {
     if (request.show) {
       messenger.composeAction.enable(sender.tab.id)
+      messenger.menus.update("mdhr_toggle_context_menu", {enabled: true})
       messenger.composeAction.setTitle({
         title: Utils.getMessage('toggle_button_tooltip'),
         tabId: sender.tab.id
@@ -121,6 +122,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
     }
     else {
       messenger.composeAction.disable(sender.tab.id)
+      messenger.menus.update("mdhr_toggle_context_menu", {enabled: false})
       messenger.composeAction.setTitle({
         title: Utils.getMessage('toggle_button_tooltip_disabled'),
         tabId: sender.tab.id
@@ -325,3 +327,31 @@ async function updateActionTooltip() {
   await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
 }
 updateActionTooltip()
+
+// Context menu in compose window
+async function createContextMenu() {
+  let menuId = await messenger.menus.create({
+    id: "mdhr_toggle_context_menu",
+    title: messenger.i18n.getMessage("context_menu_item"),
+    contexts: ["page", "selection"],
+    icons: {
+      "16": "images/rocmarkdown.svg",
+    },
+    visible: false,
+    enabled: true,
+  })
+  messenger.menus.onShown.addListener((info, tab) => {
+    if (tab.type === "messageCompose") {
+      messenger.menus.update(menuId, {visible: true})
+      messenger.menus.refresh()
+    }
+  })
+  messenger.menus.onHidden.addListener((info, tab) => {
+    messenger.menus.update(menuId, {visible: false})
+    messenger.menus.refresh()
+   })
+  messenger.menus.onClicked.addListener((info, tab) => {
+    return composeRender(tab.id)
+  })
+}
+createContextMenu()
