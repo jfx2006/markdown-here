@@ -1,4 +1,4 @@
-####
+#### 2021-09-08: v3.2.8
 * Context menu in compose window is back!
 
 #### 2021-08-15: v3.2.7

@@ -1,6 +1,75 @@
 This extension is used to manipulate the content of email before sending.
 The HTML editor must be enabled.
 
+REPRODUCING THE BUILD
+
+Requirements:
+nodejs: 14.17.0
+npm: 6.14.13
+GNU Make
+tar
+A UNIX style shell (bash)
+
+- Untar the uploaded source
+- Run "make all"
+
+Running "make all" in the unpacked source directory will rebuild
+mailext-options-sync and copy the final output into src/options/. That
+output should match the version from the mailext-options-sync repository
+on  Gitlab (URL to the exact tag is below).
+Then web-ext build will generate the extension XPI file and place it in
+web-ext-artifacts.
+
+I noticed that the md5sum of the XPI I uploaded does not match what gets
+generated. The contents of the files within report no differences when diff'd.
+
+THIRD PARTY:
+
+Highlightjs is used for syntax highlighting source code in the rendered
+HTML.
+It's not the easiest thing to download and customize what languages are
+supported, so I wrote tools/get-highlightjs.sh to build from source.
+That script also generates a styles.json file which is used in the
+options page in the syntax style selection.
+
+marked.js
+https://raw.githubusercontent.com/markedjs/marked/v2.0.1/lib/marked.js
+
+jsHtmlToText.js
+I cannot locate a current version of this library, so this is the same
+one from the markdown-here repository. There are several candidates to
+replace it.
+
+Use of mailextension experiments:
+The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
+is used. It is patched with https://github.com/jobisoft/notificationbar-API/pull/13.
+
+Options UI pages:
+- mailext-options-sync:
+  This is a project that I forked and removed some functionality from. The final built
+  file that's included in the extension can be downloaded from:
+  https://gitlab.com/jfx2006/mailext-options-sync/-/raw/v2.1.4/mailext-options-sync.js
+
+  Additionally, the source for the included version is in the uploaded tar file.
+  The MDHR Makefile will build mailext-options-sync and copy it into src/options.
+  Version 2.1.2 was built with node 14.17.0 and npm 6.14.13
+
+https://raw.githubusercontent.com/thednp/bootstrap.native/3.0.15/dist/bootstrap-native.esm.js
+https://bootswatch.com/5/darkly/bootstrap.css
+Parts of shortcuts.js from Firefox source code:
+    https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
+
+Used for tests
+https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.js
+https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.css
+https://raw.githubusercontent.com/jashkenas/underscore/1.12.0/underscore.js
+https://raw.githubusercontent.com/chaijs/chai/4.3.1/chai.js
+https://code.jquery.com/jquery-3.6.0.slim.js
+
+
+
+USING/TESTING:
+
 You write email in Markdown, then click the button in the format toolbar
 and the content of the email will be replaced with a rendered-HTML version
 of the Markdown you had written.
