@@ -41,7 +41,7 @@ describe('markdownHere', function() {
     var markdownRenderHelper = function(elem, range, callback) {
       var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem, range);
       var renderedMarkdown = MarkdownRender.markdownRender(
-        mdhHtmlToText.get(), userprefs, markdownit, hljs);
+        mdhHtmlToText.get(), userprefs, marked, hljs);
       renderedMarkdown = mdhHtmlToText.postprocess(renderedMarkdown);
 
       callback(renderedMarkdown, userprefs['main-css'] + userprefs['syntax-css']);
