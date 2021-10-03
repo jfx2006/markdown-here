@@ -21,6 +21,20 @@ NOTE: Maybe it would be better to process the DOM directly? String-processing
 the HTML seems suboptimal.
 */
 
+/* Deal with Thunderbird Composer's annoying non-disablable "pretty formatted"
+   HTML. This causes everything to be interpreted as indented code blocks
+   after restoring from a draft. */
+function dedent(input_string) {
+  let parts = []
+  let strings = input_string.split("\n")
+  for (let [i, line] of strings.entries()) {
+    let match = line.match(/^(\s*)\S*/)
+    line = line.substr(match[1].length)
+    parts.push(line)
+  }
+  return parts.join("")
+}
+
 
 /*
 `checkingIfMarkdown` should be true if the caller just wants to know if the
@@ -96,7 +110,7 @@ MdhHtmlToText.prototype._preprocess = function() {
     html = this.elem.innerHTML;
   }
 
-  this.preprocessInfo = { html: html, exclusions: [] };
+  this.preprocessInfo = { html: dedent(html), exclusions: [] };
 
   // The default behaviour for `jsHtmlToText.js` is to strip out tags (and their
   // inner text/html) that it doesn't expect/want. But we want some tag blocks
