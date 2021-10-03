@@ -105,9 +105,8 @@ function markdownRender(mdText, userprefs, marked, hljs) {
       }
     };
 
-  const renderedMarkdown = marked(mdText, markedOptions);
-
-  return renderedMarkdown;
+  marked.setOptions(markedOptions)
+  return marked(mdText);
 }
 
 
