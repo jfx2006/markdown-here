@@ -1,3 +1,12 @@
+#### 2021-10-04: v3.2.9
+* Fix incorrect text on Options page regarding Math rendering. There is
+  **only** GCharts support in this version. Canvas rendering is coming!
+  [#28](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/28)
+* Add an option to disable "smart" quotes. [#25](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/25)
+* Update to marked.js 3.0.4
+* Fix everything rendered as indented code blocks when editing a saved draft.
+  [#27](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/27)
+
 #### 2021-09-08: v3.2.8
 * Context menu in compose window is back!
 
