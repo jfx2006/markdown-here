@@ -28,6 +28,7 @@ export const kOptDefaults = {
   "hotkey-input": "Ctrl+Alt+M",
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
+  "smart-quotes-enabled": true,
   "last-version": "0",
 }
 

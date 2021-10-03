@@ -90,11 +90,11 @@ function markdownRender(mdText, userprefs, marked, hljs) {
     sanitize: false,
     tables: true,
     smartLists: true,
-    breaks: userprefs['gfm-line-breaks-enabled'],
-    smartypants: true,
+    breaks: userprefs["gfm-line-breaks-enabled"],
+    smartypants: userprefs["smart-quotes-enabled"],
     // Bit of a hack: highlight.js uses a `hljs` class to style the code block,
     // so we'll add it by sneaking it into this config field.
-    langPrefix: 'hljs language-',
+    langPrefix: "hljs language-",
     highlight: function(codeText, codeLanguage) {
         if (codeLanguage &&
             hljs.getLanguage(codeLanguage.toLowerCase())) {

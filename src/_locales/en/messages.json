@@ -217,6 +217,10 @@
     "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature."
   },
+  "options_page__smart_quotes_enabled_label": {
+    "message": "Enable \"smart\" (Unicode) quotes",
+    "description": "Use Unicode slanty quotes instead of standard ones"
+  },
   "options_page__changelog_title": {
     "message": "Changelog"
   },

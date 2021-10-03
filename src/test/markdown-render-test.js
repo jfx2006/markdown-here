@@ -22,7 +22,8 @@ describe('Markdown-Render', function() {
       userprefs = {
         'math-value': null,
         'math-enabled': false,
-        'gfm-line-breaks-enabled': true
+        'gfm-line-breaks-enabled': true,
+        'smart-quotes-enabled': true,
       };
     });
 
@@ -160,7 +161,8 @@ describe('Markdown-Render', function() {
     beforeEach(function() {
       userprefs = {
         'math-value': null,
-        'math-enabled': false
+        'math-enabled': false,
+        'smart-quotes-enabled': true,
       };
     });
 
