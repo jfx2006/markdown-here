@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "TeX Matematiksel Formüller Desteği"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"Bir formülün imajını üretmek için, Google'a istek gönderilir. Bu da formülanının Google'la paylaştığın anlamına gelir. Ayrıca, mesajın alıcıları da imajı görmek için Google'a istek gönderirler.",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"Formül derleme etiketini özelleştirirseniz, güvenli (https:\/\/)  bağlantıyı kullanmanız gerekir. Her derleme hizmeti güvenli bağlantı sunmayabilir.",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "Kısayol (namı değer kısayol)",
     "description": "A section title"

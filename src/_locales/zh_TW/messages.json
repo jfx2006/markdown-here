@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "TeX數學公式支援"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"為了產生公式的圖片, 瀏覽器會向Google發送請求。這等同於你在和Google分享公式，而且收件人也會向Google發送請求來顯示圖片。",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"如果你自訂了公式算繪標籤, 你應該使用安全 (https:\/\/) 路徑.不是所有的算繪服務都支持安全選項。",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "快捷鍵",
     "description": "A section title"

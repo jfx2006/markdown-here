@@ -128,13 +128,30 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="tex_math_title">TeX Mathematical Formulae Support</span>
+              </div>
+              <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
-                    <label class="form-check-label" for="math-enabled" data-i18n="tex_math_title">TeX Mathematical Formulae Support</label>
-                    <div class="text-muted" data-i18n="tex_math_description">
-                      Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.
+                    <div class="input-wrapper">
+                      <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
+                      <input id="math-value" class="form-text" type="text" name="math-value"/>
+                      <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
+                        <span data-i18n="reset_button">Reset</span>
+                      </button>
                     </div>
+                    <ul class="text-muted">
+                      <li data-i18n="tex_math_privacy_issue_1">
+                        To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.
+                      </li>
+                      <li data-i18n="tex_math_privacy_issue_2">
+                        If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>

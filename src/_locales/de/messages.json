@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "TeX für mathematische Formeln"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"Um eine Formel als Bilddatei zu rendern, wird eine Anfrage an Google gesendet. Damit wird die Formel für Google freigegeben. Das bedeutet auch dass die Empfänger der Nachricht Anfragen an Google schicken müssen um das gerenderte Ergebnis zu sehen.",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"Bei Anpassung des Formel-Rendering-Tags sollte ein sicherer (https:\/\/) Pfad benutzt werden. Nicht alle Rendering-Services haben diese Option.",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "Hotkey (aka Tastenkombination)",
     "description": "A section title"

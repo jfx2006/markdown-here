@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "Wsparcie dla Wzorów Matematycznych TeX"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"Aby wygenerować obraz wzoru, wysłane zostaje zapytanie do serwisu Google. W praktyce znaczy to, że dzielisz się swoim wzorem z serwisem Google. Znaczy to również, że odbiorcy twojej wiadomości wyślą zapytanie do serwisu Google w celu wyświetlenia obrazu.",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"Jeśli modyfikujesz tag generowania wzoru, użyj bezpiecznej (https:\/\/) ścieżki. Nie wszystkie serwisy generujące posiadają opcję bezpieczną.",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "Skrót Klawiszowy",
     "description": "A section title"

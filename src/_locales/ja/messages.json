@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "TeXでの数式記述サポート"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"数式の画像を生成するためにGoogleにリクエストを送信します。 これはGoogleにあなたの数式が共有されることを意味します。 また、レンダリングされた画像を取得するためにGoogleにリクエストを送信することも意味します。",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"もし数式のレンダリングタグを編集するなら、セキュアな (https:\/\/) URLを使うことを推奨します。これはすべてのレンダリングサービスでサポートされているわけではありません。",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "ホットキー (キーボード・ショートカット)",
     "description": "A section title"

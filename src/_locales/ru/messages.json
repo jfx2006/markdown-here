@@ -166,6 +166,14 @@
   "options_page__tex_math_title": {
     "message": "Поддержка математических формул TeX"
   },
+  "options_page__tex_math_privacy_issue_1":{
+    "message":"Для рендеринга изображения для формулы, запрос отправляется Google. Это фактически означает, что вы показываете вашу формулу Google. Это также означает, что получатель вашего сообщения сделает запрос к Google, чтобы увидеть отрендеренное  изображение этой формулы.",
+    "description":"one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2":{
+    "message":"Если вы настраиваете тег рендеринга формул, следует использовать безопасный (https:\/\/) путь. Имейте в виду, что не все сервисы рендеринга обеспечивают безопасное подключение.",
+    "description":"one of the TeX math privacy concerns"
+  },
   "options_page__hotkey_title": {
     "message": "\"Горячая\"(она же \"быстрая\") комбинация клавиш",
     "description": "A section title"
