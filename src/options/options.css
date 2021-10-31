@@ -119,11 +119,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"] {
-    appearance: auto;
-
-}
-
-input[type="checkbox"] {
+    -moz-appearance: revert;
     appearance: revert;
 }
 
