@@ -33,7 +33,7 @@ That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
 marked.js
-https://raw.githubusercontent.com/markedjs/marked/v2.0.1/lib/marked.js
+https://raw.githubusercontent.com/markedjs/marked/v3.0.4/lib/marked.js
 
 jsHtmlToText.js
 I cannot locate a current version of this library, so this is the same
