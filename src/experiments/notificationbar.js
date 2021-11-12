@@ -123,7 +123,7 @@ class Notification {
         }
         // if there is no default bottom box, use our own
         if (!w.gExtensionNotificationBottomBox) {
-          let statusbar = w.document.querySelector('hbox[class~="statusbar"]');
+          let statusbar = w.document.querySelector('[class~="statusbar"]');
           w.gExtensionNotificationBottomBox = new w.MozElements.NotificationBox(
             element => {
               element.id = "extension-notification-bottom-box";
