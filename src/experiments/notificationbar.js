@@ -68,14 +68,28 @@ class Notification {
       }
     };
 
-    let element = this.getNotificationBox().appendNotification(
-      properties.label,
-      `extension-notification-${notificationId}`,
-      iconURL,
-      properties.priority,
-      buttons,
-      callback
-    );
+    let element;
+    if (this.getThunderbirdVersion().major < 94) {
+      element = this.getNotificationBox().appendNotification(
+        properties.label,
+        `extension-notification-${notificationId}`,
+        iconURL,
+        properties.priority,
+        buttons,
+        callback
+      );
+    } else {
+      element = this.getNotificationBox().appendNotification(
+        `extension-notification-${notificationId}`,
+        {
+          label: properties.label,
+          image: iconURL,
+          priority: properties.priority,
+        },
+        buttons,
+        callback
+      );
+    }
     let whitelist = ["background", "color", "margin", "padding", "font"];
 
     if (properties.style) {
@@ -94,6 +108,15 @@ class Notification {
       for (let style of sanitizedStyles) {
         element.style[style] = properties.style[style];
       }
+    }
+  }
+
+  getThunderbirdVersion() {
+    let parts = Services.appinfo.version.split(".");
+    return {
+      major: parseInt(parts[0]),
+      minor: parseInt(parts[1]),
+      revision: parts.length > 2 ? parseInt(parts[2]) : 0,
     }
   }
 
