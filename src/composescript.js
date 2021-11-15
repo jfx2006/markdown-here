@@ -41,7 +41,22 @@ function requestHandler(request, sender, sendResponse) {
   }
   else if (request.action === "check-forgot-render") {
     function looksLikeMarkdown() {
-      let mdMaybe = new MdhHtmlToText.MdhHtmlToText(window.document.body, null, true).get()
+      // Make a copy of the email to work with
+      let body_copy = window.document.body.cloneNode(true)
+      // Selectors to find quoted content and signatures
+      // Only look for elements directly below <body> to avoid problems with
+      // nested quotes
+      for (let selector of [
+        "body > .moz-signature",
+        "body > blockquote[type=cite]",
+        "body > div.moz-cite-prefix"
+      ]) {
+        let match_nodes = body_copy.querySelectorAll(selector)
+        for (let node of match_nodes) {
+          node.remove()
+        }
+      }
+      let mdMaybe = new MdhHtmlToText.MdhHtmlToText(body_copy, null, true).get()
       return CommonLogic.probablyWritingMarkdown(mdMaybe)
     }
     const renderable = markdownHere.elementCanBeRendered(window.document.body)
