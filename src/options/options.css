@@ -178,6 +178,11 @@ select option {
     color: var(--mdhr-text-color);
 }
 
+select.form-control {
+    -moz-appearance: revert;
+    appearance: revert;
+}
+
 pre {
     white-space: pre-line;
 }
