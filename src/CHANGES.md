@@ -1,3 +1,14 @@
+#### 2021-11-15: v3.2.10
+* Fix [#31](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/31), bad
+  CSS style on Options checkboxes with Thunderbird 78.x
+* Fix for broken compose window notification boxes in Thunderbird 93.0beta and up.
+  [#32](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/32)
+* Do not check signatures and quoted content for markdown when check-forgot-render
+  is enabled. [#30](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/30)
+* Update to marked.js 4.0.3
+* Update to highlightjs 11.3.1
+* Fix indicator arrow on syntax theme &lt;select&gt; element in options
+
 #### 2021-10-04: v3.2.9
 * Fix incorrect text on Options page regarding Math rendering. There is
   **only** GCharts support in this version. Canvas rendering is coming!
