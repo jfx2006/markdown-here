@@ -10,6 +10,7 @@
 /* global messenger:false, Utils:false */
 
 import BSN from '../vendor/bootstrap-native.esm.js'
+import { marked } from "../vendor/marked.esm.js"
 import HotkeyHandler from './shortcuts.js'
 
 import { fetchExtFile, getHljsStyles, getHljsStylesheet } from '../async_utils.js'

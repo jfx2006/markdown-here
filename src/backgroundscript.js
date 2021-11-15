@@ -84,7 +84,6 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
               html: MarkdownRender.markdownRender(
                 request.mdText,
                 prefs,
-                marked,
                 hljs),
               css: (prefs['main-css'] + syntaxCSS)
             })
@@ -199,7 +198,6 @@ messenger.composeScripts.register({
     { file: "utils.js" },
     { file: "common-logic.js" },
     { file: "jsHtmlToText.js" },
-    { file: "marked.js" },
     { file: "mdh-html-to-text.js" },
     { file: "markdown-here.js" },
     { file: "composescript.js" }

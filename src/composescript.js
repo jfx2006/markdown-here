@@ -5,7 +5,7 @@
 
 "use strict"
 /*global messenger:false, markdownHere:false, CommonLogic:false, htmlToText:false,
-    Utils:false, MdhHtmlToText:false, marked:false*/
+    Utils:false, MdhHtmlToText:false */
 
 // Handle the menu-item click
 function requestHandler(request, sender, sendResponse) {

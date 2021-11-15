@@ -13,6 +13,8 @@
  * That way, we minimize the amount of code that needs to be loaded in every page.
  */
 
+import { marked } from "./vendor/marked.esm.js"
+
 ;(function() {
 
 "use strict";
@@ -25,7 +27,7 @@ var MarkdownRender = {};
  Using the functionality provided by the functions htmlToText and markdownToHtml,
  render html into pretty text.
  */
-function markdownRender(mdText, userprefs, marked, hljs) {
+function markdownRender(mdText, userprefs, hljs) {
   function mathify(mathcode) {
     return userprefs['math-value']
             .replace(/\{mathcode\}/ig, mathcode)

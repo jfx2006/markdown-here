@@ -37,7 +37,7 @@ function debugLog() {
 var WATCHED_PROPERTY = 'markdownHereForgotToRenderWatched';
 
 // Returns true if `text` looks like raw Markdown, false otherwise.
-function probablyWritingMarkdown(mdMaybe, marked, prefs) {
+function probablyWritingMarkdown(mdMaybe) {
   /*
   This is going to be tricksy and fraught with danger. Challenges:
     * If it's not sensitive enough, it's useless.
