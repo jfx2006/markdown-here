@@ -6,7 +6,7 @@
 
 "use strict"
 /*global messenger:false, MarkdownRender:false,
-  marked:false, hljs:false, Utils:false, CommonLogic:false */
+  marked:false, Utils:false, CommonLogic:false */
 
 /*
  * Mail Extension background script.
@@ -83,8 +83,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
             responseCallback({
               html: MarkdownRender.markdownRender(
                 request.mdText,
-                prefs,
-                hljs),
+                prefs),
               css: (prefs['main-css'] + syntaxCSS)
             })
             return true

@@ -6,7 +6,7 @@
 "use strict";
 /* jshint curly:true, noempty:true, newcap:true, eqeqeq:true, eqnull:true, undef:true, devel:true, browser:true, node:true, evil:false, latedef:false, nonew:true, trailing:false, immed:false, smarttabs:true, expr:true */
 /* global describe, expect, it, before, beforeEach, after, afterEach */
-/* global _, $, MarkdownRender, htmlToText, marked, hljs, Utils, MdhHtmlToText, markdownHere */
+/* global _, $, MarkdownRender, htmlToText, Utils, MdhHtmlToText, markdownHere */
 
 // TODO: Lots more tests.
 
@@ -41,7 +41,7 @@ describe('markdownHere', function() {
     var markdownRenderHelper = function(elem, range, callback) {
       var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem, range);
       var renderedMarkdown = MarkdownRender.markdownRender(
-        mdhHtmlToText.get(), userprefs, hljs);
+        mdhHtmlToText.get(), userprefs);
       renderedMarkdown = mdhHtmlToText.postprocess(renderedMarkdown);
 
       callback(renderedMarkdown, userprefs['main-css'] + userprefs['syntax-css']);

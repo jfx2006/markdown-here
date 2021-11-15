@@ -2,7 +2,7 @@
 
 set +ev
 
-declare HLJS_VER="10.6.0"
+declare HLJS_VER="11.3.1"
 
 declare -a HLJS_LANGS
 
@@ -30,12 +30,12 @@ git -C hljs checkout "${HLJS_VER}"
 cd hljs || exit 1
 npm i
 # shellcheck disable=SC2086
-node tools/build.js -t browser ${HLJS_LANGS[*]}
+node tools/build.js -t cdn ${HLJS_LANGS[*]}
 
 mkdir highlightjs && mkdir highlightjs/styles
 # Use uncompressed styles
 mv src/styles/*.css highlightjs/styles/
-mv build/highlight.js build/highlight.min.js highlightjs/
+mv build/es/highlight.js build/es/highlight.min.js highlightjs/
 cp LICENSE highlightjs/
 
 python3 <<_EOF_

@@ -14,6 +14,7 @@
  */
 
 import { marked } from "./vendor/marked.esm.js"
+import hljs from "./highlightjs/highlight.min.js"
 
 ;(function() {
 
@@ -27,7 +28,7 @@ var MarkdownRender = {};
  Using the functionality provided by the functions htmlToText and markdownToHtml,
  render html into pretty text.
  */
-function markdownRender(mdText, userprefs, hljs) {
+function markdownRender(mdText, userprefs) {
   function mathify(mathcode) {
     return userprefs['math-value']
             .replace(/\{mathcode\}/ig, mathcode)

@@ -22,7 +22,7 @@ import {
 
 export const kOptDefaults = {
   "main-css": "",
-  "syntax-css": "nnfx.css",
+  "syntax-css": "nnfx-light.css",
   "math-enabled": false,
   "math-value": `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
   "hotkey-input": "Ctrl+Alt+M",

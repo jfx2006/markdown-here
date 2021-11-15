@@ -6,7 +6,7 @@
 "use strict";
 /* jshint curly:true, noempty:true, newcap:true, eqeqeq:true, eqnull:true, undef:true, devel:true, browser:true, node:true, evil:false, latedef:false, nonew:true, trailing:false, immed:false, smarttabs:true, expr:true */
 /* global describe, expect, it, before, beforeEach, after, afterEach */
-/* global _, $, MarkdownRender, htmlToText, marked, hljs, Utils, MdhHtmlToText */
+/* global _, $, MarkdownRender, htmlToText, Utils, MdhHtmlToText */
 
 
 describe('Markdown-Render', function() {
@@ -28,57 +28,57 @@ describe('Markdown-Render', function() {
     });
 
     it('should be okay with an empty string', function() {
-      expect(MarkdownRender.markdownRender('', userprefs, hljs)).to.equal('');
+      expect(MarkdownRender.markdownRender('', userprefs)).to.equal('');
     });
 
     // Test the fix for https://github.com/adam-p/markdown-here/issues/51
     it('should correctly handle links with URL text', function() {
       var s = '[http://example1.com](http://example2.com)';
       var target = '<a href="http://example2.com">http://example1.com</a>';
-      expect(MarkdownRender.markdownRender(s, userprefs, hljs)).to.contain(target);
+      expect(MarkdownRender.markdownRender(s, userprefs)).to.contain(target);
     });
 
     // Test the fix for https://github.com/adam-p/markdown-here/issues/51
     it('should quite correctly handle pre-formatted links with URL text', function() {
       var s = '<a href="http://example1.com">http://example2.com</a>';
       var target = '<a href="http://example1.com">http://example2.com</a>';
-      expect(MarkdownRender.markdownRender(s, userprefs, hljs)).to.contain(target);
+      expect(MarkdownRender.markdownRender(s, userprefs)).to.contain(target);
     });
 
     it('should retain pre-formatted links', function() {
       var s = '<a href="http://example1.com">aaa</a>';
-      expect(MarkdownRender.markdownRender(s, userprefs, hljs)).to.contain(s);
+      expect(MarkdownRender.markdownRender(s, userprefs)).to.contain(s);
     });
 
     // Test issue #57: https://github.com/adam-p/markdown-here/issues/57
     it('should add the schema to links missing it', function() {
       var md = 'asdf [aaa](bbb) asdf [ccc](ftp://ddd) asdf';
       var target = '<p>asdf <a href="http://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     it('should *not* add the schema to anchor links', function() {
       var md = 'asdf [aaa](#bbb) asdf [ccc](ftp://ddd) asdf';
       var target = '<p>asdf <a href="#bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #87: https://github.com/adam-p/markdown-here/issues/87
     it('should smartypants apostrophes properly', function() {
       var md = "Adam's parents' place";
       var target = '<p>Adam\u2019s parents\u2019 place</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #83: https://github.com/adam-p/markdown-here/issues/83
     it('should not alter MD-link-looking text in code blocks', function() {
       var md = '`[a](b)`';
       var target = '<p><code>[a](b)</code></p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
 
       md = '```\n[a](b)\n```';
       target = '<pre><code>[a](b)\n</code></pre>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #84: Math: single-character formula won't render
@@ -91,33 +91,33 @@ describe('Markdown-Render', function() {
 
       var md = '`$x$`';
       var target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=x" alt="x"></p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
 
       // Make sure we haven't broken multi-character forumlae
       md = '`$xx$`';
       target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
     it('should properly render code with good language names', function() {
       var md = '```sql\nSELECT * FROM table WHERE id = 1\n```';
       var target = '<pre><code class="hljs language-sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>\n</code></pre>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
     it('should properly render code with good language names that are in the wrong (upper)case', function() {
       var md = '```SQL\nSELECT * FROM table WHERE id = 1\n```';
       var target = '<pre><code class="hljs language-SQL"><span class="hljs-keyword">SELECT</span> <span class="hljs-operator">*</span> <span class="hljs-keyword">FROM</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">WHERE</span> id <span class="hljs-operator">=</span> <span class="hljs-number">1</span>\n</code></pre>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
     it('should properly render code with unsupported language names', function() {
       var md = '```badlang\nSELECT * FROM table WHERE id = 1\n```';
       var target = '<pre><code class="hljs language-badlang">SELECT * FROM table WHERE id = 1\n</code></pre>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #132: https://github.com/adam-p/markdown-here/issues/132
@@ -125,12 +125,12 @@ describe('Markdown-Render', function() {
     it('should render smart arrows', function() {
       var md = '--> <-- <--> ==> <== <==>';
       var target = '<p>→ ← ↔ ⇒ ⇐ ⇔</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
 
       // And should not break headers or m-dashes
       md = 'Arrows\n==\nAnd friends\n--\n--> <-- <--> ==> <== <==> -- m-dash';
       target = '<h1 id="arrows">Arrows</h1>\n<h2 id="and-friends">And friends</h2>\n<p>→ ← ↔ ⇒ ⇐ ⇔ — m-dash</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #103: option to disable GFM line breaks
@@ -139,7 +139,7 @@ describe('Markdown-Render', function() {
 
       var md = 'aaa\nbbb\nccc';
       var target = '<p>aaa<br>bbb<br>ccc</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
     // Test issue #103: option to disable GFM line breaks
@@ -148,7 +148,7 @@ describe('Markdown-Render', function() {
 
       var md = 'aaa\nbbb\nccc';
       var target = '<p>aaa\nbbb\nccc</p>\n';
-      expect(MarkdownRender.markdownRender(md, userprefs, hljs)).to.equal(target);
+      expect(MarkdownRender.markdownRender(md, userprefs)).to.equal(target);
     });
 
   });
@@ -170,7 +170,7 @@ describe('Markdown-Render', function() {
       var elem = $('<div>').html(mdHTML).appendTo('body');
       var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem.get(0));
       var renderedMarkdown = MarkdownRender.markdownRender(
-        mdhHtmlToText.get(), userprefs, hljs);
+        mdhHtmlToText.get(), userprefs);
       renderedMarkdown = mdhHtmlToText.postprocess(renderedMarkdown);
       $(elem).remove();
       return renderedMarkdown;
