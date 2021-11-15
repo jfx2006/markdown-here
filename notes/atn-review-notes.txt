@@ -32,8 +32,8 @@ supported, so I wrote tools/get-highlightjs.sh to build from source.
 That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
-marked.js
-https://raw.githubusercontent.com/markedjs/marked/v3.0.4/lib/marked.js
+marked.esm.js
+https://raw.githubusercontent.com/markedjs/marked/v4.0.3/lib/marked.esm.js
 
 jsHtmlToText.js
 I cannot locate a current version of this library, so this is the same
@@ -42,7 +42,7 @@ replace it.
 
 Use of mailextension experiments:
 The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
-is used. It is patched with https://github.com/jobisoft/notificationbar-API/pull/13.
+is used.
 
 Options UI pages:
 - mailext-options-sync:
@@ -54,7 +54,7 @@ Options UI pages:
   The MDHR Makefile will build mailext-options-sync and copy it into src/options.
   Version 2.1.2 was built with node 14.17.0 and npm 6.14.13
 
-https://raw.githubusercontent.com/thednp/bootstrap.native/3.0.15/dist/bootstrap-native.esm.js
+https://raw.githubusercontent.com/thednp/bootstrap.native/4.0.0/dist/bootstrap-native.esm.js
 https://bootswatch.com/5/darkly/bootstrap.css
 Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
