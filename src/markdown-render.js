@@ -16,19 +16,13 @@
 import { marked } from "./vendor/marked.esm.js"
 import hljs from "./highlightjs/highlight.min.js"
 
-;(function() {
-
-"use strict";
-/*global module:false*/
-
-var MarkdownRender = {};
-
+"use strict"
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
  render html into pretty text.
  */
-function markdownRender(mdText, userprefs) {
+export default function markdownRender(mdText, userprefs) {
   function mathify(mathcode) {
     return userprefs['math-value']
             .replace(/\{mathcode\}/ig, mathcode)
@@ -101,31 +95,13 @@ function markdownRender(mdText, userprefs) {
     highlight: function(codeText, codeLanguage) {
         if (codeLanguage &&
             hljs.getLanguage(codeLanguage.toLowerCase())) {
-          return hljs.highlight(codeLanguage.toLowerCase(), codeText).value;
+          return hljs.highlight(codeLanguage.toLowerCase(), codeText).value
         }
 
-        return codeText;
+        return codeText
       }
-    };
+    }
 
   marked.setOptions(markedOptions)
-  return marked(mdText);
+  return marked(mdText)
 }
-
-
-// Expose these functions
-
-MarkdownRender.markdownRender = markdownRender;
-
-var EXPORTED_SYMBOLS = ['MarkdownRender'];
-
-if (typeof module !== 'undefined') {
-  module.exports = MarkdownRender;
-} else {
-  this.MarkdownRender = MarkdownRender;
-  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
-}
-
-}).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());

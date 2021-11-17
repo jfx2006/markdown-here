@@ -5,14 +5,14 @@
  */
 
 "use strict"
-/*global messenger:false, MarkdownRender:false,
-  marked:false, Utils:false, CommonLogic:false */
+/*global messenger:false, Utils:false, CommonLogic:false */
 
 /*
  * Mail Extension background script.
  */
 import {getHljsStylesheet} from './async_utils.js'
 import OptionsStore from "./options/options-storage.js"
+import markdownRender from "./markdown-render.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
@@ -81,7 +81,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
         getHljsStylesheet(`${prefs["syntax-css"]}`)
           .then(syntaxCSS => {
             responseCallback({
-              html: MarkdownRender.markdownRender(
+              html: markdownRender(
                 request.mdText,
                 prefs),
               css: (prefs['main-css'] + syntaxCSS)

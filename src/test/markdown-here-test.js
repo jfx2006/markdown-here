@@ -3,6 +3,9 @@
  * MIT License : http://adampritchard.mit-license.org/
  */
 
+
+import markdownRender from "../markdown-render.js"
+
 "use strict";
 /* jshint curly:true, noempty:true, newcap:true, eqeqeq:true, eqnull:true, undef:true, devel:true, browser:true, node:true, evil:false, latedef:false, nonew:true, trailing:false, immed:false, smarttabs:true, expr:true */
 /* global describe, expect, it, before, beforeEach, after, afterEach */
@@ -40,7 +43,7 @@ describe('markdownHere', function() {
 
     var markdownRenderHelper = function(elem, range, callback) {
       var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem, range);
-      var renderedMarkdown = MarkdownRender.markdownRender(
+      var renderedMarkdown = markdownRender(
         mdhHtmlToText.get(), userprefs);
       renderedMarkdown = mdhHtmlToText.postprocess(renderedMarkdown);
 
