@@ -13,14 +13,13 @@ import BSN from '../vendor/bootstrap-native.esm.js'
 import { marked } from "../vendor/marked.esm.js"
 import HotkeyHandler from './shortcuts.js'
 
-import { fetchExtFile, getHljsStyles, getHljsStylesheet } from '../async_utils.js'
+import { fetchExtFile, getHljsStyles } from '../async_utils.js'
 import OptionsStore from './options-storage.js'
 
 (async () => {
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
-  const cssSyntaxEdit = document.getElementById("css-syntax-edit")
   let savedMsgToast
 
   function showSavedMsg() {
@@ -61,8 +60,6 @@ import OptionsStore from './options-storage.js'
       cssSyntaxSelect.options.add(opt)
     }
 
-    cssSyntaxSelect.addEventListener('change', cssSyntaxSelectChange)
-
     if (messenger !== undefined) {
       await fillSupportInfo()
       await loadChangeList()
@@ -90,7 +87,6 @@ import OptionsStore from './options-storage.js'
     }
 
     await OptionsStore.syncForm(form)
-    await cssSyntaxSelectChange()
     form.addEventListener("options-sync:form-synced", showSavedMsg)
   }
 
@@ -136,19 +132,6 @@ import OptionsStore from './options-storage.js'
         showSavedMsg()
         document.getElementById("hotkey-display-str").innerText = newHotKey
       })
-  }
-
-  // The syntax highlighting CSS combo-box selection changed.
-  async function cssSyntaxSelectChange() {
-    if (cssSyntaxSelect.selectedIndex < 0) {
-      // This might be an upgrade from custom highlight CSS or possibly a removed
-      // color scheme, so just set a default (nnfx.css).
-      cssSyntaxSelect[65].selected = true
-    }
-    const selected = cssSyntaxSelect.options[cssSyntaxSelect.selectedIndex].value
-
-    // Get the CSS for the selected theme.
-    cssSyntaxEdit.value = await getHljsStylesheet(selected)
   }
 
   const SUBS = {"__APP_NAME": messenger.i18n.getMessage("app_name")}
