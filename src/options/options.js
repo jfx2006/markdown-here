@@ -9,20 +9,26 @@
 
 /* global messenger:false, Utils:false */
 
-import BSN from '../vendor/bootstrap-native.esm.js'
-import { marked } from "../vendor/marked.esm.js"
-import HotkeyHandler from './shortcuts.js'
+import BSN from "../vendor/bootstrap-native.esm.js"
+import markdownRender from "../markdown-render.js"
+import HotkeyHandler from "./shortcuts.js"
+import DOMPurify from "../vendor/purify.es.js"
 
-import { fetchExtFile, getHljsStyles } from '../async_utils.js'
-import OptionsStore from './options-storage.js'
+import { fetchExtFile, getHljsStyles, getHljsStylesheetURL } from "../async_utils.js"
+import OptionsStore from "./options-storage.js"
 
 (async () => {
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
+  const previewInput = document.getElementById("preview_input")
+  const previewIframe = document.getElementById("preview")
+  let inputDirty = true
+  let checkChangeTimeout = null
   let savedMsgToast
 
   function showSavedMsg() {
+    inputDirty = true
     savedMsgToast.show()
     setTimeout(function() {
       savedMsgToast.hide()
@@ -63,6 +69,7 @@ import OptionsStore from './options-storage.js'
     if (messenger !== undefined) {
       await fillSupportInfo()
       await loadChangeList()
+      await setInitialText()
       let rv = await OptionsStore.get("hotkey-input")
       document.getElementById("hotkey-display-str").innerText = rv["hotkey-input"]
       if (document.location.hash === "#docs") {
@@ -86,8 +93,77 @@ import OptionsStore from './options-storage.js'
       btn.addEventListener("click", onResetButtonClicked, false)
     }
 
+    previewIframe.addEventListener("load", handlePreviewLoad)
+    previewInput.addEventListener("input", handleInput, false)
+    previewInput.addEventListener("scroll", setPreviewScroll, false)
+
     await OptionsStore.syncForm(form)
     form.addEventListener("options-sync:form-synced", showSavedMsg)
+
+    checkPreviewChanged()
+  }
+
+  function escapeHTML(strings, html) {
+    return `${DOMPurify.sanitize(html)}`
+  }
+
+  function handlePreviewLoad() {
+    inputDirty = true
+  }
+
+  function getScrollSize(e) {
+    return e.scrollHeight - e.clientHeight
+  }
+
+  function getScrollPercent() {
+    let size = getScrollSize(previewInput)
+    if (size <= 0) {
+      return 1
+    }
+    return previewInput.scrollTop / size
+  }
+
+  function setPreviewScroll() {
+    let preview_scroll = previewIframe.contentDocument.scrollingElement
+    preview_scroll.scrollTop = getScrollPercent() * getScrollSize(preview_scroll)
+  }
+
+  function checkPreviewChanged() {
+    OptionsStore.getAll()
+      .then((prefs) => {
+        if (inputDirty) {
+          getHljsStylesheetURL(prefs["syntax-css"])
+            .then(hljs_css_url => {
+              previewIframe.contentDocument.getElementById("hljs_css").href = hljs_css_url
+
+              let md_stylesheet = prefs["main-css"]
+              let style_elem = previewIframe.contentDocument.getElementById("md_css")
+              style_elem.innerText = md_stylesheet
+
+              let html = markdownRender(previewInput.value, prefs)
+              previewIframe.contentDocument.body.innerHTML = escapeHTML`${html}`
+
+              setPreviewScroll()
+
+              inputDirty = false
+            }).catch(reason => {
+              console.log(`Error getting hljs css. ${reason}`)
+          })
+        }
+      }).finally(() => {
+        checkChangeTimeout = setTimeout(checkPreviewChanged, 500)
+    })
+
+  }
+
+  async function setInitialText() {
+    if (previewInput.value === "") {
+      previewInput.value = await fetchExtFile("/options/preview-initial.md")
+    }
+  }
+
+  function handleInput() {
+    inputDirty = true
   }
 
   async function onResetButtonClicked(event) {
@@ -109,12 +185,9 @@ import OptionsStore from './options-storage.js'
 
   async function loadChangeList() {
     let changes = await fetchExtFile("/CHANGES.md")
-    let markedOptions = {
-      gfm: true,
-      pedantic: false,
-      sanitize: false }
+    let userprefs = await OptionsStore.getAll()
 
-    changes = marked(changes, markedOptions)
+    changes = markdownRender(changes, userprefs)
 
     Utils.saferSetInnerHTML(document.getElementById("mdhrChangeList"), changes)
   }

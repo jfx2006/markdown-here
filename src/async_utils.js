@@ -22,13 +22,17 @@ export async function getHljsStyles() {
   return fetchExtFile(`${HLJS_STYLES_PATH}/styles.json`, true)
 }
 
-export async function getHljsStylesheet(syntax_css) {
+export async function getHljsStylesheetURL(syntax_css) {
   const available_styles = await getHljsStyles()
   const syntax_values = Object.values(available_styles)
   if (syntax_values.indexOf(syntax_css) === -1) {
-    console.log(`Invalid stylesheet ${syntax_css}.`)
+    throw `Invalid stylesheet ${syntax_css}.`
   }
-  return fetchExtFile(`${HLJS_STYLES_PATH}/${syntax_css}`)
+  return messenger.runtime.getURL(`${HLJS_STYLES_PATH}/${syntax_css}`)
+}
+
+export async function getHljsStylesheet(syntax_css) {
+  return fetchExtFile(getHljsStylesheetURL(syntax_css))
 }
 
 // Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
