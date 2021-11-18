@@ -15,6 +15,6 @@
     "eslint-plugin-no-unsanitized": "^3.1.4",
     "eslint-plugin-prettier": "^3.3.1",
     "prettier": "^2.3.1",
-    "web-ext": "^6.4.0"
+    "web-ext": "^6.5.0"
   }
 }
