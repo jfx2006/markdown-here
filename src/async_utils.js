@@ -32,7 +32,7 @@ export async function getHljsStylesheetURL(syntax_css) {
 }
 
 export async function getHljsStylesheet(syntax_css) {
-  return fetchExtFile(getHljsStylesheetURL(syntax_css))
+  return fetchExtFile(await getHljsStylesheetURL(syntax_css))
 }
 
 // Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
