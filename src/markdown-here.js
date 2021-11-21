@@ -38,7 +38,7 @@ https://github.com/adam-p/markdown-here/issues/85
 ;(function() {
 
 "use strict";
-/* global module:false Utils */
+/* global module:false Utils:false */
 
 
 var WRAPPER_TITLE_PREFIX = 'MDH:';
@@ -354,7 +354,7 @@ function findElemRawHolder(elem) {
   // `querySelector` would return the holder inside the original email.
   // This scenario is issue #297 https://github.com/adam-p/markdown-here/issues/297
 
-  var rawHolders = elem.querySelectorAll('[title^="' + WRAPPER_TITLE_PREFIX + '"]');
+  var rawHolders = elem.querySelectorAll(`[title^="${WRAPPER_TITLE_PREFIX}"]`);
 
   for (var i = 0; i < rawHolders.length; i++) {
     if (// The above `querySelector` will also look at grandchildren of
@@ -469,10 +469,9 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
     // title intact when saving.
     // `&#8203;` is a zero-width space: https://en.wikipedia.org/wiki/Zero-width_space
     // Thunderbird will discard the `div` if there's no content.
-    rawHolder = '<div ' +
-                'title="' + WRAPPER_TITLE_PREFIX + Utils.utf8StringToBase64(originalHtml) + '" ' +
-                'style="height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0em;padding:0;margin:0;" ' +
-                '>&#8203;</div>';
+    rawHolder = `<div title="${WRAPPER_TITLE_PREFIX}${Utils.utf8StringToBase64(originalHtml)}"
+      aria-hidden="true"
+      style="height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;">&#8203;</div>`;
 
     // Wrap our pretty HTML in a <div> wrapper.
     // We'll use the wrapper as a marker to indicate that we're in a rendered state.
