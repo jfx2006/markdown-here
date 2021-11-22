@@ -68,6 +68,9 @@ export default function markdownRender(mdText, userprefs) {
         return math;
       }
     }
+    if (code.startsWith("\n")) {
+      code = code.trimStart()
+    }
     return defaultCodeRenderer.call(this, code, lang, escaped);
   };
 
