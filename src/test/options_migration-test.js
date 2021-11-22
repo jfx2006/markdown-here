@@ -7,8 +7,8 @@
 import {
   migrate_badMathValue,
   migrate_MainCSS,
-  migrate_setLastVersion,
-  migrate_syntaxCSS,
+  migrate_setLastVersion, migrate_smartReplacements,
+  migrate_syntaxCSS
 } from "../options/options_migration.js"
 
 const DEFAULTS = {
@@ -85,6 +85,14 @@ describe("options_migrations tests", function () {
       let options = {}
       let changed = await migrate_setLastVersion(options)
       expect(changed["last-version"]).to.equal(thisVersion)
+    })
+  })
+
+  describe("migrate_smartReplacements", function () {
+    it("should migrate 'smart-quotes' option", async function() {
+      let options = { "smart-quotes-enabled": false }
+      let changed = await migrate_smartReplacements(options)
+      expect(changed["smart-replacements-enabled"]).to.equal(false)
     })
   })
 })

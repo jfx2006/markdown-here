@@ -140,3 +140,10 @@ export async function migrate_removeUnused(options, defaults) {
   }
   return null
 }
+
+export async function migrate_smartReplacements(options, defaults) {
+  if (options["smart-quotes-enabled"] !== undefined) {
+    return { "smart-replacements-enabled": options["smart-quotes-enabled"] }
+  }
+  return null
+}

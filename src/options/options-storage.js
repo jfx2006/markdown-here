@@ -17,6 +17,7 @@ import {
   migrate_oldHotKey,
   migrate_oldOptions,
   migrate_syntaxCSS,
+  migrate_smartReplacements,
   migrate_removeUnused
 } from "./options_migration.js"
 
@@ -28,7 +29,7 @@ export const kOptDefaults = {
   "hotkey-input": "Ctrl+Alt+M",
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
-  "smart-quotes-enabled": true,
+  "smart-replacements-enabled": true,
   "last-version": "0",
 }
 
@@ -51,6 +52,7 @@ function MDHROptionsStore() {
       migrate_syntaxCSS,
       migrate_badMathValue,
       migrate_MainCSS,
+      migrate_smartReplacements,
       migrate_removeUnused
     ],
     logging: true,

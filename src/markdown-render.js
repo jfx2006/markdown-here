@@ -83,6 +83,39 @@ export default function markdownRender(mdText, userprefs) {
     return defaultCodespanRenderer.call(this, text);
   };
 
+  function smartarrows(text) {
+    return text
+      .replace(/<-->/g, "\u2194")
+      .replace(/<--/g, "\u2190")
+      .replace(/-->/g, "\u2192")
+      .replace(/<==>/g, "\u21d4")
+      .replace(/<==/g, "\u21d0")
+      .replace(/==>/g, "\u21d2");
+  }
+
+  const tokenizer = {
+    inlineText(src, smartypants) {
+      const cap = this.rules.inline.text.exec(src);
+      if (cap) {
+        let text;
+        if (this.lexer.state.inRawBlock) {
+          text = this.options.sanitize
+            ? this.options.sanitizer
+              ? this.options.sanitizer(cap[0])
+              : escape(cap[0])
+            : cap[0];
+        } else {
+          text = this.options.smartypants ? smartypants(smartarrows(cap[0])) : cap[0];
+        }
+        return {
+          type: "text",
+          raw: cap[0],
+          text,
+        };
+      }
+    },
+  };
+
   const markedOptions = {
     renderer: markedRenderer,
     gfm: true,
@@ -95,16 +128,19 @@ export default function markdownRender(mdText, userprefs) {
     // Bit of a hack: highlight.js uses a `hljs` class to style the code block,
     // so we'll add it by sneaking it into this config field.
     langPrefix: "hljs language-",
-    highlight: function(codeText, codeLanguage) {
-        if (codeLanguage &&
-            hljs.getLanguage(codeLanguage.toLowerCase())) {
-          return hljs.highlight(codeText, {language: codeLanguage.toLowerCase()}).value
-        }
-
-        return codeText
+    highlight: function (codeText, codeLanguage) {
+      if (codeLanguage && hljs.getLanguage(codeLanguage.toLowerCase())) {
+        return hljs.highlight(codeText, {
+          language: codeLanguage.toLowerCase(),
+        }).value;
       }
-    }
 
-  marked.setOptions(markedOptions)
-  return marked(mdText)
+      return codeText;
+    },
+  };
+
+
+  marked.setOptions(markedOptions);
+  marked.use({tokenizer});
+  return marked(mdText);
 }
