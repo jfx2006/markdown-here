@@ -109,11 +109,11 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       })
       messenger.composeAction.setIcon({
         path: {
-          "16": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "19": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "32": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "38": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "64": Utils.getLocalURL('/images/rocmarkdown.svg')
+          "16": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "19": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "32": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "38": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "64": messenger.runtime.getURL('/images/rocmarkdown.svg')
         },
         tabId: sender.tab.id
       })
@@ -128,11 +128,11 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       })
       messenger.composeAction.setIcon({
         path: {
-          "16": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "19": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "32": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "38": Utils.getLocalURL('/images/rocmarkdown.svg'),
-          "64": Utils.getLocalURL('/images/rocmarkdown.svg')
+          "16": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "19": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "32": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "38": messenger.runtime.getURL('/images/rocmarkdown.svg'),
+          "64": messenger.runtime.getURL('/images/rocmarkdown.svg')
         },
         tabId: sender.tab.id
       })

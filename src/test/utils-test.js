@@ -244,91 +244,6 @@ describe('Utils', function() {
     });
   });
 
-
-  describe('getLocalFile', function() {
-    it('should return correct data', function(done) {
-      // We "know" our options.html file starts with this string
-      const KNOWN_PREFIX = '<html lang="en">';
-      const callback = function(data) {
-        expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
-        done();
-      };
-
-      Utils.getLocalFile('/../options/options.html', 'text/html', callback);
-    });
-
-    it('should correctly handle absence of optional argument', function(done) {
-      // We "know" our options.html file starts with this string
-      const KNOWN_PREFIX = '<html lang="en">';
-      const callback = function(data) {
-        expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
-        done();
-      };
-
-      Utils.getLocalFile('/../options/options.html', callback);
-    });
-
-    it('should supply an error arg to callback if file not found', function(done) {
-      Utils.getLocalFile('badfilename', function(val, err) {
-        expect(err).to.be.ok;
-        done();
-      });
-    });
-  });
-
-
-  describe('getLocalFileAsBase64', function() {
-    it('should return data as Base64', function(done) {
-      // We "know" our logo file starts with this string when base64'd
-      var KNOWN_PREFIX = 'iVBORw0KGgo';
-      var callback = function(data) {
-        expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
-        done();
-      };
-
-      Utils.getLocalFileAsBase64('/images/icon24.png', callback);
-    });
-
-    it('should supply an error arg to callback if file not found', function(done) {
-      Utils.getLocalFile('badfilename', function(val, err) {
-        expect(err).to.be.ok;
-        done();
-      });
-    });
-  });
-
-  describe('getLocalURL', function() {
-    it('should return a URL that can be used successfully', function(done) {
-      // We're going to cheat a little and use the URL in a request to make
-      // sure it works.
-      // It would be tough to test otherwise without replicating the internal
-      // logic of the function.
-
-      const KNOWN_PREFIX = '<html lang="en">';
-      const callback = function(data) {
-        expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX);
-        done();
-      };
-
-      const url = Utils.getLocalURL('/../options/options.html');
-      Utils.getLocalFile(url, 'text/html', callback);
-    });
-  });
-
-  describe('fireMouseClick', function() {
-    it('should properly fire a click event', function(done) {
-      var elem = document.createElement('button');
-      document.body.appendChild(elem);
-      elem.addEventListener('click', function(event) {
-        expect(event[Utils.MARKDOWN_HERE_EVENT]).to.be.true;
-        document.body.removeChild(elem);
-        done();
-      });
-
-      Utils.fireMouseClick(elem);
-    });
-  });
-
   describe('makeRequestToPrivilegedScript', function() {
     it('should communicate with privileged script', function(done) {
       Utils.makeRequestToPrivilegedScript(
@@ -365,36 +280,6 @@ describe('Utils', function() {
     })
   });
 
-  describe('setFocus', function() {
-    it('should set focus into a contenteditable div', function() {
-      var $div = $('<div contenteditable="true">').appendTo('body');
-      expect(document.activeElement).to.not.equal($div.get(0));
-
-      Utils.setFocus($div.get(0));
-      expect(document.activeElement).to.equal($div.get(0));
-
-      $div.remove();
-    });
-
-    it('should set focus into an iframe with contenteditable body', function() {
-      var $iframe = $('<iframe>').appendTo('body');
-      $iframe.get(0).contentDocument.body.contentEditable = true;
-      expect(document.activeElement).to.not.equal($iframe.get(0));
-
-      Utils.setFocus($iframe.get(0).contentDocument.body);
-      expect(document.activeElement).to.equal($iframe.get(0));
-      expect($iframe.get(0).contentDocument.activeElement).to.equal($iframe.get(0).contentDocument.body);
-
-      $iframe.remove();
-    });
-  });
-
-  describe('setFocus', function() {
-    it('should not explode', function() {
-      Utils.consoleLog('setFocus did not explode');
-    });
-  });
-
   describe('getTopURL', function() {
     it('should get the URL in a simple case', function() {
       expect(Utils.getTopURL(window)).to.equal(location.href);
@@ -408,56 +293,6 @@ describe('Utils', function() {
 
     it('should get the hostname', function() {
       expect(Utils.getTopURL(window, true)).to.equal(location.hostname);
-    });
-  });
-
-  describe('nextTick', function() {
-    it('should call callback asynchronously and quickly', function(done) {
-      var start = new Date();
-      var called = false;
-      Utils.nextTick(function() {
-        called = true;
-        expect(new Date() - start).to.be.lessThan(200);
-        done();
-      });
-      expect(called).to.equal(false);
-    });
-
-    it('should properly set context', function(done) {
-      var ctx = { hi: 'there' };
-
-      Utils.nextTick(function() {
-        expect(this).to.equal(ctx);
-        done();
-      }, ctx);
-    });
-  });
-
-  describe('nextTickFn', function() {
-    it('should return a function', function() {
-      expect(Utils.nextTickFn(function(){})).to.be.a('function');
-    });
-
-    it('should return a function that calls callback asynchronously and quickly', function(done) {
-      var start = new Date();
-      var called = false;
-      var fn = Utils.nextTickFn(function() {
-        called = true;
-        expect(new Date() - start).to.be.lessThan(200);
-        done();
-      });
-      fn();
-      expect(called).to.equal(false);
-    });
-
-    it('should properly set context', function(done) {
-      var ctx = { hi: 'there' };
-
-      var fn = Utils.nextTickFn(function() {
-        expect(this).to.equal(ctx);
-        done();
-      }, ctx);
-      fn();
     });
   });
 

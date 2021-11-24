@@ -284,145 +284,6 @@ function isElementDescendant(parent, descendant) {
   return false;
 }
 
-
-// Take a URL that refers to a file in this extension and makes it absolute.
-// Note that the URL *must not* be relative to the current path position (i.e.,
-// no "./blah" or "../blah"). So `url` must start with `/`.
-function getLocalURL(url) {
-  if (url[0] !== '/') {
-    throw 'relative url not allowed: ' + url;
-  }
-
-  if (url.indexOf('://') >= 0) {
-    // already absolute
-    return url;
-  }
-
-    return chrome.extension.getURL(url);
-
-  throw 'unknown url type: ' + url;
-}
-
-
-// Makes an asynchrous XHR request for a local file (basically a thin wrapper).
-// `mimetype` is optional. `callback` will be called with the responseText as
-// argument.
-// If error occurs, `callback`'s second parameter will be an error.
-function getLocalFile(url, mimetype, callback) {
-  if (!callback) {
-    // optional mimetype not provided
-    callback = mimetype;
-    mimetype = null;
-  }
-
-  var xhr = new window.XMLHttpRequest();
-  if (mimetype) {
-    xhr.overrideMimeType(mimetype);
-  }
-  xhr.open('GET', url);
-
-  xhr.onload = function() {
-    if (callback) {
-     callback(this.responseText);
-     callback = null;
-    }
-  };
-
-  xhr.onerror = function(e) {
-    if (callback) {
-      callback(null, e);
-      callback = null;
-    }
-  };
-
-  try {
-    // On some platforms, xhr.send throws an error if the url is not found.
-    // On some platforms, it will call onerror and on some it won't.
-    xhr.send();
-  }
-  catch(e) {
-    if (callback) {
-      callback(null, e);
-      callback = null;
-      return;
-    }
-  }
-}
-
-
-// Does async XHR request to get data at `url`, then passes it to `callback`
-// Base64-encoded.
-// Intended to be used get the logo image file in a form that can be put in a
-// data-url image element.
-// If error occurs, `callback`'s second parameter will be an error.
-function getLocalFileAsBase64(url, callback) {
-  var xhr = new window.XMLHttpRequest();
-  xhr.open('GET', url);
-  xhr.responseType = 'arraybuffer';
-
-  xhr.onload = function() {
-    var uInt8Array = new Uint8Array(this.response);
-    var base64Data = base64EncArr(uInt8Array);
-
-    if (callback) {
-      callback(base64Data);
-      callback = null;
-    }
-  };
-
-  xhr.onerror = function(e) {
-    if (callback) {
-      callback(null, e);
-      callback = null;
-    }
-  };
-
-  try {
-    // On some platforms, xhr.send throws an error if the url is not found.
-    // On some platforms, it will call onerror and on some it won't.
-    xhr.send();
-  }
-  catch(e) {
-    if (callback) {
-      callback(null, e);
-      callback = null;
-      return;
-    }
-  }
-}
-
-
-// Events fired by Markdown Here will have this property set to true.
-var MARKDOWN_HERE_EVENT = 'markdown-here-event';
-
-// Fire a mouse event on the given element. (Note: not super robust.)
-function fireMouseClick(elem) {
-  var clickEvent = elem.ownerDocument.createEvent('MouseEvent');
-  clickEvent.initMouseEvent(
-    'click',
-    true,                           // bubbles: We want the event to bubble.
-    true,                           // cancelable
-    elem.ownerDocument.defaultView, // view,
-    1,                              // detail,
-    0,                              // screenX
-    0,                              // screenY
-    0,                              // clientX
-    0,                              // clientY
-    false,                          // ctrlKey
-    false,                          // altKey
-    false,                          // shiftKey
-    false,                          // metaKey
-    0,                              // button
-    null);                          // relatedTarget
-
-  clickEvent[MARKDOWN_HERE_EVENT] = true;
-
-  elem.dispatchEvent(clickEvent);
-}
-
-
-var PRIVILEGED_REQUEST_EVENT_NAME = 'markdown-here-request-event';
-
 function makeRequestToPrivilegedScript(doc, requestObj, callback) {
   // If `callback` is undefined and we pass it anyway, Chrome complains with this:
   // Uncaught Error: Invocation of form extension.sendMessage(object, undefined, null) doesn't match definition extension.sendMessage(optional string extensionId, any message, optional function responseCallback)
@@ -451,26 +312,6 @@ function makeRequestToBGScript(action, args) {
   return messenger.runtime.sendMessage(requestObj);
 }
 
-// Gives focus to the element.
-// Setting focus into elements inside iframes is not simple.
-function setFocus(elem) {
-  // We need to do some tail-recursion focus setting up through the iframes.
-  if (elem.document) {
-    // This is a window
-    if (elem.frameElement) {
-      // This is the window of an iframe. Set focus to the parent window.
-      setFocus(elem.frameElement.ownerDocument.defaultView);
-    }
-  }
-  else if (elem.ownerDocument.defaultView.frameElement) {
-    // This element is in an iframe. Set focus to its owner window.
-    setFocus(elem.ownerDocument.defaultView);
-  }
-
-  elem.focus();
-}
-
-
 // Gets the URL of the top window that elem belongs to.
 // May recurse up through iframes.
 function getTopURL(win, justHostname) {
@@ -486,64 +327,6 @@ function getTopURL(win, justHostname) {
     url = win.location.href;
   }
   return url;
-}
-
-// Regarding methods for `nextTick` and related:
-// For ordinary browser use, setTimeout() is throttled to 1000ms for inactive
-// tabs. This doesn't seem to affect extensions, except... Chrome Canary is
-// currently doing this for the extension background scripts. This causes
-// horribly slow rendering. For info see:
-// https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout#Inactive_tabs
-// As an alternative, we can use a local XHR request/response.
-
-function asyncCallbackXHR(callback) {
-  var xhr = new window.XMLHttpRequest();
-  xhr.open('HEAD', getLocalURL('/CHANGES.md'));
-
-  xhr.onload = callback;
-  xhr.onerror = callback;
-
-  try {
-    // On some platforms, xhr.send throws an error if the url is not found.
-    // On some platforms, it will call onerror and on some it won't.
-    xhr.send();
-  }
-  catch(e) {
-    asyncCallbackTimeout(callback);
-  }
-}
-
-function asyncCallbackTimeout(callback) {
-  setTimeout(callback, 0);
-}
-
-// We prefer to use the setTimeout approach.
-var asyncCallback = asyncCallbackTimeout;
-
-// Sets a short timeout and then calls callback
-function nextTick(callback, context) {
-  nextTickFn(callback, context)();
-}
-
-// `context` is optional. Will be `this` when `callback` is called.
-function nextTickFn(callback, context) {
-  var start = new Date();
-
-  return function nextTickFnInner() {
-    var args = arguments;
-    var runner = function() {
-      // Detect a whether the async callback was super slow
-      var end = new Date() - start;
-      if (end > 200) {
-        // setTimeout is too slow -- switch to the XHR approach.
-        asyncCallback = asyncCallbackXHR;
-      }
-
-      callback.apply(context, args);
-    };
-
-    asyncCallback(runner);
-  };
 }
 
 
@@ -757,19 +540,10 @@ Utils.sanitizeDocumentFragment = sanitizeDocumentFragment;
 Utils.rangeIntersectsNode = rangeIntersectsNode;
 Utils.getDocumentFragmentHTML = getDocumentFragmentHTML;
 Utils.isElementDescendant = isElementDescendant;
-Utils.getLocalURL = getLocalURL;
-Utils.getLocalFile = getLocalFile;
-Utils.getLocalFileAsBase64 = getLocalFileAsBase64;
-Utils.fireMouseClick = fireMouseClick;
-Utils.MARKDOWN_HERE_EVENT = MARKDOWN_HERE_EVENT;
 Utils.makeRequestToPrivilegedScript = makeRequestToPrivilegedScript;
 Utils.makeRequestToBGScript = makeRequestToBGScript;
-Utils.PRIVILEGED_REQUEST_EVENT_NAME = PRIVILEGED_REQUEST_EVENT_NAME;
 Utils.consoleLog = consoleLog;
-Utils.setFocus = setFocus;
 Utils.getTopURL = getTopURL;
-Utils.nextTick = nextTick;
-Utils.nextTickFn = nextTickFn;
 Utils.getMessage = getMessage;
 Utils.utf8StringToBase64 = utf8StringToBase64;
 Utils.base64ToUTF8String = base64ToUTF8String;
