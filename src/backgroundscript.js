@@ -195,7 +195,6 @@ messenger.composeAction.onClicked.addListener(tab => {
 messenger.composeScripts.register({
   "js": [
     { file: "utils.js" },
-    { file: "common-logic.js" },
     { file: "jsHtmlToText.js" },
     { file: "mdh-html-to-text.js" },
     { file: "markdown-here.js" },

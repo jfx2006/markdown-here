@@ -4,7 +4,7 @@
  */
 
 "use strict"
-/*global messenger:false, markdownHere:false, CommonLogic:false, htmlToText:false,
+/*global messenger:false, markdownHere:false, htmlToText:false,
     Utils:false, MdhHtmlToText:false */
 
 // Handle the menu-item click
@@ -57,7 +57,7 @@ function requestHandler(request, sender, sendResponse) {
         }
       }
       let mdMaybe = new MdhHtmlToText.MdhHtmlToText(body_copy, null, true).get()
-      return CommonLogic.probablyWritingMarkdown(mdMaybe)
+      return Utils.probablyWritingMarkdown(mdMaybe)
     }
     const renderable = markdownHere.elementCanBeRendered(window.document.body)
     if (renderable) {
