@@ -405,15 +405,12 @@ function isBackgroundPage() {
     var _a
     const callback = (installType) => {
       // Always run migrations during development #25
-      resolve(
-        "development" === installType ||
-          "install" === installType ||
-          "upgrade" === installType
-      ) // Run migrations when the extension is installed or updated
-      // This broke other onInstalled functions!
-      //messenger.runtime.onInstalled.addListener(() => resolve(true))
-      // If `onInstalled` isn't fired, then migrations should not be run
-      // setTimeout(resolve, 500, false)
+      if ("development" !== installType) {
+        // Run migrations when the extension is installed or updated
+        // This broke other onInstalled functions!
+        messenger.runtime.onInstalled.addListener(() => resolve(true)) // If `onInstalled` isn't fired, then migrations should not be run
+        setTimeout(resolve, 500, false)
+      } else resolve(true)
     }
     ;(
       null === (_a = messenger.management) || void 0 === _a
@@ -524,7 +521,7 @@ class OptionsSync {
       await this._remove(_key)
       this._updateForm(this._form, await this.get(_key))
     } catch (e) {
-      return e
+      return
     }
   }
   /**
