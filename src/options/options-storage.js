@@ -33,6 +33,20 @@ export const kOptDefaults = {
   "last-version": "0",
 }
 
+let MIGRATIONS = [
+    migrate_oldHotKey,
+    migrate_oldOptions,
+    migrate_syntaxCSS,
+    migrate_badMathValue,
+    migrate_MainCSS,
+    migrate_smartReplacements,
+    migrate_removeUnused
+  ]
+
+export function MDHROptionsMigrate() {
+  return MDHROptionsStore()
+}
+
 function MDHROptionsStore() {
   let main_css_default_p = fetchExtFile("/default.css")
   let hljs_css_p = getHljsStyles()
@@ -46,15 +60,7 @@ function MDHROptionsStore() {
 
   return new OptionsSync({
     defaults: DEFAULTS,
-    migrations: [
-      migrate_oldHotKey,
-      migrate_oldOptions,
-      migrate_syntaxCSS,
-      migrate_badMathValue,
-      migrate_MainCSS,
-      migrate_smartReplacements,
-      migrate_removeUnused
-    ],
+    migrations: MIGRATIONS,
     logging: true,
   })
 }
