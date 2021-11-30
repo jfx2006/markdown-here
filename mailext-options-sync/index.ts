@@ -23,15 +23,10 @@ async function shouldRunMigrations(): Promise<boolean> {
 
 			// Run migrations when the extension is installed or updated
 			// This broke other onInstalled functions!
-			//messenger.runtime.onInstalled.addListener(() => resolve(true))
+			messenger.runtime.onInstalled.addListener(() => resolve(true))
 
 			// If `onInstalled` isn't fired, then migrations should not be run
-			// setTimeout(resolve, 500, false)
-			if (installType === "install" || installType === "upgrade") {
-				resolve(true)
-				return
-			}
-			resolve(false)
+			setTimeout(resolve, 500, false)
 		}
 
 		if (messenger.management?.getSelf) {
@@ -200,7 +195,7 @@ class OptionsSync<TOptions extends Options> {
 			await this._remove(_key)
 			this._updateForm(this._form, await this.get(_key))
 		} catch (e) {
-			return e
+			return
 		}
 	}
 
@@ -237,7 +232,7 @@ class OptionsSync<TOptions extends Options> {
 		}
 	}
 
-	private static _log(method: keyof Console, ...args: any[]): void {
+	private static _log(method: 'log' | 'info', ...args: any[]): void {
 		console[method](...args)
 	}
 
