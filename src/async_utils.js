@@ -17,6 +17,7 @@ export async function fetchExtFile(path, json=false) {
 }
 
 export const HLJS_STYLES_PATH = "/highlightjs/styles"
+const FALLBACK_HLJS_CSS = "nnfx-light.css"
 
 export async function getHljsStyles() {
   return fetchExtFile(`${HLJS_STYLES_PATH}/styles.json`, true)
@@ -26,7 +27,8 @@ export async function getHljsStylesheetURL(syntax_css) {
   const available_styles = await getHljsStyles()
   const syntax_values = Object.values(available_styles)
   if (syntax_values.indexOf(syntax_css) === -1) {
-    throw `Invalid stylesheet ${syntax_css}.`
+    console.log(`Invalid hljs CSS. Returning fallback ${FALLBACK_HLJS_CSS}`)
+    syntax_css = FALLBACK_HLJS_CSS
   }
   return messenger.runtime.getURL(`${HLJS_STYLES_PATH}/${syntax_css}`)
 }
