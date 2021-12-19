@@ -151,9 +151,8 @@ import OptionsStore from "./options-storage.js"
           })
         }
       }).finally(() => {
-        checkChangeTimeout = setTimeout(checkPreviewChanged, 500)
+        checkChangeTimeout = setTimeout(checkPreviewChanged, 100)
     })
-
   }
 
   async function setInitialText() {
