@@ -1,3 +1,13 @@
+#### 2022-01-03: v3.2.11
+* Add Markdown preview to Options->Theme.
+* Allow screen readers to ignore the "hidden div" holding unrendered content.
+  [#33](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/33)
+* Remove extra blank line at beginning of code blocks.
+  [#24](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/24)
+* Smart arrow replacements to go with smart quotes.
+  [#10](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/10)
+* Updated Marked-JS and DOMPurify to latest versions.
+
 #### 2021-11-15: v3.2.10
 * Fix [#31](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/31), bad
   CSS style on Options checkboxes with Thunderbird 78.x
