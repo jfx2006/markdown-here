@@ -452,7 +452,7 @@ class Tokenizer {
     let cap = this.rules.block.list.exec(src);
     if (cap) {
       let raw, istask, ischecked, indent, i, blankLine, endsWithBlankLine,
-        line, lines, itemContents;
+        line, nextLine, rawLine, itemContents, endEarly;
 
       let bull = cap[1].trim();
       const isordered = bull.length > 1;
@@ -473,75 +473,75 @@ class Tokenizer {
       }
 
       // Get next list item
-      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*| *)(?:\\n[^\\n]*)*(?:\\n|$))`);
+      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*)?(?:\\n|$))`);
 
-      // Get each top-level item
+      // Check if current bullet point can start a new List Item
       while (src) {
-        if (this.rules.block.hr.test(src)) { // End list if we encounter an HR (possibly move into itemRegex?)
-          break;
-        }
-
+        endEarly = false;
         if (!(cap = itemRegex.exec(src))) {
           break;
         }
 
-        lines = cap[2].split('\n');
+        if (this.rules.block.hr.test(src)) { // End list if bullet was actually HR (possibly move into itemRegex?)
+          break;
+        }
+
+        raw = cap[0];
+        src = src.substring(raw.length);
+
+        line = cap[2].split('\n', 1)[0];
+        nextLine = src.split('\n', 1)[0];
 
         if (this.options.pedantic) {
           indent = 2;
-          itemContents = lines[0].trimLeft();
+          itemContents = line.trimLeft();
         } else {
           indent = cap[2].search(/[^ ]/); // Find first non-space char
-          indent = cap[1].length + (indent > 4 ? 1 : indent); // intented code blocks after 4 spaces; indent is always 1
-          itemContents = lines[0].slice(indent - cap[1].length);
+          indent = indent > 4 ? 1 : indent; // Treat indented code blocks (> 4 spaces) as having only 1 indent
+          itemContents = line.slice(indent);
+          indent += cap[1].length;
         }
 
         blankLine = false;
-        raw = cap[0];
 
-        if (!lines[0] && /^ *$/.test(lines[1])) { // items begin with at most one blank line
-          raw = cap[1] + lines.slice(0, 2).join('\n') + '\n';
-          list.loose = true;
-          lines = [];
+        if (!line && /^ *$/.test(nextLine)) { // Items begin with at most one blank line
+          raw += nextLine + '\n';
+          src = src.substring(nextLine.length + 1);
+          endEarly = true;
         }
 
-        const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
+        if (!endEarly) {
+          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
 
-        for (i = 1; i < lines.length; i++) {
-          line = lines[i];
+          // Check if following lines should be included in List Item
+          while (src) {
+            rawLine = src.split('\n', 1)[0];
+            line = rawLine;
 
-          if (this.options.pedantic) { // Re-align to follow commonmark nesting rules
-            line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, '  ');
-          }
+            // Re-align to follow commonmark nesting rules
+            if (this.options.pedantic) {
+              line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, '  ');
+            }
 
-          // End list item if found start of new bullet
-          if (nextBulletRegex.test(line)) {
-            raw = cap[1] + lines.slice(0, i).join('\n') + '\n';
-            break;
-          }
+            // End list item if found start of new bullet
+            if (nextBulletRegex.test(line)) {
+              break;
+            }
 
-          // Until we encounter a blank line, item contents do not need indentation
-          if (!blankLine) {
-            if (!line.trim()) { // Check if current line is empty
+            if (line.search(/[^ ]/) >= indent || !line.trim()) { // Dedent if possible
+              itemContents += '\n' + line.slice(indent);
+            } else if (!blankLine) { // Until blank line, item doesn't need indentation
+              itemContents += '\n' + line;
+            } else { // Otherwise, improper indentation ends this item
+              break;
+            }
+
+            if (!blankLine && !line.trim()) { // Check if current line is blank
               blankLine = true;
             }
 
-            // Dedent if possible
-            if (line.search(/[^ ]/) >= indent) {
-              itemContents += '\n' + line.slice(indent);
-            } else {
-              itemContents += '\n' + line;
-            }
-            continue;
-          }
-
-          // Dedent this line
-          if (line.search(/[^ ]/) >= indent || !line.trim()) {
-            itemContents += '\n' + line.slice(indent);
-            continue;
-          } else { // Line was not properly indented; end of this item
-            raw = cap[1] + lines.slice(0, i).join('\n') + '\n';
-            break;
+            raw += rawLine + '\n';
+            src = src.substring(rawLine.length + 1);
           }
         }
 
@@ -573,7 +573,6 @@ class Tokenizer {
         });
 
         list.raw += raw;
-        src = src.slice(raw.length);
       }
 
       // Do not consume newlines at end of final item. Alternatively, make itemRegex *start* with any newlines to simplify/speed up endsWithBlankLine logic
@@ -587,7 +586,7 @@ class Tokenizer {
       for (i = 0; i < l; i++) {
         this.lexer.state.top = false;
         list.items[i].tokens = this.lexer.blockTokens(list.items[i].text, []);
-        if (list.items[i].tokens.some(t => t.type === 'space')) {
+        if (!list.loose && list.items[i].tokens.some(t => t.type === 'space')) {
           list.loose = true;
           list.items[i].loose = true;
         }
@@ -639,7 +638,7 @@ class Tokenizer {
         type: 'table',
         header: splitCells(cap[1]).map(c => { return { text: c }; }),
         align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        rows: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
+        rows: cap[3] ? cap[3].replace(/\n[ \t]*$/, '').split('\n') : []
       };
 
       if (item.header.length === item.align.length) {
@@ -1063,7 +1062,7 @@ const block = {
   lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
   // interruption rules of commonmark and the original markdown spec:
-  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html| +\n)[^\n]+)*)/,
+  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,
   text: /^[^\n]+/
 };
 
@@ -1102,6 +1101,7 @@ block.paragraph = edit(block._paragraph)
   .replace('hr', block.hr)
   .replace('heading', ' {0,3}#{1,6} ')
   .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
+  .replace('|table', '')
   .replace('blockquote', ' {0,3}>')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
@@ -1140,6 +1140,17 @@ block.gfm.table = edit(block.gfm.table)
   .replace('tag', block._tag) // tables can be interrupted by type (6) html blocks
   .getRegex();
 
+block.gfm.paragraph = edit(block._paragraph)
+  .replace('hr', block.hr)
+  .replace('heading', ' {0,3}#{1,6} ')
+  .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
+  .replace('table', block.gfm.table) // interrupt paragraphs with table
+  .replace('blockquote', ' {0,3}>')
+  .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
+  .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)')
+  .replace('tag', block._tag) // pars can be interrupted by type (6) html blocks
+  .getRegex();
 /**
  * Pedantic grammar (original John Gruber's loose markdown specification)
  */
