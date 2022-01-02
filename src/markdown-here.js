@@ -37,20 +37,20 @@ https://github.com/adam-p/markdown-here/issues/85
 
 ;(function() {
 
-"use strict";
+"use strict"
 /* global module:false Utils:false */
 
 
-var WRAPPER_TITLE_PREFIX = 'MDH:';
+var WRAPPER_TITLE_PREFIX = 'MDH:'
 
 
 // For debugging purposes. An external service is required to log with Firefox.
-var mylog = function() {};
+var mylog = function() {}
 
 // Finds and returns the page element that currently has focus. Drills down into
 // iframes if necessary.
 function findFocusedElem(document) {
-  var focusedElem = document.activeElement;
+  var focusedElem = document.activeElement
 
   // Tests if it's possible to access the iframe contentDocument without throwing
   // an exception.
@@ -63,27 +63,27 @@ function findFocusedElem(document) {
     // Rather than spam the console with exceptions, we'll treat this as an
     // unrenderable situation (which it is).
     try {
-      var _ = focusedElem.contentDocument;
+      var _ = focusedElem.contentDocument
     }
     catch (e) {
       // TODO: Check that this is actually a SecurityError and re-throw if it's not?
-      return false;
+      return false
     }
 
-    return true;
+    return true
   }
 
   if (!iframeAccessOkay(focusedElem)) {
-    return null;
+    return null
   }
 
   // If the focus is within an iframe, we'll have to drill down to get to the
   // actual element.
   while (focusedElem && focusedElem.contentDocument) {
-    focusedElem = focusedElem.contentDocument.activeElement;
+    focusedElem = focusedElem.contentDocument.activeElement
 
     if (!iframeAccessOkay(focusedElem)) {
-      return null;
+      return null
     }
   }
 
@@ -91,10 +91,10 @@ function findFocusedElem(document) {
   // details see https://github.com/adam-p/markdown-here/issues/31
   // The short version: Sometimes we'll get the <html> element instead of <body>.
   if (focusedElem instanceof document.defaultView.HTMLHtmlElement) {
-    focusedElem = focusedElem.ownerDocument.body;
+    focusedElem = focusedElem.ownerDocument.body
   }
 
-  return focusedElem;
+  return focusedElem
 }
 
 // Returns true if the given element can be properly rendered (i.e., if it's
@@ -104,43 +104,43 @@ function elementCanBeRendered(elem) {
   // http://stackoverflow.com/a/3333679/729729
   return (elem.contentEditable === true || elem.contentEditable === 'true' ||
           elem.contenteditable === true || elem.contenteditable === 'true' ||
-          (elem.ownerDocument && elem.ownerDocument.designMode === 'on'));
+          (elem.ownerDocument && elem.ownerDocument.designMode === 'on'))
 }
 
 // Get the currectly selected range. If there is no selected range (i.e., it is
 // collapsed), then contents of the currently focused element will be selected.
 // Returns null if no range is selected nor can be selected.
 function getOperationalRange(focusedElem) {
-  var selection, range, sig;
+  var selection, range, sig
 
-  selection = focusedElem.ownerDocument.defaultView.getSelection();
+  selection = focusedElem.ownerDocument.defaultView.getSelection()
 
   if (selection.rangeCount < 1) {
-    return null;
+    return null
   }
 
-  range = selection.getRangeAt(0);
+  range = selection.getRangeAt(0)
 
   if (range.collapsed) {
     // If there's no actual selection, select the contents of the focused element.
-    range.selectNodeContents(focusedElem);
+    range.selectNodeContents(focusedElem)
   }
 
   // Does our range include a signature? If so, remove it.
-  sig = findSignatureStart(focusedElem);
+  sig = findSignatureStart(focusedElem)
   if (sig) {
     // If the sig is an element node, set a class indicating that it's a sig.
     // This gives us (or the user) the option of styling differently.
     if (sig.nodeType === sig.ELEMENT_NODE) {
-      sig.classList.add('markdown-here-signature');
+      sig.classList.add('markdown-here-signature')
     }
 
     if (range.isPointInRange(sig, 0)) {
-      range.setEndBefore(sig);
+      range.setEndBefore(sig)
     }
   }
 
-  return range;
+  return range
 }
 
 // A signature is indicated by the last `'-- '` text node (or something like it).
@@ -149,12 +149,12 @@ function getOperationalRange(focusedElem) {
 // exclusion code. But I'm not sure how to find the sig as well without being
 // able to traverse the DOM. (Surely with regexes and parsing... someday.)
 function findSignatureStart(startElem) {
-  var i, child, recurseReturn, sig;
+  var i, child, recurseReturn, sig
 
-  sig = null;
+  sig = null
 
   for (i = 0; i < startElem.childNodes.length; i++) {
-    child = startElem.childNodes[i];
+    child = startElem.childNodes[i]
     if (child.nodeType === child.TEXT_NODE) {
       // Thunderbird wraps the sig in a `<pre>`, so there's a newline.
       // Hand-written sigs (including Hotmail and Yahoo) are `'--&nbsp;'` (aka \u00a0).
@@ -164,24 +164,24 @@ function findSignatureStart(startElem) {
         // Assume that the entire parent element belongs to the sig only if the
         // `'--'` bit is the at the very start of the parent.
         if (startElem.firstChild === child) {
-          sig = startElem;
+          sig = startElem
         }
         else {
-          sig = child;
+          sig = child
         }
       }
     }
     else if (['BLOCKQUOTE'].indexOf(child.nodeName) < 0) {
-      recurseReturn = findSignatureStart(child, true);
+      recurseReturn = findSignatureStart(child, true)
 
       // Did the recursive call find it?
       if (recurseReturn) {
-        sig = recurseReturn;
+        sig = recurseReturn
       }
     }
   }
 
-  return sig;
+  return sig
 }
 
 /**
@@ -192,20 +192,20 @@ function findSignatureStart(startElem) {
  * @returns {Element}
  */
 function replaceRange(range, html) {
-  var documentFragment, newElement;
+  var documentFragment, newElement
 
-  range.deleteContents();
+  range.deleteContents()
 
   // Create a DocumentFragment to insert and populate it with HTML
-  documentFragment = range.createContextualFragment(html);
+  documentFragment = range.createContextualFragment(html)
 
-  documentFragment = Utils.sanitizeDocumentFragment(documentFragment);
+  documentFragment = Utils.sanitizeDocumentFragment(documentFragment)
 
   // After inserting the node contents, the node is empty. So we need to save a
   // reference to the element that we need to return.
-  newElement = documentFragment.firstChild;
+  newElement = documentFragment.firstChild
 
-  range.insertNode(documentFragment);
+  range.insertNode(documentFragment)
 
   // In some clients (and maybe some versions of those clients), on some pages,
   // the newly inserted rendered Markdown will be selected. It looks better and
@@ -214,68 +214,68 @@ function replaceRange(range, html) {
   // Note that specifying the `toStart` argument to `true` seems to be necessary
   // in order to actually get a cursor in the editor.
   // Fixes #427: https://github.com/adam-p/markdown-here/issues/427
-  range.collapse(true);
+  range.collapse(true)
 
-  return newElement;
+  return newElement
 }
 
 // Returns the stylesheet for our styles.
 function getMarkdownStylesheet(elem, css) {
-  var styleElem, stylesheet, i;
+  var styleElem, stylesheet, i
 
   // We have to actually create a style element in the document, then pull the
   // stylesheet out of it (and remove the element).
 
   // Create a style element
-  styleElem = elem.ownerDocument.createElement('style');
-  styleElem.setAttribute('title', 'markdown-here-styles');
+  styleElem = elem.ownerDocument.createElement('style')
+  styleElem.setAttribute('title', 'markdown-here-styles')
 
   // Set the CSS in the style element
-  styleElem.appendChild(elem.ownerDocument.createTextNode(css));
+  styleElem.appendChild(elem.ownerDocument.createTextNode(css))
 
   // Put the style element in the DOM under `elem`
-  elem.appendChild(styleElem);
+  elem.appendChild(styleElem)
 
   // Find the stylesheet that we just created
   for (i = 0; i < elem.ownerDocument.styleSheets.length; i++) {
     if (elem.ownerDocument.styleSheets[i].title === 'markdown-here-styles') {
-      stylesheet = elem.ownerDocument.styleSheets[i];
-      break;
+      stylesheet = elem.ownerDocument.styleSheets[i]
+      break
     }
   }
 
   if (!stylesheet) {
-    throw 'Markdown Here stylesheet not found!';
+    throw 'Markdown Here stylesheet not found!'
   }
 
   // Take the stylesheet element out of the DOM
-  elem.removeChild(styleElem);
+  elem.removeChild(styleElem)
 
-  return stylesheet;
+  return stylesheet
 }
 
 // Applies our styling explicitly to the elements under `wrapperElem`.
 function makeStylesExplicit(wrapperElem, css) {
-  var stylesheet, rule, selectorMatches, i, j, styleAttr, elem;
+  var stylesheet, rule, selectorMatches, i, j, styleAttr, elem
 
-  stylesheet = getMarkdownStylesheet(wrapperElem, css);
+  stylesheet = getMarkdownStylesheet(wrapperElem, css)
 
   for (i = 0; i < stylesheet.cssRules.length; i++) {
-    rule = stylesheet.cssRules[i];
+    rule = stylesheet.cssRules[i]
 
     // Note that the CSS should not have any rules that use "body" or "html".
 
     // We're starting our search one level above the wrapper, which means we
     // might match stuff outside of our wrapper. We'll have to double-check below.
-    selectorMatches = wrapperElem.parentNode.querySelectorAll(rule.selectorText);
+    selectorMatches = wrapperElem.parentNode.querySelectorAll(rule.selectorText)
 
     for (j = 0; j < selectorMatches.length; j++) {
-      elem = selectorMatches[j];
+      elem = selectorMatches[j]
 
       // Make sure the element is inside our wrapper (or is our wrapper).
       if (elem !== wrapperElem &&
           !Utils.isElementDescendant(wrapperElem, elem)) {
-        continue;
+        continue
       }
 
       // Make sure the selector match isn't inside an exclusion block.
@@ -283,50 +283,50 @@ function makeStylesExplicit(wrapperElem, css) {
       // while going up through the parents.
       while (elem && (typeof(elem.classList) !== 'undefined')) {
         if (elem.classList.contains('markdown-here-exclude')) {
-          elem = 'excluded';
-          break;
+          elem = 'excluded'
+          break
         }
-        elem = elem.parentNode;
+        elem = elem.parentNode
       }
       if (elem === 'excluded') {
         // Don't style this element.
-        continue;
+        continue
       }
 
       // Get the existing styles for the element.
-      styleAttr = selectorMatches[j].getAttribute('style') || '';
+      styleAttr = selectorMatches[j].getAttribute('style') || ''
 
       // Append the new styles to the end of the existing styles. This will
       // give the new ones precedence if any are the same as existing ones.
 
       // Make sure existing styles end with a semicolon.
       if (styleAttr && styleAttr.search(/;[\s]*$/) < 0) {
-        styleAttr += '; ';
+        styleAttr += '; '
       }
 
-      styleAttr += rule.style.cssText;
+      styleAttr += rule.style.cssText
 
       // Set the styles back.
-      selectorMatches[j].setAttribute('style', styleAttr);
+      selectorMatches[j].setAttribute('style', styleAttr)
     }
   }
 }
 
 function hasParentElementOfTagName(element, tagName) {
-  var parent;
+  var parent
 
-  tagName = tagName.toUpperCase();
+  tagName = tagName.toUpperCase()
 
-  parent = element.parentNode;
+  parent = element.parentNode
   while (parent) {
     if (parent.nodeName === tagName) {
-      return true;
+      return true
     }
 
-    parent = parent.parentNode;
+    parent = parent.parentNode
   }
 
-  return false;
+  return false
 }
 
 
@@ -354,7 +354,7 @@ function findElemRawHolder(elem) {
   // `querySelector` would return the holder inside the original email.
   // This scenario is issue #297 https://github.com/adam-p/markdown-here/issues/297
 
-  var rawHolders = elem.querySelectorAll(`[title^="${WRAPPER_TITLE_PREFIX}"]`);
+  var rawHolders = elem.querySelectorAll(`[title^="${WRAPPER_TITLE_PREFIX}"]`)
 
   for (var i = 0; i < rawHolders.length; i++) {
     if (// The above `querySelector` will also look at grandchildren of
@@ -363,11 +363,11 @@ function findElemRawHolder(elem) {
         // Skip all wrappers that are in a `blockquote`. We don't want to revert
         // Markdown that was sent to us.
         !hasParentElementOfTagName(elem, 'BLOCKQUOTE')) {
-      return rawHolders[i];
+      return rawHolders[i]
     }
   }
 
-  return null;
+  return null
 }
 
 // Determine if the given element is a MDH wrapper element.
@@ -378,29 +378,29 @@ function isWrapperElem(elem) {
     // And is not a blockquote, so we ignore replies
     elem.tagName.toUpperCase() !== 'BLOCKQUOTE' &&
     // And has a raw-MD-holder element
-    findElemRawHolder(elem) !== null;
+    findElemRawHolder(elem) !== null
 }
 
 
 // Finds the wrapper element that's above the current cursor position and
 // returns it. Returns falsy if there is no wrapper.
 function findMarkdownHereWrapper(focusedElem) {
-  var selection, range, wrapper = null;
+  var selection, range, wrapper = null
 
-  selection = focusedElem.ownerDocument.defaultView.getSelection();
+  selection = focusedElem.ownerDocument.defaultView.getSelection()
 
   if (selection.rangeCount < 1) {
-    return null;
+    return null
   }
 
-  range = selection.getRangeAt(0);
+  range = selection.getRangeAt(0)
 
-  wrapper = range.commonAncestorContainer;
+  wrapper = range.commonAncestorContainer
   while (wrapper && !isWrapperElem(wrapper)) {
-    wrapper = wrapper.parentNode;
+    wrapper = wrapper.parentNode
   }
 
-  return wrapper;
+  return wrapper
 }
 
 
@@ -408,22 +408,22 @@ function findMarkdownHereWrapper(focusedElem) {
 // wrapper elements, or null if no wrappers found.
 function findMarkdownHereWrappersInRange(range) {
   // Adapted from: http://stackoverflow.com/a/1483487/729729
-  var containerElement = range.commonAncestorContainer;
+  var containerElement = range.commonAncestorContainer
   if (containerElement.nodeType !== containerElement.ELEMENT_NODE) {
-    containerElement = containerElement.parentNode;
+    containerElement = containerElement.parentNode
   }
 
-  var elems = [];
+  var elems = []
 
   var nodeTester = function(elem) {
     if (elem.nodeType === elem.ELEMENT_NODE &&
         Utils.rangeIntersectsNode(range, elem) &&
         isWrapperElem(elem)) {
-          elems.push(elem);
+          elems.push(elem)
     }
-  };
+  }
 
-  Utils.walkDOM(containerElement, nodeTester);
+  Utils.walkDOM(containerElement, nodeTester)
 
   /*
   // This code is probably superior, but TreeWalker is not supported by Postbox.
@@ -451,18 +451,18 @@ function findMarkdownHereWrappersInRange(range) {
   }
   */
 
-  return elems.length ? elems : null;
+  return elems.length ? elems : null
 }
 
 
 // Converts the Markdown in the user's compose element to HTML and replaces it.
 // If `selectedRange` is null, then the entire email is being rendered.
 function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComplete) {
-  var originalHtml = Utils.getDocumentFragmentHTML(selectedRange.cloneContents());
+  var originalHtml = Utils.getDocumentFragmentHTML(selectedRange.cloneContents())
 
   // Call to the extension main code to actually do the md->html conversion.
   markdownRenderer(focusedElem, selectedRange, function(mdHtml, mdCss) {
-    var wrapper, rawHolder;
+    var wrapper, rawHolder
 
     // Store the original Markdown-in-HTML to the `title` attribute of a separate,
     // invisible-ish `div`. We have found that Gmail, Evernote, etc. leave the
@@ -471,7 +471,7 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
     // Thunderbird will discard the `div` if there's no content.
     rawHolder = `<div title="${WRAPPER_TITLE_PREFIX}${Utils.utf8StringToBase64(originalHtml)}"
       aria-hidden="true"
-      style="height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;">&#8203;</div>`;
+      style="height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;">&#8203;</div>`
 
     // Wrap our pretty HTML in a <div> wrapper.
     // We'll use the wrapper as a marker to indicate that we're in a rendered state.
@@ -480,13 +480,13 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
            'data-md-url="' + Utils.getTopURL(focusedElem.ownerDocument.defaultView, true) + '">' +
         mdHtml +
         rawHolder +
-      '</div>';
+      '</div>'
 
-    wrapper = replaceRange(selectedRange, mdHtml);
+    wrapper = replaceRange(selectedRange, mdHtml)
 
     // Some webmail (Gmail) strips off any external style block. So we need to go
     // through our styles, explicitly applying them to matching elements.
-    makeStylesExplicit(wrapper, mdCss);
+    makeStylesExplicit(wrapper, mdCss)
 
     // Monitor for changes to the content of the rendered MD. This will help us
     // prevent the user from silently losing changes later.
@@ -495,36 +495,36 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
     wrapper.ownerDocument.defaultView.setTimeout(function addMutationObserver() {
       var SupportedMutationObserver =
             wrapper.ownerDocument.defaultView.MutationObserver ||
-            wrapper.ownerDocument.defaultView.WebKitMutationObserver;
+            wrapper.ownerDocument.defaultView.WebKitMutationObserver
       if (typeof(SupportedMutationObserver) !== 'undefined') {
         var observer = new SupportedMutationObserver(function(mutations) {
-          wrapper.setAttribute('markdown-here-wrapper-content-modified', true);
-          observer.disconnect();
-        });
-        observer.observe(wrapper, { childList: true, characterData: true, subtree: true });
+          wrapper.setAttribute('markdown-here-wrapper-content-modified', true)
+          observer.disconnect()
+        })
+        observer.observe(wrapper, { childList: true, characterData: true, subtree: true })
       }
-    }, 100);
+    }, 100)
 
-    renderComplete();
-  });
+    renderComplete()
+  })
 }
 
 // Revert the rendered Markdown wrapperElem back to its original form.
 function unrenderMarkdown(wrapperElem) {
-  var rawHolder = findElemRawHolder(wrapperElem);
+  var rawHolder = findElemRawHolder(wrapperElem)
   // Not checking for success of that call, since we shouldn't be here if there
   // isn't a wrapper.
 
-  var originalMdHtml = rawHolder.getAttribute('title');
-  originalMdHtml = originalMdHtml.slice(WRAPPER_TITLE_PREFIX.length).replace(/\n/g, '');
+  var originalMdHtml = rawHolder.getAttribute('title')
+  originalMdHtml = originalMdHtml.slice(WRAPPER_TITLE_PREFIX.length).replace(/\n/g, '')
 
   // Thunderbird and Postbox break the long title up into multiple lines, which
   // wrecks our ability to un-base64 it. So strip whitespace.
-  originalMdHtml = originalMdHtml.replace(/\s/g, '');
+  originalMdHtml = originalMdHtml.replace(/\s/g, '')
 
-  originalMdHtml = Utils.base64ToUTF8String(originalMdHtml);
+  originalMdHtml = Utils.base64ToUTF8String(originalMdHtml)
 
-  Utils.saferSetOuterHTML(wrapperElem, originalMdHtml);
+  Utils.saferSetOuterHTML(wrapperElem, originalMdHtml)
 }
 
 // Exported function.
@@ -546,7 +546,7 @@ function unrenderMarkdown(wrapperElem) {
 function markdownHere(document, markdownRenderer, logger, renderComplete) {
 
   if (logger) {
-    mylog = logger;
+    mylog = logger
   }
 
   // If the cursor (or current selection) is in a Markdown Here wrapper, then
@@ -556,63 +556,63 @@ function markdownHere(document, markdownRenderer, logger, renderComplete) {
   // Otherwise, we're rendering. If there's a selection, then we're rendering
   // the selection. If not, then we're rendering the whole email.
 
-  var wrappers, outerWrapper, focusedElem, range, i;
+  var wrappers, outerWrapper, focusedElem, range, i
 
-  focusedElem = findFocusedElem(document);
+  focusedElem = findFocusedElem(document)
   if (!focusedElem || !focusedElem.ownerDocument) {
-    return 'Could not find focused element';
+    return 'Could not find focused element'
   }
 
   // Look for existing rendered-Markdown wrapper to revert.
-  outerWrapper = findMarkdownHereWrapper(focusedElem);
+  outerWrapper = findMarkdownHereWrapper(focusedElem)
   if (outerWrapper) {
     // There's a wrapper above us.
-    wrappers = [outerWrapper];
+    wrappers = [outerWrapper]
   }
   else {
     // Are there wrappers in our selection?
 
-    range = getOperationalRange(focusedElem);
+    range = getOperationalRange(focusedElem)
 
     if (!range) {
-      return Utils.getMessage('nothing_to_render');
+      return Utils.getMessage('nothing_to_render')
     }
 
     // Look for wrappers in the range under consideration.
-    wrappers = findMarkdownHereWrappersInRange(range);
+    wrappers = findMarkdownHereWrappersInRange(range)
   }
 
   // If we've found wrappers, then we're reverting.
   // Otherwise, we're rendering.
   if (wrappers && wrappers.length > 0) {
-    let modified = false;
+    let modified = false
     for (i = 0; i < wrappers.length; i++) {
       // Has the content been modified by the user since rendering
       if (wrappers[i].getAttribute('markdown-here-wrapper-content-modified')) {
-        modified = true;
-        break;
+        modified = true
+        break
       }
     }
     if (modified) {
       let response = messenger.runtime.sendMessage({
         action: "get-unrender-markdown-warning"
-      });
+      })
       response.then((msg) => {
         if (msg === "ok") {
           for (let wrapper of wrappers) {
-            unrenderMarkdown(wrapper);
+            unrenderMarkdown(wrapper)
           }
           if (renderComplete) {
-            renderComplete(focusedElem, false);
+            renderComplete(focusedElem, false)
           }
         }
-      });
+      })
     } else {
       for (let wrapper of wrappers) {
-        unrenderMarkdown(wrapper);
+        unrenderMarkdown(wrapper)
       }
       if (renderComplete) {
-        renderComplete(focusedElem, false);
+        renderComplete(focusedElem, false)
       }
     }
   }
@@ -623,27 +623,27 @@ function markdownHere(document, markdownRenderer, logger, renderComplete) {
       markdownRenderer,
       function() {
         if (renderComplete) {
-          renderComplete(focusedElem, true);
+          renderComplete(focusedElem, true)
         }
-      });
+      })
   }
 
-  return true;
+  return true
 }
 
 // We also export a couple of utility functions
-markdownHere.findFocusedElem = findFocusedElem;
-markdownHere.elementCanBeRendered = elementCanBeRendered;
+markdownHere.findFocusedElem = findFocusedElem
+markdownHere.elementCanBeRendered = elementCanBeRendered
 
-var EXPORTED_SYMBOLS = ['markdownHere'];
+var EXPORTED_SYMBOLS = ['markdownHere']
 
 if (typeof module !== 'undefined') {
-  module.exports = markdownHere;
+  module.exports = markdownHere
 } else {
-  this.markdownHere = markdownHere;
-  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
+  this.markdownHere = markdownHere
+  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS
 }
 
 }).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+  return this || (typeof window !== 'undefined' ? window : global)
+}())

@@ -26,62 +26,62 @@ export default function markdownRender(mdText, userprefs) {
   function mathify(mathcode) {
     return userprefs['math-value']
             .replace(/\{mathcode\}/ig, mathcode)
-            .replace(/\{urlmathcode\}/ig, encodeURIComponent(mathcode));
+            .replace(/\{urlmathcode\}/ig, encodeURIComponent(mathcode))
   }
 
   // Hook into some of Marked's renderer customizations
-  const markedRenderer = new marked.Renderer();
+  const markedRenderer = new marked.Renderer()
 
-  const defaultLinkRenderer = markedRenderer.link;
+  const defaultLinkRenderer = markedRenderer.link
   markedRenderer.link = function(href, title, text) {
     // Added to fix MDH issue #57: MD links should automatically add scheme.
     // Note that the presence of a ':' is used to indicate a scheme, so port
     // numbers will defeat this.
-    href = href.replace(/^(?!#)([^:]+)$/, 'http://$1');
+    href = href.replace(/^(?!#)([^:]+)$/, 'http://$1')
 
-    return defaultLinkRenderer.call(this, href, title, text);
-  };
+    return defaultLinkRenderer.call(this, href, title, text)
+  }
 
   function mathsExpression(expr) {
     if (userprefs['math-enabled']) {
       if (expr.match(/^\$\$[\s\S]*\$\$$/)) {
-        expr = expr.substr(2, expr.length - 4);
-        const math_rendered = mathify(expr);
+        expr = expr.substr(2, expr.length - 4)
+        const math_rendered = mathify(expr)
         return `
                 <div style="display:block;text-align:center;">
                   ${math_rendered}
-                </div>`;
+                </div>`
       } else if (expr.match(/^\$[\s\S]*\$$/)) {
-        expr = expr.substr(1, expr.length - 2);
-        return mathify(expr);
+        expr = expr.substr(1, expr.length - 2)
+        return mathify(expr)
       }
     } else {
-      return false;
+      return false
     }
   }
 
-  const defaultCodeRenderer = markedRenderer.code;
+  const defaultCodeRenderer = markedRenderer.code
   markedRenderer.code = function(code, lang, escaped) {
     if (!lang) {
-      const math = mathsExpression(code);
+      const math = mathsExpression(code)
       if (math) {
-        return math;
+        return math
       }
     }
     if (code.startsWith("\n")) {
       code = code.trimStart()
     }
-    return defaultCodeRenderer.call(this, code, lang, escaped);
-  };
+    return defaultCodeRenderer.call(this, code, lang, escaped)
+  }
 
-  const defaultCodespanRenderer = markedRenderer.codespan;
+  const defaultCodespanRenderer = markedRenderer.codespan
   markedRenderer.codespan = function(text) {
-    const math = mathsExpression(text);
+    const math = mathsExpression(text)
     if (math) {
-      return math;
+      return math
     }
-    return defaultCodespanRenderer.call(this, text);
-  };
+    return defaultCodespanRenderer.call(this, text)
+  }
 
   function smartarrows(text) {
     return text
