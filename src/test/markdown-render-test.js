@@ -24,7 +24,7 @@ describe('Markdown-Render', function() {
         'math-value': null,
         'math-enabled': false,
         'gfm-line-breaks-enabled': true,
-        'smart-quotes-enabled': true,
+        'smart-replacements-enabled': true,
       };
     });
 
@@ -163,7 +163,7 @@ describe('Markdown-Render', function() {
       userprefs = {
         'math-value': null,
         'math-enabled': false,
-        'smart-quotes-enabled': true,
+        'smart-replacements-enabled': true,
       };
     });
 

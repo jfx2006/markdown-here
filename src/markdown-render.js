@@ -124,7 +124,7 @@ export default function markdownRender(mdText, userprefs) {
     tables: true,
     smartLists: true,
     breaks: userprefs["gfm-line-breaks-enabled"],
-    smartypants: userprefs["smart-quotes-enabled"],
+    smartypants: userprefs["smart-replacements-enabled"],
     // Bit of a hack: highlight.js uses a `hljs` class to style the code block,
     // so we'll add it by sneaking it into this config field.
     langPrefix: "hljs language-",
