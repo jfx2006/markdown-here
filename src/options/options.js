@@ -9,7 +9,6 @@
 
 /* global messenger:false, Utils:false */
 
-import BSN from "../vendor/bootstrap-native.esm.js"
 import markdownRender from "../markdown-render.js"
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.js"
@@ -37,12 +36,9 @@ import OptionsStore from "./options-storage.js"
 
   async function onOptionsLoaded() {
     await localizePage()
-    savedMsgToast = new BSN.Toast("#saved-msg")
+    savedMsgToast = new bootstrap.Toast("#saved-msg")
 
     const tests_link = document.getElementById("tests-link")
-    const optTabs = document.getElementById("optionsTabList")
-    const optTabLinks = optTabs.getElementsByTagName("a")
-    Array.from(optTabLinks).map(tab => new BSN.Tab(tab, {}))
 
     tests_link.addEventListener("click", function(e) {
       messenger.tabs.create({url: tests_link.getAttribute("href")})

@@ -16,7 +16,7 @@ describe("AsyncUtils", function () {
   describe("fetchExtFile", function () {
     it("should return correct data", async function () {
       // We "know" our options.html file starts with this string
-      const KNOWN_PREFIX = '<html lang="en">'
+      const KNOWN_PREFIX = '<!DOCTYPE html>'
       let data = await fetchExtFile("/options/options.html")
       expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX)
     })

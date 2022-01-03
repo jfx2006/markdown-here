@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Settings | Markdown Here Revival</title>
@@ -6,6 +7,7 @@
   <link rel="stylesheet" href="../vendor/bootswatch.css">
   <link rel="stylesheet" href="options.css">
   <script src="../utils.js"></script>
+  <script src="../vendor/bootstrap.bundle.js"></script>
   <script src="options.js" type="module"></script>
 </head>
 <body class="pt-3 pb-5" data-color-theme="system">
@@ -17,24 +19,24 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse d-none d-md-block" id="sidebar">
-          <ul id="optionsTabList" class="nav flex-column mb-2 text-uppercase" role="tablist">
+          <ul id="optionsTabList" class="nav nav-pills flex-column mb-2 text-uppercase" role="tablist">
             <li class="nav-item">
-              <a class="nav-link text-light rounded-sm" id="docs-tab" href="#docs" data-toggle="tab"
+              <a class="nav-link text-light" id="docs-tab" href="#docs" data-bs-toggle="pill"
                  aria-controls="docs" aria-selected="true" role="tab">
                 <span data-no_i18n="">Quickstart</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-light rounded-sm active" id="options-tab" href="#options" data-toggle="tab"
+              <a class="nav-link text-light active" id="options-tab" href="#options" data-bs-toggle="pill"
                  aria-controls="home" aria-selected="false" role="tab">
               <span data-no_i18n="">Options</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-light rounded-sm" id="theme-tab" href="#theme" data-toggle="tab"
+              <a class="nav-link text-light" id="theme-tab" href="#theme" data-bs-toggle="pill"
                  aria-controls="theme" aria-selected="false" role="tab">
                 <span data-i18n="syntax_highlighting_theme_label">Theme</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-light rounded-sm" id="about-tab" href="#about" data-toggle="tab"
+              <a class="nav-link text-light" id="about-tab" href="#about" data-bs-toggle="pill"
                  aria-controls="about" aria-selected="false" role="tab">
                 <span data-no_i18n="">About</span></a>
             </li>

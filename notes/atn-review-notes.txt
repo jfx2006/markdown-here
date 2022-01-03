@@ -54,7 +54,7 @@ Options UI pages:
   The MDHR Makefile will build mailext-options-sync and copy it into src/options.
   Version 2.1.2 was built with node 14.17.0 and npm 6.14.13
 
-https://raw.githubusercontent.com/thednp/bootstrap.native/4.0.0/dist/bootstrap-native.esm.js
+https://raw.githubusercontent.com/twbs/bootstrap/v5.1.3/dist/js/bootstrap.bundle.js
 https://bootswatch.com/5/darkly/bootstrap.css
 Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
