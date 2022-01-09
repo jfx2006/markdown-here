@@ -11,18 +11,18 @@
 
 ;(function() {
 
-"use strict";
+"use strict"
 /*global module:false, chrome:false, safari:false*/
 
 
 function consoleLog(logString) {
   if (typeof(console) !== 'undefined') {
-    console.log(logString);
+    console.log(logString)
   }
   else {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                                   .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage(String(logString));
+                                   .getService(Components.interfaces.nsIConsoleService)
+    consoleService.logStringMessage(String(logString))
   }
 }
 
@@ -36,15 +36,15 @@ function consoleLog(logString) {
 function saferSetInnerHTML(parentElem, htmlString) {
   // Jump through some hoops to avoid using innerHTML...
 
-  var range = parentElem.ownerDocument.createRange();
-  range.selectNodeContents(parentElem);
+  var range = parentElem.ownerDocument.createRange()
+  range.selectNodeContents(parentElem)
 
-  var docFrag = range.createContextualFragment(htmlString);
-  docFrag = sanitizeDocumentFragment(docFrag);
+  var docFrag = range.createContextualFragment(htmlString)
+  docFrag = sanitizeDocumentFragment(docFrag)
 
-  range.deleteContents();
-  range.insertNode(docFrag);
-  range.detach();
+  range.deleteContents()
+  range.insertNode(docFrag)
+  range.detach()
 }
 
 
@@ -57,64 +57,64 @@ function saferSetInnerHTML(parentElem, htmlString) {
 //   references to the original.
 function saferSetOuterHTML(elem, htmlString) {
   if (!isElementinDocument(elem)) {
-    throw new Error('Element must be in document');
+    throw new Error('Element must be in document')
   }
 
-  var range = elem.ownerDocument.createRange();
-  range.selectNode(elem);
+  var range = elem.ownerDocument.createRange()
+  range.selectNode(elem)
 
-  var docFrag = range.createContextualFragment(htmlString);
-  docFrag = sanitizeDocumentFragment(docFrag);
+  var docFrag = range.createContextualFragment(htmlString)
+  docFrag = sanitizeDocumentFragment(docFrag)
 
-  range.deleteContents();
-  range.insertNode(docFrag);
-  range.detach();
+  range.deleteContents()
+  range.insertNode(docFrag)
+  range.detach()
 }
 
 
 // Removes potentially harmful elements and attributes from `docFrag`.
 // Returns a santized copy.
 function sanitizeDocumentFragment(docFrag) {
-  var i;
+  var i
 
   // Don't modify the original
-  docFrag = docFrag.cloneNode(true);
+  docFrag = docFrag.cloneNode(true)
 
-  var scriptTagElems = docFrag.querySelectorAll('script');
+  var scriptTagElems = docFrag.querySelectorAll('script')
   for (i = 0; i < scriptTagElems.length; i++) {
-    scriptTagElems[i].parentNode.removeChild(scriptTagElems[i]);
+    scriptTagElems[i].parentNode.removeChild(scriptTagElems[i])
   }
 
   function cleanAttributes(node) {
-    var i;
+    var i
 
     if (typeof(node.removeAttribute) === 'undefined') {
       // We can't operate on this node
-      return;
+      return
     }
 
     // Remove event handler attributes
     for (i = node.attributes.length-1; i >= 0; i--) {
       if (node.attributes[i].name.match(/^on/)) {
-        node.removeAttribute(node.attributes[i].name);
+        node.removeAttribute(node.attributes[i].name)
       }
     }
   }
 
-  walkDOM(docFrag.firstChild, cleanAttributes);
+  walkDOM(docFrag.firstChild, cleanAttributes)
 
-  return docFrag;
+  return docFrag
 }
 
 
 // Walk the DOM, executing `func` on each element.
 // From Crockford.
 function walkDOM(node, func) {
-  func(node);
-  node = node.firstChild;
+  func(node)
+  node = node.firstChild
   while(node) {
-    walkDOM(node, func);
-    node = node.nextSibling;
+    walkDOM(node, func)
+    node = node.nextSibling
   }
 }
 
@@ -123,7 +123,7 @@ function walkDOM(node, func) {
 // Returns true if `node` is in `range`.
 // NOTE: This function is broken in Postbox: https://github.com/adam-p/markdown-here/issues/179
 function rangeIntersectsNode(range, node) {
-  var nodeRange;
+  var nodeRange
 
   // adam-p: I have found that Range.intersectsNode gives incorrect results in
   // Chrome (but not Firefox). So we're going to use the fail-back code always,
@@ -136,63 +136,63 @@ function rangeIntersectsNode(range, node) {
     ...
   */
 
-  nodeRange = node.ownerDocument.createRange();
+  nodeRange = node.ownerDocument.createRange()
   try {
-    nodeRange.selectNode(node);
+    nodeRange.selectNode(node)
   }
   catch (e) {
-    nodeRange.selectNodeContents(node);
+    nodeRange.selectNodeContents(node)
   }
 
   // Workaround for this old Mozilla bug, which is still present in Postbox:
   // https://bugzilla.mozilla.org/show_bug.cgi?id=665279
-  var END_TO_START = node.ownerDocument.defaultView.Range.END_TO_START || window.Range.END_TO_START;
-  var START_TO_END = node.ownerDocument.defaultView.Range.START_TO_END || window.Range.START_TO_END;
+  var END_TO_START = node.ownerDocument.defaultView.Range.END_TO_START || window.Range.END_TO_START
+  var START_TO_END = node.ownerDocument.defaultView.Range.START_TO_END || window.Range.START_TO_END
 
   return range.compareBoundaryPoints(
             END_TO_START,
             nodeRange) === -1 &&
          range.compareBoundaryPoints(
             START_TO_END,
-            nodeRange) === 1;
+            nodeRange) === 1
 }
 
 
 // Returns array of elements in selection.
 function getSelectedElementsInDocument(doc) {
-  var range, sel, containerElement;
-  sel = doc.getSelection();
+  var range, sel, containerElement
+  sel = doc.getSelection()
   if (sel.rangeCount > 0) {
-    range = sel.getRangeAt(0);
+    range = sel.getRangeAt(0)
   }
 
   if (!range) {
-    return [];
+    return []
   }
 
-  return getSelectedElementsInRange(range);
+  return getSelectedElementsInRange(range)
 }
 
 
 // Returns array of elements in range
 function getSelectedElementsInRange(range) {
-  var elems = [], treeWalker, containerElement;
+  var elems = [], treeWalker, containerElement
 
   if (range) {
-    containerElement = range.commonAncestorContainer;
+    containerElement = range.commonAncestorContainer
     if (containerElement.nodeType !== 1) {
-      containerElement = containerElement.parentNode;
+      containerElement = containerElement.parentNode
     }
 
-    elems = [treeWalker.currentNode];
+    elems = [treeWalker.currentNode]
 
     walkDOM(
       containerElement,
         function(node) {
           if (rangeIntersectsNode(range, node)) {
-            elems.push(node);
+            elems.push(node)
           }
-      });
+      })
 
     /*? if(platform!=='firefox' && platform!=='thunderbird'){ */
     /*
@@ -215,18 +215,18 @@ function getSelectedElementsInRange(range) {
     /*? } */
   }
 
-  return elems;
+  return elems
 }
 
 
 function isElementinDocument(element) {
-  var doc = element.ownerDocument;
+  var doc = element.ownerDocument
   while (!!(element = element.parentNode)) {
     if (element === doc) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 
@@ -236,12 +236,12 @@ function outerHTML(node, doc) {
   // if IE, Chrome take the internal method otherwise build one
   return node.outerHTML || (
     function(n){
-        var div = doc.createElement('div'), h;
-        div.appendChild(n.cloneNode(true));
-        h = div.innerHTML;
-        div = null;
-        return h;
-    })(node);
+        var div = doc.createElement('div'), h
+        div.appendChild(n.cloneNode(true))
+        h = div.innerHTML
+        div = null
+        return h
+    })(node)
 }
 
 
@@ -250,48 +250,48 @@ var charsToReplace = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;'
-};
+}
 
 function replaceChar(char) {
-  return charsToReplace[char] || char;
+  return charsToReplace[char] || char
 }
 
 // An approximate equivalent to outerHTML for document fragments.
 function getDocumentFragmentHTML(docFrag) {
-  var html = '', i;
+  var html = '', i
   for (i = 0; i < docFrag.childNodes.length; i++) {
-    var node = docFrag.childNodes[i];
+    var node = docFrag.childNodes[i]
     if (node.nodeType === node.TEXT_NODE) {
-      html += node.nodeValue.replace(/[&<>]/g, replaceChar);
+      html += node.nodeValue.replace(/[&<>]/g, replaceChar)
     }
     else { // going to assume ELEMENT_NODE
-      html += outerHTML(node, docFrag.ownerDocument);
+      html += outerHTML(node, docFrag.ownerDocument)
     }
   }
 
-  return html;
+  return html
 }
 
 
 function isElementDescendant(parent, descendant) {
-  var ancestor = descendant;
+  var ancestor = descendant
   while (!!(ancestor = ancestor.parentNode)) {
     if (ancestor === parent) {
-      return true;
+      return true
     }
   }
 
-  return false;
+  return false
 }
 
 function makeRequestToPrivilegedScript(doc, requestObj, callback) {
   // If `callback` is undefined and we pass it anyway, Chrome complains with this:
   // Uncaught Error: Invocation of form extension.sendMessage(object, undefined, null) doesn't match definition extension.sendMessage(optional string extensionId, any message, optional function responseCallback)
   if (callback) {
-    chrome.runtime.sendMessage(requestObj, callback);
+    chrome.runtime.sendMessage(requestObj, callback)
   }
   else {
-    chrome.runtime.sendMessage(requestObj);
+    chrome.runtime.sendMessage(requestObj)
   }
 }
 
@@ -309,7 +309,7 @@ function makeRequestToBGScript(action, args) {
     console.log(error)
     return
   }
-  return messenger.runtime.sendMessage(requestObj);
+  return messenger.runtime.sendMessage(requestObj)
 }
 
 // Gets the URL of the top window that elem belongs to.
@@ -317,16 +317,16 @@ function makeRequestToBGScript(action, args) {
 function getTopURL(win, justHostname) {
   if (win.frameElement) {
     // This is the window of an iframe
-    return getTopURL(win.frameElement.ownerDocument.defaultView);
+    return getTopURL(win.frameElement.ownerDocument.defaultView)
   }
-  let url;
+  let url
   if (justHostname) {
-    url = win.location.hostname;
+    url = win.location.hostname
   }
   else {
-    url = win.location.href;
+    url = win.location.href
   }
-  return url;
+  return url
 }
 
 
@@ -338,14 +338,14 @@ function getTopURL(win, justHostname) {
 // Throws exception if message is not found or if the platform doesn't support
 // internationalization (yet).
 function getMessage(messageID) {
-  let message = '';
+  let message = ''
   if (typeof(messenger) !== 'undefined') {
-    message = messenger.i18n.getMessage(messageID);
+    message = messenger.i18n.getMessage(messageID)
   }
   if (!message) {
-    throw new Error('Could not find message ID: ' + messageID);
+    throw new Error('Could not find message ID: ' + messageID)
   }
-  return message;
+  return message
 }
 
 // Returns true if `text` looks like raw Markdown, false otherwise.
@@ -388,7 +388,7 @@ function probablyWritingMarkdown(mdMaybe) {
         '')
 
     if (log !== probablyWritingMarkdown.lastLog) {
-      Utils.consoleLog(log);
+      Utils.consoleLog(log)
       probablyWritingMarkdown.lastLog = log
     }
   }
@@ -408,7 +408,7 @@ function probablyWritingMarkdown(mdMaybe) {
   }
 
   // Math
-  var math = mdMaybe.match(/`\$([^ \t\n\$]([^\$]*[^ \t\n\$])?)\$`/);
+  var math = mdMaybe.match(/`\$([^ \t\n\$]([^\$]*[^ \t\n\$])?)\$`/)
   if (math) {
     logMatch('math', math)
     return true
@@ -428,7 +428,7 @@ function probablyWritingMarkdown(mdMaybe) {
 
   // Headers. (But not hash-mark-H1, since that seems more likely to false-positive, and
   // less likely to be used. And underlines of at least length 5.)
-  var header = mdMaybe.match(/(^\s{0,3}#{2,6}[^#])|(^\s*[-=]{5,}\s*$)/m);
+  var header = mdMaybe.match(/(^\s{0,3}#{2,6}[^#])|(^\s*[-=]{5,}\s*$)/m)
   if (header) {
     logMatch('header', header)
     return true
@@ -440,7 +440,7 @@ function probablyWritingMarkdown(mdMaybe) {
   // immune to the problem, but a little better). This means we won't match
   // reference links (where the text in the square brackes is used elsewhere for
   // for the link).
-  var link = mdMaybe.match(/\]\(|\]\[/);
+  var link = mdMaybe.match(/\]\(|\]\[/)
   if (link) {
     logMatch('link', link)
     return true
@@ -474,7 +474,7 @@ function b64ToUint6 (nChr) {
     : nChr === 47 ?
       63
     :
-      0;
+      0
 
 }
 
@@ -482,21 +482,21 @@ function base64DecToArr (sBase64, nBlocksSize) {
 
   var
     sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, ""), nInLen = sB64Enc.length,
-    nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2, taBytes = new Uint8Array(nOutLen);
+    nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2, taBytes = new Uint8Array(nOutLen)
 
   for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
-    nMod4 = nInIdx & 3;
-    nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+    nMod4 = nInIdx & 3
+    nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4
     if (nMod4 === 3 || nInLen - nInIdx === 1) {
       for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
-        taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+        taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255
       }
-      nUint24 = 0;
+      nUint24 = 0
 
     }
   }
 
-  return taBytes;
+  return taBytes
 }
 
 /* Base64 string to array encoding */
@@ -514,25 +514,25 @@ function uint6ToB64 (nUint6) {
     : nUint6 === 63 ?
       47
     :
-      65;
+      65
 
 }
 
 function base64EncArr (aBytes) {
 
-  var nMod3 = 2, sB64Enc = "";
+  var nMod3 = 2, sB64Enc = ""
 
   for (var nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
-    nMod3 = nIdx % 3;
-    if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n"; }
-    nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
+    nMod3 = nIdx % 3
+    if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n" }
+    nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24)
     if (nMod3 === 2 || aBytes.length - nIdx === 1) {
-      sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
-      nUint24 = 0;
+      sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63))
+      nUint24 = 0
     }
   }
 
-  return sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? '' : nMod3 === 1 ? '=' : '==');
+  return sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? '' : nMod3 === 1 ? '=' : '==')
 
 }
 
@@ -540,10 +540,10 @@ function base64EncArr (aBytes) {
 
 function utf8ArrToStr (aBytes) {
 
-  var sView = "";
+  var sView = ""
 
   for (var nPart, nLen = aBytes.length, nIdx = 0; nIdx < nLen; nIdx++) {
-    nPart = aBytes[nIdx];
+    nPart = aBytes[nIdx]
     sView += String.fromCharCode(
       nPart > 251 && nPart < 254 && nIdx + 5 < nLen ? /* six bytes */
         /* (nPart - 252 << 32) is not possible in ECMAScript! So...: */
@@ -558,108 +558,108 @@ function utf8ArrToStr (aBytes) {
         (nPart - 192 << 6) + aBytes[++nIdx] - 128
       : /* nPart < 127 ? */ /* one byte */
         nPart
-    );
+    )
   }
 
-  return sView;
+  return sView
 
 }
 
 function strToUTF8Arr (sDOMStr) {
 
-  var aBytes, nChr, nStrLen = sDOMStr.length, nArrLen = 0;
+  var aBytes, nChr, nStrLen = sDOMStr.length, nArrLen = 0
 
   /* mapping... */
 
   for (var nMapIdx = 0; nMapIdx < nStrLen; nMapIdx++) {
-    nChr = sDOMStr.charCodeAt(nMapIdx);
-    nArrLen += nChr < 0x80 ? 1 : nChr < 0x800 ? 2 : nChr < 0x10000 ? 3 : nChr < 0x200000 ? 4 : nChr < 0x4000000 ? 5 : 6;
+    nChr = sDOMStr.charCodeAt(nMapIdx)
+    nArrLen += nChr < 0x80 ? 1 : nChr < 0x800 ? 2 : nChr < 0x10000 ? 3 : nChr < 0x200000 ? 4 : nChr < 0x4000000 ? 5 : 6
   }
 
-  aBytes = new Uint8Array(nArrLen);
+  aBytes = new Uint8Array(nArrLen)
 
   /* transcription... */
 
   for (var nIdx = 0, nChrIdx = 0; nIdx < nArrLen; nChrIdx++) {
-    nChr = sDOMStr.charCodeAt(nChrIdx);
+    nChr = sDOMStr.charCodeAt(nChrIdx)
     if (nChr < 128) {
       /* one byte */
-      aBytes[nIdx++] = nChr;
+      aBytes[nIdx++] = nChr
     } else if (nChr < 0x800) {
       /* two bytes */
-      aBytes[nIdx++] = 192 + (nChr >>> 6);
-      aBytes[nIdx++] = 128 + (nChr & 63);
+      aBytes[nIdx++] = 192 + (nChr >>> 6)
+      aBytes[nIdx++] = 128 + (nChr & 63)
     } else if (nChr < 0x10000) {
       /* three bytes */
-      aBytes[nIdx++] = 224 + (nChr >>> 12);
-      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63);
-      aBytes[nIdx++] = 128 + (nChr & 63);
+      aBytes[nIdx++] = 224 + (nChr >>> 12)
+      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63)
+      aBytes[nIdx++] = 128 + (nChr & 63)
     } else if (nChr < 0x200000) {
       /* four bytes */
-      aBytes[nIdx++] = 240 + (nChr >>> 18);
-      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63);
-      aBytes[nIdx++] = 128 + (nChr & 63);
+      aBytes[nIdx++] = 240 + (nChr >>> 18)
+      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63)
+      aBytes[nIdx++] = 128 + (nChr & 63)
     } else if (nChr < 0x4000000) {
       /* five bytes */
-      aBytes[nIdx++] = 248 + (nChr >>> 24);
-      aBytes[nIdx++] = 128 + (nChr >>> 18 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63);
-      aBytes[nIdx++] = 128 + (nChr & 63);
+      aBytes[nIdx++] = 248 + (nChr >>> 24)
+      aBytes[nIdx++] = 128 + (nChr >>> 18 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63)
+      aBytes[nIdx++] = 128 + (nChr & 63)
     } else /* if (nChr <= 0x7fffffff) */ {
       /* six bytes */
-      aBytes[nIdx++] = 252 + /* (nChr >>> 32) is not possible in ECMAScript! So...: */ (nChr / 1073741824);
-      aBytes[nIdx++] = 128 + (nChr >>> 24 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 18 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63);
-      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63);
-      aBytes[nIdx++] = 128 + (nChr & 63);
+      aBytes[nIdx++] = 252 + /* (nChr >>> 32) is not possible in ECMAScript! So...: */ (nChr / 1073741824)
+      aBytes[nIdx++] = 128 + (nChr >>> 24 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 18 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 12 & 63)
+      aBytes[nIdx++] = 128 + (nChr >>> 6 & 63)
+      aBytes[nIdx++] = 128 + (nChr & 63)
     }
   }
 
-  return aBytes;
+  return aBytes
 
 }
 /*****************************************************************************/
 function utf8StringToBase64(str) {
-  return base64EncArr(strToUTF8Arr(str));
+  return base64EncArr(strToUTF8Arr(str))
 }
 function base64ToUTF8String(str) {
-  return utf8ArrToStr(base64DecToArr(str));
+  return utf8ArrToStr(base64DecToArr(str))
 }
 
 
 // Expose these functions
 
-var Utils = {};
+var Utils = {}
 
-Utils.saferSetInnerHTML = saferSetInnerHTML;
-Utils.saferSetOuterHTML = saferSetOuterHTML;
-Utils.walkDOM = walkDOM;
-Utils.sanitizeDocumentFragment = sanitizeDocumentFragment;
-Utils.rangeIntersectsNode = rangeIntersectsNode;
-Utils.getDocumentFragmentHTML = getDocumentFragmentHTML;
-Utils.isElementDescendant = isElementDescendant;
-Utils.makeRequestToPrivilegedScript = makeRequestToPrivilegedScript;
-Utils.makeRequestToBGScript = makeRequestToBGScript;
-Utils.consoleLog = consoleLog;
-Utils.getTopURL = getTopURL;
-Utils.getMessage = getMessage;
-Utils.probablyWritingMarkdown = probablyWritingMarkdown;
-Utils.utf8StringToBase64 = utf8StringToBase64;
-Utils.base64ToUTF8String = base64ToUTF8String;
+Utils.saferSetInnerHTML = saferSetInnerHTML
+Utils.saferSetOuterHTML = saferSetOuterHTML
+Utils.walkDOM = walkDOM
+Utils.sanitizeDocumentFragment = sanitizeDocumentFragment
+Utils.rangeIntersectsNode = rangeIntersectsNode
+Utils.getDocumentFragmentHTML = getDocumentFragmentHTML
+Utils.isElementDescendant = isElementDescendant
+Utils.makeRequestToPrivilegedScript = makeRequestToPrivilegedScript
+Utils.makeRequestToBGScript = makeRequestToBGScript
+Utils.consoleLog = consoleLog
+Utils.getTopURL = getTopURL
+Utils.getMessage = getMessage
+Utils.probablyWritingMarkdown = probablyWritingMarkdown
+Utils.utf8StringToBase64 = utf8StringToBase64
+Utils.base64ToUTF8String = base64ToUTF8String
 
 
-var EXPORTED_SYMBOLS = ['Utils'];
+var EXPORTED_SYMBOLS = ['Utils']
 
 if (typeof module !== 'undefined') {
-  module.exports = Utils;
+  module.exports = Utils
 } else {
-  this.Utils = Utils;
-  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
+  this.Utils = Utils
+  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS
 }
 
 }).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+  return this || (typeof window !== 'undefined' ? window : global)
+}())

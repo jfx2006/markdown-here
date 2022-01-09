@@ -24,10 +24,10 @@ adam-p: modified to be a module
 
 
 function htmlToText(html, extensions) {
-    var text = html, i;
+    var text = html, i
 
     if (extensions && extensions['preprocessing'])
-        text = extensions['preprocessing'](text);
+        text = extensions['preprocessing'](text)
 
     text = text
         // Remove line breaks
@@ -39,7 +39,7 @@ function htmlToText(html, extensions) {
         // Remove content in comments.
         .replace(/<!--.*?-->/mig, "")
         // Remove !DOCTYPE
-        .replace(/<!DOCTYPE.*?>/ig, "");
+        .replace(/<!DOCTYPE.*?>/ig, "")
 
     /* I scanned http://en.wikipedia.org/wiki/HTML_element for all html tags.
     I put those tags that should affect plain text formatting in two categories:
@@ -47,27 +47,27 @@ function htmlToText(html, extensions) {
     replaced with one newline. */
 
     if (extensions && extensions['tagreplacement'])
-        text = extensions['tagreplacement'](text);
+        text = extensions['tagreplacement'](text)
 
     var doubleNewlineTags = ['p', 'h[1-6]', 'dl', 'dt', 'dd', 'ol', 'ul',
         'dir', 'address', 'blockquote', 'center', 'div', 'hr', 'pre', 'form',
-        'textarea', 'table'];
+        'textarea', 'table']
 
     var singleNewlineTags = ['li', 'del', 'ins', 'fieldset', 'legend',
-        'tr', 'th', 'caption', 'thead', 'tbody', 'tfoot'];
+        'tr', 'th', 'caption', 'thead', 'tbody', 'tfoot']
 
     for (i = 0; i < doubleNewlineTags.length; i++) {
-        var r = RegExp('</?\\s*' + doubleNewlineTags[i] + '[^>]*>', 'ig');
-        text = text.replace(r, '\n\n');
+        var r = RegExp('</?\\s*' + doubleNewlineTags[i] + '[^>]*>', 'ig')
+        text = text.replace(r, '\n\n')
     }
 
     for (i = 0; i < singleNewlineTags.length; i++) {
-        var r = RegExp('<\\s*' + singleNewlineTags[i] + '[^>]*>', 'ig');
-        text = text.replace(r, '\n');
+        var r = RegExp('<\\s*' + singleNewlineTags[i] + '[^>]*>', 'ig')
+        text = text.replace(r, '\n')
     }
 
     // Replace <br> and <br/> with a single newline
-    text = text.replace(/<\s*br[^>]*\/?\s*>/ig, '\n');
+    text = text.replace(/<\s*br[^>]*\/?\s*>/ig, '\n')
 
     text = text
         // Remove all remaining tags.
@@ -80,7 +80,7 @@ function htmlToText(html, extensions) {
         // Remove newlines at the end of the text.
         .replace(/\n+$/,"")
         // Decode HTML entities.
-        .replace(/&([^;]+);/g, decodeHtmlEntity);
+        .replace(/&([^;]+);/g, decodeHtmlEntity)
 
     /* adam-p: make trailing whitespace stripping optional */
 
@@ -88,20 +88,20 @@ function htmlToText(html, extensions) {
       text = text
           // Trim rightmost whitespaces for all lines
           .replace(/([^\n\S]+)\n/g,"\n")
-          .replace(/([^\n\S]+)$/,"");
+          .replace(/([^\n\S]+)$/,"")
     }
 
     if (extensions && extensions['postprocessing'])
-        text = extensions['postprocessing'](text);
+        text = extensions['postprocessing'](text)
 
-    return text;
+    return text
 }
 
 function decodeHtmlEntity(m, n) {
 	// Determine the character code of the entity. Range is 0 to 65535
 	// (characters in JavaScript are Unicode, and entities can represent
 	// Unicode characters).
-	var code;
+	var code
 
 	// Try to parse as numeric entity. This is done before named entities for
 	// speed because associative array lookup in many JavaScript implementations
@@ -110,19 +110,19 @@ function decodeHtmlEntity(m, n) {
 		// Try to parse as numeric entity
 		if (n.substr(1, 1) == 'x') {
 			// Try to parse as hexadecimal
-			code = parseInt(n.substr(2), 16);
+			code = parseInt(n.substr(2), 16)
 		} else {
 			// Try to parse as decimal
-			code = parseInt(n.substr(1), 10);
+			code = parseInt(n.substr(1), 10)
 		}
 	} else {
 		// Try to parse as named entity
-		code = ENTITIES_MAP[n];
+		code = ENTITIES_MAP[n]
 	}
 
 	// If still nothing, pass entity through
 	return (code === undefined || code === NaN) ?
-		'&' + n + ';' : String.fromCharCode(code);
+		'&' + n + ';' : String.fromCharCode(code)
 }
 
 var ENTITIES_MAP = {
@@ -254,17 +254,17 @@ var ENTITIES_MAP = {
   'lsaquo' : 8249,
   'rsaquo' : 8250,
   'euro' : 8364
-};
+}
 
-var EXPORTED_SYMBOLS = ['htmlToText'];
+var EXPORTED_SYMBOLS = ['htmlToText']
 
 if (typeof module !== 'undefined') {
-  module.exports = htmlToText;
+  module.exports = htmlToText
 } else {
-  this.htmlToText = htmlToText;
-  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
+  this.htmlToText = htmlToText
+  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS
 }
 
 }).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+  return this || (typeof window !== 'undefined' ? window : global)
+}())

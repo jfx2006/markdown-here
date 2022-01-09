@@ -1,3 +1,4 @@
 mailext-options-sync/
 testing_profile/
 src/vendor/
+src/options/mailext-options-sync.js

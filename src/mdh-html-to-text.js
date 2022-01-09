@@ -10,10 +10,10 @@ This module encapsulates Markdown Here's HTML-to-plaintext functionality.
 
 ;(function() {
 
-"use strict";
+"use strict"
 /*global module:false, htmlToText:false, Utils:false*/
 
-var exports = {};
+var exports = {}
 
 
 /*
@@ -42,9 +42,9 @@ HTML contains Markdown. It will prevent any alterations that introduce MD that
 isn't already present.
 */
 function MdhHtmlToText(elem, range, checkingIfMarkdown) {
-  this.elem = elem;
-  this.range = range;
-  this.checkingIfMarkdown = checkingIfMarkdown;
+  this.elem = elem
+  this.range = range
+  this.checkingIfMarkdown = checkingIfMarkdown
 
   // NOTE: If we end up really using `range`, we should do this:
   // if (!this.range) { this.range = new Range(); this.range.selectNodeContents(elem); }
@@ -52,9 +52,9 @@ function MdhHtmlToText(elem, range, checkingIfMarkdown) {
 
   // Is this insufficient? What if `elem` is in an iframe with no `src`?
   // Maybe we should go higher in the iframe chain?
-  this.url = Utils.getTopURL(elem.ownerDocument.defaultView);
+  this.url = Utils.getTopURL(elem.ownerDocument.defaultView)
 
-  this._preprocess();
+  this._preprocess()
 }
 
 
@@ -94,43 +94,43 @@ MdhHtmlToText.prototype._preprocess = function() {
     }]
   }
   */
-  let html;
+  let html
   if (this.range) {
-    let docFrag = this.range.cloneContents();
+    let docFrag = this.range.cloneContents()
     if (docFrag.childNodes[0].nodeType === Node.TEXT_NODE) {
-      const wrap_elem = document.createElement("div");
-      const wrap_frag = document.createDocumentFragment();
-      wrap_elem.appendChild(docFrag);
+      const wrap_elem = document.createElement("div")
+      const wrap_frag = document.createDocumentFragment()
+      wrap_elem.appendChild(docFrag)
       wrap_frag.appendChild(wrap_elem)
       docFrag = wrap_frag
     }
-    html = Utils.getDocumentFragmentHTML(docFrag);
+    html = Utils.getDocumentFragmentHTML(docFrag)
   }
   else {
-    html = this.elem.innerHTML;
+    html = this.elem.innerHTML
   }
 
-  this.preprocessInfo = { html: dedent(html), exclusions: [] };
+  this.preprocessInfo = { html: dedent(html), exclusions: [] }
 
   // The default behaviour for `jsHtmlToText.js` is to strip out tags (and their
   // inner text/html) that it doesn't expect/want. But we want some tag blocks
   // to remain intact.
-  this.excludeTagBlocks('blockquote', true);
+  this.excludeTagBlocks('blockquote', true)
 
   // It's a deviation from Markdown, but we'd like to leave any rendered
   // images already in the email intact. So we'll escape their tags.
   // Note that we can't use excludeTagBlocks because there's no closing tag.
-  this.preprocessInfo.html = this.preprocessInfo.html.replace(/<(img[^>]*)>/ig, '&lt;$1&gt;');
+  this.preprocessInfo.html = this.preprocessInfo.html.replace(/<(img[^>]*)>/ig, '&lt;$1&gt;')
 
   if (this.checkingIfMarkdown) {
     // If we're just checking for Markdown, strip out `<code>` blocks so that
     // we don't incorrectly detect unrendered MD in them.
-    this.preprocessInfo.html = this.preprocessInfo.html.replace(/<code\b.+?<\/code>/ig, '');
+    this.preprocessInfo.html = this.preprocessInfo.html.replace(/<code\b.+?<\/code>/ig, '')
   }
   else {
     // Some tags we can convert to Markdown, but don't do it if we're just
     // checking for Markdown, otherwise we'll cause false positives.
-    this.preprocessInfo.html = convertHTMLtoMarkdown('a', this.preprocessInfo.html);
+    this.preprocessInfo.html = convertHTMLtoMarkdown('a', this.preprocessInfo.html)
   }
 
   // NOTE: Don't use '.' in these regexes and hope to match across newlines. Instead use [\s\S].
@@ -171,25 +171,25 @@ MdhHtmlToText.prototype._preprocess = function() {
       .replace(/<(img[^>]*)>/ig, '&lt;$1&gt;')
 
       // &nbsp; --> space
-      .replace(/&nbsp;/ig, ' ');
-};
+      .replace(/&nbsp;/ig, ' ')
+}
 
 
 MdhHtmlToText.prototype.get = function() {
-  return htmlToText(this.preprocessInfo.html, { allowTrailingWhitespace: true });
-};
+  return htmlToText(this.preprocessInfo.html, { allowTrailingWhitespace: true })
+}
 
 
 // Re-insert the excluded content that we removed in preprocessing
 MdhHtmlToText.prototype.postprocess = function(renderedMarkdown) {
-  var i;
+  var i
   for (i = 0; i < this.preprocessInfo.exclusions.length; i++) {
     renderedMarkdown = renderedMarkdown.replace(this.preprocessInfo.exclusions[i].placeholder,
-                                                this.preprocessInfo.exclusions[i].content);
+                                                this.preprocessInfo.exclusions[i].content)
   }
 
-  return renderedMarkdown;
-};
+  return renderedMarkdown
+}
 
 
 // Escape all tags between tags of type `tagName`, inclusive. Also add a
@@ -210,51 +210,51 @@ MdhHtmlToText.prototype.excludeTagBlocks = function(
           ifHasAttribute,
           ifNotHasString) {
   var depth, startIndex, openIndex, closeIndex, currentOpenIndex,
-    openTagRegex, closeTagRegex, remainder, closeTagLength, regexFiller;
+    openTagRegex, closeTagRegex, remainder, closeTagLength, regexFiller
 
-  regexFiller = ifNotHasString ? '(((?!'+ifNotHasString+')[^>])*)' : '[^>]*';
+  regexFiller = ifNotHasString ? '(((?!'+ifNotHasString+')[^>])*)' : '[^>]*'
   if (ifHasAttribute) {
-    openTagRegex = new RegExp('<'+tagName+'\\b'+regexFiller+'\\b'+ifHasAttribute+'\\b'+regexFiller+'>', 'i');
+    openTagRegex = new RegExp('<'+tagName+'\\b'+regexFiller+'\\b'+ifHasAttribute+'\\b'+regexFiller+'>', 'i')
   }
   else {
-    openTagRegex = new RegExp('<'+tagName+'\\b'+regexFiller+'>', 'i');
+    openTagRegex = new RegExp('<'+tagName+'\\b'+regexFiller+'>', 'i')
   }
 
-  closeTagRegex = new RegExp('</'+tagName+'\\b', 'i');
+  closeTagRegex = new RegExp('</'+tagName+'\\b', 'i')
 
-  depth = 0;
-  startIndex = 0;
+  depth = 0
+  startIndex = 0
 
   while (true) {
-    remainder = this.preprocessInfo.html.slice(startIndex);
+    remainder = this.preprocessInfo.html.slice(startIndex)
 
-    openIndex = remainder.search(openTagRegex);
-    closeIndex = remainder.search(closeTagRegex);
+    openIndex = remainder.search(openTagRegex)
+    closeIndex = remainder.search(closeTagRegex)
 
     if (openIndex < 0 && closeIndex < 0) {
-      break;
+      break
     }
 
     if (closeIndex < 0 || (openIndex >= 0 && openIndex < closeIndex)) {
       // Process an open tag next.
 
       // Make the index relative to the beginning of the string.
-      openIndex += startIndex;
+      openIndex += startIndex
 
       if (depth === 0) {
         // Not a nested tag. Start the escape here.
-        currentOpenIndex = openIndex;
+        currentOpenIndex = openIndex
       }
 
-      startIndex = openIndex + 1;
-      depth += 1;
+      startIndex = openIndex + 1
+      depth += 1
     }
     else {
       // Process a close tag next.
 
       if (depth > 0) {
         // Make the index relative to the beginning of the string.
-        closeIndex += startIndex;
+        closeIndex += startIndex
 
         if (depth === 1) {
           // Not a nested tag. Time to escape.
@@ -262,9 +262,9 @@ MdhHtmlToText.prototype.excludeTagBlocks = function(
           // put around them so that they don't get mashed together with the
           // preceeding and following Markdown.
 
-          closeTagLength = ('</'+tagName+'>').length;
+          closeTagLength = ('</'+tagName+'>').length
 
-          var placeholder = String(Math.random());
+          var placeholder = String(Math.random())
           this.preprocessInfo.exclusions.push({
             placeholder: placeholder,
             content:
@@ -273,7 +273,7 @@ MdhHtmlToText.prototype.excludeTagBlocks = function(
               this.preprocessInfo.html.slice(currentOpenIndex, closeIndex+closeTagLength) +
               (wrapInPara ? '</p>' : '') +
               '</div>'
-          });
+          })
 
           // We need to insert some empty lines when we extract something,
           // otherwise the stuff above and below would be rendered as if they
@@ -284,28 +284,28 @@ MdhHtmlToText.prototype.excludeTagBlocks = function(
             '<br><br><br>' + // three empty lines is "guaranteed" to break a Markdown block (like a bullet list)
             placeholder +
             '<br><br><br>' +
-            this.preprocessInfo.html.slice(closeIndex+closeTagLength);
+            this.preprocessInfo.html.slice(closeIndex+closeTagLength)
 
           // Start from the beginning again. The length of the string has
           // changed (so our indexes are meaningless), and we'll only find
           // unescaped/unprocessed tags of interest anyway.
-          startIndex = 0;
+          startIndex = 0
         }
         else {
-          startIndex = closeIndex + 1;
+          startIndex = closeIndex + 1
         }
 
-        depth -= 1;
+        depth -= 1
       }
       else {
         // Depth is 0. So we've found a closing tag while not in an opening
         // tag -- this can happen normally if `ifHasAttribute` is non-null.
         // Just advance the startIndex.
-        startIndex += closeIndex + 1;
+        startIndex += closeIndex + 1
       }
     }
   }
-};
+}
 
 
 /**
@@ -314,12 +314,12 @@ resulting HTML.
 */
 function convertHTMLtoMarkdown(tag, html) {
   if (tag === 'a') {
-    var htmlToRestore = [];
+    var htmlToRestore = []
     html = html.replace(/(`+)[\s\S]+?\1/ig, function($0) {
-      var replacement = Math.random();
-      htmlToRestore.push([replacement, $0]);
-      return replacement;
-    });
+      var replacement = Math.random()
+      htmlToRestore.push([replacement, $0])
+      return replacement
+    })
     /*
     Make sure we do *not* convert HTML links that are inside of MD links.
     Otherwise we'll have problems like issue #69.
@@ -341,41 +341,41 @@ function convertHTMLtoMarkdown(tag, html) {
     html = html.replace(
       /((?:\]\([^\)]*)|(?:\[[^\]]*)|(?:\[.*\]:.*))?<a\s[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/ig,
       function($0, $1, $2, $3) {
-        return $1 ? $0 : '['+$3+']('+$2+')';
-      });
+        return $1 ? $0 : '['+$3+']('+$2+')'
+      })
 
     for (var i = 0; i < htmlToRestore.length; i++) {
       html = html.replace(htmlToRestore[i][0], function() {
           // The replacement argument to `String.replace()` has some magic values: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
           // Because we don't control the content of that argument, we either
           // need to escape dollar signs in it, or use the function version.
-          return htmlToRestore[i][1];
-        });
+          return htmlToRestore[i][1]
+        })
     }
   }
   else {
-    throw new Error('convertHTMLtoMarkdown: ' + tag + ' is not a supported tag');
+    throw new Error('convertHTMLtoMarkdown: ' + tag + ' is not a supported tag')
   }
 
-  return html;
+  return html
 }
 
 
-exports.MdhHtmlToText = MdhHtmlToText;
+exports.MdhHtmlToText = MdhHtmlToText
 
 exports._testExports = {
   convertHTMLtoMarkdown: convertHTMLtoMarkdown
-};
+}
 
-var EXPORTED_SYMBOLS = ['MdhHtmlToText'];
+var EXPORTED_SYMBOLS = ['MdhHtmlToText']
 
 if (typeof module !== 'undefined') {
-  module.exports = exports;
+  module.exports = exports
 } else {
-  this.MdhHtmlToText = exports;
-  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS;
+  this.MdhHtmlToText = exports
+  this.EXPORTED_SYMBOLS = EXPORTED_SYMBOLS
 }
 
 }).call(function() {
-  return this || (typeof window !== 'undefined' ? window : global);
-}());
+  return this || (typeof window !== 'undefined' ? window : global)
+}())
