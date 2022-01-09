@@ -1,15 +1,8 @@
-.DS_Store
 node_modules
-Thumbs.db
-
-*.sublime-project
-*.sublime-workspace
 .idea
 
 # Build directory
-web-ext-artifacts
+/web-ext-artifacts
 
-# Extension stub file
-markdown-here@adam.pritchard
-
-testing_profile*
+# profiles for testing
+/mdhr_test_profiles/

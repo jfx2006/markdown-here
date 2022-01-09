@@ -16,6 +16,6 @@ module.exports = {
         firefox: "thunderbird",
         // profile must exist or pass --profile-create-if-missing in the commandline
         // profile does not persist, use --keep-profile-changes to update it
-        firefoxProfile: "./testing_profile"
+        firefoxProfile: "./mdhr_test_profiles/testing_profile"
     },
 }
