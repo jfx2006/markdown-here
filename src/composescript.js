@@ -21,7 +21,7 @@ function requestHandler(request, sender, sendResponse) {
     }
 
     if (!markdownHere.elementCanBeRendered(focusedElem)) {
-      alert(Utils.getMessage('invalid_field'))
+      alert(Utils.getMessage("invalid_field"))
       return false
     }
 
