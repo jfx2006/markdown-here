@@ -5,7 +5,7 @@ import os.path as osp
 import re
 
 HTML_RE = re.compile(r'data-i18n="([a-z0-9_]+)"')
-JS_RE = re.compile(r'getMessage\("([a-z0-9_]+)"\)')
+JS_RE = re.compile(r'getMessage\("([a-z0-9_]+)"(,.+)?\)')
 
 
 def get_strings_from_file(path, ext):
