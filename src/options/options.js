@@ -13,7 +13,7 @@ import markdownRender from "../markdown-render.js"
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.js"
 
-import { fetchExtFile, getHljsStyles, getHljsStylesheetURL } from "../async_utils.js"
+import { fetchExtFile, getHljsStyles, getHljsStylesheetURL, getLanguage } from "../async_utils.js"
 import OptionsStore from "./options-storage.js"
 
 (async () => {
@@ -153,7 +153,8 @@ import OptionsStore from "./options-storage.js"
 
   async function setInitialText() {
     if (previewInput.value === "") {
-      previewInput.value = await fetchExtFile("/options/preview-initial.md")
+      const preview_lang = await getLanguage()
+      previewInput.value = await fetchExtFile(`/_locales/${preview_lang}/preview.md`)
     }
   }
 
