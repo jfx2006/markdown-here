@@ -6,10 +6,8 @@
   "app_slogan": {
     "message": "Markdown emails for Mozilla Thunderbird"
   },
-  "toggle_button_text": {
-    "message": "MD Toggle",
-    "description": "Text shown underneath the render toggle button. Make it as short as possible."
-  },
+
+  "__WET_GROUP__application": { "message": "Application" },
   "toggle_button_tooltip": {
     "message": "Click to toggle Markdown rendering",
     "description": "text shown when user hovers mouse over Markdown Toggle button"
@@ -18,14 +16,6 @@
     "message": "The selected field is not valid for Markdown rendering",
     "description": "text shown when user hover mouse over disabled Markdown Toggle button"
   },
-  "context_menu_item": {
-    "message": "Markdown Toggle",
-    "description": "Text shown on the context menu."
-  },
-  "invalid_field": {
-    "message": "The selected field is not valid for Markdown rendering. Please use a rich editor.",
-    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered"
-  },
   "plain_text_compose": {
     "message": "You are using a plain-text compose editor. You must change to a rich editor to use $APPNAME$.",
     "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
@@ -33,12 +23,38 @@
       "appname": { "content": "$1" }
     }
   },
-  "cursor_into_compose": {
-    "message": "Please put the cursor into the compose box."
+  "unrender_button": {
+    "message": "Unrender",
+    "description": "Button label to revert rendered Markdown"
   },
-  "forgot_to_render_prompt_title": {
-    "message": "Forget to toggle Markdown?",
-    "description": "Title of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
+  "unrendering_modified_markdown_warning": {
+    "message": "The rendered Markdown appears to have been modifed.\nIf you unrender it, your changes since rendering will be lost.\n\nAre you sure you wish to unrender?",
+    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed."
+  },
+  "upgrade_notification_text": {
+    "message": "$APPNAME$ updated",
+    "description": "Text on the notification shown when Markdown Here has been updated",
+    "placeholders": {
+      "appname": { "content": "$1" }
+    }
+  },
+  "update_notes_button": {
+    "message": "Update Notes"
+  },
+  "cancel_button": {
+    "message": "Cancel"
+  },
+  "context_menu_item": {
+    "message": "Markdown Toggle",
+    "description": "Text shown on the context menu."
+  },
+  "forgot_to_render_back_button": {
+    "message": "Back",
+    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
+  },
+  "forgot_to_render_prompt_close_hover": {
+    "message": "Dismiss this notification",
+    "description": "Text that shows when the user hovers over the 'X' that will close the prompt"
   },
   "forgot_to_render_prompt_info": {
     "message": "It looks like you wrote this email in Markdown but forgot to make it pretty.",
@@ -48,56 +64,74 @@
     "message": "Send it anyway?",
     "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
   },
-  "forgot_to_render_back_button": {
-    "message": "Back",
-    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
   "forgot_to_render_send_button": {
     "message": "Send",
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
   },
-  "forgot_to_render_prompt_close_hover": {
-    "message": "Dismiss this notification",
-    "description": "Text that shows when the user hovers over the 'X' that will close the prompt"
-  },
-  "upgrade_notification_text": {
-    "message": "$APPNAME$ updated",
-    "description": "Text on the notification shown when Markdown Here has been updated",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    }
-  },
-  "upgrade_notification_changes_tooltip": {
-    "message": "Click to see the changes in this release",
-    "description": "Tooltip text on the link that opens the changes list"
-  },
-  "upgrade_notification_dismiss_tooltip": {
-    "message": "Dismiss this notification",
-    "description": "Tooltip text on the link that dismisses the notification"
+  "invalid_field": {
+    "message": "The selected field is not valid for Markdown rendering. Please use a rich editor.",
+    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered"
   },
   "nothing_to_render": {
     "message": "Nothing found to render or revert",
     "description": "Error message shown to user if there's nothing found to revert or render."
   },
-  "unrendering_modified_markdown_warning": {
-    "message": "The rendered Markdown appears to have been modifed.\nIf you unrender it, your changes since rendering will be lost.\n\nAre you sure you wish to unrender?",
-    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed."
-  },
+
+  "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
     "message": "$APPNAME$ Options",
     "placeholders": {
       "appname": { "content": "$1" }
     }
   },
+
+  "__WET_GROUP__options": { "message": "Options" },
   "options_page__options_title": {
     "message": "Options"
   },
+  "options_page__gfm_line_breaks_enabled_label": {
+    "message": "Enable GFM line breaks.",
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
+  },
+  "options_page__forgot_to_render_label2": {
+    "message": "Enable \"forgot-to-render\" check.",
+    "description": "Label for the checkbox that enables the forgot-to-render feature"
+  },
+  "options_page__forgot_to_render_2": {
+    "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
+    "description": "Descriptive text explaining the 'forgot-to-render' feature."
+  },
+  "options_page__smart_replacements_enabled_label": {
+    "message": "Enable \"smart\" typographic replacements",
+    "description": "Label for enabling the smart replacements feature"
+  },
+  "options_page__smart_replacements_2": {
+    "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
+    "description": "An explanation of what smart replacements are"
+  },
+  "options_page__tex_math_title": {
+    "message": "TeX Mathematical Formulae Support"
+  },
+  "options_page__tex_math_privacy_issue_1": {
+    "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
+    "description": "one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_privacy_issue_2": {
+    "message": "If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.",
+    "description": "one of the TeX math privacy concerns"
+  },
+  "options_page__tex_math_description": {
+    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
+    "description": "description how math is rendered"
+  },
+  "options_page__hotkey_title": {
+    "message": "Hotkey (aka keyboard shortcut)",
+    "description": "A section title"
+  },
+
+  "__WET_GROUP__usage": { "message": "Usage" },
   "options_page__basic_usage": {
     "message": "Basic Usage"
-  },
-  "options_page__reload_restart": {
-    "message": "After installing or upgrading, reload your email web page or restart your web browser.",
-    "description": "A step in the basic usage instructions"
   },
   "options_page__start_new_message": {
     "message": "Start a new email message.",
@@ -115,7 +149,7 @@
   },
   "options_page__toggle_hotkey": {
     "message": "Or use the hotkey:",
-    "description": "A step suggestion in the basicv usage instructions"
+    "description": "A step suggestion in the basic usage instructions"
   },
   "options_page__pretty_cool": {
     "message": "The message should now look pretty cool. Send it to your friends!",
@@ -134,13 +168,11 @@
   "options_page__tips_tricks_link": {
     "message": "Tips and Tricks"
   },
+
+  "__WET_GROUP__theme": { "message": "Theme" },
   "options_page__primary_css_title": {
     "message": "Primary Styling CSS",
     "description": "section title"
-  },
-  "options_page__reset_primary_css": {
-    "message": "Reset to Default",
-    "description": "text on button to reset Primary Styling CSS"
   },
   "options_page__syntax_highlighting_css_title": {
     "message": "Syntax Highlighting CSS",
@@ -150,6 +182,12 @@
     "message": "Theme",
     "description": "label for the syntax highlighting theme combo box"
   },
+  "options_page__preview_title": {
+    "message": "Preview",
+    "description": "section title for the Markdown preview section"
+  },
+
+  "__WET_GROUP__about": { "message": "About" },
   "options_page__report_bugs_title": {
     "message": "Report bugs"
   },
@@ -165,66 +203,6 @@
     "message": "Copy to clipboard",
     "description": "button for copying debug information to the clipboard"
   },
-  "options_page__preview_title": {
-    "message": "Preview",
-    "description": "section title for the Markdown preview section"
-  },
-  "options_page__markdown_toggle_button_text": {
-    "message": "Markdown Toggle",
-    "description": "button text for Markdown Toggle button"
-  },
-  "options_page__notes_title": {
-    "message": "Notes",
-    "description": "section title"
-  },
-  "options_page__note_options_sync": {
-    "message": "Changes are automatically saved and synchronized (if sync is enabled in your browser)."
-  },
-  "options_page__note_syntax_styles_after_primary": {
-    "message": "The syntax highlighting styles are applied after the primary styling, and so take precedence."
-  },
-  "options_page__note_default_client_styles": {
-    "message": "Some email editors and browsers impose their own styles. Those may not be apparent here."
-  },
-  "options_page__tex_math_title": {
-    "message": "TeX Mathematical Formulae Support"
-  },
-  "options_page__tex_math_description": {
-    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
-    "description": "description how math is rendered"
-  },
-  "options_page__tex_math_privacy_issue_1": {
-    "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
-    "description": "one of the TeX math privacy concerns"
-  },
-  "options_page__tex_math_privacy_issue_2": {
-    "message": "If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.",
-    "description": "one of the TeX math privacy concerns"
-  },
-  "options_page__hotkey_title": {
-    "message": "Hotkey (aka keyboard shortcut)",
-    "description": "A section title"
-  },
-  "options_page__reset_button": {
-    "message": "Reset",
-    "description": "used for resetting certain options to the default"
-  },
-  "options_page__forgot_to_render_label2": {
-    "message": "Enable \"forgot-to-render\" check.",
-    "description": "Label for the checkbox that enables the forgot-to-render feature"
-  },
-  "options_page__forgot_to_render_2": {
-    "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
-    "description": "Descriptive text explaining the 'forgot-to-render' feature."
-  },
-  "options_page__smart_replacements_enabled_label": {
-    "message": "Enable \"smart\" typographic replacements",
-    "description": "Label for enabling the smart replacements feature"
-  },
-  "options_page__smart_replacements_2": {
-    "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
-    "description": "An explanation of what smart replacements are"
-  },
   "options_page__changelog_title": {
     "message": "Changelog"
   },
@@ -232,17 +210,10 @@
     "message": "Changes saved",
     "description": "message that shows when user changes have been saved"
   },
-  "options_page__preview_markdown": {
-    "message": "```javascript<br>\nfunction syntaxHighlighting() {<br>\n&nbsp; var n = 33;<br>\n&nbsp; var s = \"hello, こんにちは\";<br>\n&nbsp; console.log(s);<br>\n}<br>\n```<br>\n<br>\n* plain<br>\n* *emphasis*<br>\n&nbsp; * **strong emphasis**<br>\n&nbsp; &nbsp; * ~~strikethrough~~<br>\n* `inline code`<br>\n<br>\n1. Numbered list<br>\n&nbsp;&nbsp;&nbsp;1. Numbered sub-list<br>\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Numbered sub-sub-list<br>\n2. [Link](https://www.google.com)<br>\n<br>\n<br>\nAn image: ![Markdown Here logo](/images/icon24.png)\n<br>\n<br>\n> Block quote.&nbsp; <br>\n> *With* **some** `markdown`.<br>\n<br>\nIf **TeX Math** support is enabled, this is the quadratic equation:&nbsp;<br>\n`$$-b \\pm \\sqrt{b^2 - 4ac} \\over 2a$$`<br>\n<br>\n# Header 1<br>\n## Header 2<br>\n### Header 3<br>\n#### Header 4<br>\n##### Header 5<br>\n###### Header 6<br>\n&nbsp; <br>\n| Tables        | Are           | Cool  |<br>\n| ------------- |:-------------:| -----:|<br>\n| column 3 is   | right-aligned | $$1600 |<br>\n| column 2 is   | centered      |   $$12 |<br>\n| zebra stripes | are neat      |    $$1 |<br>\n<br>\nHere's a horizontal rule:<br>\n<br>\n---<br>\n<br>\n```<br>\ncode block<br>\nwith no highlighting<br>\n```<br>\n<br>\n",
-    "description": "This doesn't need to be translated, unless you want to make it more relevant to your language. The raw Markdown used for previewing user styling changes. Also shows users what can be done with Markdown. Please note that the double dollar signs ($$) are needed to make a single dollar sign in the application."
+  "options_page__reset_button": {
+    "message": "Reset",
+    "description": "used for resetting certain options to the default"
   },
-  "currently_in_use": {
-    "message": "Currently in use",
-    "description": "Indicates the syntax highlighting theme that the user is currently using"
-  },
-  "options_page__gfm_line_breaks_enabled_label": {
-    "message": "Enable GFM line breaks.",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
-  },
+
   "__WET_LOCALE__": { "message": "en" }
 }

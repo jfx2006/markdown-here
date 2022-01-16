@@ -1,202 +1,271 @@
 {
   "app_name": {
-    "message": "Markdown Here",
-    "description": "This is the name of the extension, the placeholder $APPNAME$ is used the remaining strings."
+    "message": "Markdown Here Revival",
+    "description": "This is the name of the extension, the placeholder $APPNAME$ is used the remaining strings.",
+    "hash": "edf09063590176700ead1a22bf3a5937"
   },
   "app_slogan": {
-    "message": "E-Mail in Markdown schreiben, dann aufhübschen lassen."
+    "message": "Markdown-E-Mails für Mozilla Thunderbird",
+    "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
-  "toggle_button_text": {
-    "message": "MD An/Aus",
-    "description": "Text shown underneath the render toggle button. Make it as short as possible."
-  },
+
+  "__WET_GROUP__application": { "message": "Application" },
   "toggle_button_tooltip": {
     "message": "Zwischen Markdown und gerendert wechseln",
-    "description": "text shown when user hovers mouse over Markdown Toggle button"
+    "description": "text shown when user hovers mouse over Markdown Toggle button",
+    "hash": "3bc9f4a63b89c5b8074cda8fb4899226"
   },
   "toggle_button_tooltip_disabled": {
     "message": "Das ausgewählte Feld kann nicht als Markdown gerendert werden",
-    "description": "text shown when user hover mouse over disabled Markdown Toggle button"
-  },
-  "context_menu_item": {
-    "message": "Markdown An/Aus",
-    "description": "Text shown on the context menu."
-  },
-  "invalid_field": {
-    "message": "Das ausgewählte Textfeld kann nicht zu Markdown gerendert werden. Bitte einen Rich-Text–Editor verwenden.",
-    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered"
+    "description": "text shown when user hover mouse over disabled Markdown Toggle button",
+    "hash": "2af454f8549b5eaf47e81091f9608279"
   },
   "plain_text_compose": {
-    "message": "Ein Plaintext-Editor ist nicht für Markdown Here geeignet. Bitte einen Rich-Text–Editor verwenden.",
+    "message": "Ein Plaintext-Editor ist nicht für $APPNAME$ geeignet. Bitte einen Rich-Text–Editor verwenden.",
     "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
     "placeholders": {
-      "appname": { "content": "Markdown Here Revival" }
-    }
+      "appname": { "content": "$1" }
+    },
+    "hash": "d4193cf5d1751aef08b349322be35a5a"
   },
-  "cursor_into_compose": {
-    "message": "Bitte den Cursor im Textfeld platzieren."
-  },
-  "forgot_to_render_prompt_title": {
-    "message": "Markdown-Rendering vergessen?",
-    "description": "Title of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "forgot_to_render_prompt_info": {
-    "message": "Es sieht so aus als wäre diese E-Mail in Markdown geschrieben, aber noch nicht gerendert.",
-    "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "forgot_to_render_prompt_question": {
-    "message": "Trotzdem senden?",
-    "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "forgot_to_render_back_button": {
-    "message": "Zurück",
-    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "forgot_to_render_send_button": {
-    "message": "Senden",
-    "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "forgot_to_render_prompt_close_hover": {
-    "message": "Benachrichtigung schließen",
-    "description": "Text that shows when the user hovers over the 'X' that will close the prompt"
-  },
-  "upgrade_notification_text": {
-    "message": "Markdown Here aktualisiert",
-    "description": "Text on the notification shown when Markdown Here has been updated",
-    "placeholders": {
-      "appname": { "content": "Markdown Here Revival" }
-    }
-  },
-  "upgrade_notification_changes_tooltip": {
-    "message": "Anklicken um Änderungen in dieser Version zu sehen",
-    "description": "Tooltip text on the link that opens the changes list"
-  },
-  "upgrade_notification_dismiss_tooltip": {
-    "message": "Benachrichtigung schließen",
-    "description": "Tooltip text on the link that dismisses the notification"
-  },
-  "nothing_to_render": {
-    "message": "Nichts zu rendern oder wiederherzustellen gefunden",
-    "description": "Error message shown to user if there's nothing found to revert or render."
+  "unrender_button": {
+    "message": "Unrender",
+    "description": "Button label to revert rendered Markdown",
+    "hash": "2084a9f0d626e52ba79a1ecaf470497e"
   },
   "unrendering_modified_markdown_warning": {
     "message": "Es scheint so als wäre dieser gerenderte Markdown-Text manuell verändert worden. Wiederherstellen würde diese Änderungen verwerfen.\n\nWirklich wiederherstellen?",
-    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed."
+    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed.",
+    "hash": "f66b39d56c77dd84c6c2bdabad1f29fb"
   },
-  "options_page__page_title": {
-    "message": "Markdown Here Optionen",
+  "upgrade_notification_text": {
+    "message": "$APPNAME$ aktualisiert",
+    "description": "Text on the notification shown when Markdown Here has been updated",
     "placeholders": {
-      "appname": { "content": "Markdown Here Revival" }
-    }
+      "appname": { "content": "$1" }
+    },
+    "hash": "76796ecd460f742236be591169ce278b"
   },
-  "options_page__basic_usage": {
-    "message": "Grundlegende Verwendung"
+  "update_notes_button": {
+    "message": "Update Notes",
+    "hash": "fef3aae852e44ea637393db11e0da28a"
   },
-  "options_page__reload_restart": {
-    "message": "Die E-Mail–Webseite neu laden oder den Browser neu starten.",
-    "description": "A step in the basic usage instructions"
+  "cancel_button": {
+    "message": "Cancel",
+    "hash": "17aa19f18a894459ab6ff21156e8a341"
   },
-  "options_page__start_new_message": {
-    "message": "Eine neue E-Mail beginnen.",
-    "description": "A step in the basic usage instructions"
-  },
-  "options_page__type_some_markdown": {
-    "message": "Markdown schreiben.<br/>Zum Beispiel: <code>_Hallo_ `Markdown` **Here**!</code>"
-  },
-  "options_page__pretty_cool": {
-    "message": "Die E-Mail sollte jetzt ziemlich gut aussehen. Reif zum Verschicken!",
-    "description": "A step in the basic usage instructions"
-  },
-  "options_page__resources_title": {
-    "message": "Ressourcen und Links",
-    "description": "A section title"
-  },
-  "options_page__resources_cheatsheet_link": {
-    "message": "Für Markdown-Neulinge: das <a href=\"https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet\" target=\"_blank\">Markdown Here Cheatsheet</a> macht einen schnell zum Profi."
-  },
-  "options_page__advanced_usage": {
-    "message": "Viel mehr Infos und fortgeschrittene Features finden sich auf der <a href=\"https://github.com/adam-p/markdown-here\" target=\"_blank\">Markdown Here Projektseite</a>. Auch weiter unten gibt es einiges an Optionen."
-  },
-  "options_page__ggroup": {
-    "message": "Fragen stellen, Diskussionen starten, oder einfach Hallo sagen – in der <a href=\"https://groups.google.com/forum/?fromgroups=#!forum/markdown-here\" target=\"_blank\">markdown-here Google–Gruppe</a>."
-  },
-  "options_page__mdh_wiki": {
-    "message": "Im <a href=\"https://github.com/adam-p/markdown-here/wiki\" target=\"_blank\">Markdown Here Wiki</a> gibt es Infos über <a href=\"https://github.com/adam-p/markdown-here/wiki/Compatibility\" target=\"_blank\">weitere Anwendungen von MDH</a> und weitere <a href=\"https://github.com/adam-p/markdown-here/wiki/Tips-and-Tricks\" target=\"_blank\">Tipps und Tricks</a>."
-  },
-  "options_page__next_steps": {
-    "message": "Für Interessierte an der Zukunft von Markdown Here, der <a href=\"https://github.com/adam-p/markdown-here#next-steps\" target=\"_blank\">Abschnitt <i>Weitere Schritte</i></a> im README."
-  },
-  "options_page__primary_css_title": {
-    "message": "Grundlegendes Styling-CSS",
-    "description": "section title"
-  },
-  "options_page__reset_primary_css": {
-    "message": "Auf Standard zurücksetzen",
-    "description": "text on button to reset Primary Styling CSS"
-  },
-  "options_page__syntax_highlighting_css_title": {
-    "message": "CSS für Syntax-Highlighting",
-    "description": "section title"
-  },
-  "options_page__syntax_highlighting_theme_label": {
-    "message": "Schema:",
-    "description": "label for the syntax highlighting theme combo box"
-  },
-  "options_page__preview_title": {
-    "message": "Vorschau",
-    "description": "section title for the Markdown preview section"
-  },
-  "options_page__markdown_toggle_button_text": {
+  "context_menu_item": {
     "message": "Markdown An/Aus",
-    "description": "button text for Markdown Toggle button"
+    "description": "Text shown on the context menu.",
+    "hash": "a1a283d948a9ceae00725349176065ab"
   },
-  "options_page__notes_title": {
-    "message": "Hinweise",
-    "description": "section title"
+  "forgot_to_render_back_button": {
+    "message": "Zurück",
+    "description": "Text on the Back (cancel) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
+    "hash": "16a5bc1e5d6a2e5bbb1b35ca483971e8"
   },
-  "options_page__note_options_sync": {
-    "message": "Änderungen werden automatisch gesichert und synchronisiert (wenn Sync im Browser aktiviert ist)."
+  "forgot_to_render_prompt_close_hover": {
+    "message": "Benachrichtigung schließen",
+    "description": "Text that shows when the user hovers over the 'X' that will close the prompt",
+    "hash": "48f8b404a3afd15f165abe500bf625c0"
   },
-  "options_page__note_syntax_styles_after_primary": {
-    "message": "Die Stile für Syntax-Highlighting werden nach dem grundlegenden Styling angewandt und haben so Vorrang."
+  "forgot_to_render_prompt_info": {
+    "message": "Es sieht so aus als wäre diese E-Mail in Markdown geschrieben, aber noch nicht gerendert.",
+    "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
+    "hash": "7a6bf5503a66dfc42914e6fec5a668ba"
   },
-  "options_page__note_default_client_styles": {
-    "message": "Manche E-Mail–Programme und Browser erzwingen ihre eigenen Stile. Das ist hier möglicherweise nicht zu ersehen."
+  "forgot_to_render_prompt_question": {
+    "message": "Trotzdem senden?",
+    "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
+    "hash": "5ceefbf6f6675554ec47ed2fac4edc4d"
   },
-  "options_page__tex_math_title": {
-    "message": "TeX für mathematische Formeln"
+  "forgot_to_render_send_button": {
+    "message": "Senden",
+    "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
+    "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
-  "options_page__tex_math_privacy_issue_1":{
-    "message":"Um eine Formel als Bilddatei zu rendern, wird eine Anfrage an Google gesendet. Damit wird die Formel für Google freigegeben. Das bedeutet auch dass die Empfänger der Nachricht Anfragen an Google schicken müssen um das gerenderte Ergebnis zu sehen.",
-    "description":"one of the TeX math privacy concerns"
+  "invalid_field": {
+    "message": "Das ausgewählte Textfeld kann nicht zu Markdown gerendert werden. Bitte einen Rich-Text–Editor verwenden.",
+    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered",
+    "hash": "b872064a02c3f0ecfa92a225e6d30ccf"
   },
-  "options_page__tex_math_privacy_issue_2":{
-    "message":"Bei Anpassung des Formel-Rendering-Tags sollte ein sicherer (https:\/\/) Pfad benutzt werden. Nicht alle Rendering-Services haben diese Option.",
-    "description":"one of the TeX math privacy concerns"
+  "nothing_to_render": {
+    "message": "Nichts zu rendern oder wiederherzustellen gefunden",
+    "description": "Error message shown to user if there's nothing found to revert or render.",
+    "hash": "1cdbc3e0314a985039d6c9cf27e20c9e"
   },
-  "options_page__hotkey_title": {
-    "message": "Hotkey (aka Tastenkombination)",
-    "description": "A section title"
+
+  "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
+  "options_page__page_title": {
+    "message": "$APPNAME$ Optionen",
+    "placeholders": {
+      "appname": { "content": "$1" }
+    },
+    "hash": "fefb9554fa7cc03466d11dd0e706bb2e"
   },
-  "options_page__forgot_to_render_2": {
-    "message": "Bei Versendung einer E-Mail überprüft dies den Inhalt um festzustellen ob sie in Markdown geschrieben, aber noch nicht gerendert wurde (durch Klick auf \"Markdown An/Aus\"). Möglicherweise muss dies deaktiviert werden wenn es das Versenden von E-Mails verhindert.",
-    "description": "Descriptive text explaining the 'forgot-to-render' feature."
-  },
-  "options_page__changes_saved": {
-    "message": "Änderungen gespeichert",
-    "description": "message that shows when user changes have been saved"
-  },
-  "options_page__preview_markdown": {
-    "message": "```javascript<br>\nfunction syntaxHighlighting() {<br>\n&nbsp; var n = 33;<br>\n&nbsp; var s = \"hello, world\";<br>\n&nbsp; console.log(s);<br>\n}<br>\n```<br>\n<br>\n<br>\n- normal<br>\n+ **fett**<br>\n* *kursiv*<br>\n- ***fett & kursiv***<br>\n+ ~~durchgestrichen~~<br>\n- `codierte Darstellung`<br>\n<br>\n<br>\n1. Nummerierte Listen<br>\n&nbsp;&nbsp;&nbsp;1. Numbered sub-list<br>\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Numbered sub-sub-list<br>\n2. [Link](https://www.google.com)<br>\n- eingerückte<br>\n- Aufzählung<br>\n&nbsp; - weiter<br>\n&nbsp; - eingerückt<br>\n&nbsp; &nbsp; - und<br>\n&nbsp; &nbsp; - nochmal<br>\n<br>\n<br>\nEin Bild hinzufügen: ![Markdown Here logo](/images/icon24.png)\n<br>\n<br>\n> Ein Zitat.&nbsp; <br>\n> *Mit* **etwas** `Markdown`.<br>\n<br>\n<br>\nSofern die Unterstützung von **TeX Math** aktiviert ist, sieht eine quadratische Gleichung so aus:&nbsp; <br>\n$$-b \\pm \\sqrt{b^2 - 4ac} \\over 2a$$<br>\n<br>\n<br>\n# Überschrift 1<br>\n## Überschrift 2<br>\n### Überschrift 3<br>\n#### Überschrift 4<br>\n##### Überschrift 5<br>\n###### Überschrift 6<br>\n&nbsp; <br>\n<br>\n| Tabellen | sind | auch möglich |<br>\n| ------------- |:-------------:| -----:|<br>\n| Spalte 3 ist | rechtsbündig  | $$1600 |<br>\n| Salte 2 ist | zentriert | $$12 |<br>\n| Sogar mit | Zebrastreifen | $$1 |<br>\n<br>\n<br>\nHier eine horizontale Linie:<br>\n<br>\n---<br>\n<br>\n<br>\n```<br>\nUnd hier ein Code-Block<br>\nohne Hervorhebung<br>\n```<br>\n<br>",
-    "description": "This doesn't need to be translated, unless you want to make it more relevant to your language. The raw Markdown used for previewing user styling changes. Also shows users what can be done with Markdown. Please note that the double dollar signs ($$) are needed to make a single dollar sign in the application."
-  },
-  "currently_in_use": {
-    "message": "Derzeit im Einsatz",
-    "description": "Indicates the syntax highlighting theme that the user is currently using"
+
+  "__WET_GROUP__options": { "message": "Options" },
+  "options_page__options_title": {
+    "message": "Optionen",
+    "hash": "531dad0078a72193602b18495f0ad4e9"
   },
   "options_page__gfm_line_breaks_enabled_label": {
     "message": "<b>Aktivieren der GFM Zeilenumbrüche.</b>",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
+    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
+  "options_page__forgot_to_render_label2": {
+    "message": "Aktivieren Sie die Prüfung \"Vergessen zu rendern\".",
+    "description": "Label for the checkbox that enables the forgot-to-render feature",
+    "hash": "2c89383ef981e027e75be9e47f6d4297"
+  },
+  "options_page__forgot_to_render_2": {
+    "message": "Bei Versendung einer E-Mail überprüft dies den Inhalt um festzustellen ob sie in Markdown geschrieben, aber noch nicht gerendert wurde (durch Klick auf \"Markdown An/Aus\"). Möglicherweise muss dies deaktiviert werden wenn es das Versenden von E-Mails verhindert.",
+    "description": "Descriptive text explaining the 'forgot-to-render' feature.",
+    "hash": "ee2c5919a16190356cb0b5802dbe6e48"
+  },
+  "options_page__smart_replacements_enabled_label": {
+    "message": "Enable \"smart\" typographic replacements",
+    "description": "Label for enabling the smart replacements feature",
+    "hash": "a460151f688d7d592aa246379fcbb609"
+  },
+  "options_page__smart_replacements_2": {
+    "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
+    "description": "An explanation of what smart replacements are",
+    "hash": "5f91244199941f295456a0c754f51ddf"
+  },
+  "options_page__tex_math_title": {
+    "message": "TeX für mathematische Formeln",
+    "hash": "8c09b9f03c93800e4f601e57c374eec5"
+  },
+  "options_page__tex_math_privacy_issue_1": {
+    "message": "Um eine Formel als Bilddatei zu rendern, wird eine Anfrage an Google gesendet. Damit wird die Formel für Google freigegeben. Das bedeutet auch dass die Empfänger der Nachricht Anfragen an Google schicken müssen um das gerenderte Ergebnis zu sehen.",
+    "description": "one of the TeX math privacy concerns",
+    "hash": "45421bd5f89bb7b4209792e558a5684f"
+  },
+  "options_page__tex_math_privacy_issue_2": {
+    "message": "Bei Anpassung des Formel-Rendering-Tags sollte ein sicherer (https://) Pfad benutzt werden. Nicht alle Rendering-Services haben diese Option.",
+    "description": "one of the TeX math privacy concerns",
+    "hash": "6377d919509c05850fd38caccbcfbda4"
+  },
+  "options_page__tex_math_description": {
+    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
+    "description": "description how math is rendered",
+    "hash": "ead94268f19cef4441fc69f97689d9b6"
+  },
+  "options_page__hotkey_title": {
+    "message": "Hotkey (aka Tastenkombination)",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  },
+
+  "__WET_GROUP__usage": { "message": "Usage" },
+  "options_page__basic_usage": {
+    "message": "Grundlegende Verwendung",
+    "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
+  },
+  "options_page__start_new_message": {
+    "message": "Eine neue E-Mail beginnen.",
+    "description": "A step in the basic usage instructions",
+    "hash": "b109e639b6a4a080cbf6533b363953b9"
+  },
+  "options_page__type_some_markdown": {
+    "message": "Markdown schreiben.<br/>Zum Beispiel: <code>_Hallo_ `Markdown` **Here**!</code>",
+    "hash": "f0db9e92b6eead27204d516a3034a2fc"
+  },
+  "options_page__short_markdown_example": {
+    "message": "`Markdown` **Here** _Revival_!",
+    "hash": "67f19cc4f24de8f9b404819ab7633356"
+  },
+  "options_page__click_toggle2": {
+    "message": "Click the compose action button on the format toolbar.",
+    "description": "A step in the basic usage instructions",
+    "hash": "5cff03024fcd99c85e11e5ef45a9ff8d"
+  },
+  "options_page__toggle_hotkey": {
+    "message": "Or use the hotkey:",
+    "description": "A step suggestion in the basic usage instructions",
+    "hash": "64f745514a24fa38ae148ef25745c835"
+  },
+  "options_page__pretty_cool": {
+    "message": "Die E-Mail sollte jetzt ziemlich gut aussehen. Reif zum Verschicken!",
+    "description": "A step in the basic usage instructions",
+    "hash": "6edecd307fe1c627181b007fbe1cc456"
+  },
+  "options_page__resources_title": {
+    "message": "Ressourcen und Links",
+    "description": "A section title",
+    "hash": "d3acbfafa858245f2345f00786324790"
+  },
+  "options_page__resources_cheatsheet_link": {
+    "message": "Für Markdown-Neulinge: das <a href=\"https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet\" target=\"_blank\">Markdown Here Cheatsheet</a> macht einen schnell zum Profi.",
+    "hash": "ddb4af27f215d4704f3f31878374c20f"
+  },
+  "options_page__mdhr_wiki": {
+    "message": "Markdown Here Revival wiki",
+    "hash": "31514a95d56ddc2d8df5c4d15439d17f"
+  },
+  "options_page__tips_tricks_link": {
+    "message": "Tips and Tricks",
+    "hash": "0c17546aca51dff7b1014d20502cb526"
+  },
+
+  "__WET_GROUP__theme": { "message": "Theme" },
+  "options_page__primary_css_title": {
+    "message": "Grundlegendes Styling-CSS",
+    "description": "section title",
+    "hash": "1381af5b005843fe11ee6884b0093683"
+  },
+  "options_page__syntax_highlighting_css_title": {
+    "message": "CSS für Syntax-Highlighting",
+    "description": "section title",
+    "hash": "697181e7fed87c2b2c17dab7b3e1cf25"
+  },
+  "options_page__syntax_highlighting_theme_label": {
+    "message": "Schema",
+    "description": "label for the syntax highlighting theme combo box",
+    "hash": "9da24ca7508eb181c632829fd698be9a"
+  },
+  "options_page__preview_title": {
+    "message": "Vorschau",
+    "description": "section title for the Markdown preview section",
+    "hash": "b2ce6f78ea0a002ab97efea02562c3c0"
+  },
+
+  "__WET_GROUP__about": { "message": "About" },
+  "options_page__report_bugs_title": {
+    "message": "Report bugs",
+    "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
+  },
+  "options_page__create_gitlab_issue": {
+    "message": "Create new issue on GitLab",
+    "description": "Text linking to Gitlab issue creation page",
+    "hash": "43410ee226a64717592bd271c54ac2e0"
+  },
+  "options_page__issue_debug_info": {
+    "message": "The following debug info can be used:",
+    "description": "header for some extension debug information",
+    "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
+  },
+  "options_page__debug_copy_clipboard": {
+    "message": "Copy to clipboard",
+    "description": "button for copying debug information to the clipboard",
+    "hash": "17b6a865f4e197dcff670c9ac12517a1"
+  },
+  "options_page__changelog_title": {
+    "message": "Changelog",
+    "hash": "d1f539e046abe83e76dcf2163f9a143c"
+  },
+  "options_page__changes_saved": {
+    "message": "Änderungen gespeichert",
+    "description": "message that shows when user changes have been saved",
+    "hash": "d99c431e6bd557568398d89c7e83914b"
+  },
+  "options_page__reset_button": {
+    "message": "Reset",
+    "description": "used for resetting certain options to the default",
+    "hash": "0d25968a7dfc21f95043a86dd5373b81"
+  },
+
   "__WET_LOCALE__": { "message": "de" }
 }
