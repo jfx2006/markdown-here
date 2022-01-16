@@ -129,7 +129,10 @@
     "description": "A section title"
   },
 
-  "__WET_GROUP__usage": { "message": "Usage" },
+  "__WET_GROUP__usage": { "message": "Howto" },
+  "options_page__howto": {
+    "message": "Howto"
+  },
   "options_page__basic_usage": {
     "message": "Basic Usage"
   },
@@ -188,6 +191,9 @@
   },
 
   "__WET_GROUP__about": { "message": "About" },
+  "options_page__about": {
+    "message": "About"
+  },
   "options_page__report_bugs_title": {
     "message": "Report bugs"
   },

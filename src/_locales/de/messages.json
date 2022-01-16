@@ -28,11 +28,6 @@
     },
     "hash": "d4193cf5d1751aef08b349322be35a5a"
   },
-  "unrender_button": {
-    "message": "Unrender",
-    "description": "Button label to revert rendered Markdown",
-    "hash": "2084a9f0d626e52ba79a1ecaf470497e"
-  },
   "unrendering_modified_markdown_warning": {
     "message": "Es scheint so als wäre dieser gerenderte Markdown-Text manuell verändert worden. Wiederherstellen würde diese Änderungen verwerfen.\n\nWirklich wiederherstellen?",
     "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed.",
@@ -45,14 +40,6 @@
       "appname": { "content": "$1" }
     },
     "hash": "76796ecd460f742236be591169ce278b"
-  },
-  "update_notes_button": {
-    "message": "Update Notes",
-    "hash": "fef3aae852e44ea637393db11e0da28a"
-  },
-  "cancel_button": {
-    "message": "Cancel",
-    "hash": "17aa19f18a894459ab6ff21156e8a341"
   },
   "context_menu_item": {
     "message": "Markdown An/Aus",
@@ -110,7 +97,7 @@
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
   "options_page__gfm_line_breaks_enabled_label": {
-    "message": "<b>Aktivieren der GFM Zeilenumbrüche.</b>",
+    "message": "Aktivieren der GFM Zeilenumbrüche.",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
@@ -123,16 +110,6 @@
     "message": "Bei Versendung einer E-Mail überprüft dies den Inhalt um festzustellen ob sie in Markdown geschrieben, aber noch nicht gerendert wurde (durch Klick auf \"Markdown An/Aus\"). Möglicherweise muss dies deaktiviert werden wenn es das Versenden von E-Mails verhindert.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "ee2c5919a16190356cb0b5802dbe6e48"
-  },
-  "options_page__smart_replacements_enabled_label": {
-    "message": "Enable \"smart\" typographic replacements",
-    "description": "Label for enabling the smart replacements feature",
-    "hash": "a460151f688d7d592aa246379fcbb609"
-  },
-  "options_page__smart_replacements_2": {
-    "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
-    "description": "An explanation of what smart replacements are",
-    "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__tex_math_title": {
     "message": "TeX für mathematische Formeln",
@@ -148,18 +125,13 @@
     "description": "one of the TeX math privacy concerns",
     "hash": "6377d919509c05850fd38caccbcfbda4"
   },
-  "options_page__tex_math_description": {
-    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
-    "description": "description how math is rendered",
-    "hash": "ead94268f19cef4441fc69f97689d9b6"
-  },
   "options_page__hotkey_title": {
     "message": "Hotkey (aka Tastenkombination)",
     "description": "A section title",
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
 
-  "__WET_GROUP__usage": { "message": "Usage" },
+  "__WET_GROUP__usage": { "message": "Howto" },
   "options_page__basic_usage": {
     "message": "Grundlegende Verwendung",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
@@ -170,22 +142,12 @@
     "hash": "b109e639b6a4a080cbf6533b363953b9"
   },
   "options_page__type_some_markdown": {
-    "message": "Markdown schreiben.<br/>Zum Beispiel: <code>_Hallo_ `Markdown` **Here**!</code>",
+    "message": "Markdown schreiben. Zum Beispiel:",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "`Markdown` **Here** _Revival_!",
+    "message": "_Hallo_ `Markdown` **Here** _Revival_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
-  },
-  "options_page__click_toggle2": {
-    "message": "Click the compose action button on the format toolbar.",
-    "description": "A step in the basic usage instructions",
-    "hash": "5cff03024fcd99c85e11e5ef45a9ff8d"
-  },
-  "options_page__toggle_hotkey": {
-    "message": "Or use the hotkey:",
-    "description": "A step suggestion in the basic usage instructions",
-    "hash": "64f745514a24fa38ae148ef25745c835"
   },
   "options_page__pretty_cool": {
     "message": "Die E-Mail sollte jetzt ziemlich gut aussehen. Reif zum Verschicken!",
@@ -196,18 +158,6 @@
     "message": "Ressourcen und Links",
     "description": "A section title",
     "hash": "d3acbfafa858245f2345f00786324790"
-  },
-  "options_page__resources_cheatsheet_link": {
-    "message": "Für Markdown-Neulinge: das <a href=\"https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet\" target=\"_blank\">Markdown Here Cheatsheet</a> macht einen schnell zum Profi.",
-    "hash": "ddb4af27f215d4704f3f31878374c20f"
-  },
-  "options_page__mdhr_wiki": {
-    "message": "Markdown Here Revival wiki",
-    "hash": "31514a95d56ddc2d8df5c4d15439d17f"
-  },
-  "options_page__tips_tricks_link": {
-    "message": "Tips and Tricks",
-    "hash": "0c17546aca51dff7b1014d20502cb526"
   },
 
   "__WET_GROUP__theme": { "message": "Theme" },
@@ -233,38 +183,10 @@
   },
 
   "__WET_GROUP__about": { "message": "About" },
-  "options_page__report_bugs_title": {
-    "message": "Report bugs",
-    "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
-  },
-  "options_page__create_gitlab_issue": {
-    "message": "Create new issue on GitLab",
-    "description": "Text linking to Gitlab issue creation page",
-    "hash": "43410ee226a64717592bd271c54ac2e0"
-  },
-  "options_page__issue_debug_info": {
-    "message": "The following debug info can be used:",
-    "description": "header for some extension debug information",
-    "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
-  },
-  "options_page__debug_copy_clipboard": {
-    "message": "Copy to clipboard",
-    "description": "button for copying debug information to the clipboard",
-    "hash": "17b6a865f4e197dcff670c9ac12517a1"
-  },
-  "options_page__changelog_title": {
-    "message": "Changelog",
-    "hash": "d1f539e046abe83e76dcf2163f9a143c"
-  },
   "options_page__changes_saved": {
     "message": "Änderungen gespeichert",
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
-  },
-  "options_page__reset_button": {
-    "message": "Reset",
-    "description": "used for resetting certain options to the default",
-    "hash": "0d25968a7dfc21f95043a86dd5373b81"
   },
 
   "__WET_LOCALE__": { "message": "de" }
