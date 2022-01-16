@@ -45,3 +45,15 @@ export async function sha256Digest(text) {
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
   return hashHex
 }
+
+const LANGS = ["de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt_BR", "ru", "tr", "zh_CN", "zh_TW"]
+
+export async function getLanguage() {
+  let accepted_langs = await messenger.i18n.getAcceptLanguages()
+  for (let lang of accepted_langs) {
+    if (LANGS.includes(lang)) {
+      return lang
+    }
+  }
+  return "en"
+}

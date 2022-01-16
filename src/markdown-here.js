@@ -575,7 +575,7 @@ function markdownHere(document, markdownRenderer, logger, renderComplete) {
     range = getOperationalRange(focusedElem)
 
     if (!range) {
-      return Utils.getMessage('nothing_to_render')
+      return Utils.getMessage("nothing_to_render")
     }
 
     // Look for wrappers in the range under consideration.

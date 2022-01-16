@@ -16,13 +16,13 @@ import markdownRender from "./markdown-render.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
-  const APP_NAME = messenger.i18n.getMessage("app_name")
+  const APP_NAME = Utils.getMessage("app_name")
   function updateCallback(winId, url) {
-    const message = messenger.i18n.getMessage("upgrade_notification_text", APP_NAME)
+    const message = Utils.getMessage("upgrade_notification_text", APP_NAME)
     openNotification(winId,
       message,
       messenger.notificationbar.PRIORITY_INFO_MEDIUM,
-      ["Update Notes", "Cancel"]
+      [Utils.getMessage("update_notes_button"), Utils.getMessage("cancel_button")]
     ).then(rv => {
       if (rv === "ok") {
         messenger.tabs.create({
@@ -104,7 +104,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       messenger.composeAction.enable(sender.tab.id)
       messenger.menus.update("mdhr_toggle_context_menu", {enabled: true})
       messenger.composeAction.setTitle({
-        title: Utils.getMessage('toggle_button_tooltip'),
+        title: Utils.getMessage("toggle_button_tooltip"),
         tabId: sender.tab.id
       })
       messenger.composeAction.setIcon({
@@ -123,7 +123,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       messenger.composeAction.disable(sender.tab.id)
       messenger.menus.update("mdhr_toggle_context_menu", {enabled: false})
       messenger.composeAction.setTitle({
-        title: Utils.getMessage('toggle_button_tooltip_disabled'),
+        title: Utils.getMessage("toggle_button_tooltip_disabled"),
         tabId: sender.tab.id
       })
       messenger.composeAction.setIcon({
@@ -147,9 +147,9 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   }
   else if (request.action === 'get-unrender-markdown-warning') {
     return openNotification(sender.tab.windowId,
-      Utils.getMessage('unrendering_modified_markdown_warning'),
+      Utils.getMessage("unrendering_modified_markdown_warning"),
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      ["Unrender", "Cancel"]
+      [Utils.getMessage("unrender_button"), Utils.getMessage("cancel_button")]
     )
   }
   else if (request.action === 'test-request') {
@@ -320,7 +320,7 @@ function forgotToRenderEnabled() {
 // Show the shortcut hotkey on the ComposeAction button
 async function updateActionTooltip() {
   const hotkey = await OptionsStore.get("hotkey-input")
-  const msg = messenger.i18n.getMessage("toggle_button_tooltip")
+  const msg = Utils.getMessage("toggle_button_tooltip")
   await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
 }
 updateActionTooltip()
@@ -329,7 +329,7 @@ updateActionTooltip()
 async function createContextMenu() {
   let menuId = await messenger.menus.create({
     id: "mdhr_toggle_context_menu",
-    title: messenger.i18n.getMessage("context_menu_item"),
+    title: Utils.getMessage("context_menu_item"),
     contexts: ["page", "selection"],
     icons: {
       "16": "images/rocmarkdown.svg",

@@ -202,12 +202,12 @@ import OptionsStore from "./options-storage.js"
       })
   }
 
-  const SUBS = {"__APP_NAME": messenger.i18n.getMessage("app_name")}
+  const SUBS = {"__APP_NAME": Utils.getMessage("app_name")}
   async function localizePage() {
     const page_prefix = "options_page"
     const nodes = document.body.querySelectorAll("[data-i18n]")
     for (let n of nodes) {
-      let key = `${page_prefix}__${n.dataset.i18n}`
+      let message_id = `${page_prefix}__${n.dataset.i18n}`
       let arg_str = n.dataset.i18nArg
       let arg = null
       if (arg_str !== undefined) {
@@ -217,7 +217,10 @@ import OptionsStore from "./options-storage.js"
           arg = arg_str
         }
       }
-      n.textContent = messenger.i18n.getMessage(key, arg)
+      let message = Utils.getMessage(message_id, arg)
+      if (message) {
+        n.textContent = message
+      }
     }
   }
   await onOptionsLoaded()

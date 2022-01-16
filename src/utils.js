@@ -333,17 +333,13 @@ function getTopURL(win, justHostname) {
 /*
  * i18n/l10n
  */
-// Get the translated string indicated by `messageID`.
-// Note that there's no support for placeholders as yet.
-// Throws exception if message is not found or if the platform doesn't support
-// internationalization (yet).
-function getMessage(messageID) {
-  let message = ''
-  if (typeof(messenger) !== 'undefined') {
-    message = messenger.i18n.getMessage(messageID)
-  }
+// Get the translated string indicated by `messageID` with placeholder substitution.
+// If the messageID is invalid, return null
+function getMessage(messageID, subs=null) {
+  let message = messenger.i18n.getMessage(messageID, subs)
   if (!message) {
-    throw new Error('Could not find message ID: ' + messageID)
+    console.error('Could not find message ID: ' + messageID)
+    return null
   }
   return message
 }

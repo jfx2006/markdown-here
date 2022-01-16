@@ -300,7 +300,7 @@ describe('Utils', function() {
     it('should return a string', function() {
       // Since the exact string retuned depends on the current browser locale,
       // we'll just check that some string is returned.
-      expect(Utils.getMessage('options_page__page_title')).to.be.a('string');
+      expect(Utils.getMessage("options_page__page_title")).to.be.a('string');
     });
 
     it('should throw on bad message ID', function() {
