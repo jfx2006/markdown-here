@@ -25,15 +25,12 @@ It's open source, that sort of thing is silly.
 
 ## Translation
 
-I know very little about this stuff other than I have a bunch of messages.json
-files that look like they can be cumbersome to manage.
+There is a [separate repository](https://gitlab.com/jfx2006/mdhr-i18n)
+for i18n strings. See that repo's README.md file. The short version is,
+use [WET](https://github.com/Lusito/web-ext-translator) to make your changes
+and either send a pull request or create an issue and upload a ZIP file.
 
-Right now, they're not updated with the few string changes I made. I'm happy
-to use some sort of third-party thing like the old
-[Crowdin project page](https://crowdin.net/project/markdown-here). Preferably
-something that can used for free under a small/OSS project agreement.
-
-## Contributors
+## Conthributors
 
 * [JFX](https://gitlab.com/jfx2006) - Fork owner and Thunderbird core developer
 
