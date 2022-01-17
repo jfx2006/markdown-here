@@ -35,6 +35,10 @@ options page in the syntax style selection.
 marked.esm.js
 https://raw.githubusercontent.com/markedjs/marked/v4.0.8/lib/marked.esm.js
 
+TeXZilla.js
+https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
+(modified to be importable as an esm module)
+
 jsHtmlToText.js
 I cannot locate a current version of this library, so this is the same
 one from the markdown-here repository. There are several candidates to
