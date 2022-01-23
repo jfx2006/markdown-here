@@ -79,8 +79,35 @@
             "optional": true,
             "description": "Additional CSS styles to apply to the notification. Supported CSS properties are 'color', 'background*', 'margin*', 'padding*' and 'font*'",
             "type": "object",
-            "additionalProperties": {
-              "type": "string"
+            "additionalProperties": false,
+            "patternProperties": {
+              "^color$": {
+                "type": "string"
+              },
+              "^font-style$": {
+                "type": "string",
+                "pattern": "^(normal|italic|oblique(\\s+[0-9]*(.[0-9]+)?(deg|rad|turn|grad))?)$"
+              },
+              "^font-size$": {
+                "type": "string",
+                "pattern": "^([0-9]+(.[0-9]+)?(%|c(h|m)|mm|e(m|x)|i(c|n)|lh|p(c|t|x)|Q|r(em|lh)|v(b|h|i|max|min|w)))$"
+              },
+              "^font-weight$": {
+                "type": "string",
+                "pattern": "^(normal|bold(er)?|lighter|1000|([1-9]{1}[0-9]{0,2}))$"
+              },
+              "^(background-)?color$": {
+                "type": "string",
+                "pattern": "^((?!transparent)([a-z]{4,})|-moz-([a-zA-Z\\-]+)|#(?=[a-f0-9]*)(?:.{3}|.{6})|rgb\\s*\\(\\s*(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\\s*,\\s*(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\\s*,\\s*(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\\)|rgb\\s*\\(\\s*(1(\\.0+)?|0|0?\\.[0-9]+)\\s*,\\s*(1(\\.0+)?|0|0?\\.[0-9]+)\\s*,\\s*(1(\\.0+)?|0|0?\\.[0-9]+)\\s*\\)|rgb\\s*\\(\\s*(([1-9]{1}[0-9]?|100)%|0%?)\\s*,\\s*(([1-9]{1}[0-9]?|100)%|0%?)\\s*,\\s*(([1-9]{1}[0-9]?|100)%|0%?)\\s*\\))$"
+              },
+              "^background-image$": {
+                "type": "string",
+                "pattern": "/^url\\((?<delim>(\"|'))(moz-extension:\\/\\/[a-f0-9\\-]+\\/([a-zA-Z0-9._\\-\\/]+)|([a-zA-Z0-9\\/]+)\\.(jpg|jpeg|png))(?=<delim>)\\)$"
+              },
+              "^(padding|margin)(\\-(top|left|right|bottom|))?$": {
+                "type": "string",
+                "pattern": "^([\\+\\-]?[0-9]+(.[0-9]+)?(%|c(h|m)|mm|e(m|x)|i(c|n)|lh|p(c|t|x)|Q|r(em|lh)|v(b|h|i|max|min|w)))(\\s+([\\+\\-]?[0-9]+(.[0-9]+)?(%|c(h|m)|mm|e(m|x)|i(c|n)|lh|p(c|t|x)|Q|r(em|lh)|v(b|h|i|max|min|w)))){0,3}$"
+              }
             }
           }
         }
