@@ -140,6 +140,7 @@ import OptionsStore from "./options-storage.js"
 
               let html = markdownRender(previewInput.value, prefs)
               previewIframe.contentDocument.body.innerHTML = escapeHTML`${html}`
+              Utils.convertMathSVGs(previewIframe.contentDocument.body)
 
               setPreviewScroll()
 
