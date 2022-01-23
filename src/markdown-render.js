@@ -14,7 +14,7 @@
  */
 
 import { marked } from "./vendor/marked.esm.js"
-import { mathInline } from "./marked-texzilla.js"
+import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
 
 "use strict"
@@ -142,7 +142,7 @@ export default function markdownRender(mdText, userprefs) {
     markedRenderer.code = gchartCodeRenderer
     markedRenderer.codespan = gchartCodespanRenderer
   } else if (userprefs["math-renderer"] === "texzilla") {
-    marked.use({extensions: [mathInline]})
+    marked.use({extensions: [mathBlock, mathInline]})
   }
   return marked(mdText)
 }
