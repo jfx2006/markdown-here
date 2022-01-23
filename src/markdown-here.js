@@ -454,12 +454,6 @@ function findMarkdownHereWrappersInRange(range) {
   return elems.length ? elems : null
 }
 
-function convertMathSVGs(wrapper_elem) {
-  const mathSVGs = wrapper_elem.querySelectorAll("img.math_texzilla_svg")
-  for (let svgImg of mathSVGs) {
-    Utils.SVG2PNG(svgImg, "math_texzilla")
-  }
-}
 
 // Converts the Markdown in the user's compose element to HTML and replaces it.
 // If `selectedRange` is null, then the entire email is being rendered.
@@ -496,7 +490,7 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
 
     // marked-texzilla produces SVG images, which are not very email friendly,
     // convert them to PNGs
-    convertMathSVGs(wrapper)
+    Utils.convertMathSVGs(wrapper)
 
     // Monitor for changes to the content of the rendered MD. This will help us
     // prevent the user from silently losing changes later.

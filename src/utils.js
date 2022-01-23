@@ -690,6 +690,14 @@ function SVG2PNG(svgImg, imgClass) {
   })
 }
 
+function convertMathSVGs(wrapper_elem, selector="img.math_texzilla_svg",
+    imgClass="math_texzilla") {
+  const mathSVGs = wrapper_elem.querySelectorAll(selector)
+  for (let svgImg of mathSVGs) {
+    SVG2PNG(svgImg, imgClass)
+  }
+}
+
 // Expose these functions
 
 var Utils = {}
@@ -710,6 +718,7 @@ Utils.probablyWritingMarkdown = probablyWritingMarkdown
 Utils.utf8StringToBase64 = utf8StringToBase64
 Utils.base64ToUTF8String = base64ToUTF8String
 Utils.SVG2PNG = SVG2PNG
+Utils.convertMathSVGs = convertMathSVGs
 
 var EXPORTED_SYMBOLS = ['Utils']
 
