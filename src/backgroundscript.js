@@ -218,11 +218,11 @@ messenger.compose.onBeforeSend.addListener(async function(tab, details) {
   let rv
   // If this is a plain text message, do not check for markdown-like content
   if (details.isPlainText) {
-    return Promise.resolve()
+    return Promise.resolve({})
   }
   let forgotToRenderCheckEnabled = await forgotToRenderEnabled()
   if (!forgotToRenderCheckEnabled) {
-    return Promise.resolve()
+    return Promise.resolve({})
   }
 
   let isMarkdown = await messenger.tabs.sendMessage(
@@ -244,7 +244,7 @@ messenger.compose.onBeforeSend.addListener(async function(tab, details) {
     rv = "ok"
   }
   if (rv === "ok") {
-    return Promise.resolve()
+    return Promise.resolve({});
   }
   else {
     return Promise.resolve({ cancel: true })
@@ -279,6 +279,7 @@ async function openNotification(windowId, message, priority, button_labels) {
         if (closeNotificationId === notificationId && buttonId) {
           if (["btn-ok"].includes(buttonId)) {
             notificationResponse = "ok"
+            resolve(notificationResponse)
           }
         }
       }
