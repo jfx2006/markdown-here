@@ -148,11 +148,7 @@
     "description": "one of the TeX math privacy concerns",
     "hash": "6377d919509c05850fd38caccbcfbda4"
   },
-  "options_page__tex_math_description": {
-    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
-    "description": "description how math is rendered",
-    "hash": "ead94268f19cef4441fc69f97689d9b6"
-  },
+
   "options_page__hotkey_title": {
     "message": "快捷键",
     "description": "A section title",
