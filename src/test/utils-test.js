@@ -129,9 +129,10 @@ describe('Utils', function() {
     });
 
     it('should throw exception if element not in DOM', function() {
-      var testElem = $('<div><b>bye</b></div>').get(0);
-
-      var fn = _.partial(Utils.saferSetOuterHTML, '<p></p>');
+      var fn = function() {
+        var testElem = $('<div><b>bye</b></div>').get(0);
+        Utils.saferSetOuterHTML(testElem, '<p></p>')
+      }
 
       expect(fn).to.throw(Error);
     });
@@ -303,9 +304,8 @@ describe('Utils', function() {
       expect(Utils.getMessage("options_page__page_title")).to.be.a('string');
     });
 
-    it('should throw on bad message ID', function() {
-      var fn = _.partial(Utils.getMessage, 'BAADF00D');
-      expect(fn).to.throw(Error);
+    it('return null on bad message ID', function() {
+      expect(Utils.getMessage('BAADF00D')).to.be.null;
     });
   });
 
