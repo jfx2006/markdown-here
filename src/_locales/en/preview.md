@@ -30,11 +30,11 @@ as www.thunderbird.net or https://en.wikipedia.org/wiki/Invader_Zim.
 
 ## Tables
 
-Name | Lunch order | Spicy      | Owes
-------- | ---------------- | ---------- | ---------:
-Joan  | saag paneer | medium | $11
-Sally  | vindaloo        | mild       | $14
-Erin   | lamb madras | HOT      | $5
+| Name  | Lunch order | Spicy  | Owes |
+|-------|-------------|--------|-----:|
+| Joan  | saag paneer | medium |  $11 |
+| Sally | vindaloo    | mild   |  $14 |
+| Erin  | lamb madras | HOT    |   $5 |
 
 ## Code syntax highlighting
 
@@ -49,7 +49,7 @@ alert(hw);
 ## Math formulae
 
 My math is so rusty that I barely remember the _quadratic equation_:
-`$ {-b \pm \sqrt{b^2 - 4ac} \over 2a} $`
+`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
 
 ## Lists
 

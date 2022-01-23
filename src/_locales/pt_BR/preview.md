@@ -24,8 +24,8 @@ Uma imagem: ![Markdown Here logo](/images/icon24.png)
 > Citação em bloco.  
 > *Com* **um pouco de** `markdown`.
 
-Se o suporte de **TeX Math** estiver ativado, esta é a equação quadrática: 
-$$-b \pm \sqrt{b^2 - 4ac} \over 2a$$
+Se o suporte de **TeX Math** estiver ativado, esta é a equação quadrática:
+`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
 
 # Cabeçalho 1
 ## Cabeçalho 2
@@ -34,11 +34,11 @@ $$-b \pm \sqrt{b^2 - 4ac} \over 2a$$
 ##### Cabeçalho 5
 ###### Cabeçalho 6
   
-| Tabelas          | São                | Legais | 
-| ---------------- | :----------------: | -----: | 
-| coluna 3 está    | alinhada à direita | $$1600 | 
-| coluna 2 está    | centrada           | $$12   | 
-| listras de zebra | são organizadas    | $$1    | 
+| Tabelas          | São                | Legais |
+| ---------------- | :----------------: | -----: |
+| coluna 3 está    | alinhada à direita | $$1600 |
+| coluna 2 está    | centrada           | $$12   |
+| listras de zebra | são organizadas    | $$1    |
 
 Temos aqui uma linha horizontal:
 
