@@ -95,8 +95,10 @@ import OptionsStore from "./options-storage.js"
 
     await OptionsStore.syncForm(form)
     form.addEventListener("options-sync:form-synced", showSavedMsg)
+    form.addEventListener("options-sync:form-synced", handleMathRenderer)
 
     checkPreviewChanged()
+    handleMathRenderer()
   }
 
   function escapeHTML(strings, html) {
@@ -201,6 +203,22 @@ import OptionsStore from "./options-storage.js"
         showSavedMsg()
         document.getElementById("hotkey-display-str").innerText = newHotKey
       })
+  }
+
+  function handleMathRenderer(e) {
+    // Run when enabling/disabling/changing Math Renderer
+    let selected = document.querySelector("[name='math-renderer']:checked")
+    let value = selected.value
+
+    let e_math_url = document.getElementById("math-value")
+    let e_math_url_reset = document.getElementById("math-reset-button")
+    if (value === "gchart") {
+      e_math_url.disabled = false
+      e_math_url_reset.disabled = false
+    } else {
+      e_math_url.disabled = true
+      e_math_url_reset.disabled = true
+    }
   }
 
   const SUBS = {"__APP_NAME": Utils.getMessage("app_name")}

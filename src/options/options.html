@@ -141,13 +141,60 @@
             </div>
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
+                <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <div class="input-wrapper">
+                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
                 <span data-i18n="tex_math_title">TeX Mathematical Formulae Support</span>
               </div>
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
                     <div class="input-wrapper">
-                      <input id="math-enabled" class="form-check-input" type="checkbox" name="math-enabled"/>
+                      <input id="math-renderer-disabled" class="form-check-input" type="radio" name="math-renderer"
+                             value="disabled"/>
+                      <label class="form-check-label" for="math-renderer-disabled" data-i18n="tex_math_disabled">Disabled</label>
+                    </div>
+                  </div>
+                  <div class="form-check">
+                    <div class="input-wrapper">
+                      <input id="math-renderer-texzilla" class="form-check-input" type="radio" name="math-renderer"
+                              value="texzilla"/>
+                      <label class="form-check-label" for="math-renderer-texzilla" data-i18n="tex_math_texzilla_label">
+                        TeXZilla and HTML Canvas rendering</label>
+                    </div>
+                    <ul class="text-muted">
+                      <li data-i18n="tex_math_texzilla_description">
+                        Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.
+                      </li>
+                      <li data-i18n="tex_math_texzilla_description2">
+                        With this option, do not use backticks around your formula.
+                      </li>
+                      <li>
+                        <code>$a^2 + b^2 = c^2$</code>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="form-check">
+                    <div class="input-wrapper">
+                      <input id="math-renderer-gchart" class="form-check-input" type="radio" name="math-renderer"
+                             value="gchart"/>
+                      <label class="form-check-label" for="math-renderer-gchart" data-i18n="tex_math_gchart_label">
+                        Math rendering using Google Chart API (deprecated)</label>
+                    </div>
+                    <div>
+                      <label class="form-check-label" for="math-value"></label>
                       <input id="math-value" class="form-text" type="text" name="math-value"/>
                       <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
                         <span data-i18n="reset_button">Reset</span>
@@ -160,22 +207,13 @@
                       <li data-i18n="tex_math_privacy_issue_2">
                         If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
                       </li>
+                      <li data-i18n="tex_math_gchart_backtick">
+                        With this option, you must surround your math code with backticks.
+                      </li>
+                      <li>
+                        <code>`$a^2 + b^2 = c^2$`</code>
+                      </li>
                     </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card my-4 shadow">
-              <div class="card-header h4 rounded-0">
-                <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
-              </div>
-              <div class="card-body">
-                <div class="form-group">
-                  <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
-                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -383,7 +421,7 @@
                     </pre>
                 </details>
                 <details>
-                  <summary>shortcuts.js</summary>
+                  <summary>shortcuts.js & TeXZilla.js</summary>
                   <pre> Mozilla Public License Version 2.0
                         ==================================
 
