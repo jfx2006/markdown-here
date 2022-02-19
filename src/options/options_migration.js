@@ -147,3 +147,10 @@ export async function migrate_smartReplacements(options, defaults) {
   }
   return null
 }
+
+export async function migrate_mathRenderer(options, defaults) {
+  if (options["math-enabled"] === true) {
+    return {"math-renderer": "gchart"}
+  }
+  return null
+}

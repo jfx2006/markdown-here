@@ -18,14 +18,15 @@ import {
   migrate_oldOptions,
   migrate_syntaxCSS,
   migrate_smartReplacements,
-  migrate_removeUnused
+  migrate_removeUnused,
+  migrate_mathRenderer
 } from "./options_migration.js"
 
 export const kOptDefaults = {
   "main-css": "",
   "syntax-css": "nnfx-light.css",
-  "math-enabled": false,
   "math-value": `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
+  "math-renderer": "disabled",
   "hotkey-input": "Ctrl+Alt+M",
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
@@ -40,6 +41,7 @@ let MIGRATIONS = [
     migrate_badMathValue,
     migrate_MainCSS,
     migrate_smartReplacements,
+    migrate_mathRenderer,
     migrate_removeUnused
   ]
 

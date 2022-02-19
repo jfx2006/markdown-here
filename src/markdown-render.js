@@ -14,6 +14,7 @@
  */
 
 import { marked } from "./vendor/marked.esm.js"
+import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
 
 "use strict"
@@ -43,25 +44,22 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   function mathsExpression(expr) {
-    if (userprefs['math-enabled']) {
-      if (expr.match(/^\$\$[\s\S]*\$\$$/)) {
-        expr = expr.substr(2, expr.length - 4)
-        const math_rendered = mathify(expr)
-        return `
-                <div style="display:block;text-align:center;">
-                  ${math_rendered}
-                </div>`
-      } else if (expr.match(/^\$[\s\S]*\$$/)) {
-        expr = expr.substr(1, expr.length - 2)
-        return mathify(expr)
-      }
-    } else {
-      return false
+    if (expr.match(/^\$\$[\s\S]*\$\$$/)) {
+      expr = expr.substr(2, expr.length - 4)
+      const math_rendered = mathify(expr)
+      return `
+              <div style="display:block;text-align:center;">
+                ${math_rendered}
+              </div>`
+    } else if (expr.match(/^\$[\s\S]*\$$/)) {
+      expr = expr.substr(1, expr.length - 2)
+      return mathify(expr)
     }
+    return false
   }
 
   const defaultCodeRenderer = markedRenderer.code
-  markedRenderer.code = function(code, lang, escaped) {
+  const gchartCodeRenderer = function(code, lang, escaped) {
     if (!lang) {
       const math = mathsExpression(code)
       if (math) {
@@ -75,7 +73,7 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   const defaultCodespanRenderer = markedRenderer.codespan
-  markedRenderer.codespan = function(text) {
+  const gchartCodespanRenderer = function(text) {
     const math = mathsExpression(text)
     if (math) {
       return math
@@ -140,5 +138,11 @@ export default function markdownRender(mdText, userprefs) {
 
   marked.setOptions(markedOptions)
   marked.use({tokenizer})
+  if (userprefs["math-renderer"] === "gchart") {
+    markedRenderer.code = gchartCodeRenderer
+    markedRenderer.codespan = gchartCodespanRenderer
+  } else if (userprefs["math-renderer"] === "texzilla") {
+    marked.use({extensions: [mathBlock, mathInline]})
+  }
   return marked(mdText)
 }

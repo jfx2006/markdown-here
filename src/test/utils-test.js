@@ -464,4 +464,10 @@ describe('Utils', function() {
 
   });
 
+/*  describe("convertMathSVGS", function() {
+    it("should convert img.math_texzilla_svg to a png", function() {
+
+    })
+  })*/
+
 });

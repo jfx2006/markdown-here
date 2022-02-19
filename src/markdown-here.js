@@ -471,21 +471,20 @@ function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComp
     // through our styles, explicitly applying them to matching elements.
     makeStylesExplicit(wrapper, mdCss)
 
+    // marked-texzilla produces SVG images, which are not very email friendly,
+    // convert them to PNGs
+    Utils.convertMathSVGs(wrapper)
+
     // Monitor for changes to the content of the rendered MD. This will help us
     // prevent the user from silently losing changes later.
     // We're going to set this up after a short timeout, to help prevent false
     // detections based on automatic changes by the host site.
     wrapper.ownerDocument.defaultView.setTimeout(function addMutationObserver() {
-      var SupportedMutationObserver =
-            wrapper.ownerDocument.defaultView.MutationObserver ||
-            wrapper.ownerDocument.defaultView.WebKitMutationObserver
-      if (typeof(SupportedMutationObserver) !== 'undefined') {
-        var observer = new SupportedMutationObserver(function(mutations) {
-          wrapper.setAttribute('markdown-here-wrapper-content-modified', true)
-          observer.disconnect()
-        })
-        observer.observe(wrapper, { childList: true, characterData: true, subtree: true })
-      }
+      let observer = new MutationObserver(function(mutations) {
+        wrapper.setAttribute('markdown-here-wrapper-content-modified', true)
+        observer.disconnect()
+      })
+      observer.observe(wrapper, { childList: true, characterData: true, subtree: true })
     }, 100)
 
     renderComplete()

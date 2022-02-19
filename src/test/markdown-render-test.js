@@ -22,7 +22,7 @@ describe('Markdown-Render', function() {
     beforeEach(function() {
       userprefs = {
         'math-value': null,
-        'math-enabled': false,
+        'math-renderer': "disabled",
         'gfm-line-breaks-enabled': true,
         'smart-replacements-enabled': true,
       };
@@ -87,7 +87,7 @@ describe('Markdown-Render', function() {
     it('should render single-character math formulae', function() {
       userprefs = {
         'math-value': '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        'math-enabled': true
+        'math-renderer': 'gchart'
       };
 
       var md = '`$x$`';
@@ -98,6 +98,21 @@ describe('Markdown-Render', function() {
       md = '`$xx$`';
       target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n';
       expect(markdownRender(md, userprefs)).to.equal(target);
+    });
+
+    it('should render single-character math formulae via texzilla', function() {
+      userprefs = {
+        'math-renderer': 'texzilla'
+      };
+
+      var md = '$x$';
+      var target = '<p><img src="data:image/svg+xml;base64';
+      expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
+
+      // Make sure we haven't broken multi-character forumlae
+      md = '$xx$';
+      target = '<p><img src="data:image/svg+xml;base64';
+      expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
     });
 
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
@@ -162,7 +177,7 @@ describe('Markdown-Render', function() {
     beforeEach(function() {
       userprefs = {
         'math-value': null,
-        'math-enabled': false,
+        'math-renderer': "disabled",
         'smart-replacements-enabled': true,
       };
     });
@@ -292,7 +307,7 @@ describe('Markdown-Render', function() {
     it('should render single-character math formulae', function() {
       userprefs = {
         'math-value': '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        'math-enabled': true
+        'math-renderer': 'gchart'
       };
 
       var md = '`$x$`';
@@ -303,6 +318,21 @@ describe('Markdown-Render', function() {
       md = '`$xx$`';
       target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n';
       expect(fullRender(md)).to.equal(target);
+    });
+
+    it('should render single-character math formulae via texzilla', function() {
+      userprefs = {
+        'math-renderer': 'texzilla'
+      };
+
+      var md = '$x$';
+      var target = '<p><img src="data:image/svg+xml;base64';
+      expect(fullRender(md).slice(0, target.length)).to.equal(target);
+
+      // Make sure we haven't broken multi-character forumlae
+      md = '$xx$';
+      target = '<p><img src="data:image/svg+xml;base64';
+      expect(fullRender(md).slice(0, target.length)).to.equal(target);
     });
 
   });

@@ -109,8 +109,31 @@
     "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
     "description": "An explanation of what smart replacements are"
   },
+  "options_page__hotkey_title": {
+    "message": "Hotkey (aka keyboard shortcut)",
+    "description": "A section title"
+  },
   "options_page__tex_math_title": {
     "message": "TeX Mathematical Formulae Support"
+  },
+  "options_page__tex_math_disabled": {
+    "message": "Disabled"
+  },
+  "options_page__tex_math_texzilla_label": {
+    "message": "TeXZilla and HTML Canvas rendering",
+    "description": "Label for tex math rendering option"
+  },
+  "options_page__tex_math_texzilla_description": {
+    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
+    "description": "description how math is rendered when TexZilla option is selected"
+  },
+  "options_page__tex_math_texzilla_description2": {
+    "message": "With this option, do not use backticks around your formula.",
+    "description": "additional note for TexZilla/Canvas math rendering"
+  },
+  "options_page__tex_math_gchart_label": {
+    "message": "Math rendering using Google Chart API (deprecated)",
+    "description": "Label for GChart math rendering option"
   },
   "options_page__tex_math_privacy_issue_1": {
     "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
@@ -120,14 +143,11 @@
     "message": "If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.",
     "description": "one of the TeX math privacy concerns"
   },
-  "options_page__tex_math_description": {
-    "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
-    "description": "description how math is rendered"
+  "options_page__tex_math_gchart_backtick": {
+    "message": "With this option, you must surround your math code with backticks.",
+    "description": "additional note for Gchart math rendering"
   },
-  "options_page__hotkey_title": {
-    "message": "Hotkey (aka keyboard shortcut)",
-    "description": "A section title"
-  },
+
 
   "__WET_GROUP__usage": { "message": "Howto" },
   "options_page__howto": {
