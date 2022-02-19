@@ -4,7 +4,9 @@
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test91": "web-ext run --verbose -p mdhr_test_profiles/testing91",
+    "testbeta": "web-ext run --verbose -f thunderbird-beta"
   },
   "private": true,
   "author": "JFX",
