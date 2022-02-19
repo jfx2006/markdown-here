@@ -22,7 +22,7 @@ describe('Markdown-Render', function() {
     beforeEach(function() {
       userprefs = {
         'math-value': null,
-        'math-enabled': false,
+        'math-renderer': "disabled",
         'gfm-line-breaks-enabled': true,
         'smart-replacements-enabled': true,
       };
@@ -87,7 +87,7 @@ describe('Markdown-Render', function() {
     it('should render single-character math formulae', function() {
       userprefs = {
         'math-value': '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        'math-enabled': true
+        'math-renderer': 'gchart'
       };
 
       var md = '`$x$`';
@@ -162,7 +162,7 @@ describe('Markdown-Render', function() {
     beforeEach(function() {
       userprefs = {
         'math-value': null,
-        'math-enabled': false,
+        'math-renderer': "disabled",
         'smart-replacements-enabled': true,
       };
     });
@@ -292,7 +292,7 @@ describe('Markdown-Render', function() {
     it('should render single-character math formulae', function() {
       userprefs = {
         'math-value': '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        'math-enabled': true
+        'math-renderer': 'gchart'
       };
 
       var md = '`$x$`';
