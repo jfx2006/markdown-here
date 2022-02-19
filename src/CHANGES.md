@@ -1,3 +1,11 @@
+#### 2022-02-22: v3.3.0
+* i18n strings files are now uniform. Patches accepted. Use WET. More to come.
+* Previewer initial content can be localized by editing "preview.md" itself.
+* Lots of code cleanup
+* TexZilla/Canvas math rendering now available as an alternative to GChart. See
+  Options for details. Syntax is different! (no more backticks)
+  [#6](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/6)
+
 #### 2022-01-03: v3.2.11
 * Add Markdown preview to Options->Theme.
 * Allow screen readers to ignore the "hidden div" holding unrendered content.
