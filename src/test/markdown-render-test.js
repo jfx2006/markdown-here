@@ -100,6 +100,21 @@ describe('Markdown-Render', function() {
       expect(markdownRender(md, userprefs)).to.equal(target);
     });
 
+    it('should render single-character math formulae via texzilla', function() {
+      userprefs = {
+        'math-renderer': 'texzilla'
+      };
+
+      var md = '$x$';
+      var target = '<p><img src="data:image/svg+xml;base64';
+      expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
+
+      // Make sure we haven't broken multi-character forumlae
+      md = '$xx$';
+      target = '<p><img src="data:image/svg+xml;base64';
+      expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
+    });
+
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
     it('should properly render code with good language names', function() {
       var md = '```sql\nSELECT * FROM table WHERE id = 1\n```';
@@ -303,6 +318,21 @@ describe('Markdown-Render', function() {
       md = '`$xx$`';
       target = '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n';
       expect(fullRender(md)).to.equal(target);
+    });
+
+    it('should render single-character math formulae via texzilla', function() {
+      userprefs = {
+        'math-renderer': 'texzilla'
+      };
+
+      var md = '$x$';
+      var target = '<p><img src="data:image/svg+xml;base64';
+      expect(fullRender(md).slice(0, target.length)).to.equal(target);
+
+      // Make sure we haven't broken multi-character forumlae
+      md = '$xx$';
+      target = '<p><img src="data:image/svg+xml;base64';
+      expect(fullRender(md).slice(0, target.length)).to.equal(target);
     });
 
   });
