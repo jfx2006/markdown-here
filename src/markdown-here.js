@@ -372,9 +372,8 @@ function findElemRawHolder(elem) {
 
 // Determine if the given element is a MDH wrapper element.
 function isWrapperElem(elem) {
-  return true &&
-    // Make sure the candidate is an element node
-    elem.nodeType === elem.ELEMENT_NODE &&
+  // Make sure the candidate is an element node
+  return elem.nodeType === elem.ELEMENT_NODE &&
     // And is not a blockquote, so we ignore replies
     elem.tagName.toUpperCase() !== 'BLOCKQUOTE' &&
     // And has a raw-MD-holder element
@@ -408,48 +407,32 @@ function findMarkdownHereWrapper(focusedElem) {
 // wrapper elements, or null if no wrappers found.
 function findMarkdownHereWrappersInRange(range) {
   // Adapted from: http://stackoverflow.com/a/1483487/729729
-  var containerElement = range.commonAncestorContainer
+  let containerElement = range.commonAncestorContainer
   if (containerElement.nodeType !== containerElement.ELEMENT_NODE) {
     containerElement = containerElement.parentNode
   }
 
-  var elems = []
-
-  var nodeTester = function(elem) {
-    if (elem.nodeType === elem.ELEMENT_NODE &&
-        Utils.rangeIntersectsNode(range, elem) &&
-        isWrapperElem(elem)) {
-          elems.push(elem)
-    }
-  }
-
-  Utils.walkDOM(containerElement, nodeTester)
-
-  /*
-  // This code is probably superior, but TreeWalker is not supported by Postbox.
-  // If this ends up getting used, it should probably be moved into walkDOM
-  // (or walkDOM should be removed).
-  var nodeTester = function(node) {
+  const nodeTester = function(node) {
     if (node.nodeType !== node.ELEMENT_NODE ||
         !Utils.rangeIntersectsNode(range, node) ||
         !isWrapperElem(node)) {
-      return node.ownerDocument.defaultView.NodeFilter.FILTER_SKIP;
+      return node.ownerDocument.defaultView.NodeFilter.FILTER_SKIP
     }
 
-    return node.ownerDocument.defaultView.NodeFilter.FILTER_ACCEPT;
-  };
+    return node.ownerDocument.defaultView.NodeFilter.FILTER_ACCEPT
+  }
 
-  var treeWalker = containerElement.ownerDocument.createTreeWalker(
+  const treeWalker = containerElement.ownerDocument.createTreeWalker(
       containerElement,
       containerElement.ownerDocument.defaultView.NodeFilter.SHOW_ELEMENT,
       nodeTester,
-      false);
+      false)
 
-  var elems = [];
+  let elems = []
   while (treeWalker.nextNode()) {
-    elems.push(treeWalker.currentNode);
+    elems.push(treeWalker.currentNode)
   }
-  */
+  /**/
 
   return elems.length ? elems : null
 }
