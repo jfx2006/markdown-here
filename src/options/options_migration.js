@@ -12,6 +12,8 @@ const OLD_CSS_SUMS = [
   "bb5a0fd030d27ce58011d9250524c83f2cf1242b07f874496b394a7ea02c49c2",
   // 3.1.0
   "72706d3e07c403c35688760180a753552af05c4ed2d5d1906dbf89b5c649342a",
+  // 3.3.1
+  "67f46b9488904c869638c6f9fc2ea04d1046b5efa1115fec186a327c13a7ea96"
 ]
 
 // Checksum of the current version of default.css
