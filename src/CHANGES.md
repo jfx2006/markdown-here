@@ -1,3 +1,7 @@
+#### 2022-03-27 v3.3.1
+* Options page CSS fixes  [#39](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/39)
+* Updated default.css  [#40](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/40)
+
 #### 2022-02-22: v3.3.0
 * i18n strings files are now uniform. Patches accepted. Use WET. More to come.
 * Previewer initial content can be localized by editing "preview.md" itself.
