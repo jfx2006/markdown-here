@@ -2,7 +2,7 @@
 
 *Markdown Here Revival* is a fork of Markdown Here, the popular browser extension
 specifically targeting modern Thunderbird versions
-It lets you write email<sup>&dagger;</sup> in Markdown<sup>&Dagger;</sup> and
+It lets you write email in Markdown and
 render them before sending. It also supports syntax highlighting (just specify
 the language in a fenced code block).
 
