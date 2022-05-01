@@ -244,7 +244,7 @@ messenger.compose.onBeforeSend.addListener(async function(tab, details) {
     rv = "ok"
   }
   if (rv === "ok") {
-    return Promise.resolve({});
+    return Promise.resolve({})
   }
   else {
     return Promise.resolve({ cancel: true })
@@ -268,7 +268,7 @@ async function openNotification(windowId, message, priority, button_labels) {
 
       // Defining a onClosed listener
       function onClosedListener(closeWinId, closeNotificationId, closedByUser) {
-        if (closeNotificationId === notificationId) {
+        if (closeWinId === windowId) {
           messenger.notificationbar.onClosed.removeListener(onClosedListener)
           messenger.notificationbar.onButtonClicked.removeListener(onButtonClickListener)
           resolve(notificationResponse)
@@ -276,11 +276,11 @@ async function openNotification(windowId, message, priority, button_labels) {
       }
 
       function onButtonClickListener(closeWinId, closeNotificationId, buttonId) {
-        if (closeNotificationId === notificationId && buttonId) {
-          if (["btn-ok"].includes(buttonId)) {
+        if (closeWinId === windowId) {
+          if (buttonId === "btn-ok") {
             notificationResponse = "ok"
-            resolve(notificationResponse)
           }
+          resolve(notificationResponse)
         }
       }
 
