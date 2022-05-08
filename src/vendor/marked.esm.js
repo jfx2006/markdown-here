@@ -1,6 +1,6 @@
 /**
  * marked - a markdown parser
- * Copyright (c) 2011-2021, Christopher Jeffrey. (MIT Licensed)
+ * Copyright (c) 2011-2022, Christopher Jeffrey. (MIT Licensed)
  * https://github.com/markedjs/marked
  */
 
@@ -70,6 +70,9 @@ function escape(html, encode) {
 
 const unescapeTest = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig;
 
+/**
+ * @param {string} html
+ */
 function unescape(html) {
   // explicitly match decimal, hex, and named HTML entities
   return html.replace(unescapeTest, (_, n) => {
@@ -85,8 +88,13 @@ function unescape(html) {
 }
 
 const caret = /(^|[^\[])\^/g;
+
+/**
+ * @param {string | RegExp} regex
+ * @param {string} opt
+ */
 function edit(regex, opt) {
-  regex = regex.source || regex;
+  regex = typeof regex === 'string' ? regex : regex.source;
   opt = opt || '';
   const obj = {
     replace: (name, val) => {
@@ -104,6 +112,12 @@ function edit(regex, opt) {
 
 const nonWordAndColonTest = /[^\w:]/g;
 const originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
+
+/**
+ * @param {boolean} sanitize
+ * @param {string} base
+ * @param {string} href
+ */
 function cleanUrl(sanitize, base, href) {
   if (sanitize) {
     let prot;
@@ -134,6 +148,10 @@ const justDomain = /^[^:]+:\/*[^/]*$/;
 const protocol = /^([^:]+:)[\s\S]*$/;
 const domain = /^([^:]+:\/*[^/]*)[\s\S]*$/;
 
+/**
+ * @param {string} base
+ * @param {string} href
+ */
 function resolveUrl(base, href) {
   if (!baseUrls[' ' + base]) {
     // we can ignore everything in base after the last slash of its path component,
@@ -203,7 +221,7 @@ function splitCells(tableRow, count) {
 
   // First/last cell in a row cannot be empty if it has no leading/trailing pipe
   if (!cells[0].trim()) { cells.shift(); }
-  if (!cells[cells.length - 1].trim()) { cells.pop(); }
+  if (cells.length > 0 && !cells[cells.length - 1].trim()) { cells.pop(); }
 
   if (cells.length > count) {
     cells.splice(count);
@@ -218,9 +236,14 @@ function splitCells(tableRow, count) {
   return cells;
 }
 
-// Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
-// /c*$/ is vulnerable to REDOS.
-// invert: Remove suffix of non-c chars instead. Default falsey.
+/**
+ * Remove trailing 'c's. Equivalent to str.replace(/c*$/, '').
+ * /c*$/ is vulnerable to REDOS.
+ *
+ * @param {string} str
+ * @param {string} c
+ * @param {boolean} invert Remove suffix of non-c chars instead. Default falsey.
+ */
 function rtrim(str, c, invert) {
   const l = str.length;
   if (l === 0) {
@@ -242,7 +265,7 @@ function rtrim(str, c, invert) {
     }
   }
 
-  return str.substr(0, l - suffLen);
+  return str.slice(0, l - suffLen);
 }
 
 function findClosingBracket(str, b) {
@@ -274,6 +297,10 @@ function checkSanitizeDeprecation(opt) {
 }
 
 // copied from https://stackoverflow.com/a/5450113/806777
+/**
+ * @param {string} pattern
+ * @param {number} count
+ */
 function repeatString(pattern, count) {
   if (count < 1) {
     return '';
@@ -306,15 +333,14 @@ function outputLink(cap, link, raw, lexer) {
     };
     lexer.state.inLink = false;
     return token;
-  } else {
-    return {
-      type: 'image',
-      raw,
-      href,
-      title,
-      text: escape(text)
-    };
   }
+  return {
+    type: 'image',
+    raw,
+    href,
+    title,
+    text: escape(text)
+  };
 }
 
 function indentCodeCompensation(raw, text) {
@@ -355,14 +381,11 @@ class Tokenizer {
 
   space(src) {
     const cap = this.rules.block.newline.exec(src);
-    if (cap) {
-      if (cap[0].length > 1) {
-        return {
-          type: 'space',
-          raw: cap[0]
-        };
-      }
-      return { raw: '\n' };
+    if (cap && cap[0].length > 0) {
+      return {
+        type: 'space',
+        raw: cap[0]
+      };
     }
   }
 
@@ -416,7 +439,7 @@ class Tokenizer {
         type: 'heading',
         raw: cap[0],
         depth: cap[1].length,
-        text: text,
+        text,
         tokens: []
       };
       this.lexer.inline(token.text, token.tokens);
@@ -437,7 +460,7 @@ class Tokenizer {
   blockquote(src) {
     const cap = this.rules.block.blockquote.exec(src);
     if (cap) {
-      const text = cap[0].replace(/^ *> ?/gm, '');
+      const text = cap[0].replace(/^ *>[ \t]?/gm, '');
 
       return {
         type: 'blockquote',
@@ -473,7 +496,7 @@ class Tokenizer {
       }
 
       // Get next list item
-      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*)?(?:\\n|$))`);
+      const itemRegex = new RegExp(`^( {0,3}${bull})((?:[\t ][^\\n]*)?(?:\\n|$))`);
 
       // Check if current bullet point can start a new List Item
       while (src) {
@@ -511,7 +534,8 @@ class Tokenizer {
         }
 
         if (!endEarly) {
-          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
+          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])((?: [^\\n]*)?(?:\\n|$))`);
+          const hrRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`);
 
           // Check if following lines should be included in List Item
           while (src) {
@@ -525,6 +549,11 @@ class Tokenizer {
 
             // End list item if found start of new bullet
             if (nextBulletRegex.test(line)) {
+              break;
+            }
+
+            // Horizontal rule found
+            if (hrRegex.test(src)) {
               break;
             }
 
@@ -565,7 +594,7 @@ class Tokenizer {
 
         list.items.push({
           type: 'list_item',
-          raw: raw,
+          raw,
           task: !!istask,
           checked: ischecked,
           loose: false,
@@ -586,7 +615,24 @@ class Tokenizer {
       for (i = 0; i < l; i++) {
         this.lexer.state.top = false;
         list.items[i].tokens = this.lexer.blockTokens(list.items[i].text, []);
-        if (!list.loose && list.items[i].tokens.some(t => t.type === 'space')) {
+        const spacers = list.items[i].tokens.filter(t => t.type === 'space');
+        const hasMultipleLineBreaks = spacers.every(t => {
+          const chars = t.raw.split('');
+          let lineBreaks = 0;
+          for (const char of chars) {
+            if (char === '\n') {
+              lineBreaks += 1;
+            }
+            if (lineBreaks > 1) {
+              return true;
+            }
+          }
+
+          return false;
+        });
+
+        if (!list.loose && spacers.length && hasMultipleLineBreaks) {
+          // Having a single line break doesn't mean a list is loose. A single line break is terminating the last list item
           list.loose = true;
           list.items[i].loose = true;
         }
@@ -638,7 +684,7 @@ class Tokenizer {
         type: 'table',
         header: splitCells(cap[1]).map(c => { return { text: c }; }),
         align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        rows: cap[3] ? cap[3].replace(/\n[ \t]*$/, '').split('\n') : []
+        rows: cap[3] && cap[3].trim() ? cap[3].replace(/\n[ \t]*$/, '').split('\n') : []
       };
 
       if (item.header.length === item.align.length) {
@@ -1043,10 +1089,10 @@ const block = {
   newline: /^(?: *(?:\n|$))+/,
   code: /^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,
   fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
-  hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
+  hr: /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
-  list: /^( {0,3}bull)( [^\n]+?)?(?:\n|$)/,
+  list: /^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/,
   html: '^ {0,3}(?:' // optional indentation
     + '<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' // (1)
     + '|comment[^\\n]*(\\n+|$)' // (2)
@@ -1057,7 +1103,7 @@ const block = {
     + '|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)' // (7) open tag
     + '|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)' // (7) closing tag
     + ')',
-  def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
+  def: /^ {0,3}\[(label)\]: *(?:\n *)?<?([^\s>]+)>?(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
   lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
@@ -1066,7 +1112,7 @@ const block = {
   text: /^[^\n]+/
 };
 
-block._label = /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/;
+block._label = /(?!\s*\])(?:\\.|[^\[\]\\])+/;
 block._title = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/;
 block.def = edit(block.def)
   .replace('label', block._label)
@@ -1194,15 +1240,15 @@ const inline = {
     + '|^<![a-zA-Z]+\\s[\\s\\S]*?>' // declaration, e.g. <!DOCTYPE html>
     + '|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>', // CDATA section
   link: /^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/,
-  reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-  nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
+  reflink: /^!?\[(label)\]\[(ref)\]/,
+  nolink: /^!?\[(ref)\](?:\[\])?/,
   reflinkSearch: 'reflink|nolink(?!\\()',
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
     //        (1) and (2) can only be a Right Delimiter. (3) and (4) can only be Left.  (5) and (6) can be either Left or Right.
-    //        () Skip orphan delim inside strong    (1) #***                (2) a***#, a***                   (3) #***a, ***a                 (4) ***#              (5) #***#                 (6) a***a
-    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/ // ^- Not allowed for _
+    //          () Skip orphan inside strong  () Consume to delim (1) #***                (2) a***#, a***                   (3) #***a, ***a                 (4) ***#              (5) #***#                 (6) a***a
+    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[^*]+(?=[^*])|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/ // ^- Not allowed for _
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
@@ -1262,6 +1308,11 @@ inline.link = edit(inline.link)
 
 inline.reflink = edit(inline.reflink)
   .replace('label', inline._label)
+  .replace('ref', block._label)
+  .getRegex();
+
+inline.nolink = edit(inline.nolink)
+  .replace('ref', block._label)
   .getRegex();
 
 inline.reflinkSearch = edit(inline.reflinkSearch, 'g')
@@ -1330,6 +1381,7 @@ inline.breaks = merge({}, inline.gfm, {
 
 /**
  * smartypants text replacement
+ * @param {string} text
  */
 function smartypants(text) {
   return text
@@ -1351,6 +1403,7 @@ function smartypants(text) {
 
 /**
  * mangle email addresses
+ * @param {string} text
  */
 function mangle(text) {
   let out = '',
@@ -1438,8 +1491,7 @@ class Lexer {
    */
   lex(src) {
     src = src
-      .replace(/\r\n|\r/g, '\n')
-      .replace(/\t/g, '    ');
+      .replace(/\r\n|\r/g, '\n');
 
     this.blockTokens(src, this.tokens);
 
@@ -1456,8 +1508,13 @@ class Lexer {
    */
   blockTokens(src, tokens = []) {
     if (this.options.pedantic) {
-      src = src.replace(/^ +$/gm, '');
+      src = src.replace(/\t/g, '    ').replace(/^ +$/gm, '');
+    } else {
+      src = src.replace(/^( *)(\t+)/gm, (_, leading, tabs) => {
+        return leading + '    '.repeat(tabs.length);
+      });
     }
+
     let token, lastToken, cutSrc, lastParagraphClipped;
 
     while (src) {
@@ -1477,7 +1534,11 @@ class Lexer {
       // newline
       if (token = this.tokenizer.space(src)) {
         src = src.substring(token.raw.length);
-        if (token.type) {
+        if (token.raw.length === 1 && tokens.length > 0) {
+          // if there's a single \n as a spacer, it's terminating the last line,
+          // so move it there so that we don't get unecessary paragraph tags
+          tokens[tokens.length - 1].raw += '\n';
+        } else {
           tokens.push(token);
         }
         continue;
@@ -1849,29 +1910,31 @@ class Renderer {
       + '</code></pre>\n';
   }
 
+  /**
+   * @param {string} quote
+   */
   blockquote(quote) {
-    return '<blockquote>\n' + quote + '</blockquote>\n';
+    return `<blockquote>\n${quote}</blockquote>\n`;
   }
 
   html(html) {
     return html;
   }
 
+  /**
+   * @param {string} text
+   * @param {string} level
+   * @param {string} raw
+   * @param {any} slugger
+   */
   heading(text, level, raw, slugger) {
     if (this.options.headerIds) {
-      return '<h'
-        + level
-        + ' id="'
-        + this.options.headerPrefix
-        + slugger.slug(raw)
-        + '">'
-        + text
-        + '</h'
-        + level
-        + '>\n';
+      const id = this.options.headerPrefix + slugger.slug(raw);
+      return `<h${level} id="${id}">${text}</h${level}>\n`;
     }
+
     // ignore IDs
-    return '<h' + level + '>' + text + '</h' + level + '>\n';
+    return `<h${level}>${text}</h${level}>\n`;
   }
 
   hr() {
@@ -1884,8 +1947,11 @@ class Renderer {
     return '<' + type + startatt + '>\n' + body + '</' + type + '>\n';
   }
 
+  /**
+   * @param {string} text
+   */
   listitem(text) {
-    return '<li>' + text + '</li>\n';
+    return `<li>${text}</li>\n`;
   }
 
   checkbox(checked) {
@@ -1896,12 +1962,19 @@ class Renderer {
       + '> ';
   }
 
+  /**
+   * @param {string} text
+   */
   paragraph(text) {
-    return '<p>' + text + '</p>\n';
+    return `<p>${text}</p>\n`;
   }
 
+  /**
+   * @param {string} header
+   * @param {string} body
+   */
   table(header, body) {
-    if (body) body = '<tbody>' + body + '</tbody>';
+    if (body) body = `<tbody>${body}</tbody>`;
 
     return '<table>\n'
       + '<thead>\n'
@@ -1911,39 +1984,59 @@ class Renderer {
       + '</table>\n';
   }
 
+  /**
+   * @param {string} content
+   */
   tablerow(content) {
-    return '<tr>\n' + content + '</tr>\n';
+    return `<tr>\n${content}</tr>\n`;
   }
 
   tablecell(content, flags) {
     const type = flags.header ? 'th' : 'td';
     const tag = flags.align
-      ? '<' + type + ' align="' + flags.align + '">'
-      : '<' + type + '>';
-    return tag + content + '</' + type + '>\n';
+      ? `<${type} align="${flags.align}">`
+      : `<${type}>`;
+    return tag + content + `</${type}>\n`;
   }
 
-  // span level renderer
+  /**
+   * span level renderer
+   * @param {string} text
+   */
   strong(text) {
-    return '<strong>' + text + '</strong>';
+    return `<strong>${text}</strong>`;
   }
 
+  /**
+   * @param {string} text
+   */
   em(text) {
-    return '<em>' + text + '</em>';
+    return `<em>${text}</em>`;
   }
 
+  /**
+   * @param {string} text
+   */
   codespan(text) {
-    return '<code>' + text + '</code>';
+    return `<code>${text}</code>`;
   }
 
   br() {
     return this.options.xhtml ? '<br/>' : '<br>';
   }
 
+  /**
+   * @param {string} text
+   */
   del(text) {
-    return '<del>' + text + '</del>';
+    return `<del>${text}</del>`;
   }
 
+  /**
+   * @param {string} href
+   * @param {string} title
+   * @param {string} text
+   */
   link(href, title, text) {
     href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
     if (href === null) {
@@ -1957,15 +2050,20 @@ class Renderer {
     return out;
   }
 
+  /**
+   * @param {string} href
+   * @param {string} title
+   * @param {string} text
+   */
   image(href, title, text) {
     href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
     if (href === null) {
       return text;
     }
 
-    let out = '<img src="' + href + '" alt="' + text + '"';
+    let out = `<img src="${href}" alt="${text}"`;
     if (title) {
-      out += ' title="' + title + '"';
+      out += ` title="${title}"`;
     }
     out += this.options.xhtml ? '/>' : '>';
     return out;
@@ -2027,6 +2125,9 @@ class Slugger {
     this.seen = {};
   }
 
+  /**
+   * @param {string} value
+   */
   serialize(value) {
     return value
       .toLowerCase()
@@ -2040,6 +2141,8 @@ class Slugger {
 
   /**
    * Finds the next safe (unique) slug to use
+   * @param {string} originalSlug
+   * @param {boolean} isDryRun
    */
   getNextSafeSlug(originalSlug, isDryRun) {
     let slug = originalSlug;
@@ -2060,8 +2163,9 @@ class Slugger {
 
   /**
    * Convert string to unique id
-   * @param {object} options
-   * @param {boolean} options.dryrun Generates the next unique slug without updating the internal accumulator.
+   * @param {object} [options]
+   * @param {boolean} [options.dryrun] Generates the next unique slug without
+   * updating the internal accumulator.
    */
   slug(value, options = {}) {
     const slug = this.serialize(value);
@@ -2622,6 +2726,7 @@ marked.walkTokens = function(tokens, callback) {
 
 /**
  * Parse Inline
+ * @param {string} src
  */
 marked.parseInline = function(src, opt) {
   // throw error in case of non string input
