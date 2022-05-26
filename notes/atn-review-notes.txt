@@ -33,7 +33,7 @@ That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
 marked.esm.js
-https://raw.githubusercontent.com/markedjs/marked/v4.0.15/lib/marked.esm.js
+https://raw.githubusercontent.com/markedjs/marked/v4.0.16/lib/marked.esm.js
 
 TeXZilla.js
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
