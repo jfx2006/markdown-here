@@ -6,7 +6,8 @@
     "build": "web-ext build",
     "lint": "eslint .",
     "test91": "web-ext run --verbose -p mdhr_test_profiles/testing91",
-    "testbeta": "web-ext run --verbose -f thunderbird-beta"
+    "testbeta": "web-ext run --verbose -f thunderbird-beta",
+    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f thunderbird-daily"
   },
   "private": true,
   "author": "JFX",
