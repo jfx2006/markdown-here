@@ -157,6 +157,10 @@ footer {
     bottom: 1rem;
 }
 
+footer.small {
+    font-size: .75rem;
+}
+
 button {
     height: 30px;
     margin: 10px;
@@ -231,6 +235,7 @@ pre {
 
 #sidebar {
     background-color: var(--mdhr-sidebar-background-color) !important;
+    margin-top: 1em;
 }
 
 .active > a {
