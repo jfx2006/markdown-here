@@ -174,6 +174,9 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       updateActionTooltip()
     })
   }
+  else if (request.action === "compose-ready") {
+    return onComposeReady(sender.tab)
+  }
   else {
     console.log('unmatched request action', request.action)
     throw 'unmatched request action: ' + request.action
@@ -353,3 +356,13 @@ async function createContextMenu() {
   })
 }
 createContextMenu()
+
+async function onComposeReady(tab) {
+  let composeDetails = await messenger.compose.getComposeDetails(tab.id)
+  if (["reply", "forward"].includes(composeDetails.type)) {
+    let identityId = composeDetails.identityId
+    let replyPosition = await messenger.reply_prefs.getReplyPosition(identityId)
+    let useParagraph = await messenger.reply_prefs.getUseParagraph()
+    return {reply_position: replyPosition, use_paragraph: useParagraph}
+  }
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "namespace": "reply_prefs",
+    "functions": [
+      {
+        "name": "getReplyPosition",
+        "type": "function",
+        "description": "Retrieve a pref that sets reply position.",
+        "async": true,
+        "parameters": [
+          {
+            "name": "identityId",
+            "type": "string",
+            "description": "The identityId to get prefs"
+          }
+        ]
+      },
+      {
+        "name": "getUseParagraph",
+        "type": "function",
+        "description": "Retrieve default compose style (paragraph or body)",
+        "async": true,
+        "parameters": [
+        ]
+      }
+    ]
+  }
+]

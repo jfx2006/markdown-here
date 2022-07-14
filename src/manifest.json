@@ -19,7 +19,7 @@
     "128": "images/rocmarkdown.svg",
     "512": "images/rocmarkdown.svg"
   },
-  "permissions": ["compose", "menus", "storage", "tabs"],
+  "permissions": ["accountsRead", "compose", "menus", "storage", "tabs"],
   "background": {"page": "background.html"},
   "compose_action": {
     "browser_style": true,
@@ -52,6 +52,14 @@
         "scopes": ["addon_parent"],
         "paths": [["notificationbar"]],
         "script": "experiments/notificationbar.js"
+      }
+    },
+    "reply_prefs": {
+      "schema": "experiments/preferences_schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["reply_prefs"]],
+        "script": "experiments/preferences.js"
       }
     }
   }

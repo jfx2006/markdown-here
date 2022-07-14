@@ -89,3 +89,21 @@ function requestMarkdownConversion(elem, range, callback) {
 function markdownRenderComplete(elem, rendered) {
   return true
 }
+
+messenger.runtime.sendMessage({action: "compose-ready"})
+  .then(response => {
+    if (response.reply_position === "bottom") {
+      let mailBody = window.document.body
+      let firstChild = mailBody.firstElementChild
+      if (firstChild.nodeName === "DIV" && firstChild.classList.contains("moz-cite-prefix")) {
+        let insertElem
+        if (response.use_paragraph) {
+          insertElem = window.document.createElement("p")
+          insertElem.appendChild(window.document.createElement("br"))
+        } else {
+          insertElem = window.document.createElement("br")
+        }
+        mailBody.insertAdjacentElement("afterbegin", insertElem)
+      }
+    }
+  })
