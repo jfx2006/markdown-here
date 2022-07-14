@@ -1,3 +1,9 @@
+#### v3.4.1
+* Deal with TB bug 1778889.
+
+#### v3.4.0
+* Don't include quote citation div when rendering markdown
+
 #### 2022-03-27 v3.3.1
 * Options page CSS fixes  [#39](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/39)
 * Updated default.css  [#40](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/40)
