@@ -33,7 +33,7 @@ That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
 marked.esm.js
-https://raw.githubusercontent.com/markedjs/marked/v4.0.16/lib/marked.esm.js
+https://raw.githubusercontent.com/markedjs/marked/v4.0.18/lib/marked.esm.js
 
 TeXZilla.js
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
@@ -63,8 +63,8 @@ https://bootswatch.com/5/darkly/bootstrap.css
 Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
 
-DOMPurify 2.3.3 (ESM build)
-https://raw.githubusercontent.com/cure53/DOMPurify/2.3.4/dist/purify.es.js
+DOMPurify 2.3.10 (ESM build)
+https://github.com/cure53/DOMPurify/blob/2.3.10/dist/purify.es.js
 
 Used for tests
 https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.js

@@ -1,5 +1,6 @@
 #### v3.4.1
 * Deal with TB bug 1778889.
+* Update DOMPurify and Markedjs vendored libs.
 
 #### v3.4.0
 * Don't include quote citation div when rendering markdown
