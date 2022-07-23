@@ -64,7 +64,7 @@ Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
 
 DOMPurify 2.3.10 (ESM build)
-https://github.com/cure53/DOMPurify/blob/2.3.10/dist/purify.es.js
+https://raw.githubusercontent.com/cure53/DOMPurify/2.3.10/dist/purify.es.js
 
 Used for tests
 https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.js
