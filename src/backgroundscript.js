@@ -48,17 +48,13 @@ messenger.runtime.onInstalled.addListener(async (details) => {
   switch (details.reason) {
     case "install":
       onboardUrl.hash = "#docs"
-      callback = installCallback
+      installCallback(winId, onboardUrl)
       break
     case "update":
       onboardUrl.searchParams.set("previousVersion", details.previousVersion)
-      callback = updateCallback
+      updateCallback(winId, onboardUrl)
       break
   }
-
-  // Forces migrations to run if needed
-  let last_version = await OptionsStore.get("last-version")
-  callback(winId, onboardUrl)
 })
 
 
