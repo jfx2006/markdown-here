@@ -1,15 +1,22 @@
 # ![logo][logo] Markdown Here Revival
 
-*Markdown Here Revival* is a fork of Markdown Here, the popular browser extension
-specifically targeting modern Thunderbird versions.
-It lets you write email in Markdown and
-render them before sending. It also supports syntax highlighting (just specify
-the language in a fenced code block).
+*Markdown Here Revival* is a fork of [Markdown Here](https://markdown-here.com/), 
+the popular browser extension in order to specifically target modern Thunderbird versions.
+
+It lets you write email in Markdown and render it as HTML before sending. It also
+supports syntax highlighting (just specify the language in a fenced code block).
 
 Unfortunately, attempts by a few members of the user community to contact
 the author of Markdown Here have been unsuccessful.
 
-### Table of Contents
+## Compatibility
+
+This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
+Support for browser-based email such as GMail, Outlook, or Yahoo Mail was
+removed to reduce tne necessary ongoing maintenace burden from these platforms.
+
+# Table of Contents
+
 **[Installation Instructions](#installation-instructions)**<br>
 **[Usage Instructions](#usage-instructions)**<br>
 **[Troubleshooting](#troubleshooting)**<br>
@@ -68,13 +75,6 @@ The Options page can be accessed via Thunderbird extensions list. The available 
 ## Troubleshooting
 
 Coming soon!
-
-
-## Compatibility
-
-This is a mail extension for Mozilla Thunderbird. It will not work in a web
-browser such as Firefox or any other e-mail software.
-
 
 ## Notes and Miscellaneous
 
