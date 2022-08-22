@@ -20,7 +20,6 @@ removed to reduce tne necessary ongoing maintenace burden from these platforms.
 **[Installation Instructions](#installation-instructions)**<br>
 **[Usage Instructions](#usage-instructions)**<br>
 **[Troubleshooting](#troubleshooting)**<br>
-**[Compatibility](#compatibility)**<br>
 **[Notes and Miscellaneous](#notes-and-miscellaneous)**<br>
 **[Building](#building)**<br>
 **[Feedback](#feedback)**<br>
