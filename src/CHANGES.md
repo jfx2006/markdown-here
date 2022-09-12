@@ -1,3 +1,11 @@
+#### v3.4.3
+* Don't run onInstalled callback for unnecessary reasons
+* Fix excluded content having random spaces and other things disappearing
+  [#48](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/48)
+
+#### v3.4.2
+* Update markedjs and DOMPurify
+
 #### v3.4.1
 * Deal with TB bug 1778889.
 * Update DOMPurify and Markedjs vendored libs.
