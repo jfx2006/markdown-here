@@ -27,12 +27,12 @@ the HTML seems suboptimal.
 function dedent(input_string) {
   let parts = []
   let strings = input_string.split("\n")
-  for (let [i, line] of strings.entries()) {
+  for (let line of strings) {
     let match = line.match(/^(\s*)\S*/)
-    line = line.substr(match[1].length)
+    line = line.substring(match[1].length)
     parts.push(line)
   }
-  return parts.join("")
+  return parts.join("\n")
 }
 
 
