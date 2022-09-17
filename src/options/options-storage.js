@@ -51,13 +51,10 @@ export function MDHROptionsMigrate() {
 
 function MDHROptionsStore() {
   let main_css_default_p = fetchExtFile("/default.css")
-  let hljs_css_p = getHljsStyles()
   let DEFAULTS = Object.assign({}, kOptDefaults)
 
-  let p_all = Promise.all([main_css_default_p, hljs_css_p])
-  p_all.then(async function (value) {
-    DEFAULTS["main-css"] = value[0]
-    DEFAULTS["hljs_styles"] = value[1]
+  main_css_default_p.then(async function (value) {
+    DEFAULTS["main-css"] = value
   })
 
   return new OptionsSync({

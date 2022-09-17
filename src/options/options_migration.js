@@ -3,7 +3,7 @@
  * MIT License
  */
 
-import { sha256Digest } from '../async_utils.js'
+import { getHljsStyles, sha256Digest } from '../async_utils.js'
 // Sha256 Checksums for old versions of default.css
 const OLD_CSS_SUMS = [
   // Test checksum
@@ -84,7 +84,7 @@ export async function migrate_oldOptions(options, defaults) {
 }
 
 export async function migrate_syntaxCSS(options, defaults) {
-  const syntax_css_available = defaults["hljs_styles"]
+  const syntax_css_available = await getHljsStyles()
   const syntax_values = Object.values(syntax_css_available)
   const syntax_css = options["syntax-css"]
   if (syntax_values.indexOf(syntax_css) === -1) {

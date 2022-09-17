@@ -2,7 +2,7 @@
  * Copyright JFX 2021
  * MIT License
  */
-/* global describe, expect, it, before, beforeEach, after, afterEach */
+/* global td, describe, expect, it, before, beforeEach, after, afterEach */
 
 import {
   migrate_badMathValue,
@@ -20,13 +20,12 @@ const DEFAULTS = {
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
   "last-version": "0",
-  hljs_styles: { one: "one.css", two: "two.css", three: "three.css" },
 }
 
 describe("options_migrations tests", function () {
   describe("migrate_syntaxCSS", function () {
     it("should not modify a valid css style", async function () {
-      let options = { "syntax-css": "two.css" }
+      let options = { "syntax-css": "default.css" }
       let changed = await migrate_syntaxCSS(options, DEFAULTS)
       expect(changed).to.be.null
     })
