@@ -13,11 +13,11 @@
   },
   "default_locale": "en",
   "icons": {
-    "16": "images/rocmarkdown.svg",
-    "32": "images/rocmarkdown.svg",
-    "48": "images/rocmarkdown.svg",
-    "128": "images/rocmarkdown.svg",
-    "512": "images/rocmarkdown.svg"
+    "16": "images/md_fucsia.svg",
+    "32": "images/md_bw.svg",
+    "48": "images/md_bw.svg",
+    "128": "images/md_fucsia.svg",
+    "512": "images/md_fucsia.svg"
   },
   "permissions": ["accountsRead", "compose", "menus", "storage", "tabs"],
   "background": {"page": "background.html"},
@@ -25,10 +25,11 @@
     "browser_style": true,
     "default_area": "formattoolbar",
     "default_icon": {
-      "16": "images/rocmarkdown.svg",
-      "19": "images/rocmarkdown.svg",
-      "32": "images/rocmarkdown.svg",
-      "64": "images/rocmarkdown.svg"
+      "16": "images/md_bw.svg",
+      "19": "images/md_bw.svg",
+      "32": "images/md_fucsia.svg",
+      "38": "images/md_fucsia.svg",
+      "64": "images/md_fucsia.svg"
     },
     "default_title": "__MSG_toggle_button_tooltip__"
   },
