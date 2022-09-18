@@ -52,6 +52,7 @@ messenger.runtime.onInstalled.addListener(async (details) => {
       break
     case "update":
       onboardUrl.searchParams.set("previousVersion", details.previousVersion)
+      onboardUrl.hash = "#about"
       updateCallback(winId, onboardUrl)
       break
   }

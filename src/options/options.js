@@ -36,6 +36,10 @@ import OptionsStore from "./options-storage.js"
 
   async function onOptionsLoaded() {
     await localizePage()
+    activatePillNav()
+    if (document.location.hash !== "") {
+      activatePill(document.location.hash)
+    }
     savedMsgToast = new bootstrap.Toast("#saved-msg")
 
     const tests_link = document.getElementById("tests-link")
@@ -99,6 +103,23 @@ import OptionsStore from "./options-storage.js"
 
     checkPreviewChanged()
     handleMathRenderer()
+  }
+
+  function activatePillNav() {
+    const triggerPillList = document.querySelectorAll("#optionsTabList a")
+    triggerPillList.forEach(triggerEl => {
+      const pillTrigger = new bootstrap.Tab(triggerEl)
+      triggerEl.addEventListener("click", event => {
+        event.preventDefault()
+        pillTrigger.show()
+      })
+    })
+  }
+
+  function activatePill(url_hash) {
+    const selector = `#optionsTabList a[data-bs-toggle='pill'][href='${url_hash}']`
+    const triggerEl = document.querySelector(selector)
+    bootstrap.Tab.getInstance(triggerEl).show()
   }
 
   function escapeHTML(strings, html) {
