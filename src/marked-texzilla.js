@@ -7,6 +7,8 @@
 import TeXZilla from "./vendor/TeXZilla.js"
 import { marked } from "./vendor/marked.esm.js"
 
+TeXZilla.setSafeMode(true)
+
 function tex2SVG(aTeX, aRTL, aSize) {
   // Set default size.
   if (aSize === undefined) {
