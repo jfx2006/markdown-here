@@ -2,6 +2,9 @@
 * Don't run onInstalled callback for unnecessary reasons
 * Fix excluded content having random spaces and other things disappearing
   [#48](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/48)
+* Do not store hljs stylesheets file list in extension storage.
+  [#49](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/49)
+* Make options page #hash links go to right page on load.
 
 #### v3.4.2
 * Update markedjs and DOMPurify
