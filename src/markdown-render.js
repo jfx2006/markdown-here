@@ -14,10 +14,11 @@
  */
 
 import { marked } from "./vendor/marked.esm.js"
-import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
 
 "use strict"
+
+let marked_texzilla
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
@@ -142,7 +143,18 @@ export default function markdownRender(mdText, userprefs) {
     markedRenderer.code = gchartCodeRenderer
     markedRenderer.codespan = gchartCodespanRenderer
   } else if (userprefs["math-renderer"] === "texzilla") {
-    marked.use({extensions: [mathBlock, mathInline]})
+    if (marked_texzilla) {
+      marked.use({ extensions: [marked_texzilla.mathBlock, marked_texzilla.mathInline] })
+    } else {
+      import("./marked-texzilla.js")
+        .then((module) => {
+          marked_texzilla = module
+          marked.use({ extensions: [marked_texzilla.mathBlock, marked_texzilla.mathInline] })
+        })
+        .catch((err) => {
+          throw err
+        })
+    }
   }
   return marked(mdText)
 }

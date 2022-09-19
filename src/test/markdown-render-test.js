@@ -105,12 +105,12 @@ describe('Markdown-Render', function() {
         'math-renderer': 'texzilla'
       };
 
-      var md = '$x$';
+      var md = '$ x $';
       var target = '<p><img src="data:image/svg+xml;base64';
       expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
 
       // Make sure we haven't broken multi-character forumlae
-      md = '$xx$';
+      md = '$ xx $';
       target = '<p><img src="data:image/svg+xml;base64';
       expect(markdownRender(md, userprefs).slice(0, target.length)).to.equal(target);
     });
@@ -325,12 +325,12 @@ describe('Markdown-Render', function() {
         'math-renderer': 'texzilla'
       };
 
-      var md = '$x$';
+      var md = '$ x $';
       var target = '<p><img src="data:image/svg+xml;base64';
       expect(fullRender(md).slice(0, target.length)).to.equal(target);
 
       // Make sure we haven't broken multi-character forumlae
-      md = '$xx$';
+      md = '$ xx $';
       target = '<p><img src="data:image/svg+xml;base64';
       expect(fullRender(md).slice(0, target.length)).to.equal(target);
     });
