@@ -4,8 +4,8 @@ The HTML editor must be enabled.
 REPRODUCING THE BUILD
 
 Requirements:
-nodejs: 14.17.0
-npm: 7.19.1
+nodejs: 18.12.1
+npm: 8.19.2
 GNU Make
 tar
 A UNIX style shell (bash)
