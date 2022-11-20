@@ -34,6 +34,18 @@ import OptionsStore from "./options-storage.js"
     }, 5000)
   }
 
+  function link_onClicked(e) {
+    const elem = e.target
+    if (elem.localName !== "a") { return }
+    if (elem.protocol === "moz-extension:") {
+      e.preventDefault()
+      messenger.tabs.create({url: elem.href})
+    } else if ((elem.protocol === "https:") || (elem.protocol === "http:")) {
+      e.preventDefault()
+      messenger.windows.openDefaultBrowser(elem.href)
+    }
+  }
+
   async function onOptionsLoaded() {
     await localizePage()
     activatePillNav()
@@ -42,11 +54,7 @@ import OptionsStore from "./options-storage.js"
     }
     savedMsgToast = new bootstrap.Toast("#saved-msg")
 
-    const tests_link = document.getElementById("tests-link")
-
-    tests_link.addEventListener("click", function(e) {
-      messenger.tabs.create({url: tests_link.getAttribute("href")})
-    })
+    document.addEventListener("click", link_onClicked)
 
     document.getElementById("copyVersionToClipboard").addEventListener('click', function(e) {
       e.preventDefault()
