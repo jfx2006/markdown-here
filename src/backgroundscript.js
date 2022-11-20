@@ -340,8 +340,13 @@ async function createContextMenu() {
   })
   messenger.menus.onShown.addListener((info, tab) => {
     if (tab.type === "messageCompose") {
-      messenger.menus.update(menuId, {visible: true})
-      messenger.menus.refresh()
+      messenger.compose.getComposeDetails(tab.id)
+        .then(details => {
+          if (!details.isPlainText) {
+            messenger.menus.update(menuId, {visible: true})
+            messenger.menus.refresh()
+          }
+        })
     }
   })
   messenger.menus.onHidden.addListener((info, tab) => {
