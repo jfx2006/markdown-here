@@ -47,6 +47,14 @@ import OptionsStore from "./options-storage.js"
   }
 
   async function onOptionsLoaded() {
+    messenger.management.getSelf()
+      .then(info => {
+        if (info.installType === "development") {
+          const tests_link = document.getElementById("tests-link")
+          tests_link.hidden = false
+        }
+      })
+
     await localizePage()
     activatePillNav()
     if (document.location.hash !== "") {
