@@ -110,6 +110,10 @@ main {
     background: var(--mdhr-background-color);
 }
 
+textarea {
+    font-size: .9rem;
+}
+
 textarea,
 input,
 input[type="checkbox"],
@@ -276,6 +280,10 @@ pre {
 #copyVersionToClipboard + span {
     color: var(--bs-success);
     font-size: xx-large;
+}
+
+#preview_input {
+    height: 25em;
 }
 
 #preview {
