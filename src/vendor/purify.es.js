@@ -1,4 +1,4 @@
-/*! @license DOMPurify 2.4.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.1/LICENSE */
+/*! @license DOMPurify 2.4.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.3/LICENSE */
 
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -190,7 +190,7 @@ function clone(object) {
   var property;
 
   for (property in object) {
-    if (apply(hasOwnProperty, object, [property])) {
+    if (apply(hasOwnProperty, object, [property]) === true) {
       newObject[property] = object[property];
     }
   }
@@ -322,7 +322,7 @@ function createDOMPurify() {
    */
 
 
-  DOMPurify.version = '2.4.1';
+  DOMPurify.version = '2.4.3';
   /**
    * Array of elements that DOMPurify removed during sanitation.
    * Empty if nothing was removed.
@@ -947,7 +947,7 @@ function createDOMPurify() {
       doc = implementation.createDocument(NAMESPACE, 'template', null);
 
       try {
-        doc.documentElement.innerHTML = IS_EMPTY_INPUT ? '' : dirtyPayload;
+        doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
       } catch (_) {// Syntax error if dirtyPayload is invalid xml
       }
     }

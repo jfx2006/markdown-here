@@ -63,8 +63,8 @@ https://raw.githubusercontent.com/thomaspark/bootswatch/v5.2.2/dist/darkly/boots
 Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
 
-DOMPurify 2.4.1 (ESM build)
-https://raw.githubusercontent.com/cure53/DOMPurify/2.4.1/dist/purify.es.js
+DOMPurify 2.4.3 (ESM build)
+https://raw.githubusercontent.com/cure53/DOMPurify/2.4.3/dist/purify.es.js
 
 Used for tests
 https://cdn.jsdelivr.net/npm/mocha@8.1.3/mocha.js
