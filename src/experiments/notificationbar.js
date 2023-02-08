@@ -77,9 +77,9 @@ class Notification {
           label,
           image: iconURL,
           priority,
+          eventCallback: notificationBarCallback,
         },
-        buttonSet,
-        notificationBarCallback
+        buttonSet
       );
     }
     let allowedCssPropNames = [

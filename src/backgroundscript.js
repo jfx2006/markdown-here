@@ -180,11 +180,6 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   }
 })
 
-// Defining a onDismissed listener
-messenger.notificationbar.onDismissed.addListener((windowId, notificationId) => {
-  console.log(`notification ${notificationId} in window ${windowId} was dismissed`)
-})
-
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener(tab => {
   return composeRender(tab.id)
@@ -284,6 +279,7 @@ async function openNotification(windowId, message, priority, button_labels) {
         }
       }
 
+      messenger.notificationbar.onDismissed.addListener(onClosedListener)
       messenger.notificationbar.onClosed.addListener(onClosedListener)
       messenger.notificationbar.onButtonClicked.addListener(onButtonClickListener)
     })
