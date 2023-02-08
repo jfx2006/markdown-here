@@ -115,8 +115,10 @@ MdhHtmlToText.prototype._preprocess = function() {
   // The default behaviour for `jsHtmlToText.js` is to strip out tags (and their
   // inner text/html) that it doesn't expect/want. But we want some tag blocks
   // to remain intact.
+  this.excludeTagBlocks("div", false, `class="moz-signature`)
   this.excludeTagBlocks("blockquote", false)
   this.excludeTagBlocks("div", false, `class="moz-cite-prefix`)
+  this.excludeTagBlocks("div", false, `class="moz-forward-container`)
 
   // It's a deviation from Markdown, but we'd like to leave any rendered
   // images already in the email intact. So we'll escape their tags.

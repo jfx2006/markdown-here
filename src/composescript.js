@@ -47,9 +47,10 @@ function requestHandler(request, sender, sendResponse) {
       // Only look for elements directly below <body> to avoid problems with
       // nested quotes
       for (let selector of [
-        "body > .moz-signature",
+        "body > div.moz-signature",
         "body > blockquote[type=cite]",
-        "body > div.moz-cite-prefix"
+        "body > div.moz-cite-prefix",
+        "body > div.moz-forward-container"
       ]) {
         let match_nodes = body_copy.querySelectorAll(selector)
         for (let node of match_nodes) {
