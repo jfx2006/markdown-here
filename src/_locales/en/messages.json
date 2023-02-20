@@ -109,6 +109,10 @@
     "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
     "description": "An explanation of what smart replacements are"
   },
+  "options_page__emoji_shortcode_enabled_label": {
+    "message": "Enable :emoji: (Github style) Shortcodes",
+    "description": "Label for enabling emoji shortcodes"
+  },
   "options_page__hotkey_title": {
     "message": "Hotkey (aka keyboard shortcut)",
     "description": "A section title"

@@ -16,8 +16,8 @@
 import { marked } from "./vendor/marked.esm.js"
 import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
-
-"use strict"
+import { markedEmoji } from "./marked-emoji.js"
+import emojis from "./data/shortcodes.mjs"
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
@@ -137,12 +137,16 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   marked.setOptions(markedOptions)
-  marked.use({tokenizer})
+  marked.use({ tokenizer })
   if (userprefs["math-renderer"] === "gchart") {
     markedRenderer.code = gchartCodeRenderer
     markedRenderer.codespan = gchartCodespanRenderer
   } else if (userprefs["math-renderer"] === "texzilla") {
-    marked.use({extensions: [mathBlock, mathInline]})
+    marked.use({ extensions: [mathBlock, mathInline] })
   }
+  if (userprefs["emoji-shortcode"]) {
+    marked.use(markedEmoji({ emojis, unicode: true }))
+  }
+
   return marked(mdText)
 }
