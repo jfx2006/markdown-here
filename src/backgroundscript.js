@@ -5,24 +5,24 @@
  */
 
 "use strict"
-/*global messenger:false, Utils:false, CommonLogic:false */
+/*global messenger:false */
 
 /*
  * Mail Extension background script.
  */
-import {getHljsStylesheet} from './async_utils.js'
+import {getHljsStylesheet, getMessage} from './async_utils.js'
 import OptionsStore from "./options/options-storage.js"
 import markdownRender from "./markdown-render.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
-  const APP_NAME = Utils.getMessage("app_name")
+  const APP_NAME = getMessage("app_name")
   function updateCallback(winId, url) {
-    const message = Utils.getMessage("upgrade_notification_text", APP_NAME)
+    const message = getMessage("upgrade_notification_text", APP_NAME)
     openNotification(winId,
       message,
       messenger.notificationbar.PRIORITY_INFO_MEDIUM,
-      [Utils.getMessage("update_notes_button"), Utils.getMessage("cancel_button")]
+      [getMessage("update_notes_button"), getMessage("cancel_button")]
     ).then(rv => {
       if (rv === "ok") {
         messenger.tabs.create({
@@ -101,7 +101,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       messenger.composeAction.enable(sender.tab.id)
       messenger.menus.update("mdhr_toggle_context_menu", {enabled: true})
       messenger.composeAction.setTitle({
-        title: Utils.getMessage("toggle_button_tooltip"),
+        title: getMessage("toggle_button_tooltip"),
         tabId: sender.tab.id
       })
       messenger.composeAction.setIcon({
@@ -120,7 +120,7 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
       messenger.composeAction.disable(sender.tab.id)
       messenger.menus.update("mdhr_toggle_context_menu", {enabled: false})
       messenger.composeAction.setTitle({
-        title: Utils.getMessage("toggle_button_tooltip_disabled"),
+        title: getMessage("toggle_button_tooltip_disabled"),
         tabId: sender.tab.id
       })
       messenger.composeAction.setIcon({
@@ -144,9 +144,9 @@ messenger.runtime.onMessage.addListener(function(request, sender, responseCallba
   }
   else if (request.action === 'get-unrender-markdown-warning') {
     return openNotification(sender.tab.windowId,
-      Utils.getMessage("unrendering_modified_markdown_warning"),
+      getMessage("unrendering_modified_markdown_warning"),
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [Utils.getMessage("unrender_button"), Utils.getMessage("cancel_button")]
+      [getMessage("unrender_button"), getMessage("cancel_button")]
     )
   }
   else if (request.action === 'test-request') {
@@ -223,15 +223,15 @@ messenger.compose.onBeforeSend.addListener(async function(tab, details) {
   let isMarkdown = await messenger.tabs.sendMessage(
     tab.id, { action: "check-forgot-render" })
   if (isMarkdown) {
-    const message = `${Utils.getMessage("forgot_to_render_prompt_info")}
-        ${Utils.getMessage("forgot_to_render_prompt_question")}`
+    const message = `${getMessage("forgot_to_render_prompt_info")}
+        ${getMessage("forgot_to_render_prompt_question")}`
 
     rv = await openNotification(tab.windowId,
       message,
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
       [
-        Utils.getMessage("forgot_to_render_send_button"),
-        Utils.getMessage("forgot_to_render_back_button")
+        getMessage("forgot_to_render_send_button"),
+        getMessage("forgot_to_render_back_button")
       ]
     )
   }
@@ -317,7 +317,7 @@ function forgotToRenderEnabled() {
 // Show the shortcut hotkey on the ComposeAction button
 async function updateActionTooltip() {
   const hotkey = await OptionsStore.get("hotkey-input")
-  const msg = Utils.getMessage("toggle_button_tooltip")
+  const msg = getMessage("toggle_button_tooltip")
   await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
 }
 updateActionTooltip()
@@ -326,7 +326,7 @@ updateActionTooltip()
 async function createContextMenu() {
   let menuId = await messenger.menus.create({
     id: "mdhr_toggle_context_menu",
-    title: Utils.getMessage("context_menu_item"),
+    title: getMessage("context_menu_item"),
     contexts: ["page", "selection"],
     icons: {
       "16": "images/rocmarkdown.svg",

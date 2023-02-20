@@ -10,6 +10,7 @@ import {
   sha256Digest,
   getHljsStylesheet,
   getHljsStyles,
+  getMessage,
 } from "../async_utils.js"
 
 describe("AsyncUtils", function () {
@@ -55,6 +56,18 @@ describe("AsyncUtils", function () {
         "2949725604dd9eef82100f8ff39fcced9d3682700ee2fb5c4205e3e584defee6"
       let result = await sha256Digest(TEXT)
       expect(result).to.equal(TEXT_SUM)
+    })
+  })
+
+  describe('getMessage', function() {
+    it('should return a string', function() {
+      // Since the exact string retuned depends on the current browser locale,
+      // we'll just check that some string is returned.
+      expect(Utils.getMessage("options_page__page_title")).to.be.a('string')
+    })
+
+    it('return null on bad message ID', function() {
+      expect(Utils.getMessage('BAADF00D')).to.be.null
     })
   })
 })

@@ -57,3 +57,12 @@ export async function getLanguage() {
   }
   return "en"
 }
+
+export function getMessage(messageID, subs=null) {
+  let message = messenger.i18n.getMessage(messageID, subs)
+  if (!message) {
+    console.error('Could not find message ID: ' + messageID)
+    return null
+  }
+  return message
+}

@@ -13,7 +13,7 @@ import markdownRender from "../markdown-render.js"
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.js"
 
-import { fetchExtFile, getHljsStyles, getHljsStylesheetURL, getLanguage } from "../async_utils.js"
+import { fetchExtFile, getHljsStyles, getHljsStylesheetURL, getLanguage, getMessage } from "../async_utils.js"
 import OptionsStore from "./options-storage.js"
 
 (async () => {
@@ -259,7 +259,7 @@ import OptionsStore from "./options-storage.js"
     }
   }
 
-  const SUBS = {"__APP_NAME": Utils.getMessage("app_name")}
+  const SUBS = {"__APP_NAME": getMessage("app_name")}
   async function localizePage() {
     const page_prefix = "options_page"
     const nodes = document.body.querySelectorAll("[data-i18n]")
@@ -274,7 +274,7 @@ import OptionsStore from "./options-storage.js"
           arg = arg_str
         }
       }
-      let message = Utils.getMessage(message_id, arg)
+      let message = getMessage(message_id, arg)
       if (message) {
         n.textContent = message
       }
