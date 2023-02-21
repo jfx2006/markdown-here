@@ -1,3 +1,6 @@
+#### v3.5.0
+* Add emoji shortcode (Github style) support
+
 #### v3.4.3
 * Don't run onInstalled callback for unnecessary reasons
 * Fix excluded content having random spaces and other things disappearing

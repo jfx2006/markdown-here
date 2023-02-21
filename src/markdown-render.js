@@ -17,28 +17,26 @@ import { marked } from "./vendor/marked.esm.js"
 import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
 
-"use strict"
-
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
  render html into pretty text.
  */
 export default function markdownRender(mdText, userprefs) {
   function mathify(mathcode) {
-    return userprefs['math-value']
-            .replace(/\{mathcode\}/ig, mathcode)
-            .replace(/\{urlmathcode\}/ig, encodeURIComponent(mathcode))
+    return userprefs["math-value"]
+      .replace(/\{mathcode\}/gi, mathcode)
+      .replace(/\{urlmathcode\}/gi, encodeURIComponent(mathcode))
   }
 
   // Hook into some of Marked's renderer customizations
   const markedRenderer = new marked.Renderer()
 
   const defaultLinkRenderer = markedRenderer.link
-  markedRenderer.link = function(href, title, text) {
+  markedRenderer.link = function (href, title, text) {
     // Added to fix MDH issue #57: MD links should automatically add scheme.
     // Note that the presence of a ':' is used to indicate a scheme, so port
     // numbers will defeat this.
-    href = href.replace(/^(?!#)([^:]+)$/, 'http://$1')
+    href = href.replace(/^(?!#)([^:]+)$/, "http://$1")
 
     return defaultLinkRenderer.call(this, href, title, text)
   }
@@ -59,7 +57,7 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   const defaultCodeRenderer = markedRenderer.code
-  const gchartCodeRenderer = function(code, lang, escaped) {
+  const gchartCodeRenderer = function (code, lang, escaped) {
     if (!lang) {
       const math = mathsExpression(code)
       if (math) {
@@ -73,7 +71,7 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   const defaultCodespanRenderer = markedRenderer.codespan
-  const gchartCodespanRenderer = function(text) {
+  const gchartCodespanRenderer = function (text) {
     const math = mathsExpression(text)
     if (math) {
       return math
@@ -137,12 +135,12 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   marked.setOptions(markedOptions)
-  marked.use({tokenizer})
+  marked.use({ tokenizer })
   if (userprefs["math-renderer"] === "gchart") {
     markedRenderer.code = gchartCodeRenderer
     markedRenderer.codespan = gchartCodespanRenderer
   } else if (userprefs["math-renderer"] === "texzilla") {
-    marked.use({extensions: [mathBlock, mathInline]})
+    marked.use({ extensions: [mathBlock, mathInline] })
   }
   return marked(mdText)
 }

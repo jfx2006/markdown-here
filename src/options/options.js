@@ -7,53 +7,61 @@
  * Options page UI code
  */
 
-/* global messenger:false, Utils:false */
+/* global messenger:false, Utils:false bootstrap:false */
 
 import markdownRender from "../markdown-render.js"
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.js"
 
-import { fetchExtFile, getHljsStyles, getHljsStylesheetURL, getLanguage, getMessage } from "../async_utils.js"
+import {
+  fetchExtFile,
+  getHljsStyles,
+  getHljsStylesheetURL,
+  getLanguage,
+  getMessage,
+} from "../async_utils.js"
 import OptionsStore from "./options-storage.js"
-
-(async () => {
+;(async () => {
+  // eslint-disable-next-line no-unused-vars
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
   const previewInput = document.getElementById("preview_input")
   const previewIframe = document.getElementById("preview")
   let inputDirty = true
+  // eslint-disable-next-line no-unused-vars
   let checkChangeTimeout = null
   let savedMsgToast
 
   function showSavedMsg() {
     inputDirty = true
     savedMsgToast.show()
-    setTimeout(function() {
+    setTimeout(function () {
       savedMsgToast.hide()
     }, 5000)
   }
 
   function link_onClicked(e) {
     const elem = e.target
-    if (elem.localName !== "a") { return }
+    if (elem.localName !== "a") {
+      return
+    }
     if (elem.protocol === "moz-extension:") {
       e.preventDefault()
-      messenger.tabs.create({url: elem.href})
-    } else if ((elem.protocol === "https:") || (elem.protocol === "http:")) {
+      messenger.tabs.create({ url: elem.href })
+    } else if (elem.protocol === "https:" || elem.protocol === "http:") {
       e.preventDefault()
       messenger.windows.openDefaultBrowser(elem.href)
     }
   }
 
   async function onOptionsLoaded() {
-    messenger.management.getSelf()
-      .then(info => {
-        if (info.installType === "development") {
-          const tests_link = document.getElementById("tests-link")
-          tests_link.hidden = false
-        }
-      })
+    messenger.management.getSelf().then((info) => {
+      if (info.installType === "development") {
+        const tests_link = document.getElementById("tests-link")
+        tests_link.hidden = false
+      }
+    })
 
     await localizePage()
     activatePillNav()
@@ -64,14 +72,14 @@ import OptionsStore from "./options-storage.js"
 
     document.addEventListener("click", link_onClicked)
 
-    document.getElementById("copyVersionToClipboard").addEventListener('click', function(e) {
+    document.getElementById("copyVersionToClipboard").addEventListener("click", function (e) {
       e.preventDefault()
       e.stopPropagation()
-      const copyText = document.getElementById('versionInfo').innerText
+      const copyText = document.getElementById("versionInfo").innerText
       navigator.clipboard.writeText(copyText)
       const check = e.target.nextElementSibling
       check.classList.add("show")
-      setTimeout(function() {
+      setTimeout(function () {
         check.classList.remove("show")
       }, 5000)
     })
@@ -123,9 +131,9 @@ import OptionsStore from "./options-storage.js"
 
   function activatePillNav() {
     const triggerPillList = document.querySelectorAll("#optionsTabList a")
-    triggerPillList.forEach(triggerEl => {
+    triggerPillList.forEach((triggerEl) => {
       const pillTrigger = new bootstrap.Tab(triggerEl)
-      triggerEl.addEventListener("click", event => {
+      triggerEl.addEventListener("click", (event) => {
         event.preventDefault()
         pillTrigger.show()
       })
@@ -168,7 +176,7 @@ import OptionsStore from "./options-storage.js"
       .then((prefs) => {
         if (inputDirty) {
           getHljsStylesheetURL(prefs["syntax-css"])
-            .then(hljs_css_url => {
+            .then((hljs_css_url) => {
               previewIframe.contentDocument.getElementById("hljs_css").href = hljs_css_url
 
               let md_stylesheet = prefs["main-css"]
@@ -182,13 +190,15 @@ import OptionsStore from "./options-storage.js"
               setPreviewScroll()
 
               inputDirty = false
-            }).catch(reason => {
+            })
+            .catch((reason) => {
               console.log(`Error getting hljs css. ${reason}`)
-          })
+            })
         }
-      }).finally(() => {
+      })
+      .finally(() => {
         checkChangeTimeout = setTimeout(checkPreviewChanged, 100)
-    })
+      })
   }
 
   async function setInitialText() {
@@ -214,8 +224,9 @@ import OptionsStore from "./options-storage.js"
     const browser_info = await messenger.runtime.getBrowserInfo()
     const appManifest = messenger.runtime.getManifest()
     document.getElementById("mdhrVersion").innerText = appManifest.version
-    document.getElementById("mdhrThunderbirdVersion").innerText =
-      `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
+    document.getElementById(
+      "mdhrThunderbirdVersion"
+    ).innerText = `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
 
@@ -230,17 +241,16 @@ import OptionsStore from "./options-storage.js"
 
   async function handleHotKey(e) {
     let newHotKey = e.detail.value()
-    await OptionsStore.set({ "hotkey-input": newHotKey})
-    Utils.makeRequestToBGScript('update-hotkey', {"hotkey_value": newHotKey})
-      .then(() => {
-        form.dispatchEvent(
-          new CustomEvent("options-sync:form-synced", {
-            bubbles: true,
-          })
-        )
-        showSavedMsg()
-        document.getElementById("hotkey-display-str").innerText = newHotKey
-      })
+    await OptionsStore.set({ "hotkey-input": newHotKey })
+    Utils.makeRequestToBGScript("update-hotkey", { hotkey_value: newHotKey }).then(() => {
+      form.dispatchEvent(
+        new CustomEvent("options-sync:form-synced", {
+          bubbles: true,
+        })
+      )
+      showSavedMsg()
+      document.getElementById("hotkey-display-str").innerText = newHotKey
+    })
   }
 
   function handleMathRenderer(e) {
@@ -259,7 +269,7 @@ import OptionsStore from "./options-storage.js"
     }
   }
 
-  const SUBS = {"__APP_NAME": getMessage("app_name")}
+  const SUBS = { __APP_NAME: getMessage("app_name") }
   async function localizePage() {
     const page_prefix = "options_page"
     const nodes = document.body.querySelectorAll("[data-i18n]")

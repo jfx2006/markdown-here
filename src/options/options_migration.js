@@ -3,7 +3,9 @@
  * MIT License
  */
 
-import { getHljsStyles, sha256Digest } from '../async_utils.js'
+/*global messenger:false */
+
+import { getHljsStyles, sha256Digest } from "../async_utils.mjs"
 // Sha256 Checksums for old versions of default.css
 const OLD_CSS_SUMS = [
   // Test checksum
@@ -13,21 +15,21 @@ const OLD_CSS_SUMS = [
   // 3.1.0
   "72706d3e07c403c35688760180a753552af05c4ed2d5d1906dbf89b5c649342a",
   // 3.3.1
-  "67f46b9488904c869638c6f9fc2ea04d1046b5efa1115fec186a327c13a7ea96"
+  "67f46b9488904c869638c6f9fc2ea04d1046b5efa1115fec186a327c13a7ea96",
 ]
 
 // Checksum of the current version of default.css
 // 3.2.0
 const DEFAULT_CSS_SUM = "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069"
 
-const EXT_STORAGE = (messenger.storage.sync || messenger.storage.local)
+const EXT_STORAGE = messenger.storage.sync || messenger.storage.local
 
 export async function migrate_oldHotKey(options, defaults) {
   let platformInfo = await messenger.runtime.getPlatformInfo()
   let old_hotkey = await EXT_STORAGE.get("hotkey")
   old_hotkey = old_hotkey["hotkey"]
   let isMac = Boolean(platformInfo["os"] === "mac")
-  if ((old_hotkey !== undefined) && (old_hotkey !== "")) {
+  if (old_hotkey !== undefined && old_hotkey !== "") {
     // Might not be JSON encoded?
     try {
       old_hotkey = JSON.parse(old_hotkey)
@@ -41,8 +43,7 @@ export async function migrate_oldHotKey(options, defaults) {
     if (old_hotkey.ctrlKey) {
       if (isMac) {
         key_combo.push("MacCtrl")
-      }
-      else {
+      } else {
         key_combo.push("Ctrl")
       }
     }
@@ -53,22 +54,25 @@ export async function migrate_oldHotKey(options, defaults) {
 
     const hotkey_str = key_combo.join("+")
     if (hotkey_str !== defaults["hotkey-input"]) {
-      return {"hotkey-input": hotkey_str}
+      return { "hotkey-input": hotkey_str }
     }
   }
   return null
 }
 
-
 export async function migrate_oldOptions(options, defaults) {
-  const bool_options = ["math-enabled", "forgot-to-render-check-enabled", "gfm-line-breaks-enabled"]
+  const bool_options = [
+    "math-enabled",
+    "forgot-to-render-check-enabled",
+    "gfm-line-breaks-enabled",
+  ]
   const string_options = ["main-css", "math-value"]
   const old_option_keys = Array.prototype.concat(bool_options, string_options)
   let old_options = await EXT_STORAGE.get(old_option_keys)
   for (let b_opt of bool_options) {
     // Sometimes booleans turned to strings, which makes testing truthiness annoying
-    if (typeof(old_options[b_opt]) === "string") {
-      old_options[b_opt] = Boolean((old_options[b_opt] === "true"))
+    if (typeof old_options[b_opt] === "string") {
+      old_options[b_opt] = Boolean(old_options[b_opt] === "true")
     }
   }
   let changed_options = {}
@@ -89,7 +93,7 @@ export async function migrate_syntaxCSS(options, defaults) {
   const syntax_css = options["syntax-css"]
   if (syntax_values.indexOf(syntax_css) === -1) {
     console.log(`Invalid Highlightjs CSS detected. Resetting to ${defaults["syntax-css"]}`)
-    return {"syntax-css": defaults["syntax-css"]}
+    return { "syntax-css": defaults["syntax-css"] }
   }
   return null
 }
@@ -102,7 +106,7 @@ export async function migrate_badMathValue(options, defaults) {
     while (math_value[0] === '"') {
       math_value = JSON.parse(math_value)
     }
-    return {"math-value": math_value}
+    return { "math-value": math_value }
   }
   return null
 }
@@ -112,7 +116,7 @@ export async function migrate_MainCSS(options, defaults) {
   if (sha256 !== DEFAULT_CSS_SUM) {
     if (OLD_CSS_SUMS.includes(sha256)) {
       console.log("Updating main-css to current default.")
-      return {"main-css": defaults["main-css"]}
+      return { "main-css": defaults["main-css"] }
     }
   }
   return null
@@ -122,7 +126,7 @@ export async function migrate_setLastVersion(options) {
   const thisVersion = messenger.runtime.getManifest().version
   if (options["last-version"] !== thisVersion) {
     console.log(`Setting last-version: ${thisVersion}`)
-    return {"last-version": thisVersion}
+    return { "last-version": thisVersion }
   }
   return null
 }
@@ -152,7 +156,7 @@ export async function migrate_smartReplacements(options, defaults) {
 
 export async function migrate_mathRenderer(options, defaults) {
   if (options["math-enabled"] === true) {
-    return {"math-renderer": "gchart"}
+    return { "math-renderer": "gchart" }
   }
   return null
 }

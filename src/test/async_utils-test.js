@@ -11,7 +11,7 @@ import {
   getHljsStylesheet,
   getHljsStyles,
   getMessage,
-} from "../async_utils.js"
+} from "../async_utils.mjs"
 
 describe("AsyncUtils", function () {
   describe("fetchExtFile", function () {

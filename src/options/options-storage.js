@@ -9,7 +9,7 @@
  * Requires https://github.com/fregante/webext-options-sync
  */
 
-import { fetchExtFile, getHljsStyles } from "../async_utils.js"
+import { fetchExtFile } from "../async_utils.mjs"
 import OptionsSync from "./mailext-options-sync.js"
 import {
   migrate_badMathValue,
@@ -19,7 +19,7 @@ import {
   migrate_syntaxCSS,
   migrate_smartReplacements,
   migrate_removeUnused,
-  migrate_mathRenderer
+  migrate_mathRenderer,
 } from "./options_migration.js"
 
 export const kOptDefaults = {
@@ -35,15 +35,15 @@ export const kOptDefaults = {
 }
 
 let MIGRATIONS = [
-    migrate_oldHotKey,
-    migrate_oldOptions,
-    migrate_syntaxCSS,
-    migrate_badMathValue,
-    migrate_MainCSS,
-    migrate_smartReplacements,
-    migrate_mathRenderer,
-    migrate_removeUnused
-  ]
+  migrate_oldHotKey,
+  migrate_oldOptions,
+  migrate_syntaxCSS,
+  migrate_badMathValue,
+  migrate_MainCSS,
+  migrate_smartReplacements,
+  migrate_mathRenderer,
+  migrate_removeUnused,
+]
 
 export function MDHROptionsMigrate() {
   return MDHROptionsStore()
