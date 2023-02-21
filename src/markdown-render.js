@@ -144,7 +144,7 @@ export default function markdownRender(mdText, userprefs) {
   } else if (userprefs["math-renderer"] === "texzilla") {
     marked.use({ extensions: [mathBlock, mathInline] })
   }
-  if (userprefs["emoji-shortcode"]) {
+  if (userprefs["emoji-shortcode-enabled"]) {
     marked.use(markedEmoji({ emojis, unicode: true }))
   }
 

@@ -31,7 +31,7 @@ export const kOptDefaults = {
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
   "smart-replacements-enabled": true,
-  "emoji-shortcode": true,
+  "emoji-shortcode-enabled": true,
   "last-version": "0",
 }
 
