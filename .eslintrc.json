@@ -1,18 +1,45 @@
 {
   "env": {
     "browser": true,
-    "es6": true,
+    "es2021": true,
     "webextensions": true
   },
   "parserOptions": {
     "sourceType": "module",
-    "ecmaVersion": 11
+    "ecmaVersion": 12
   },
-  "extends": [
-    "plugin:no-unsanitized/DOM",
-    "prettier"
-  ],
+  "root": true,
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["html", "no-unsanitized", "prettier"],
   "rules": {
-    "semi": [2, "never"]
-  }
+    "quotes": [
+      "error",
+      "double",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ],
+    "semi": ["error", "never"],
+    "no-eval": "error",
+    "curly": ["error", "all"],
+    "no-unused-vars": ["error", { "args": "none", "vars": "local" }],
+    "max-len": [
+      "error",
+      {
+        "code": 99,
+        "tabWidth": 2,
+        "ignoreUrls": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["web-ext-config.js"],
+      "parserOptions": {
+        "ecmaVersion": 12
+      },
+      "env": {
+        "node": true,
+        "browser": false
+      }
+    }
+  ]
 }
