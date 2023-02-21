@@ -16,6 +16,8 @@
 import { marked } from "./vendor/marked.esm.js"
 import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
+import { markedEmoji } from "./marked-emoji.js"
+import emojis from "./data/shortcodes.mjs"
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
@@ -142,5 +144,9 @@ export default function markdownRender(mdText, userprefs) {
   } else if (userprefs["math-renderer"] === "texzilla") {
     marked.use({ extensions: [mathBlock, mathInline] })
   }
+  if (userprefs["emoji-shortcode"]) {
+    marked.use(markedEmoji({ emojis, unicode: true }))
+  }
+
   return marked(mdText)
 }
