@@ -19,7 +19,7 @@ import {
   getHljsStylesheetURL,
   getLanguage,
   getMessage,
-} from "../async_utils.js"
+} from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
 ;(async () => {
   // eslint-disable-next-line no-unused-vars
