@@ -579,89 +579,6 @@
     return utf8ArrToStr(base64DecToArr(str))
   }
 
-  /**
-   * Trim a canvas. Based on
-   * https://stackoverflow.com/questions/11796554/automatically-crop-html5-canvas-to-contents
-   *
-   * @author Arjan Haverkamp (arjan at avoid dot org)
-   * @param {CanvasRenderingContext2D} ctx A canvas context element to trim.
-   *        This element will be trimmed (reference)
-   * @returns {Object} Width and height of trimmed canvas and left-top coordinate of trimmed area.
-   *          Example: {width:400, height:300, x:65, y:104}
-   */
-  function trimCanvas(ctx) {
-    let canvas = ctx.canvas,
-      w = canvas.width,
-      h = canvas.height,
-      imageData = ctx.getImageData(0, 0, w, h),
-      tlCorner = { x: w + 1, y: h + 1 },
-      brCorner = { x: -1, y: -1 }
-
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        let pixel = (y * w + x) * 4
-        let pixel_value =
-          imageData.data[pixel] +
-          imageData.data[pixel + 1] +
-          imageData.data[pixel + 2] +
-          imageData.data[pixel + 3]
-        if (pixel_value !== 1020) {
-          tlCorner.x = Math.min(x, tlCorner.x)
-          tlCorner.y = Math.min(y, tlCorner.y)
-          brCorner.x = Math.max(x, brCorner.x)
-          brCorner.y = Math.max(y, brCorner.y)
-        }
-      }
-    }
-    const width = brCorner.x - tlCorner.x + 6
-    const height = brCorner.y - tlCorner.y + 6
-
-    const cut = ctx.getImageData(tlCorner.x - 3, tlCorner.y - 3, width, height)
-
-    canvas.width = width
-    canvas.height = height
-
-    ctx.putImageData(cut, 0, 0)
-
-    return { width: width, height: height, x: tlCorner.x - 3, y: tlCorner.y - 3 }
-  }
-
-  function SVG2PNG(svgImg, imgClass) {
-    // Converts an SVG <img> to a PNG using the browser canvas
-    svgImg.addEventListener("load", function (e) {
-      let canvas = document.createElement("canvas")
-      canvas.width = svgImg.width
-      canvas.height = svgImg.height
-      let ctx = canvas.getContext("2d")
-      ctx.fillStyle = "white"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      ctx.drawImage(svgImg, 0, 0)
-      // The images produced by TeXZilla tend to have a lot of whitespace
-      // around the actual formula, so trim it down like GCharts was
-      const ctx_trim = trimCanvas(ctx)
-
-      let pngDataURL = canvas.toDataURL("image/png")
-      let pngImg = new Image()
-      pngImg.width = ctx_trim.width
-      pngImg.height = ctx_trim.height
-      pngImg.alt = svgImg.alt
-      pngImg.src = pngDataURL
-      pngImg.classList.add(imgClass)
-      svgImg.replaceWith(pngImg)
-    })
-  }
-
-  function convertMathSVGs(
-    wrapper_elem,
-    selector = "img.math_texzilla_svg",
-    imgClass = "math_texzilla"
-  ) {
-    const mathSVGs = wrapper_elem.querySelectorAll(selector)
-    for (let svgImg of mathSVGs) {
-      SVG2PNG(svgImg, imgClass)
-    }
-  }
-
   // Expose these functions
 
   var Utils = {}
@@ -681,8 +598,6 @@
   Utils.probablyWritingMarkdown = probablyWritingMarkdown
   Utils.utf8StringToBase64 = utf8StringToBase64
   Utils.base64ToUTF8String = base64ToUTF8String
-  Utils.SVG2PNG = SVG2PNG
-  Utils.convertMathSVGs = convertMathSVGs
 
   var EXPORTED_SYMBOLS = ["Utils"]
 
