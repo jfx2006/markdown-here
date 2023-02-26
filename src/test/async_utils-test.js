@@ -63,11 +63,11 @@ describe("AsyncUtils", function () {
     it('should return a string', function() {
       // Since the exact string retuned depends on the current browser locale,
       // we'll just check that some string is returned.
-      expect(Utils.getMessage("options_page__page_title")).to.be.a('string')
+      expect(getMessage("options_page__page_title")).to.be.a('string')
     })
 
     it('return null on bad message ID', function() {
-      expect(Utils.getMessage('BAADF00D')).to.be.null
+      expect(getMessage('BAADF00D')).to.be.null
     })
   })
 })
