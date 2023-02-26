@@ -456,16 +456,25 @@ https://github.com/adam-p/markdown-here/issues/85
     return elems.length ? elems : null
   }
 
+  function insertStylesheet(document, style_id, stylesheet) {
+    const style_elem = document.getElementById(style_id)
+    if (style_elem) {
+      if (style_elem.innerHTML !== stylesheet) {
+
+      }
+    }
+  }
+
   // Converts the Markdown in the user's compose element to HTML and replaces it.
   // If `selectedRange` is null, then the entire email is being rendered.
   function renderMarkdown(focusedElem, selectedRange, markdownRenderer, renderComplete) {
     var originalHtml = Utils.getDocumentFragmentHTML(selectedRange.cloneContents())
 
     // Call to the extension main code to actually do the md->html conversion.
-    markdownRenderer(focusedElem, selectedRange, function (mdHtml, mdCss) {
+    markdownRenderer(focusedElem, selectedRange, function (mdHtml, mdMainCss, mdSyntaxCss) {
       var wrapper, rawHolder
       const holderCSS =
-        "height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
+        "height:0;width:0;max-h*eight:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
 
       // Store the original Markdown-in-HTML to the `title` attribute of a separate,
       // invisible-ish `div`. We have found that Gmail, Evernote, etc. leave the
@@ -490,11 +499,11 @@ https://github.com/adam-p/markdown-here/issues/85
 
       // Some webmail (Gmail) strips off any external style block. So we need to go
       // through our styles, explicitly applying them to matching elements.
-      makeStylesExplicit(wrapper, mdCss)
+      // makeStylesExplicit(wrapper, mdCss)
 
       // marked-texzilla produces SVG images, which are not very email friendly,
       // convert them to PNGs
-      Utils.convertMathSVGs(wrapper)
+      // Utils.convertMathSVGs(wrapper)
 
       // Monitor for changes to the content of the rendered MD. This will help us
       // prevent the user from silently losing changes later.
