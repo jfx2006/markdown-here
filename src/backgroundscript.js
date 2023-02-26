@@ -11,7 +11,7 @@
  */
 import { getHljsStylesheet, getMessage } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
-import markdownRender from "./markdown-render.js"
+import { resetMarked, markdownRender } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
@@ -73,20 +73,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
   }
 
   if (request.action === "render") {
-    OptionsStore.getAll()
-      .then((prefs) => {
-        getHljsStylesheet(`${prefs["syntax-css"]}`).then((syntaxCSS) => {
-          responseCallback({
-            html: markdownRender(request.mdText, prefs),
-            css: prefs["main-css"] + syntaxCSS,
-          })
-          return true
-        })
-      })
-      .catch((e) => {
-        throw e
-      })
-    return true
+    return doRender(request.mdText)
   } else if (request.action === "get-options") {
     OptionsStore.getAll().then((prefs) => {
       responseCallback(prefs)
@@ -154,11 +141,32 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return updateHotKey(request.hotkey_value, request.hotkey_tooltip)
   } else if (request.action === "compose-ready") {
     return onComposeReady(sender.tab)
+  } else if (request.action === "renderer-reset") {
+    return resetMarked()
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
   }
 })
+
+await resetMarked()
+
+async function doRender(mdText) {
+  async function getSyntaxCSS() {
+    const syntax_css_name = await OptionsStore.get("syntax-css")
+    return await getHljsStylesheet(syntax_css_name["syntax-css"])
+  }
+  async function getMainCSS() {
+    const main_css = await OptionsStore.get("main-css")
+    return main_css["main-css"]
+  }
+  const syntax_css_p = getSyntaxCSS()
+  const main_css_p = getMainCSS()
+  const html_p = markdownRender(mdText)
+
+  const [main_css, syntax_css, html] = await Promise.all([main_css_p, syntax_css_p, html_p])
+  return { html, main_css, syntax_css }
+}
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {

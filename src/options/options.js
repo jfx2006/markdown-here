@@ -131,6 +131,7 @@ import OptionsStore from "./options-storage.js"
     await OptionsStore.syncForm(form)
     form.addEventListener("options-sync:form-synced", showSavedMsg)
     form.addEventListener("options-sync:form-synced", handleMathRenderer)
+    form.addEventListener("options-sync:form-synced", updateMarkedGlobal)
 
     checkPreviewChanged()
     handleMathRenderer()
