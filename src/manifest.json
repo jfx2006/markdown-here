@@ -61,6 +61,19 @@
         "paths": [["reply_prefs"]],
         "script": "experiments/preferences.js"
       }
+    },
+    "ex_customui": {
+      "schema": "experiments/customui/api.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["ex_customui"]],
+        "script": "experiments/customui/parent.js"
+      },
+      "child": {
+        "scopes": ["addon_child"],
+        "paths": [["ex_customui"]],
+        "script": "experiments/customui/child.js"
+      }
     }
   }
 }

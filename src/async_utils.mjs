@@ -3,6 +3,8 @@
  * MIT License
  */
 
+import OptionsStore from "./options/options-storage.js";
+
 export async function fetchExtFile(path, json=false) {
   const url = messenger.runtime.getURL(path)
   const response = await fetch(url)
@@ -35,6 +37,15 @@ export async function getHljsStylesheetURL(syntax_css) {
 
 export async function getHljsStylesheet(syntax_css) {
   return fetchExtFile(await getHljsStylesheetURL(syntax_css))
+}
+
+export async function getSyntaxCSS() {
+  const syntax_css_name = await OptionsStore.get("syntax-css")
+  return await getHljsStylesheet(syntax_css_name["syntax-css"])
+}
+export async function getMainCSS() {
+  const main_css = await OptionsStore.get("main-css")
+  return main_css["main-css"]
 }
 
 const EMOJI_SHORTCODES = "/data/emoji_codes.json"

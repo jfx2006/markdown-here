@@ -2,4 +2,5 @@ mailext-options-sync/
 testing_profile/
 src/vendor/
 src/experiments/notificationbar.js
+src/experiments/customui/*.js
 src/options/mailext-options-sync.js

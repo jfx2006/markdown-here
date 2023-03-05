@@ -138,6 +138,10 @@
         "value": "compose",
         "description": "String identifying an area associated with the process of composing a message (currently a sidebar in the message compose window)"
       },
+      "LOCATION_COMPOSE_EDITOR": {
+        "value": "compose_editor",
+        "description": "String identifying an area associated with the process of composing a message (currently an editor sidebar in the message compose window)"
+      },
       "LOCATION_MESSAGING": {
         "value": "messaging",
         "description": "String identifying an area permanently visible alongside messaging features of Thunderbird (currently a sidebar in the messaging tab)"

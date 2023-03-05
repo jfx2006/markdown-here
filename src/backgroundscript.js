@@ -73,6 +73,8 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
 
   if (request.action === "render") {
     return doRender(request.mdText)
+  } else if (request.action === "render-md") {
+    return markdownRender(request.mdText)
   } else if (request.action === "get-options") {
     OptionsStore.getAll().then((prefs) => {
       responseCallback(prefs)
@@ -149,6 +151,9 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return onComposeReady(sender.tab)
   } else if (request.action === "renderer-reset") {
     return resetMarked()
+  } else if (request.action === "render-preview") {
+    // This message is intended for the customui.compose_editor doing live preview
+    return false
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
@@ -351,4 +356,11 @@ async function onComposeReady(tab) {
     let useParagraph = await messenger.reply_prefs.getUseParagraph()
     return { reply_position: replyPosition, use_paragraph: useParagraph }
   }
+  return {}
 }
+
+// Register custom UI compose editor
+await messenger.ex_customui.add(
+  messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
+  messenger.runtime.getURL("compose_preview/compose_preview.html")
+)

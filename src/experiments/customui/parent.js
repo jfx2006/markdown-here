@@ -265,7 +265,24 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
         }
       });
     };
-    
+
+    // Sets sensible sizes for an editor sidebar frame
+    const setWebextFrameSizesForEditor = function(frame, options) {
+      frame.parentElement.style.display = "inline";
+      frame.parentElement.style.width = (options.width || 650) + "px";
+      frame.style.height = "100%";
+      frame.style.width = "100%";
+      frame.style.display = options.hidden ? "none" : "block";
+      frame.addCustomUILocalOptionsListener(lOptions => {
+        if (typeof lOptions.width === "number") {
+          frame.parentElement.style.width = lOptions.width + "px";
+        }
+        if (typeof lOptions.hidden === "boolean") {
+          frame.style.display = lOptions.hidden ? "none" : "block";
+        }
+      });
+    };
+
     // Creates and inserts the WebExtension frame for the given URL and location
     // id as element of a customUI-specific sidebar within the container given
     // by a document and the container's id. Returns an element containing the
@@ -288,8 +305,8 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
         splitter.style["background-color"] = "transparent";
         splitter.style["margin-inline-end"] = "-5px";
         splitter.style["position"] = "relative";
-        container.appendChild(splitter);           
-        
+        container.appendChild(splitter);
+
         sidebar = document.createXULElement("vbox");
         sidebar.setAttribute("persist", "width");
         sidebar.setAttribute("width", "244");
@@ -562,7 +579,52 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
           removeSidebarWebextFrame("compose", url, window.document);
         }
       });
-      
+
+      // A "sidebar" that's more closely tied to the editor part of the compose window
+      locationHandlers.compose_editor = makeLocationHandler({
+        injectIntoWindow(window, url, options) {
+          if (window.location.toString() !== "chrome://messenger/content/"
+            + "messengercompose/messengercompose.xhtml") {
+            return; // incompatible window
+          }
+          // Wrap the editor in a div
+          const editorWrapperId = "customui-editor-wrapper";
+          let editor_wrapper = window.document.getElementById(editorWrapperId);
+          if (!editor_wrapper) {
+            const editor_elem = window.document.getElementById("messageEditor");
+            editor_wrapper = window.document.createElement("div");
+            editor_wrapper.id = editorWrapperId;
+            editor_wrapper.style = "display: flex; flex: 1 1 0;";
+            editor_elem.insertAdjacentElement("beforebegin", editor_wrapper);
+            editor_wrapper.appendChild(editor_elem);
+
+            // Add the "sidebar"
+            const frame = insertSidebarWebextFrame(
+              "compose_editor",
+              url,
+              window.document,
+              "customui-editor-wrapper"
+            );
+            const win = context.extension.windowManager.convert(window)
+            options.width = Math.floor(win.width / 2)
+            setWebextFrameSizesForEditor(frame, options);
+
+
+            frame.setCustomUIContextProperty("windowId", win.id);
+            frame.setCustomUIContextProperty("windowType", win.type)
+
+            editor_wrapper.querySelector("splitter").style.appearance = "initial";
+          }
+        },
+        uninjectFromWindow(window, url) {
+          const editor_elem = window.document.getElementById("messageEditor");
+          const editor_wrapper = window.document.getElementById("customui-editor-wrapper");
+          removeSidebarWebextFrame("compose_editor", url, window.document);
+          editor_wrapper.insertAdjacentElement("beforebegin", editor_elem);
+          editor_wrapper.remove();
+        }
+      });
+
       // Messaging ------------------------------------------------------------
       locationHandlers.messaging = makeLocationHandler({
         injectIntoWindow(window, url, options) {
