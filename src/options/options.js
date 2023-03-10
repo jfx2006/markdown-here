@@ -49,12 +49,17 @@ import OptionsStore from "./options-storage.js"
   }
 
   async function onOptionsLoaded() {
-    messenger.management.getSelf().then((info) => {
-      if (info.installType === "development") {
-        const tests_link = document.getElementById("tests-link")
-        tests_link.hidden = false
-      }
-    })
+    try {
+      messenger.management.getSelf().then((info) => {
+        if (info.installType === "development") {
+          const tests_link = document.getElementById("tests-link")
+          tests_link.hidden = false
+        }
+      })
+    } catch (e) {
+      const tests_link = document.getElementById("tests-link")
+      tests_link.hidden = false
+    }
 
     await localizePage()
     activatePillNav()
@@ -83,7 +88,7 @@ import OptionsStore from "./options-storage.js"
       cssSyntaxSelect.options.add(opt)
     }
 
-    if (messenger !== undefined) {
+    if (window.messenger?.runtime) {
       await fillSupportInfo()
       await loadChangeList()
       await setInitialText()
@@ -101,6 +106,9 @@ import OptionsStore from "./options-storage.js"
         e.setAttribute("aria-selected", true)
         document.getElementById("docs").classList.add("active", "show")
       }
+
+      await OptionsStore.syncForm(form)
+      form.addEventListener("options-sync:form-synced", onOptionsSaved)
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -113,9 +121,6 @@ import OptionsStore from "./options-storage.js"
     previewIframe.addEventListener("load", handlePreviewLoad)
     previewInput.addEventListener("input", handleInput, false)
     previewInput.addEventListener("scroll", setPreviewScroll, false)
-
-    await OptionsStore.syncForm(form)
-    form.addEventListener("options-sync:form-synced", onOptionsSaved)
 
     checkPreviewChanged()
     handleMathRenderer()

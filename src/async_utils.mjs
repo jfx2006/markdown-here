@@ -5,8 +5,21 @@
 
 import OptionsStore from "./options/options-storage.js";
 
+export function wxGetUrl(path) {
+  const url = window.messenger?.runtime.getURL(path)
+  if (url) {
+    return url
+  }
+  if (path.startsWith("/")) {
+    const slashroot = document.querySelector("meta[name=slashroot]").content || "."
+    path = `${slashroot}${path}`
+  }
+  const u = new URL(path, location.href)
+  return u.href
+}
+
 export async function fetchExtFile(path, json=false) {
-  const url = messenger.runtime.getURL(path)
+  const url = wxGetUrl(path)
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Error fetching ${path}: ${response.status}`)
@@ -32,7 +45,7 @@ export async function getHljsStylesheetURL(syntax_css) {
     console.log(`Invalid hljs CSS. Returning fallback ${FALLBACK_HLJS_CSS}`)
     syntax_css = FALLBACK_HLJS_CSS
   }
-  return messenger.runtime.getURL(`${HLJS_STYLES_PATH}/${syntax_css}`)
+  return wxGetUrl(`${HLJS_STYLES_PATH}/${syntax_css}`)
 }
 
 export async function getHljsStylesheet(syntax_css) {
@@ -76,7 +89,7 @@ export async function getLanguage() {
 }
 
 export function getMessage(messageID, subs=null) {
-  let message = messenger.i18n.getMessage(messageID, subs)
+  let message = window.messenger?.i18n.getMessage(messageID, subs) || null
   if (!message) {
     console.error('Could not find message ID: ' + messageID)
     return null

@@ -22,7 +22,7 @@ const OLD_CSS_SUMS = [
 // 3.2.0
 const DEFAULT_CSS_SUM = "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069"
 
-const EXT_STORAGE = messenger.storage.sync || messenger.storage.local
+const EXT_STORAGE = window.messenger?.storage.sync || window.messenger?.storage.local || {}
 
 export async function migrate_oldHotKey(options, defaults) {
   let platformInfo = await messenger.runtime.getPlatformInfo()

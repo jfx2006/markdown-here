@@ -236,7 +236,12 @@
       console.log(error)
       return
     }
-    return messenger.runtime.sendMessage(requestObj)
+    return (
+      window.messenger?.runtime.sendMessage(requestObj) ||
+      new Promise((r) => {
+        r(true)
+      })
+    )
   }
 
   // Gets the URL of the top window that elem belongs to.
