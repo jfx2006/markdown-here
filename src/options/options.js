@@ -270,8 +270,8 @@ import OptionsStore from "./options-storage.js"
   const SUBS = { __APP_NAME: getMessage("app_name") }
   async function localizePage() {
     const page_prefix = "options_page"
-    const nodes = document.body.querySelectorAll("[data-i18n]")
-    for (let n of nodes) {
+    const text_nodes = document.body.querySelectorAll("[data-i18n]")
+    for (let n of text_nodes) {
       let message_id = `${page_prefix}__${n.dataset.i18n}`
       let arg_str = n.dataset.i18nArg
       let arg = null
@@ -285,6 +285,12 @@ import OptionsStore from "./options-storage.js"
       let message = getMessage(message_id, arg)
       if (message) {
         n.textContent = message
+      }
+      if (n.title) {
+        message = getMessage(`${message_id}-Title`)
+        if (message) {
+          n.title = message
+        }
       }
     }
   }
