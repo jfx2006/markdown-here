@@ -160,3 +160,10 @@ export async function migrate_mathRenderer(options, defaults) {
   }
   return null
 }
+export async function migrate_mathRenderer2(options, defaults) {
+  if (options["math-renderer"] === "disabled") {
+    return { "math-renderer-enabled": false, "math-renderer": defaults["math-renderer"] }
+  } else {
+    return { "math-renderer-enabled": true, "math-renderer": options["math-renderer"] }
+  }
+}

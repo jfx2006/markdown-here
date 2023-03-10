@@ -138,15 +138,10 @@
     "message": "TeX Mathematical Formulae Support",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
-  "options_page__tex_math_privacy_issue_1": {
+  "options_page__tex_math_gchart_label-Title": {
     "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
-  },
-  "options_page__tex_math_privacy_issue_2": {
-    "message": "If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "6377d919509c05850fd38caccbcfbda4"
   },
 
   "options_page__hotkey_title": {

@@ -89,10 +89,6 @@
   "options_page__options_title": {
     "message": "Options"
   },
-  "options_page__gfm_line_breaks_enabled_label": {
-    "message": "Enable GFM line breaks.",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
-  },
   "options_page__forgot_to_render_label2": {
     "message": "Enable \"forgot-to-render\" check.",
     "description": "Label for the checkbox that enables the forgot-to-render feature"
@@ -100,6 +96,14 @@
   "options_page__forgot_to_render_2": {
     "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature."
+  },
+  "options_page__features_title": {
+    "message": "Markdown Features",
+    "description": "Heading for a set of options to enable or disable various features of the Markdown rendering"
+  },
+  "options_page__gfm_line_breaks_enabled_label": {
+    "message": "Enable GFM line breaks.",
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
   },
   "options_page__smart_replacements_enabled_label": {
     "message": "Enable \"smart\" typographic replacements",
@@ -127,31 +131,18 @@
     "message": "TeXZilla and HTML Canvas rendering",
     "description": "Label for tex math rendering option"
   },
-  "options_page__tex_math_texzilla_description": {
+  "options_page__tex_math_texzilla_label-Title": {
     "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
     "description": "description how math is rendered when TexZilla option is selected"
-  },
-  "options_page__tex_math_texzilla_description2": {
-    "message": "With this option, do not use backticks around your formula.",
-    "description": "additional note for TexZilla/Canvas math rendering"
   },
   "options_page__tex_math_gchart_label": {
     "message": "Math rendering using Google Chart API (deprecated)",
     "description": "Label for GChart math rendering option"
   },
-  "options_page__tex_math_privacy_issue_1": {
+  "options_page__tex_math_gchart_label-Title": {
     "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
     "description": "one of the TeX math privacy concerns"
   },
-  "options_page__tex_math_privacy_issue_2": {
-    "message": "If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.",
-    "description": "one of the TeX math privacy concerns"
-  },
-  "options_page__tex_math_gchart_backtick": {
-    "message": "With this option, you must surround your math code with backticks.",
-    "description": "additional note for Gchart math rendering"
-  },
-
 
   "__WET_GROUP__usage": { "message": "Howto" },
   "options_page__howto": {

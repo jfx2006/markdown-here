@@ -260,8 +260,21 @@ pre {
 .input-wrapper > input {
     display: flex;
     position: relative;
+    margin-top: 5px;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+.input-wrapper-block {
+    display: block;
+}
+
+.input-wrapper-block > .input-wrapper-block {
+    margin-left: 30px;
+}
+
+#math-gchart-url {
+    margin-left: 20px;
 }
 
 #saved-msg {

@@ -233,7 +233,7 @@ import OptionsStore from "./options-storage.js"
     const changesElem = document.getElementById("mdhrChangeList")
     const changes = await fetchExtFile("/CHANGES.md")
 
-    const response = await Utils.makeRequestToBGScript("render", { mdText: changes })
+    const response = await Utils.makeRequestToBGScript("render-md", { mdText: changes })
     changesElem.innerHTML = escapeHTML`${response.html}`
   }
 
@@ -253,17 +253,31 @@ import OptionsStore from "./options-storage.js"
 
   function handleMathRenderer(e) {
     // Run when enabling/disabling/changing Math Renderer
-    let selected = document.querySelector("[name='math-renderer']:checked")
-    let value = selected.value
-
-    let e_math_url = document.getElementById("math-value")
-    let e_math_url_reset = document.getElementById("math-reset-button")
-    if (value === "gchart") {
-      e_math_url.disabled = false
-      e_math_url_reset.disabled = false
+    let enabled = document.getElementById("math-renderer-enabled")
+    if (enabled.checked) {
+      document.querySelectorAll("[name=math-renderer]").forEach((elem) => {
+        elem.disabled = false
+      })
+      let value = document.querySelector("[name=math-renderer]:checked")?.value
+      if (!value) {
+        document.getElementById("math-renderer-texzilla").checked = true
+        value = "texzilla"
+      }
+      let e_math_url = document.getElementById("math-value")
+      let e_math_url_reset = document.getElementById("math-reset-button")
+      if (value === "gchart") {
+        e_math_url.disabled = false
+        e_math_url_reset.disabled = false
+      } else {
+        e_math_url.disabled = true
+        e_math_url_reset.disabled = true
+      }
     } else {
-      e_math_url.disabled = true
-      e_math_url_reset.disabled = true
+      document.querySelectorAll("[name=math-renderer]").forEach((elem) => {
+        elem.disabled = true
+      })
+      document.getElementById("math-value").disabled = true
+      document.getElementById("math-reset-button").disabled = true
     }
   }
 

@@ -4,6 +4,7 @@
   <title>Settings | Markdown Here Revival</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="slashroot" content="..">
   <link rel="stylesheet" href="../vendor/bootswatch.css">
   <link rel="stylesheet" href="options.css">
   <script src="../utils.js"></script>
@@ -106,19 +107,13 @@
             </div>
           </div>
 
-          <!-- Options -->
+          <!-- Markdown Features -->
           <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab" id="options">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
                 <span data-i18n="options_title">Options</span>
               </div>
               <div class="card-body">
-                <div class="form-group">
-                  <div class="form-check">
-                    <input id="gfm-line-breaks" class="form-check-input" type="checkbox" name="gfm-line-breaks-enabled"/>
-                    <label class="form-check-label" for="gfm-line-breaks" data-i18n="gfm_line_breaks_enabled_label">Enable GFM line breaks</label>
-                  </div>
-                </div>
                 <div class="form-group">
                   <div class="form-check">
                     <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
@@ -128,6 +123,29 @@
                       but forgot to render it (i.e., click "Markdown Toggle") before sending.
                       This may need to be disabled if it interferes with your ability to send email.
                     </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="form-check">
+                    <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
+                    <div class="input-wrapper">
+                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
+                <span data-i18n="features_title">Markdown Features</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input id="gfm-line-breaks" class="form-check-input" type="checkbox" name="gfm-line-breaks-enabled"/>
+                    <label class="form-check-label" for="gfm-line-breaks" data-i18n="gfm_line_breaks_enabled_label">Enable GFM line breaks</label>
                   </div>
                 </div>
                 <div class="form-group">
@@ -144,89 +162,41 @@
                     <!-- <div class="text-muted" data-i18n="smart_replacements_2"></div> -->
                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="card my-4 shadow">
-              <div class="card-header h4 rounded-0">
-                <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
-              </div>
-              <div class="card-body">
                 <div class="form-group">
-                  <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
-                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
+                  <div class="input-wrapper-block">
+                    <div class="form-check">
+                      <input id="math-renderer-enabled" class="form-check-input" type="checkbox" name="math-renderer-enabled" />
+                      <label class="form-check-label" for="math-renderer-enabled" data-i18n="tex_math_title">TeX Mathematical
+                        Formulae Support</label>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card my-4 shadow">
-              <div class="card-header h4 rounded-0">
-                <span data-i18n="tex_math_title">TeX Mathematical Formulae Support</span>
-              </div>
-              <div class="card-body">
-                <div class="form-group">
-                  <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="math-renderer-disabled" class="form-check-input" type="radio" name="math-renderer"
-                             value="disabled"/>
-                      <label class="form-check-label" for="math-renderer-disabled" data-i18n="tex_math_disabled">Disabled</label>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="math-renderer-texzilla" class="form-check-input" type="radio" name="math-renderer"
-                              value="texzilla"/>
-                      <label class="form-check-label" for="math-renderer-texzilla" data-i18n="tex_math_texzilla_label">
-                        TeXZilla and HTML Canvas rendering</label>
-                    </div>
-                    <ul class="text-muted">
-                      <li data-i18n="tex_math_texzilla_description">
-                        Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.
-                      </li>
-                      <li data-i18n="tex_math_texzilla_description2">
-                        With this option, do not use backticks around your formula.
-                      </li>
-                      <li>
-                        <code>$a^2 + b^2 = c^2$</code>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="form-check">
-                    <div class="input-wrapper">
-                      <input id="math-renderer-gchart" class="form-check-input" type="radio" name="math-renderer"
-                             value="gchart"/>
-                      <label class="form-check-label" for="math-renderer-gchart" data-i18n="tex_math_gchart_label">
-                        Math rendering using Google Chart API (deprecated)</label>
-                    </div>
-                    <div>
-                      <label class="form-check-label" for="math-value"></label>
-                      <input id="math-value" class="form-text" type="text" name="math-value"/>
-                      <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
-                        <span data-i18n="reset_button">Reset</span>
-                      </button>
-                    </div>
-                    <ul class="text-muted">
-                      <li data-i18n="tex_math_privacy_issue_1">
-                        To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.
-                      </li>
-                      <li data-i18n="tex_math_privacy_issue_2">
-                        If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
-                      </li>
-                      <li data-i18n="tex_math_gchart_backtick">
-                        With this option, you must surround your math code with backticks.
-                      </li>
-                      <li>
-                        <code>`$a^2 + b^2 = c^2$`</code>
-                      </li>
-                    </ul>
+                    <div class="input-wrapper-block">
+                      <div class="form-check">
+                        <input id="math-renderer-texzilla" class="form-check-input" type="radio" name="math-renderer"
+                               value="texzilla"/>
+                        <label class="form-check-label" for="math-renderer-texzilla" data-i18n="tex_math_texzilla_label"
+                              title="Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.">
+                          TeXZilla and HTML Canvas rendering</label>
+                      </div>
+                      <div class="form-check">
+                        <input id="math-renderer-gchart" class="form-check-input" type="radio" name="math-renderer"
+                               value="gchart"/>
+                        <label class="form-check-label" for="math-renderer-gchart" data-i18n="tex_math_gchart_label"
+                               title="To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.">
+                          Math rendering using Google Chart API (deprecated)</label>
+                        </div>
+                        <div id="math-gchart-url">
+                          <label class="form-check-label" for="math-value"></label>
+                          <input id="math-value" class="form-text" type="text" name="math-value"/>
+                          <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
+                            <span data-i18n="reset_button">Reset</span>
+                          </button>
+                        </div>
+                      </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
           <!-- Theme -->
           <div role="tabpanel" class="tab-pane fade" aria-labelledby="theme-tab" id="theme">
             <div class="card my-4 shadow">
@@ -808,7 +778,7 @@
               </div>
             </div>
           </div>
-          </div>
+        </div>
         </form>
       </main>
 

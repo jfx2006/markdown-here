@@ -111,17 +111,12 @@
     "message": "Wsparcie dla Wzorów Matematycznych TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
-  "options_page__tex_math_privacy_issue_1": {
+  "options_page__tex_math_gchart_label-Title": {
     "message": "Aby wygenerować obraz wzoru, wysłane zostaje zapytanie do serwisu Google. W praktyce znaczy to, że dzielisz się swoim wzorem z serwisem Google. Znaczy to również, że odbiorcy twojej wiadomości wyślą zapytanie do serwisu Google w celu wyświetlenia obrazu.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
   },
-  "options_page__tex_math_privacy_issue_2": {
-    "message": "Jeśli modyfikujesz tag generowania wzoru, użyj bezpiecznej (https://) ścieżki. Nie wszystkie serwisy generujące posiadają opcję bezpieczną.",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "6377d919509c05850fd38caccbcfbda4"
-  },
-  "options_page__hotkey_title": {
+    "options_page__hotkey_title": {
     "message": "Skrót Klawiszowy",
     "description": "A section title",
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"

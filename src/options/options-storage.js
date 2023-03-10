@@ -20,13 +20,15 @@ import {
   migrate_smartReplacements,
   migrate_removeUnused,
   migrate_mathRenderer,
+  migrate_mathRenderer2,
 } from "./options_migration.js"
 
 export const kOptDefaults = {
   "main-css": "",
   "syntax-css": "nnfx-light.css",
   "math-value": `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
-  "math-renderer": "disabled",
+  "math-renderer-enabled": false,
+  "math-renderer": "texzilla",
   "hotkey-input": "Ctrl+Alt+M",
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
@@ -43,6 +45,7 @@ let MIGRATIONS = [
   migrate_MainCSS,
   migrate_smartReplacements,
   migrate_mathRenderer,
+  migrate_mathRenderer2,
   migrate_removeUnused,
 ]
 
