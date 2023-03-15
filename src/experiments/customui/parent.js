@@ -268,19 +268,23 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
 
     // Sets sensible sizes for an editor sidebar frame
     const setWebextFrameSizesForEditor = function(frame, options) {
-      frame.parentElement.style.display = "inline";
+      frame.parentElement.style.display = options.hidden ? "none" : "inline";
       frame.parentElement.style.width = (options.width || 650) + "px";
       frame.style.height = "100%";
       frame.style.width = "100%";
-      frame.style.display = options.hidden ? "none" : "block";
+      frame.style.display = "block";
       frame.addCustomUILocalOptionsListener(lOptions => {
         if (typeof lOptions.width === "number") {
           frame.parentElement.style.width = lOptions.width + "px";
+          frame.setCustomUIContextProperty("width", lOptions.width)
         }
         if (typeof lOptions.hidden === "boolean") {
-          frame.style.display = lOptions.hidden ? "none" : "block";
+          frame.parentElement.style.display = lOptions.hidden ? "none" : "inline";
+          frame.setCustomUIContextProperty("hidden", lOptions.hidden)
         }
       });
+      frame.setCustomUIContextProperty("hidden", options.hidden)
+      frame.setCustomUIContextProperty("width", options.width)
     };
 
     // Creates and inserts the WebExtension frame for the given URL and location
@@ -605,10 +609,9 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
               window.document,
               "customui-editor-wrapper"
             );
-            const win = context.extension.windowManager.convert(window)
+            const win = context.extension.windowManager.convert(window);
             options.width = Math.floor(win.width / 2)
             setWebextFrameSizesForEditor(frame, options);
-
 
             frame.setCustomUIContextProperty("windowId", win.id);
             frame.setCustomUIContextProperty("windowType", win.type)

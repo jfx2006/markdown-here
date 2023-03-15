@@ -6,6 +6,7 @@
 
 import DOMPurify from "../vendor/purify.es.js"
 import { getMainCSS, getSyntaxCSS } from "../async_utils.mjs"
+import OptionsStore from "../options/options-storage.js"
 
 function escapeHTML(strings, html) {
   return `${DOMPurify.sanitize(html)}`
@@ -26,10 +27,41 @@ async function renderMDEmail(unsanitized_html) {
   return true
 }
 
+async function togglePreview() {
+  const context = await messenger.ex_customui.getContext()
+  await messenger.ex_customui.setLocalOptions({ hidden: !context.hidden })
+  return context.hidden
+}
+
+const onContextChange = async function (context) {
+  try {
+    await OptionsStore.set({ "preview-hidden": context.hidden, "preview-width": context.width })
+    // ... in real code, you would do something with the contact here...
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+messenger.ex_customui.onEvent.addListener(async (type, details) => {
+  switch (type) {
+    case "context":
+      // This event fires if the context is changed dynamically: for example,
+      // the user might alter the address book to create a new contact in
+      await onContextChange(details)
+      return
+  }
+})
+
 async function previewFrameLoaded(e) {
   await setMDPreviewStyles()
 
+  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
+
   const context = await messenger.ex_customui.getContext()
+  await messenger.ex_customui.setLocalOptions({
+    hidden: savedState.hidden,
+    width: savedState.width,
+  })
   const win = await messenger.windows.get(context.windowId, {
     populate: true,
     windowTypes: ["messageCompose"],
@@ -46,9 +78,10 @@ p_iframe.src = "preview_iframe.html"
 
 messenger.runtime.onMessage.addListener(async function (request, sender, responseCallback) {
   if (
-    typeof sender.tab === "undefined" ||
-    typeof sender.tab.id === "undefined" ||
-    sender.tab.id < 0
+    (typeof sender.tab === "undefined" ||
+      typeof sender.tab.id === "undefined" ||
+      sender.tab.id < 0) &&
+    request.windowId === undefined
   ) {
     return false
   }
@@ -56,13 +89,18 @@ messenger.runtime.onMessage.addListener(async function (request, sender, respons
     return false
   }
   const context = await messenger.ex_customui.getContext()
-  if (sender.tab.windowId !== context.windowId) {
-    return false
-  }
   if (context.windowType !== "messageCompose") {
     return false
   }
   if (request.action === "render-preview") {
+    if (sender.tab.windowId !== context.windowId) {
+      return false
+    }
     return await renderMDEmail(request.payload)
+  } else if (request.action === "toggle-preview") {
+    if (request.windowId !== context.windowId) {
+      return false
+    }
+    return await togglePreview()
   }
 })

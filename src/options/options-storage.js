@@ -35,6 +35,8 @@ export const kOptDefaults = {
   "smart-replacements-enabled": true,
   "emoji-shortcode-enabled": true,
   "last-version": "0",
+  "preview-width": 650,
+  "preview-hidden": false,
 }
 
 let MIGRATIONS = [

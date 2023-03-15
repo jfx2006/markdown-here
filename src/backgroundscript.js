@@ -181,7 +181,7 @@ async function doRender(mdText) {
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {
-  return composeRender(tab.id)
+  return messenger.runtime.sendMessage({ action: "toggle-preview", windowId: tab.windowId })
 })
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -359,8 +359,13 @@ async function onComposeReady(tab) {
   return {}
 }
 
-// Register custom UI compose editor
-await messenger.ex_customui.add(
-  messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
-  messenger.runtime.getURL("compose_preview/compose_preview.html")
-)
+async function injectMDPreview() {
+  // Register custom UI compose editor
+  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
+  await messenger.ex_customui.add(
+    messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
+    messenger.runtime.getURL("compose_preview/compose_preview.html"),
+    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] }
+  )
+}
+await injectMDPreview()
