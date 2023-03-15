@@ -44,6 +44,14 @@ I cannot locate a current version of this library, so this is the same
 one from the markdown-here repository. There are several candidates to
 replace it.
 
+Emoji stuff:
+data/emoji_codes.json comes from: (MIT Licensed)
+https://cdn.jsdelivr.net/npm/emojibase-data@7.0.1/en/shortcodes/github.json
+marked_emoji.js is a modification of: (MIT Licensed)
+https://github.com/UziTech/marked-emoji/blob/main/src/index.js
+My version assumes that most people have an emoji font these days and using the
+images causes bloat.
+
 Use of mailextension experiments:
 The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
 is used. Plus https://github.com/jobisoft/notificationbar-API/pull/17.
