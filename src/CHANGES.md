@@ -1,5 +1,6 @@
-#### v3.5.0
+#### v3.4.5
 * Add emoji shortcode (Github style) support
+  eg. `:smiley:` becomes 😃
 
 #### v3.4.3
 * Don't run onInstalled callback for unnecessary reasons
