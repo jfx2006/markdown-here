@@ -334,10 +334,19 @@ class OptionsSync<UserOptions extends Options> {
 		if (
 			areaName === this.storageType
 			&& changes
-			&& changes['newValue']
 			&& (!document.hasFocus() || !this._form!.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
 		) {
-			this._updateForm(this._form!, changes['newValue']);
+			const newValues: Record<string, any> = {};
+			for (const change in changes) {
+				if (changes[change].newValue !== undefined) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					newValues[change] = changes[change].newValue;
+				}
+			}
+
+			if (Object.keys(newValues).length > 0) {
+				this._updateForm(this._form!, newValues as UserOptions);
+			}
 		}
 	};
 }

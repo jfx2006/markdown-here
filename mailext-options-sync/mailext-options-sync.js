@@ -806,11 +806,19 @@ class OptionsSync {
     return serialize(form, { include: include })
   }
   _handleStorageChangeOnForm = (changes, areaName) => {
-    areaName !== this.storageType ||
-      !changes ||
-      !changes.newValue ||
-      (document.hasFocus() && this._form.contains(document.activeElement)) ||
-      this._updateForm(this._form, changes.newValue)
+    if (
+      areaName === this.storageType &&
+      changes &&
+      (!document.hasFocus() || !this._form.contains(document.activeElement))
+    ) {
+      const newValues = {}
+      for (const change in changes)
+        void 0 !== changes[change].newValue &&
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          (newValues[change] = changes[change].newValue)
+      Object.keys(newValues).length > 0 &&
+        this._updateForm(this._form, newValues)
+    }
   }
 }
 export { OptionsSync as default }

@@ -37,7 +37,8 @@
 			"webextensions"
 		],
     "ignores": [
-      "mail-ext-types.d.ts"
+      "mail-ext-types.d.ts",
+      "mailext-options-sync.js"
     ],
 		"rules": {
 			"@typescript-eslint/no-unsafe-return": "off",
