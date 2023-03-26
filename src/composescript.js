@@ -88,7 +88,7 @@ async function doRenderPreview() {
     })
     const renderedMarkdown = mdhHtmlToText.postprocess(result_html)
     const rv = await messenger.runtime.sendMessage({
-      action: "render-preview",
+      action: "cp.render-preview",
       payload: renderedMarkdown,
     })
     return rv

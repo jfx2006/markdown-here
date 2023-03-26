@@ -70,7 +70,10 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
   if (!request.action && request.popupCloseMode) {
     return false
   }
-
+  // Ignore messages for compose-preview pane
+  if (request.action.startsWith("cp.")) {
+    return false
+  }
   if (request.action === "render") {
     return doRender(request.mdText)
   } else if (request.action === "render-md") {
@@ -151,9 +154,6 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return onComposeReady(sender.tab)
   } else if (request.action === "renderer-reset") {
     return resetMarked()
-  } else if (request.action === "render-preview") {
-    // This message is intended for the customui.compose_editor doing live preview
-    return false
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
@@ -181,7 +181,7 @@ async function doRender(mdText) {
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {
-  return messenger.runtime.sendMessage({ action: "toggle-preview", windowId: tab.windowId })
+  return messenger.runtime.sendMessage({ action: "cp.toggle-preview", windowId: tab.windowId })
 })
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -234,7 +234,11 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
     rv = "ok"
   }
   if (rv === "ok") {
-    return Promise.resolve({})
+    const msgHTML = await messenger.runtime.sendMessage({
+      action: "cp.get-content",
+      windowId: tab.windowId,
+    })
+    return Promise.resolve({ cancel: false, details: { body: msgHTML } })
   } else {
     return Promise.resolve({ cancel: true })
   }

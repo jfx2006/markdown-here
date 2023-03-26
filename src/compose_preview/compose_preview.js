@@ -33,6 +33,15 @@ async function togglePreview() {
   return context.hidden
 }
 
+async function getMsgContent() {
+  const preview = await requestPreview()
+  if (!preview) {
+    throw new Error("Unable to render email!")
+  }
+  const serializer = new XMLSerializer()
+  return serializer.serializeToString(p_iframe.contentDocument)
+}
+
 const onContextChange = async function (context) {
   try {
     await OptionsStore.set({ "preview-hidden": context.hidden, "preview-width": context.width })
@@ -52,24 +61,30 @@ messenger.ex_customui.onEvent.addListener(async (type, details) => {
   }
 })
 
-async function previewFrameLoaded(e) {
-  await setMDPreviewStyles()
-
-  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
-
+async function requestPreview(callback) {
+  let rv = false
   const context = await messenger.ex_customui.getContext()
-  await messenger.ex_customui.setLocalOptions({
-    hidden: savedState.hidden,
-    width: savedState.width,
-  })
   const win = await messenger.windows.get(context.windowId, {
     populate: true,
     windowTypes: ["messageCompose"],
   })
   const tabId = win.tabs[0]?.id
   if (tabId) {
-    messenger.tabs.sendMessage(tabId, { action: "request-preview" })
+    rv = await messenger.tabs.sendMessage(tabId, { action: "request-preview" })
   }
+  return rv
+}
+
+async function previewFrameLoaded(e) {
+  await setMDPreviewStyles()
+
+  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
+
+  await messenger.ex_customui.setLocalOptions({
+    hidden: savedState.hidden,
+    width: savedState.width,
+  })
+  await requestPreview()
 }
 
 const p_iframe = document.getElementById("preview_frame")
@@ -88,19 +103,30 @@ messenger.runtime.onMessage.addListener(async function (request, sender, respons
   if (!request.action) {
     return false
   }
+  if (!request.action.startsWith("cp.")) {
+    return false
+  }
   const context = await messenger.ex_customui.getContext()
   if (context.windowType !== "messageCompose") {
     return false
   }
-  if (request.action === "render-preview") {
-    if (sender.tab.windowId !== context.windowId) {
-      return false
-    }
-    return await renderMDEmail(request.payload)
-  } else if (request.action === "toggle-preview") {
-    if (request.windowId !== context.windowId) {
-      return false
-    }
-    return await togglePreview()
+  switch (request.action) {
+    case "cp.render-preview":
+      if (sender.tab.windowId !== context.windowId) {
+        return false
+      }
+      return await renderMDEmail(request.payload)
+    case "cp.toggle-preview":
+      if (request.windowId !== context.windowId) {
+        return false
+      }
+      return await togglePreview()
+    case "cp.get-content":
+      if (request.windowId !== context.windowId) {
+        return false
+      }
+      return await getMsgContent()
+    default:
+      console.log(`Compose Preview: invalid action: ${request.action}`)
   }
 })
