@@ -77,6 +77,7 @@ messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
       }
     }
   }
+  doRenderPreview()
 })
 
 async function doRenderPreview() {

@@ -12,13 +12,17 @@ function escapeHTML(strings, html) {
   return `${DOMPurify.sanitize(html)}`
 }
 
-async function setMDPreviewStyles() {
-  return Promise.all([getMainCSS(), getSyntaxCSS()]).then(([main_css, syntax_css]) => {
-    let style_elem = p_iframe.contentDocument.getElementById("main_css")
-    style_elem.replaceChildren(p_iframe.contentDocument.createTextNode(main_css))
+async function addStyleSheet(id, css) {
+  const style_elem = p_iframe.contentDocument.createElement("style")
+  style_elem.id = id
+  style_elem.replaceChildren(p_iframe.contentDocument.createTextNode(css))
+  p_iframe.contentDocument.head.appendChild(style_elem)
+}
 
-    style_elem = p_iframe.contentDocument.getElementById("syntax_css")
-    style_elem.replaceChildren(p_iframe.contentDocument.createTextNode(syntax_css))
+async function setMDPreviewStyles() {
+  return Promise.all([getMainCSS(), getSyntaxCSS()]).then(async ([main_css, syntax_css]) => {
+    await addStyleSheet("main_css", main_css)
+    await addStyleSheet("syntax_css", syntax_css)
   })
 }
 
@@ -33,13 +37,44 @@ async function togglePreview() {
   return context.hidden
 }
 
+function dropUnusedCSS(html) {
+  const NO_MD_SELECTOR = ":not(.markdown-here-exclude,  .markdown-here-exclude *)"
+  const STYLE_ELEM_IDS = ["syntax_css", "main_css"]
+  let final_css = []
+  for (const stylesheet of html.styleSheets) {
+    if (STYLE_ELEM_IDS.includes(stylesheet.ownerNode.id)) {
+      for (let i = stylesheet.cssRules.length - 1; i >= 0; i--) {
+        const origRule = stylesheet.cssRules[i]
+        if (origRule.constructor.name === "CSSStyleRule") {
+          // CSSStyleRule
+          const rule = `:where(${origRule.selectorText}${NO_MD_SELECTOR}`
+          const selectorMatches = Array.from(html.body.querySelectorAll(rule))
+          if (selectorMatches.length > 0) {
+            final_css.push(origRule.cssText)
+          }
+        }
+      }
+    }
+  }
+  for (const removeElemId of STYLE_ELEM_IDS) {
+    html.getElementById(removeElemId).remove()
+  }
+  return final_css.join("\n")
+}
+
 async function getMsgContent() {
   const preview = await requestPreview()
   if (!preview) {
     throw new Error("Unable to render email!")
   }
+  const html_msg = p_iframe.contentDocument.cloneNode(true)
+  const emailCSS = dropUnusedCSS(html_msg)
+  const emailCssElem = html_msg.createElement("style")
+  emailCssElem.replaceChildren(html_msg.createTextNode(emailCSS))
+  html_msg.head.appendChild(emailCssElem)
+
   const serializer = new XMLSerializer()
-  return serializer.serializeToString(p_iframe.contentDocument)
+  return serializer.serializeToString(html_msg)
 }
 
 const onContextChange = async function (context) {
@@ -61,8 +96,7 @@ messenger.ex_customui.onEvent.addListener(async (type, details) => {
   }
 })
 
-async function requestPreview(callback) {
-  let rv = false
+async function requestPreview() {
   const context = await messenger.ex_customui.getContext()
   const win = await messenger.windows.get(context.windowId, {
     populate: true,
@@ -70,9 +104,8 @@ async function requestPreview(callback) {
   })
   const tabId = win.tabs[0]?.id
   if (tabId) {
-    rv = await messenger.tabs.sendMessage(tabId, { action: "request-preview" })
+    return await messenger.tabs.sendMessage(tabId, { action: "request-preview" })
   }
-  return rv
 }
 
 async function previewFrameLoaded(e) {
@@ -84,14 +117,13 @@ async function previewFrameLoaded(e) {
     hidden: savedState.hidden,
     width: savedState.width,
   })
-  await requestPreview()
 }
 
 const p_iframe = document.getElementById("preview_frame")
 p_iframe.addEventListener("load", previewFrameLoaded)
 p_iframe.src = "preview_iframe.html"
 
-messenger.runtime.onMessage.addListener(async function (request, sender, responseCallback) {
+messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
   if (
     (typeof sender.tab === "undefined" ||
       typeof sender.tab.id === "undefined" ||
@@ -106,27 +138,28 @@ messenger.runtime.onMessage.addListener(async function (request, sender, respons
   if (!request.action.startsWith("cp.")) {
     return false
   }
-  const context = await messenger.ex_customui.getContext()
-  if (context.windowType !== "messageCompose") {
-    return false
-  }
-  switch (request.action) {
-    case "cp.render-preview":
-      if (sender.tab.windowId !== context.windowId) {
-        return false
-      }
-      return await renderMDEmail(request.payload)
-    case "cp.toggle-preview":
-      if (request.windowId !== context.windowId) {
-        return false
-      }
-      return await togglePreview()
-    case "cp.get-content":
-      if (request.windowId !== context.windowId) {
-        return false
-      }
-      return await getMsgContent()
-    default:
-      console.log(`Compose Preview: invalid action: ${request.action}`)
-  }
+  return messenger.ex_customui.getContext().then((context) => {
+    if (context.windowType !== "messageCompose") {
+      return false
+    }
+    switch (request.action) {
+      case "cp.render-preview":
+        if (sender.tab.windowId !== context.windowId) {
+          return false
+        }
+        return renderMDEmail(request.payload)
+      case "cp.toggle-preview":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return togglePreview()
+      case "cp.get-content":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return getMsgContent()
+      default:
+        console.log(`Compose Preview: invalid action: ${request.action}`)
+    }
+  })
 })
