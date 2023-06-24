@@ -4,7 +4,6 @@
 
 var { EventEmitter, EventManager, ExtensionAPI } = ExtensionCommon;
 var { ExtensionError } = ExtensionUtils;
-var { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
 
 class Notification {
   constructor(notificationId, properties, parent) {
