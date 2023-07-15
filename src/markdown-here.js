@@ -110,7 +110,7 @@ https://github.com/adam-p/markdown-here/issues/85
     // Only look for elements directly below <body> to avoid problems with
     // nested quotes
     for (let selector of [
-      "body > div.moz-signature",
+      "body > .moz-signature",
       "body > blockquote[type=cite]",
       "body > div.moz-cite-prefix",
       "body > div.moz-forward-container",
