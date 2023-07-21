@@ -30,7 +30,7 @@ def get_strings_from_file(path, ext):
 
 def main():
     result = set()
-    src_root = osp.abspath(osp.join(osp.dirname(__file__), "..", "src"))
+    src_root = osp.abspath(osp.join(osp.dirname(__file__), "..", "extension"))
     for root, dirs, files in os.walk(src_root):
         for name in files:
             a, ext = osp.splitext(name)

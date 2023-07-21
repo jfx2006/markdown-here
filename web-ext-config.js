@@ -6,7 +6,7 @@ module.exports = {
     overwriteDest: true,
     filename: "{name}-{version}.xpi",
   },
-  sourceDir: "src",
+  sourceDir: "extension",
   ignoreFiles: ["**/test", "**/test/**"],
   run: {
     // must be in $PATH or a full path

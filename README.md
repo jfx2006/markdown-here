@@ -118,4 +118,4 @@ MIT License: See [the LICENSE file](LICENSE).
 
 ---
 
-[logo]: src/images/rocmarkdown.svg
+[logo]: extension/images/rocmarkdown.svg

@@ -14,7 +14,7 @@ A UNIX style shell (bash)
 - Run "make all"
 
 Running "make all" in the unpacked source directory will rebuild
-mailext-options-sync and copy the final output into src/options/. That
+mailext-options-sync and copy the final output into extension/options/. That
 output should match the version from the mailext-options-sync repository
 on  Gitlab (URL to the exact tag is below).
 Then web-ext build will generate the extension XPI file and place it in
@@ -55,7 +55,7 @@ Options UI pages:
   https://gitlab.com/jfx2006/mailext-options-sync/-/raw/v2.1.4/mailext-options-sync.js
 
   Additionally, the source for the included version is in the uploaded tar file.
-  The MDHR Makefile will build mailext-options-sync and copy it into src/options.
+  The MDHR Makefile will build mailext-options-sync and copy it into extension/options.
   Version 2.1.2 was built with node 14.17.0 and npm 6.14.13
 
 https://raw.githubusercontent.com/twbs/bootstrap/v5.2.2/dist/js/bootstrap.bundle.js

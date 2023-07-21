@@ -77,27 +77,30 @@ node tools/build.js -t cdn ${HLJS_LANGS[*]}
 
 mkdir highlightjs && mkdir highlightjs/styles
 # Use uncompressed styles
-mv src/styles/*.css highlightjs/styles/
+mv extension/styles/*.css highlightjs/styles/
 mv build/es/highlight.js build/es/highlight.min.js highlightjs/
 cp LICENSE highlightjs/
 
-python3 <<_EOF_
+# language=python
+python3 << _EOF_
 import os
 import json
 
+
 def mkname(n):
-     n=os.path.splitext(n)[0]
-     n=n.replace('-', ' ')
-     words=["{}{}".format(w[0].upper(), w[1:]) for w in n.split(' ')]
-     n=" ".join(words)
-     return n
+    n = os.path.splitext(n)[0]
+    n = n.replace("-", " ")
+    words = ["{}{}".format(w[0].upper(), w[1:]) for w in n.split(" ")]
+    n = " ".join(words)
+    return n
+
 
 css_files = os.listdir("highlightjs/styles/")
 css_files.sort()
-res={}
+res = {}
 for c in css_files:
-    name=mkname(c)
-    res[name]=c
+    name = mkname(c)
+    res[name] = c
 
 with open("highlightjs/styles/styles.json", "w") as fp:
     json.dump(res, fp, indent=2, sort_keys=True)
@@ -109,4 +112,4 @@ mv -f hljs/highlightjs .
 rm -rf hljs
 
 echo "Hopefully you have a built highlights ${HLJS_VER} in highlighjs/."
-echo "Move to your src/ directory to use it."
+echo "Move to your extension/ directory to use it."r

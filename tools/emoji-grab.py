@@ -59,7 +59,7 @@ def main():
         for s in shortcuts:
             emoji_shortcuts[s] = entities
 
-    with open("../src/data/emoji_codes.json", "w") as fp:
+    with open("../extension/data/emoji_codes.json", "w") as fp:
         json.dump(
             emoji_shortcuts,
             fp,
