@@ -647,6 +647,7 @@
       pngImg.alt = svgImg.alt
       pngImg.src = pngDataURL
       pngImg.classList.add(imgClass)
+      pngImg.style = "position: relative; top: 2px;"
       svgImg.replaceWith(pngImg)
     })
   }

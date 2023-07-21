@@ -10,7 +10,7 @@ import { marked } from "./vendor/marked.esm.js"
 function tex2SVG(aTeX, aRTL, aSize) {
   // Set default size.
   if (aSize === undefined) {
-    aSize = 24
+    aSize = 16
   }
   let svgImg = TeXZilla.toImage(aTeX, aRTL, true, aSize)
   svgImg.classList.add("math_texzilla_svg")
