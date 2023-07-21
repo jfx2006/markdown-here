@@ -73,6 +73,7 @@ async function SVG2PNG(svgImg, imgClass) {
       pngImg.alt = svgImg.alt
       pngImg.src = pngDataURL
       pngImg.classList.add(imgClass)
+      pngImg.style = "position: relative; top: 2px;"
       resolve(pngImg.outerHTML)
     })
   })
@@ -84,7 +85,7 @@ export async function TeX2PNG(aTeX, aRTL, aSize) {
   }
   // Set default size.
   if (aSize === undefined) {
-    aSize = 24
+    aSize = 16
   }
   let svgImg = TeXZilla.toImage(aTeX, aRTL, true, aSize)
   svgImg.classList.add("math_texzilla_svg")

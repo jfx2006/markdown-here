@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Markdown in plain text signatures was not ignored [#57](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/57)
+- TeXZilla math images were too big for default font size [#58](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/58);
+  **This just makes the math images smaller; a future fix is planned to use the
+  default font size set in Thunderbird preferences.**
 
 [HEAD]: https://gitlab.com/jfx2006/markdown-here-revival/-/tags/vHEAD
 
