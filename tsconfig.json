@@ -3,6 +3,7 @@
     "allowJs": true,
     "checkJs": true,
     "module": "es2022",
+    "target": "es2022",
     "strictNullChecks": true
   },
   "include": ["extension/**/*"],
