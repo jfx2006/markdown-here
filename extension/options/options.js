@@ -22,7 +22,7 @@ import OptionsStore from "./options-storage.js"
   const previewInput = document.getElementById("preview_input")
   const previewIframe = document.getElementById("preview")
   let inputDirty = true
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   let checkChangeTimeout = null
   let savedMsgToast
 
@@ -231,7 +231,7 @@ import OptionsStore from "./options-storage.js"
 
   async function loadChangeList() {
     const changesElem = document.getElementById("mdhrChangeList")
-    const changes = await fetchExtFile("/CHANGES.md")
+    const changes = await fetchExtFile("/CHANGELOG.md")
 
     const response = await Utils.makeRequestToBGScript("render-md", { mdText: changes })
     changesElem.innerHTML = escapeHTML`${response.html}`

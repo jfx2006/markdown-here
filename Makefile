@@ -1,6 +1,7 @@
 
 all: extension
 	npm install
+	cp -f CHANGELOG.md extension/CHANGELOG.md
 	npm run build
 
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
