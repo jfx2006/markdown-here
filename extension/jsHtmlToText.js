@@ -20,7 +20,7 @@ HTML decoding functionality provided by: http://code.google.com/p/google-trekker
 adam-p: modified to be a module
 */
 
-/*global module:false messenger:false global:false */
+/*global module:false  global:false */
 
 ;(function () {
   function htmlToText(html, extensions) {

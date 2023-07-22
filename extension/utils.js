@@ -9,7 +9,7 @@
  * This module assumes that a global `window` is available.
  */
 
-/*global module:false messenger:false global:false */
+/*global module:false global:false */
 
 ;(function () {
   "use strict"

@@ -1,10 +1,8 @@
-/*
+/**
  * Copyright JFX 2021
  * Copyright Adam Pritchard 2016
  * MIT License
- */
-
-/*global messenger:false */
+ **/
 
 /*
  * Mail Extension background script.
@@ -60,11 +58,7 @@ messenger.runtime.onInstalled.addListener(async (details) => {
 messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
   // The content script can load in a not-real tab (like the search box), which
   // has an invalid `sender.tab` value. We should just ignore these pages.
-  if (
-    typeof sender.tab === "undefined" ||
-    typeof sender.tab.id === "undefined" ||
-    sender.tab.id < 0
-  ) {
+  if (typeof sender.tab?.id === "undefined" || sender.tab.id < 0) {
     return false
   }
   if (!request.action && request.popupCloseMode) {
@@ -131,7 +125,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       sender.tab.windowId,
       getMessage("unrendering_modified_markdown_warning"),
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("unrender_button"), getMessage("cancel_button")]
+      [getMessage("unrender_button"), getMessage("cancel_button")],
     )
   } else if (request.action === "test-request") {
     responseCallback("test-request-good")
@@ -228,7 +222,7 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
       tab.windowId,
       message,
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")]
+      [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
     )
   } else {
     rv = "ok"
@@ -369,7 +363,7 @@ async function injectMDPreview() {
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
-    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] }
+    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] },
   )
 }
 await injectMDPreview()

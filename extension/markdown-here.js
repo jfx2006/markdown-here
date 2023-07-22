@@ -34,7 +34,7 @@ For info about the ideas we had and experiments we ran, see:
 https://github.com/adam-p/markdown-here/issues/85
 */
 
-/* global module:false Utils:false messenger:false global:false MdhHtmlToText:false */
+/* global module:false Utils:false global:false MdhHtmlToText:false */
 
 ;(function () {
   "use strict"

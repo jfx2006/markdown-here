@@ -7,7 +7,7 @@
  * Options page UI code
  */
 
-/* global messenger:false, Utils:false bootstrap:false */
+/* global  Utils:false bootstrap:false */
 
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.js"

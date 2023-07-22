@@ -1,6 +1,13 @@
 mailext-options-sync/
 testing_profile/
+extension/highlightjs
 extension/vendor/
 extension/experiments/notificationbar.js
 extension/experiments/customui/*.js
 extension/options/mailext-options-sync.js
+extension/options/shortcuts.js
+extension/test/chai.js
+extension/test/jquery.slim.js
+extension/test/mocha.js
+extension/test/underscore.js
+web-ext-config.js

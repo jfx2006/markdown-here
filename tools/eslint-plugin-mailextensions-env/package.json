@@ -1,0 +1,7 @@
+{
+  "name": "eslint-plugin-mailextensions-env",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": ["eslint", "eslintplugin"]
+}

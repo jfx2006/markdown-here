@@ -3,7 +3,7 @@
  * MIT License
  */
 
-import OptionsStore from "./options/options-storage.js";
+import OptionsStore from "./options/options-storage.js"
 
 export function wxGetUrl(path) {
   const url = window.messenger?.runtime.getURL(path)
@@ -18,7 +18,7 @@ export function wxGetUrl(path) {
   return u.href
 }
 
-export async function fetchExtFile(path, json=false) {
+export async function fetchExtFile(path, json = false) {
   const url = wxGetUrl(path)
   const response = await fetch(url)
   if (!response.ok) {
@@ -70,13 +70,27 @@ export async function getEmojiShortcodes() {
 // Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 export async function sha256Digest(text) {
   const msgUint8 = new TextEncoder().encode(text)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
   return hashHex
 }
 
-const LANGS = ["de", "en", "es", "fr", "it", "ja", "ko", "pl", "pt_BR", "ru", "tr", "zh_CN", "zh_TW"]
+const LANGS = [
+  "de",
+  "en",
+  "es",
+  "fr",
+  "it",
+  "ja",
+  "ko",
+  "pl",
+  "pt_BR",
+  "ru",
+  "tr",
+  "zh_CN",
+  "zh_TW",
+]
 
 export async function getLanguage() {
   let accepted_langs = await messenger.i18n.getAcceptLanguages()
@@ -88,10 +102,10 @@ export async function getLanguage() {
   return "en"
 }
 
-export function getMessage(messageID, subs=null) {
+export function getMessage(messageID, subs = null) {
   let message = window.messenger?.i18n.getMessage(messageID, subs) || null
   if (!message) {
-    console.error('Could not find message ID: ' + messageID)
+    console.error("Could not find message ID: " + messageID)
     return null
   }
   return message

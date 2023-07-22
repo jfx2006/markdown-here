@@ -4,8 +4,7 @@
  */
 
 "use strict"
-/*global messenger:false, markdownHere:false, htmlToText:false,
-    Utils:false, MdhHtmlToText:false */
+/*global markdownHere:false, htmlToText:false, Utils:false, MdhHtmlToText:false */
 
 function requestHandler(request, sender, sendResponse) {
   var focusedElem, mdReturn

@@ -3,8 +3,6 @@
  * MIT License
  */
 
-/*global messenger:false */
-
 import { getHljsStyles, sha256Digest } from "../async_utils.mjs"
 // Sha256 Checksums for old versions of default.css
 const OLD_CSS_SUMS = [

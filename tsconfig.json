@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "es2022",
+    "strictNullChecks": true
+  },
+  "include": ["extension/**/*"],
+  "exclude": [
+    "extension/vendor/*.js",
+    "extension/highlightjs/*.js",
+    "extension/experiments/notificationbar.js",
+    "extension/experiments/customui/*.js",
+    "extension/options/mailext-options-sync.js",
+    "extension/options/shortcuts.js",
+    "extension/test/chai.js",
+    "extension/test/jquery.slim.js",
+    "extension/test/mocha.js",
+    "extension/test/underscore.js"
+  ]
+}

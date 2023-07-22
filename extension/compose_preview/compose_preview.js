@@ -2,7 +2,6 @@
  * Copyright JFX 2023
  * MIT License
  */
-/* global messenger:false module:false Utils:false MdhHtmlToText:false */
 
 import DOMPurify from "../vendor/purify.es.js"
 import { getMainCSS, getSyntaxCSS } from "../async_utils.mjs"
