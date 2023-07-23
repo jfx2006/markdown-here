@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Markdown mode live preview
 
+### Fixed
+
+- Markdown in plain text signatures was not ignored [#57](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/57)
+
 [HEAD]: https://gitlab.com/jfx2006/markdown-here-revival/-/tags/vHEAD
 
 [//]: # (C3-2-DKAC:GGL:Rjfx2006/markdown-here-revival:Tv{t})

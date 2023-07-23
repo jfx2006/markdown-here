@@ -111,6 +111,8 @@ we have the DOM available? String-processing the HTML seems suboptimal.
     // inner text/html) that it doesn't expect/want. But we want some tag blocks
     // to remain intact.
     this.excludeTagBlocks("div", false, `class="moz-signature`)
+    // Plain text signatures are in <pre> tags, not <div>
+    this.excludeTagBlocks("pre", false, `class="moz-signature`)
     this.excludeTagBlocks("blockquote", false)
     this.excludeTagBlocks("div", false, `class="moz-cite-prefix`)
     this.excludeTagBlocks("div", false, `class="moz-forward-container`)
