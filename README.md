@@ -1,4 +1,4 @@
-# <img src="src/images/md_fucsia.svg" alt="MDHR Logo" width="130" height="130" align="center"> Markdown Here Revival
+# <img src="extension/images/md_fucsia.svg" alt="MDHR Logo" style="height: 1.5em; width: 1.5em; vertical-align: bottom"> Markdown Here Revival
 
 *Markdown Here Revival* is a fork of [Markdown Here](https://markdown-here.com/), 
 the popular browser extension in order to specifically target modern Thunderbird versions.
@@ -9,11 +9,17 @@ supports syntax highlighting (just specify the language in a fenced code block).
 Unfortunately, attempts by a few members of the user community to contact
 the author of Markdown Here have been unsuccessful.
 
+---
+**Thank you to @GregoryK for the wonderful new icons for MDHR 4.0!**
+
+---
+
 ## Compatibility
 
-This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
+This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/). *Markdown Here Revival 4.0.0* and higher require *Thunderbird 102.0* or *Thunderbird 115.0*. 
+
 Support for browser-based email such as GMail, Outlook, or Yahoo Mail was
-removed to reduce tne necessary ongoing maintenace burden from these platforms.
+removed to reduce the necessary ongoing maintenace burden from these platforms.
 
 # Table of Contents
 
@@ -112,10 +118,14 @@ All ideas, bugs, plans, complaints, and dreams will end up in one of those two p
 
 MIT License: See [the LICENSE file](LICENSE).
 
+### Icons
+
+@GregoryK's new icons in MDHR 4.0 are licensed [Mozilla Public License v2](LICENSE.images)
+
 ### Other images
 
 [Creative Commons Attribution 3.0 Unported (CC BY 3.0) License](https://creativecommons.org/licenses/by/3.0/)
 
 ---
 
-[logo]: src/images/md_fucsia.svg
+[logo]: extension/images/md_fucsia.svg

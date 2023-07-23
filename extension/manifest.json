@@ -31,6 +31,29 @@
       "38": "images/md_fucsia.svg",
       "64": "images/md_fucsia.svg"
     },
+    "theme_icons": [
+      {
+        "dark": "images/md_dark.svg",
+        "light": "images/md_light.svg",
+        "size": 16
+      },
+      {
+        "dark": "images/md_dark.svg",
+        "light": "images/md_light.svg",
+        "size": 19
+      },
+      {
+        "dark": "images/md_fucsia.svg",
+        "light": "images/md_fucsia.svg",
+        "size": 32
+      },
+      {
+        "dark": "images/md_fucsia.svg",
+        "light": "images/md_fucsia.svg",
+        "size": 64
+      }
+    ],
+
     "default_title": "__MSG_toggle_button_tooltip__"
   },
   "commands": {
