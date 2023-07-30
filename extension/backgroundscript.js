@@ -10,6 +10,7 @@
 import { getHljsStylesheet, getMessage } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { resetMarked, markdownRender } from "./markdown-render.js"
+import { getShortcutStruct } from "./options/shortcuts.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
@@ -136,14 +137,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     }
     return Promise.resolve(["test-bg-request", "test-bg-request-ok"])
   } else if (request.action === "update-hotkey") {
-    return messenger.commands
-      .update({
-        name: "toggle-markdown",
-        shortcut: request.hotkey_value,
-      })
-      .then(() => {
-        updateActionTooltip()
-      })
+    return updateHotKey(request.hotkey_value, request.hotkey_tooltip)
   } else if (request.action === "compose-ready") {
     return onComposeReady(sender.tab)
   } else if (request.action === "renderer-reset") {
@@ -306,13 +300,22 @@ function forgotToRenderEnabled() {
   })
 }
 
-// Show the shortcut hotkey on the ComposeAction button
-async function updateActionTooltip() {
-  const hotkey = await OptionsStore.get("hotkey-input")
+async function updateHotKey(hotkey_value, tooltip) {
+  await messenger.commands.update({
+    name: "toggle-markdown",
+    shortcut: hotkey_value,
+  })
   const msg = getMessage("toggle_button_tooltip")
-  await messenger.composeAction.setTitle({ title: `${msg}\n${hotkey["hotkey-input"]}` })
+  await messenger.composeAction.setTitle({ title: `${msg}\n${tooltip}` })
 }
-updateActionTooltip()
+OptionsStore.get("hotkey-input").then(async (result) => {
+  const shortkeyStruct = getShortcutStruct(result["hotkey-input"])
+  let tooltip = shortkeyStruct.shortcut
+  if (shortkeyStruct.macShortcut) {
+    tooltip = shortkeyStruct.macShortcut
+  }
+  await updateHotKey(shortkeyStruct.shortcut, tooltip)
+})
 
 // Context menu in compose window
 async function createContextMenu() {

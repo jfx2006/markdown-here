@@ -165,3 +165,12 @@ export async function migrate_mathRenderer2(options, defaults) {
     return { "math-renderer-enabled": true, "math-renderer": options["math-renderer"] }
   }
 }
+
+export async function migrate_macHotkeys(options, defaults) {
+  if (navigator.platform === "MacIntel") {
+    if (options["hotkey-input"] === "Ctrl+Alt+M") {
+      return { "hotkey-input": defaults["hotkey-input"] }
+    }
+  }
+  return null
+}

@@ -21,7 +21,16 @@ import {
   migrate_removeUnused,
   migrate_mathRenderer,
   migrate_mathRenderer2,
-} from "./options_migration.js"
+  migrate_macHotkeys,
+} from "./options_migration.js";
+
+
+function hotKeyDefault() {
+  if (navigator.platform === "MacIntel") {
+    return "MacCtrl+Command+M"
+  }
+  return "Ctrl+Alt+M"
+}
 
 export const kOptDefaults = {
   "main-css": "",
@@ -29,7 +38,7 @@ export const kOptDefaults = {
   "math-value": `<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">`,
   "math-renderer-enabled": false,
   "math-renderer": "texzilla",
-  "hotkey-input": "Ctrl+Alt+M",
+  "hotkey-input": hotKeyDefault(),
   "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
   "smart-replacements-enabled": true,
@@ -48,6 +57,7 @@ let MIGRATIONS = [
   migrate_smartReplacements,
   migrate_mathRenderer,
   migrate_mathRenderer2,
+  migrate_macHotkeys,
   migrate_removeUnused,
 ]
 

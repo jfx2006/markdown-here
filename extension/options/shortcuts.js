@@ -103,15 +103,57 @@ function remapKey(string) {
   return string
 }
 
+function getMacShortcut(modifiers, key) {
+  // Take a shortcut string for macOS and rewrite the key names to match
+  // what people expect for that platform: Ctrl -> ⌘
+  if (navigator.platform === "MacIntel") {
+    const keyMap = { MacCtrl: "Ctrl", Command: "⌘", Ctrl: "⌘", Alt: "Alt", Shift: "Shift" }
+    return [...modifiers.map((k) => keyMap[k]), key].join("+")
+  }
+}
+
 // Modified from chrome://mozapps/content/extensions/shortcuts.js
-function getStringForEvent(event) {
+function getKeyForEvent(event) {
   for (const option of keyOptions) {
     const value = option(event)
     if (validKeys.has(value)) {
       return value
     }
   }
-  return ""
+  return null
+}
+
+export function getShortcutStruct(shortcutStr) {
+  if (!shortcutStr) {
+    // Ensure the shortcut is a string, even if it is unset.
+    return null
+  }
+  const remap = {
+    MacCtrl: "MacCtrl",
+    Command: "Command",
+    Ctrl: "Command",
+    Alt: "Alt",
+    Shift: "Shift",
+  }
+
+  let modifiers = shortcutStr.split("+")
+  let key = modifiers.pop()
+
+  if (modifiers.length) {
+    const modifiers_fix = modifiers.map((x) => remap[x])
+    return {
+      modifiers,
+      key: key,
+      shortcut: [...modifiers_fix, key].join("+"),
+      macShortcut: getMacShortcut(modifiers, key),
+    }
+  }
+
+  if (FUNCTION_KEYS.test(key)) {
+    return key
+  }
+
+  return null
 }
 
 // From chrome://mozapps/content/extensions/shortcuts.js
@@ -134,16 +176,28 @@ function getShortcutForEvent(e) {
     }
   }
 
-  return Object.entries(modifierMap)
+  const modifiers = Object.entries(modifierMap)
     .filter(([key, isDown]) => isDown)
     .map(([key]) => key)
-    .concat(getStringForEvent(e))
-    .join("+")
+  const str = getKeyForEvent(e)
+  if (str !== null) {
+    return {
+      modifiers,
+      key: str,
+      shortcut: [...modifiers, str].join("+"),
+      macShortcut: getMacShortcut(modifiers, str),
+    }
+  }
 }
+
+const BASIC_KEYS =
+  /^([A-Z0-9]|Comma|Period|Home|End|PageUp|PageDown|Space|Insert|Delete|Up|Down|Left|Right)$/
+const FUNCTION_KEYS = /^(F[1-9]|F1[0-2])$/
 
 export default class HotkeyHandler {
   constructor(id) {
     this.inputElem = document.getElementById(id)
+    this.hiddenElem = document.getElementById(`${id}-hidden`)
     this.commandName = this.inputElem.getAttribute("data-command")
     this.form = this.inputElem.form
     this.resetBtn = document.getElementById(`${id}-reset`)
@@ -153,8 +207,29 @@ export default class HotkeyHandler {
     })
     this.updateEvent = new CustomEvent("hotkey", {
       bubbles: true,
-      detail: { value: () => this.inputElem.value },
+      detail: { value: () => this.inputElem.value, macHotKey: () => this.hiddenElem.innerText },
     })
+  }
+  setValidKey(shortcutStruct) {
+    this.inputElem.value = shortcutStruct.shortcut
+    if (shortcutStruct.macShortcut) {
+      this.hiddenElem.innerText = shortcutStruct.macShortcut
+      this.hiddenElem.classList.remove("hidden")
+    }
+    this.inputElem.dispatchEvent(this.updateEvent)
+  }
+
+  setMacShortcutDisplay(shortcutStr) {
+    const shortcutStruct = getShortcutStruct(shortcutStr)
+    if (shortcutStruct && shortcutStruct.macShortcut) {
+      this.hiddenElem.innerText = shortcutStruct.macShortcut
+      this.hiddenElem.classList.remove("hidden")
+      return shortcutStruct
+    }
+  }
+
+  setInvalidKey() {
+    this.hiddenElem.classList.remove("hidden")
   }
 
   async shortCutChanged(e) {
@@ -172,30 +247,65 @@ export default class HotkeyHandler {
         // Avoid triggering back-navigation.
         e.preventDefault()
         e.currentTarget.value = ""
+        this.setInvalidKey()
         return
       }
       // Catch cases where no modifier key is given (Alt, etc)
       e.preventDefault()
       e.stopPropagation()
+      this.setInvalidKey()
       return
     }
     e.preventDefault()
     e.stopPropagation()
 
-    const shortcutString = getShortcutForEvent(e)
-    if (e.type === "keyup" || !shortcutString.length || shortcutString.endsWith("+")) {
-      return
+    const shortcutStruct = getShortcutForEvent(e)
+    if (shortcutStruct) {
+      switch (shortcutStruct.modifiers.length) {
+        case 0:
+          // A lack of modifiers is only allowed with function keys.
+          if (!FUNCTION_KEYS.test(shortcutStruct.key)) {
+            this.setInvalidKey()
+            return
+          }
+          break
+        case 1:
+          // Shift is only allowed on its own with function keys.
+          if (shortcutStruct.modifiers[0] === "Shift" && !FUNCTION_KEYS.test(shortcutStruct.key)) {
+            this.setInvalidKey()
+            return
+          }
+          // Alt+<letter> on macOS does funny things...
+          if (shortcutStruct.modifiers[0] === "Alt" && BASIC_KEYS.test(shortcutStruct.key)) {
+            this.setInvalidKey()
+            return
+          }
+          break
+        case 2:
+          if (shortcutStruct.modifiers[0] === shortcutStruct.modifiers[1]) {
+            this.setInvalidKey()
+            return
+          }
+          break
+        default:
+          this.setInvalidKey()
+          return
+      }
+      if (!BASIC_KEYS.test(shortcutStruct.key) && !FUNCTION_KEYS.test(shortcutStruct.key)) {
+        this.setInvalidKey()
+        return
+      }
+      this.setValidKey(shortcutStruct)
     }
-    if (e.type === "keyup" && !shortcutString.find("+")) {
-      console.log(`Invalid hotkey combo: ${shortcutString}`)
-      return
-    }
-    this.inputElem.value = shortcutString
-    this.inputElem.dispatchEvent(this.updateEvent)
   }
   async resetShortcut() {
     await messenger.commands.reset(this.commandName)
-    await this.updateKeys()
+    const shortcutStr = await this.updateKeys()
+    const shortcutStruct = getShortcutStruct(shortcutStr)
+    if (shortcutStruct.macShortcut) {
+      this.hiddenElem.innerText = shortcutStruct.macShortcut
+      this.hiddenElem.classList.remove("hidden")
+    }
     this.inputElem.dispatchEvent(this.updateEvent)
   }
   async updateKeys() {
