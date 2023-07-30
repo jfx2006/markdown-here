@@ -5,9 +5,9 @@
   "scripts": {
     "build": "web-ext build",
     "lint": "eslint .",
-    "test102": "web-ext run --verbose -p mdhr_test_profiles/testing102 -f /home/rob/bin/thunderbird",
-    "test115": "web-ext run --verbose -p mdhr_test_profiles/testing115 -f /home/rob/bin/thunderbird115",
-    "testbeta": "web-ext run --verbose -f thunderbird-beta",
+    "test102": "web-ext run --verbose -p mdhr_test_profiles/testing102 -f /home/rob/bin/thunderbird --keep-profile-changes",
+    "test115": "web-ext run --verbose -p mdhr_test_profiles/testing115 -f /home/rob/bin/thunderbird115 --keep-profile-changes",
+    "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
     "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f thunderbird-daily"
   },
   "private": true,
