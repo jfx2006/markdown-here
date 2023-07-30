@@ -257,11 +257,18 @@ pre {
 }
 
 .input-wrapper,
-.input-wrapper > input {
+.input-wrapper > input,
+.input-wrapper > span {
     display: flex;
     position: relative;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+.input-wrapper > span {
+    padding-top: 8px;
+    font-size: medium;
+    font-style: italic;
 }
 
 #saved-msg {
@@ -302,4 +309,8 @@ pre {
     .sidebar {
         width: 240px;
     }
+}
+
+span.hidden {
+    display: none !important;
 }

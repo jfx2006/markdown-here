@@ -95,7 +95,14 @@ import OptionsStore from "./options-storage.js"
       await loadChangeList()
       await setInitialText()
       let rv = await OptionsStore.get("hotkey-input")
-      document.getElementById("hotkey-display-str").innerText = rv["hotkey-input"]
+      let displayShortcut = rv["hotkey-input"]
+      if (navigator.platform === "MacIntel") {
+        const shortcutStruct = hotkeyHandler.setMacShortcutDisplay(displayShortcut)
+        document.getElementById("hotkey-display-str").innerText = shortcutStruct.macShortcut
+        document.getElementById("hotkey-input").value = shortcutStruct.shortcut
+      } else {
+        document.getElementById("hotkey-display-str").innerText = displayShortcut
+      }
       if (document.location.hash === "#docs") {
         let e
         e = document.getElementById("options-tab")
@@ -225,7 +232,7 @@ import OptionsStore from "./options-storage.js"
     const appManifest = messenger.runtime.getManifest()
     document.getElementById("mdhrVersion").innerText = appManifest.version
     document.getElementById(
-      "mdhrThunderbirdVersion"
+      "mdhrThunderbirdVersion",
     ).innerText = `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
@@ -240,7 +247,11 @@ import OptionsStore from "./options-storage.js"
   }
 
   async function handleHotKey(e) {
-    let newHotKey = e.detail.value()
+    const newHotKey = e.detail.value()
+    let displayHotKey = newHotKey
+    if (navigator.platform === "MacIntel") {
+      displayHotKey = e.detail.macHotKey()
+    }
     await OptionsStore.set({ "hotkey-input": newHotKey })
     Utils.makeRequestToBGScript("update-hotkey", { hotkey_value: newHotKey }).then(() => {
       form.dispatchEvent(
@@ -249,7 +260,7 @@ import OptionsStore from "./options-storage.js"
         })
       )
       showSavedMsg()
-      document.getElementById("hotkey-display-str").innerText = newHotKey
+      document.getElementById("hotkey-display-str").innerText = displayHotKey
     })
   }
 

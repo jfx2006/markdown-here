@@ -160,3 +160,12 @@ export async function migrate_mathRenderer(options, defaults) {
   }
   return null
 }
+
+export async function migrate_macHotkeys(options, defaults) {
+  if (navigator.platform === "MacIntel") {
+    if (options["hotkey-input"] === "Ctrl+Alt+M") {
+      return { "hotkey-input": defaults["hotkey-input"] }
+    }
+  }
+  return null
+}
