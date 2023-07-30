@@ -3,6 +3,8 @@
   [#57](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/57)
 * Attempt to fix oversized and misaligned TeXZilla math images
   [#58](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/58)
+* macOS hotkey fixes
+  [#56](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/56)
 
 #### v3.4.5
 * Add emoji shortcode (Github style) support
