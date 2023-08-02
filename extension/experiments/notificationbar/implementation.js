@@ -4,13 +4,17 @@
 
 var { EventEmitter, EventManager, ExtensionAPI } = ExtensionCommon;
 var { ExtensionError } = ExtensionUtils;
+var Services = globalThis.Services || ChromeUtils.import(
+  'resource://gre/modules/Services.jsm'
+).Services;
 
-class Notification {
+class ExtensionNotification {
   constructor(notificationId, properties, parent) {
     this.closedByUser = true;
     this.properties = properties;
     this.parent = parent;
     this.notificationId = notificationId;
+    this.tbVersion = this.getThunderbirdVersion().major;
 
     const { buttons, icon, label, priority, style, windowId } = properties;
 
@@ -41,6 +45,14 @@ class Notification {
       },
     }));
 
+    const getContainerElement = (element) => {
+      // Supernova introduced a container element in TB112.
+      if (this.tbVersion >= 112) {
+        return element.shadowRoot.querySelector(".container");
+      }
+      return null;
+    }
+
     const notificationBarCallback = (event) => {
       // Every dismissed notification will also generate a removed notification
       if (event === 'dismissed') {
@@ -60,7 +72,7 @@ class Notification {
     };
 
     let element;
-    if (this.getThunderbirdVersion().major < 94) {
+    if (this.tbVersion < 94) {
       element = this.getNotificationBox().appendNotification(
         label,
         `extension-notification-${notificationId}`,
@@ -78,10 +90,14 @@ class Notification {
           priority,
           eventCallback: notificationBarCallback,
         },
-        buttonSet
+        buttonSet,
       );
     }
-    let allowedCssPropNames = [
+
+    if (!element)
+      return;
+
+    const allowedCssPropNames = [
       'background',
       'color',
       'margin',
@@ -102,8 +118,15 @@ class Notification {
         );
       });
 
+      let containerElement = getContainerElement(element);
       for (let cssPropertyName of sanitizedStyles) {
         element.style[cssPropertyName] = style[cssPropertyName];
+        if (containerElement) {
+          containerElement.style[cssPropertyName] = style[cssPropertyName];
+        }
+      }
+      if (containerElement && this.properties.icon) {
+        containerElement.querySelector("span.icon").style.display = "none"; // because Supernova will display the default (i) icon
       }
     }
   }
@@ -119,12 +142,43 @@ class Notification {
     };
   }
 
-  getNotificationBox() {
+  getNotificationBoxPreSupernova() {
     const w = this.parent.extension.windowManager.get(
       this.properties.windowId,
       this.parent.context
     ).window;
     switch (this.properties.placement) {
+      case 'top':
+        if (!w.gExtensionNotificationTopBox) {
+          // try to add it before the toolbox, if that fails add it firstmost
+          const toolbox = w.document.querySelector('toolbox');
+          if (toolbox) {
+            w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
+              (element) => {
+                element.id = 'extension-notification-top-box';
+                element.setAttribute('notificationside', 'top');
+                toolbox.parentElement.insertBefore(
+                  element,
+                  toolbox.nextElementSibling
+                );
+              }
+            );
+          } else {
+            w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
+              (element) => {
+                element.id = 'extension-notification-top-box';
+                element.setAttribute('notificationside', 'top');
+                w.document.documentElement.insertBefore(
+                  element,
+                  w.document.documentElement.firstChild
+                );
+              }
+            );
+          }
+        }
+        return w.gExtensionNotificationTopBox;
+        break;
+
       case 'message':
         // below the receipient list in the message preview window
         if (w.gMessageNotificationBar) {
@@ -159,19 +213,39 @@ class Notification {
           );
         }
         return w.gExtensionNotificationBottomBox;
+        break;
+    }
+  }
 
+  getNotificationBoxPostSupernova() {
+    const w = this.parent.extension.windowManager.get(
+      this.properties.windowId,
+      this.parent.context
+    ).window;
+    switch (this.properties.placement) {
       case 'top':
         if (!w.gExtensionNotificationTopBox) {
-          // try to add it before the toolbox, if that fails add it firstmost
+          const messengerBody = w.document.getElementById('messengerBody');
           const toolbox = w.document.querySelector('toolbox');
-          if (toolbox) {
+          if (messengerBody) {
             w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
               (element) => {
                 element.id = 'extension-notification-top-box';
                 element.setAttribute('notificationside', 'top');
-                toolbox.parentElement.insertBefore(
+                messengerBody.insertBefore(
                   element,
-                  toolbox.nextElementSibling
+                  messengerBody.firstChild
+                );
+              }
+            );
+          } else if (toolbox) {
+            w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
+              (element) => {
+                element.id = 'extension-notification-top-box';
+                element.setAttribute('notificationside', 'top');
+                element.style.marginInlineStart = "var(--spaces-total-width)";
+                toolbox.insertAdjacentElement(
+                  'afterend', element
                 );
               }
             );
@@ -189,7 +263,47 @@ class Notification {
           }
         }
         return w.gExtensionNotificationTopBox;
+        break;
+
+      case 'message':
+        if (!this.properties.tabId) {
+          throw new Error("appendNotification - missing tab id");
+        }
+        const aTab = this.parent.context.extension.tabManager.get(this.properties.tabId);
+        let messageBrowser = null;
+        switch (aTab.nativeTab.mode?.name) {
+          case "mailMessageTab":
+            // message tab;
+            messageBrowser = aTab.nativeTab.chromeBrowser.contentWindow;
+            break;
+          case "mail3PaneTab":
+            // message in mail3pane tab
+            messageBrowser = aTab.nativeTab.chromeBrowser.contentWindow.messageBrowser.contentWindow;
+            break;
+          default:
+            // message window;
+            messageBrowser = aTab.nativeTab.messageBrowser.contentWindow;
+            break;
+        }
+        if (messageBrowser) {
+          return messageBrowser.gMessageNotificationBar.msgNotificationBar;
+        }
+        console.error("appendNotification - could not get window for tabId " + this.properties.tabId);
+        return null;
+        break;
+
+      default:
+      case 'bottom':
+        return this.getNotificationBoxPreSupernova();
+        break;
     }
+  }
+
+  getNotificationBox() {
+    if (this.tbVersion >= 112) {
+      return this.getNotificationBoxPostSupernova();
+    }
+    return this.getNotificationBoxPreSupernova();
   }
 
   remove(closedByUser) {
@@ -246,7 +360,7 @@ var notificationbar = class extends ExtensionAPI {
           const notificationId = self.nextId++;
           self.notificationsMap.set(
             notificationId,
-            new Notification(notificationId, properties, self)
+            new ExtensionNotification(notificationId, properties, self)
           );
           return notificationId;
         },
