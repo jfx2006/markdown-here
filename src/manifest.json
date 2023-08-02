@@ -47,11 +47,11 @@
   },
   "experiment_apis": {
     "notificationbar": {
-      "schema": "experiments/notificationbar_schema.json",
+      "schema": "experiments/notificationbar/schema.json",
       "parent": {
         "scopes": ["addon_parent"],
         "paths": [["notificationbar"]],
-        "script": "experiments/notificationbar.js"
+        "script": "experiments/notificationbar/implementation.js"
       }
     },
     "reply_prefs": {

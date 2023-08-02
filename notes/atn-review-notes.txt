@@ -54,7 +54,8 @@ https://raw.githubusercontent.com/UziTech/marked-emoji/v1.2.2/src/index.js
 
 Use of mailextension experiments:
 The notificationbar experiment from https://github.com/jobisoft/notificationbar-API
-is used. Plus https://github.com/jobisoft/notificationbar-API/pull/17.
+is used. Git rev 8f645332bca46c81b6f0108fcfe7f7bf1bcec2f4 plus
+https://github.com/jobisoft/notificationbar-API/pull/20.
 
 Options UI pages:
 - mailext-options-sync:
