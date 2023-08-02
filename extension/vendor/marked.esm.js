@@ -1,5 +1,5 @@
 /**
- * marked v4.2.12 - a markdown parser
+ * marked v5.1.2 - a markdown parser
  * Copyright (c) 2011-2023, Christopher Jeffrey. (MIT Licensed)
  * https://github.com/markedjs/marked
  */
@@ -19,6 +19,7 @@ function getDefaults() {
     headerIds: true,
     headerPrefix: '',
     highlight: null,
+    hooks: null,
     langPrefix: 'language-',
     mangle: true,
     pedantic: false,
@@ -183,23 +184,6 @@ function resolveUrl(base, href) {
 
 const noopTest = { exec: function noopTest() {} };
 
-function merge(obj) {
-  let i = 1,
-    target,
-    key;
-
-  for (; i < arguments.length; i++) {
-    target = arguments[i];
-    for (key in target) {
-      if (Object.prototype.hasOwnProperty.call(target, key)) {
-        obj[key] = target[key];
-      }
-    }
-  }
-
-  return obj;
-}
-
 function splitCells(tableRow, count) {
   // ensure that every cell-delimiting pipe has a space
   // before it to distinguish it from an escaped pipe
@@ -290,30 +274,42 @@ function findClosingBracket(str, b) {
   return -1;
 }
 
-function checkSanitizeDeprecation(opt) {
-  if (opt && opt.sanitize && !opt.silent) {
+function checkDeprecations(opt, callback) {
+  if (!opt || opt.silent) {
+    return;
+  }
+
+  if (callback) {
+    console.warn('marked(): callback is deprecated since version 5.0.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/using_pro#async');
+  }
+
+  if (opt.sanitize || opt.sanitizer) {
     console.warn('marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options');
   }
-}
 
-// copied from https://stackoverflow.com/a/5450113/806777
-/**
- * @param {string} pattern
- * @param {number} count
- */
-function repeatString(pattern, count) {
-  if (count < 1) {
-    return '';
+  if (opt.highlight || opt.langPrefix !== 'language-') {
+    console.warn('marked(): highlight and langPrefix parameters are deprecated since version 5.0.0, should not be used and will be removed in the future. Instead use https://www.npmjs.com/package/marked-highlight.');
   }
-  let result = '';
-  while (count > 1) {
-    if (count & 1) {
-      result += pattern;
-    }
-    count >>= 1;
-    pattern += pattern;
+
+  if (opt.mangle) {
+    console.warn('marked(): mangle parameter is enabled by default, but is deprecated since version 5.0.0, and will be removed in the future. To clear this warning, install https://www.npmjs.com/package/marked-mangle, or disable by setting `{mangle: false}`.');
   }
-  return result + pattern;
+
+  if (opt.baseUrl) {
+    console.warn('marked(): baseUrl parameter is deprecated since version 5.0.0, should not be used and will be removed in the future. Instead use https://www.npmjs.com/package/marked-base-url.');
+  }
+
+  if (opt.smartypants) {
+    console.warn('marked(): smartypants parameter is deprecated since version 5.0.0, should not be used and will be removed in the future. Instead use https://www.npmjs.com/package/marked-smartypants.');
+  }
+
+  if (opt.xhtml) {
+    console.warn('marked(): xhtml parameter is deprecated since version 5.0.0, should not be used and will be removed in the future. Instead use https://www.npmjs.com/package/marked-xhtml.');
+  }
+
+  if (opt.headerIds || opt.headerPrefix) {
+    console.warn('marked(): headerIds and headerPrefix parameters enabled by default, but are deprecated since version 5.0.0, and will be removed in the future. To clear this warning, install  https://www.npmjs.com/package/marked-gfm-heading-id, or disable by setting `{headerIds: false}`.');
+  }
 }
 
 function outputLink(cap, link, raw, lexer) {
@@ -672,6 +668,7 @@ class Tokenizer {
     if (cap) {
       const token = {
         type: 'html',
+        block: true,
         raw: cap[0],
         pre: !this.options.sanitizer
           && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
@@ -829,6 +826,7 @@ class Tokenizer {
         raw: cap[0],
         inLink: this.lexer.state.inLink,
         inRawBlock: this.lexer.state.inRawBlock,
+        block: false,
         text: this.options.sanitize
           ? (this.options.sanitizer
             ? this.options.sanitizer(cap[0])
@@ -921,7 +919,7 @@ class Tokenizer {
 
     const nextChar = match[1] || match[2] || '';
 
-    if (!nextChar || (nextChar && (prevChar === '' || this.rules.inline.punctuation.exec(prevChar)))) {
+    if (!nextChar || !prevChar || this.rules.inline.punctuation.exec(prevChar)) {
       const lLength = match[0].length - 1;
       let rDelim, rLength, delimTotal = lLength, midDelimTotal = 0;
 
@@ -955,7 +953,7 @@ class Tokenizer {
         // Remove extra characters. *a*** -> *a*
         rLength = Math.min(rLength, rLength + delimTotal + midDelimTotal);
 
-        const raw = src.slice(0, lLength + match.index + (match[0].length - rDelim.length) + rLength);
+        const raw = src.slice(0, lLength + match.index + rLength + 1);
 
         // Create `em` if smallest delimiter has odd char count. *a***
         if (Math.min(lLength, rLength) % 2) {
@@ -1109,7 +1107,7 @@ class Tokenizer {
 const block = {
   newline: /^(?: *(?:\n|$))+/,
   code: /^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,
-  fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
+  fences: /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
   hr: /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
@@ -1126,7 +1124,7 @@ const block = {
     + ')',
   def: /^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
-  lheading: /^((?:.|\n(?!\n))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
+  lheading: /^((?:(?!^bull ).|\n(?!\n|bull ))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
   // interruption rules of commonmark and the original markdown spec:
   _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,
@@ -1164,6 +1162,10 @@ block.html = edit(block.html, 'i')
   .replace('attribute', / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/)
   .getRegex();
 
+block.lheading = edit(block.lheading)
+  .replace(/bull/g, block.bullet) // lists can interrupt
+  .getRegex();
+
 block.paragraph = edit(block._paragraph)
   .replace('hr', block.hr)
   .replace('heading', ' {0,3}#{1,6} ')
@@ -1184,17 +1186,18 @@ block.blockquote = edit(block.blockquote)
  * Normal Block Grammar
  */
 
-block.normal = merge({}, block);
+block.normal = { ...block };
 
 /**
  * GFM Block Grammar
  */
 
-block.gfm = merge({}, block.normal, {
+block.gfm = {
+  ...block.normal,
   table: '^ *([^\\n ].*\\|.*)\\n' // Header
     + ' {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)(?:\\| *)?' // Align
     + '(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
-});
+};
 
 block.gfm.table = edit(block.gfm.table)
   .replace('hr', block.hr)
@@ -1222,7 +1225,8 @@ block.gfm.paragraph = edit(block._paragraph)
  * Pedantic grammar (original John Gruber's loose markdown specification)
  */
 
-block.pedantic = merge({}, block.normal, {
+block.pedantic = {
+  ...block.normal,
   html: edit(
     '^ *(?:comment *(?:\\n|\\s*$)'
     + '|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)' // closed tag
@@ -1246,7 +1250,7 @@ block.pedantic = merge({}, block.normal, {
     .replace('|list', '')
     .replace('|html', '')
     .getRegex()
-});
+};
 
 /**
  * Inline-Level Grammar
@@ -1266,45 +1270,49 @@ const inline = {
   nolink: /^!?\[(ref)\](?:\[\])?/,
   reflinkSearch: 'reflink|nolink(?!\\()',
   emStrong: {
-    lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    //        (1) and (2) can only be a Right Delimiter. (3) and (4) can only be Left.  (5) and (6) can be either Left or Right.
-    //          () Skip orphan inside strong                                      () Consume to delim     (1) #***                (2) a***#, a***                             (3) #***a, ***a                 (4) ***#              (5) #***#                 (6) a***a
-    rDelimAst: /^(?:[^_*\\]|\\.)*?\_\_(?:[^_*\\]|\\.)*?\*(?:[^_*\\]|\\.)*?(?=\_\_)|(?:[^*\\]|\\.)+(?=[^*])|[punct_](\*+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|(?:[^punct*_\s\\]|\\.)(\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^(?:[^_*\\]|\\.)*?\*\*(?:[^_*\\]|\\.)*?\_(?:[^_*\\]|\\.)*?(?=\*\*)|(?:[^_\\]|\\.)+(?=[^_])|[punct*](\_+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/ // ^- Not allowed for _
+    lDelim: /^(?:\*+(?:((?!\*)[punct])|[^\s*]))|^_+(?:((?!_)[punct])|([^\s_]))/,
+    //         (1) and (2) can only be a Right Delimiter. (3) and (4) can only be Left.  (5) and (6) can be either Left or Right.
+    //         | Skip orphan inside strong      | Consume to delim | (1) #***              | (2) a***#, a***                    | (3) #***a, ***a                  | (4) ***#                 | (5) #***#                         | (6) a***a
+    rDelimAst: /^[^_*]*?__[^_*]*?\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\*)[punct](\*+)(?=[\s]|$)|[^punct\s](\*+)(?!\*)(?=[punct\s]|$)|(?!\*)[punct\s](\*+)(?=[^punct\s])|[\s](\*+)(?!\*)(?=[punct])|(?!\*)[punct](\*+)(?!\*)(?=[punct])|[^punct\s](\*+)(?=[^punct\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|(?!_)[punct](_+)(?=[\s]|$)|[^punct\s](_+)(?!_)(?=[punct\s]|$)|(?!_)[punct\s](_+)(?=[^punct\s])|[\s](_+)(?!_)(?=[punct])|(?!_)[punct](_+)(?!_)(?=[punct])/ // ^- Not allowed for _
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
   del: noopTest,
   text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,
-  punctuation: /^([\spunctuation])/
+  punctuation: /^((?![*_])[\spunctuation])/
 };
 
-// list of punctuation marks from CommonMark spec
-// without * and _ to handle the different emphasis markers * and _
-inline._punctuation = '!"#$%&\'()+\\-.,/:;<=>?@\\[\\]`^{|}~';
-inline.punctuation = edit(inline.punctuation).replace(/punctuation/g, inline._punctuation).getRegex();
+// list of unicode punctuation marks, plus any missing characters from CommonMark spec
+inline._punctuation = '\\p{P}$+<=>`^|~';
+inline.punctuation = edit(inline.punctuation, 'u').replace(/punctuation/g, inline._punctuation).getRegex();
 
 // sequences em should skip over [title](link), `code`, <html>
-inline.blockSkip = /\[[^\]]*?\]\([^\)]*?\)|`[^`]*?`|<[^>]*?>/g;
-// lookbehind is not available on Safari as of version 16
-// inline.escapedEmSt = /(?<=(?:^|[^\\)(?:\\[^])*)\\[*_]/g;
-inline.escapedEmSt = /(?:^|[^\\])(?:\\\\)*\\[*_]/g;
+inline.blockSkip = /\[[^[\]]*?\]\([^\(\)]*?\)|`[^`]*?`|<[^<>]*?>/g;
+inline.anyPunctuation = /\\[punct]/g;
+inline._escapes = /\\([punct])/g;
 
 inline._comment = edit(block._comment).replace('(?:-->|$)', '-->').getRegex();
 
-inline.emStrong.lDelim = edit(inline.emStrong.lDelim)
+inline.emStrong.lDelim = edit(inline.emStrong.lDelim, 'u')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, 'g')
+inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, 'gu')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline.emStrong.rDelimUnd = edit(inline.emStrong.rDelimUnd, 'g')
+inline.emStrong.rDelimUnd = edit(inline.emStrong.rDelimUnd, 'gu')
   .replace(/punct/g, inline._punctuation)
   .getRegex();
 
-inline._escapes = /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g;
+inline.anyPunctuation = edit(inline.anyPunctuation, 'gu')
+  .replace(/punct/g, inline._punctuation)
+  .getRegex();
+
+inline._escapes = edit(inline._escapes, 'gu')
+  .replace(/punct/g, inline._punctuation)
+  .getRegex();
 
 inline._scheme = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
 inline._email = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;
@@ -1348,13 +1356,14 @@ inline.reflinkSearch = edit(inline.reflinkSearch, 'g')
  * Normal Inline Grammar
  */
 
-inline.normal = merge({}, inline);
+inline.normal = { ...inline };
 
 /**
  * Pedantic Inline Grammar
  */
 
-inline.pedantic = merge({}, inline.normal, {
+inline.pedantic = {
+  ...inline.normal,
   strong: {
     start: /^__|\*\*/,
     middle: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
@@ -1373,20 +1382,21 @@ inline.pedantic = merge({}, inline.normal, {
   reflink: edit(/^!?\[(label)\]\s*\[([^\]]*)\]/)
     .replace('label', inline._label)
     .getRegex()
-});
+};
 
 /**
  * GFM Inline Grammar
  */
 
-inline.gfm = merge({}, inline.normal, {
+inline.gfm = {
+  ...inline.normal,
   escape: edit(inline.escape).replace('])', '~|])').getRegex(),
   _extended_email: /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/,
   url: /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,
   _backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,
   del: /^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,
   text: /^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/
-});
+};
 
 inline.gfm.url = edit(inline.gfm.url, 'i')
   .replace('email', inline.gfm._extended_email)
@@ -1395,13 +1405,14 @@ inline.gfm.url = edit(inline.gfm.url, 'i')
  * GFM + Line Breaks Inline Grammar
  */
 
-inline.breaks = merge({}, inline.gfm, {
+inline.breaks = {
+  ...inline.gfm,
   br: edit(inline.br).replace('{2,}', '*').getRegex(),
   text: edit(inline.gfm.text)
     .replace('\\b_', '\\b_| {2,}\\n')
     .replace(/\{2,\}/g, '*')
     .getRegex()
-});
+};
 
 /**
  * smartypants text replacement
@@ -1738,20 +1749,19 @@ class Lexer {
       if (links.length > 0) {
         while ((match = this.tokenizer.rules.inline.reflinkSearch.exec(maskedSrc)) != null) {
           if (links.includes(match[0].slice(match[0].lastIndexOf('[') + 1, -1))) {
-            maskedSrc = maskedSrc.slice(0, match.index) + '[' + repeatString('a', match[0].length - 2) + ']' + maskedSrc.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex);
+            maskedSrc = maskedSrc.slice(0, match.index) + '[' + 'a'.repeat(match[0].length - 2) + ']' + maskedSrc.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex);
           }
         }
       }
     }
     // Mask out other blocks
     while ((match = this.tokenizer.rules.inline.blockSkip.exec(maskedSrc)) != null) {
-      maskedSrc = maskedSrc.slice(0, match.index) + '[' + repeatString('a', match[0].length - 2) + ']' + maskedSrc.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
+      maskedSrc = maskedSrc.slice(0, match.index) + '[' + 'a'.repeat(match[0].length - 2) + ']' + maskedSrc.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
     }
 
-    // Mask out escaped em & strong delimiters
-    while ((match = this.tokenizer.rules.inline.escapedEmSt.exec(maskedSrc)) != null) {
-      maskedSrc = maskedSrc.slice(0, match.index + match[0].length - 2) + '++' + maskedSrc.slice(this.tokenizer.rules.inline.escapedEmSt.lastIndex);
-      this.tokenizer.rules.inline.escapedEmSt.lastIndex--;
+    // Mask out escaped characters
+    while ((match = this.tokenizer.rules.inline.anyPunctuation.exec(maskedSrc)) != null) {
+      maskedSrc = maskedSrc.slice(0, match.index) + '++' + maskedSrc.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);
     }
 
     while (src) {
@@ -1943,7 +1953,7 @@ class Renderer {
     return `<blockquote>\n${quote}</blockquote>\n`;
   }
 
-  html(html) {
+  html(html, block) {
     return html;
   }
 
@@ -2366,8 +2376,7 @@ class Parser {
           continue;
         }
         case 'html': {
-          // TODO parse inline content if parameter markdown=1
-          out += this.renderer.html(token.text);
+          out += this.renderer.html(token.text, token.block);
           continue;
         }
         case 'paragraph': {
@@ -2478,122 +2487,400 @@ class Parser {
   }
 }
 
+class Hooks {
+  constructor(options) {
+    this.options = options || defaults;
+  }
+
+  static passThroughHooks = new Set([
+    'preprocess',
+    'postprocess'
+  ]);
+
+  /**
+   * Process markdown before marked
+   */
+  preprocess(markdown) {
+    return markdown;
+  }
+
+  /**
+   * Process HTML after marked is finished
+   */
+  postprocess(html) {
+    return html;
+  }
+}
+
+class Marked {
+  defaults = getDefaults();
+  options = this.setOptions;
+
+  parse = this.#parseMarkdown(Lexer.lex, Parser.parse);
+  parseInline = this.#parseMarkdown(Lexer.lexInline, Parser.parseInline);
+
+  Parser = Parser;
+  parser = Parser.parse;
+  Renderer = Renderer;
+  TextRenderer = TextRenderer;
+  Lexer = Lexer;
+  lexer = Lexer.lex;
+  Tokenizer = Tokenizer;
+  Slugger = Slugger;
+  Hooks = Hooks;
+
+  constructor(...args) {
+    this.use(...args);
+  }
+
+  walkTokens(tokens, callback) {
+    let values = [];
+    for (const token of tokens) {
+      values = values.concat(callback.call(this, token));
+      switch (token.type) {
+        case 'table': {
+          for (const cell of token.header) {
+            values = values.concat(this.walkTokens(cell.tokens, callback));
+          }
+          for (const row of token.rows) {
+            for (const cell of row) {
+              values = values.concat(this.walkTokens(cell.tokens, callback));
+            }
+          }
+          break;
+        }
+        case 'list': {
+          values = values.concat(this.walkTokens(token.items, callback));
+          break;
+        }
+        default: {
+          if (this.defaults.extensions && this.defaults.extensions.childTokens && this.defaults.extensions.childTokens[token.type]) { // Walk any extensions
+            this.defaults.extensions.childTokens[token.type].forEach((childTokens) => {
+              values = values.concat(this.walkTokens(token[childTokens], callback));
+            });
+          } else if (token.tokens) {
+            values = values.concat(this.walkTokens(token.tokens, callback));
+          }
+        }
+      }
+    }
+    return values;
+  }
+
+  use(...args) {
+    const extensions = this.defaults.extensions || { renderers: {}, childTokens: {} };
+
+    args.forEach((pack) => {
+      // copy options to new object
+      const opts = { ...pack };
+
+      // set async to true if it was set to true before
+      opts.async = this.defaults.async || opts.async || false;
+
+      // ==-- Parse "addon" extensions --== //
+      if (pack.extensions) {
+        pack.extensions.forEach((ext) => {
+          if (!ext.name) {
+            throw new Error('extension name required');
+          }
+          if (ext.renderer) { // Renderer extensions
+            const prevRenderer = extensions.renderers[ext.name];
+            if (prevRenderer) {
+              // Replace extension with func to run new extension but fall back if false
+              extensions.renderers[ext.name] = function(...args) {
+                let ret = ext.renderer.apply(this, args);
+                if (ret === false) {
+                  ret = prevRenderer.apply(this, args);
+                }
+                return ret;
+              };
+            } else {
+              extensions.renderers[ext.name] = ext.renderer;
+            }
+          }
+          if (ext.tokenizer) { // Tokenizer Extensions
+            if (!ext.level || (ext.level !== 'block' && ext.level !== 'inline')) {
+              throw new Error("extension level must be 'block' or 'inline'");
+            }
+            if (extensions[ext.level]) {
+              extensions[ext.level].unshift(ext.tokenizer);
+            } else {
+              extensions[ext.level] = [ext.tokenizer];
+            }
+            if (ext.start) { // Function to check for start of token
+              if (ext.level === 'block') {
+                if (extensions.startBlock) {
+                  extensions.startBlock.push(ext.start);
+                } else {
+                  extensions.startBlock = [ext.start];
+                }
+              } else if (ext.level === 'inline') {
+                if (extensions.startInline) {
+                  extensions.startInline.push(ext.start);
+                } else {
+                  extensions.startInline = [ext.start];
+                }
+              }
+            }
+          }
+          if (ext.childTokens) { // Child tokens to be visited by walkTokens
+            extensions.childTokens[ext.name] = ext.childTokens;
+          }
+        });
+        opts.extensions = extensions;
+      }
+
+      // ==-- Parse "overwrite" extensions --== //
+      if (pack.renderer) {
+        const renderer = this.defaults.renderer || new Renderer(this.defaults);
+        for (const prop in pack.renderer) {
+          const prevRenderer = renderer[prop];
+          // Replace renderer with func to run extension, but fall back if false
+          renderer[prop] = (...args) => {
+            let ret = pack.renderer[prop].apply(renderer, args);
+            if (ret === false) {
+              ret = prevRenderer.apply(renderer, args);
+            }
+            return ret;
+          };
+        }
+        opts.renderer = renderer;
+      }
+      if (pack.tokenizer) {
+        const tokenizer = this.defaults.tokenizer || new Tokenizer(this.defaults);
+        for (const prop in pack.tokenizer) {
+          const prevTokenizer = tokenizer[prop];
+          // Replace tokenizer with func to run extension, but fall back if false
+          tokenizer[prop] = (...args) => {
+            let ret = pack.tokenizer[prop].apply(tokenizer, args);
+            if (ret === false) {
+              ret = prevTokenizer.apply(tokenizer, args);
+            }
+            return ret;
+          };
+        }
+        opts.tokenizer = tokenizer;
+      }
+
+      // ==-- Parse Hooks extensions --== //
+      if (pack.hooks) {
+        const hooks = this.defaults.hooks || new Hooks();
+        for (const prop in pack.hooks) {
+          const prevHook = hooks[prop];
+          if (Hooks.passThroughHooks.has(prop)) {
+            hooks[prop] = (arg) => {
+              if (this.defaults.async) {
+                return Promise.resolve(pack.hooks[prop].call(hooks, arg)).then(ret => {
+                  return prevHook.call(hooks, ret);
+                });
+              }
+
+              const ret = pack.hooks[prop].call(hooks, arg);
+              return prevHook.call(hooks, ret);
+            };
+          } else {
+            hooks[prop] = (...args) => {
+              let ret = pack.hooks[prop].apply(hooks, args);
+              if (ret === false) {
+                ret = prevHook.apply(hooks, args);
+              }
+              return ret;
+            };
+          }
+        }
+        opts.hooks = hooks;
+      }
+
+      // ==-- Parse WalkTokens extensions --== //
+      if (pack.walkTokens) {
+        const walkTokens = this.defaults.walkTokens;
+        opts.walkTokens = function(token) {
+          let values = [];
+          values.push(pack.walkTokens.call(this, token));
+          if (walkTokens) {
+            values = values.concat(walkTokens.call(this, token));
+          }
+          return values;
+        };
+      }
+
+      this.defaults = { ...this.defaults, ...opts };
+    });
+
+    return this;
+  }
+
+  setOptions(opt) {
+    this.defaults = { ...this.defaults, ...opt };
+    return this;
+  }
+
+  #parseMarkdown(lexer, parser) {
+    return (src, opt, callback) => {
+      if (typeof opt === 'function') {
+        callback = opt;
+        opt = null;
+      }
+
+      const origOpt = { ...opt };
+      opt = { ...this.defaults, ...origOpt };
+      const throwError = this.#onError(opt.silent, opt.async, callback);
+
+      // throw error in case of non string input
+      if (typeof src === 'undefined' || src === null) {
+        return throwError(new Error('marked(): input parameter is undefined or null'));
+      }
+      if (typeof src !== 'string') {
+        return throwError(new Error('marked(): input parameter is of type '
+          + Object.prototype.toString.call(src) + ', string expected'));
+      }
+
+      checkDeprecations(opt, callback);
+
+      if (opt.hooks) {
+        opt.hooks.options = opt;
+      }
+
+      if (callback) {
+        const highlight = opt.highlight;
+        let tokens;
+
+        try {
+          if (opt.hooks) {
+            src = opt.hooks.preprocess(src);
+          }
+          tokens = lexer(src, opt);
+        } catch (e) {
+          return throwError(e);
+        }
+
+        const done = (err) => {
+          let out;
+
+          if (!err) {
+            try {
+              if (opt.walkTokens) {
+                this.walkTokens(tokens, opt.walkTokens);
+              }
+              out = parser(tokens, opt);
+              if (opt.hooks) {
+                out = opt.hooks.postprocess(out);
+              }
+            } catch (e) {
+              err = e;
+            }
+          }
+
+          opt.highlight = highlight;
+
+          return err
+            ? throwError(err)
+            : callback(null, out);
+        };
+
+        if (!highlight || highlight.length < 3) {
+          return done();
+        }
+
+        delete opt.highlight;
+
+        if (!tokens.length) return done();
+
+        let pending = 0;
+        this.walkTokens(tokens, (token) => {
+          if (token.type === 'code') {
+            pending++;
+            setTimeout(() => {
+              highlight(token.text, token.lang, (err, code) => {
+                if (err) {
+                  return done(err);
+                }
+                if (code != null && code !== token.text) {
+                  token.text = code;
+                  token.escaped = true;
+                }
+
+                pending--;
+                if (pending === 0) {
+                  done();
+                }
+              });
+            }, 0);
+          }
+        });
+
+        if (pending === 0) {
+          done();
+        }
+
+        return;
+      }
+
+      if (opt.async) {
+        return Promise.resolve(opt.hooks ? opt.hooks.preprocess(src) : src)
+          .then(src => lexer(src, opt))
+          .then(tokens => opt.walkTokens ? Promise.all(this.walkTokens(tokens, opt.walkTokens)).then(() => tokens) : tokens)
+          .then(tokens => parser(tokens, opt))
+          .then(html => opt.hooks ? opt.hooks.postprocess(html) : html)
+          .catch(throwError);
+      }
+
+      try {
+        if (opt.hooks) {
+          src = opt.hooks.preprocess(src);
+        }
+        const tokens = lexer(src, opt);
+        if (opt.walkTokens) {
+          this.walkTokens(tokens, opt.walkTokens);
+        }
+        let html = parser(tokens, opt);
+        if (opt.hooks) {
+          html = opt.hooks.postprocess(html);
+        }
+        return html;
+      } catch (e) {
+        return throwError(e);
+      }
+    };
+  }
+
+  #onError(silent, async, callback) {
+    return (e) => {
+      e.message += '\nPlease report this to https://github.com/markedjs/marked.';
+
+      if (silent) {
+        const msg = '<p>An error occurred:</p><pre>'
+          + escape(e.message + '', true)
+          + '</pre>';
+        if (async) {
+          return Promise.resolve(msg);
+        }
+        if (callback) {
+          callback(null, msg);
+          return;
+        }
+        return msg;
+      }
+
+      if (async) {
+        return Promise.reject(e);
+      }
+      if (callback) {
+        callback(e);
+        return;
+      }
+      throw e;
+    };
+  }
+}
+
+const markedInstance = new Marked(defaults);
+
 /**
  * Marked
  */
 function marked(src, opt, callback) {
-  // throw error in case of non string input
-  if (typeof src === 'undefined' || src === null) {
-    throw new Error('marked(): input parameter is undefined or null');
-  }
-  if (typeof src !== 'string') {
-    throw new Error('marked(): input parameter is of type '
-      + Object.prototype.toString.call(src) + ', string expected');
-  }
-
-  if (typeof opt === 'function') {
-    callback = opt;
-    opt = null;
-  }
-
-  opt = merge({}, marked.defaults, opt || {});
-  checkSanitizeDeprecation(opt);
-
-  if (callback) {
-    const highlight = opt.highlight;
-    let tokens;
-
-    try {
-      tokens = Lexer.lex(src, opt);
-    } catch (e) {
-      return callback(e);
-    }
-
-    const done = function(err) {
-      let out;
-
-      if (!err) {
-        try {
-          if (opt.walkTokens) {
-            marked.walkTokens(tokens, opt.walkTokens);
-          }
-          out = Parser.parse(tokens, opt);
-        } catch (e) {
-          err = e;
-        }
-      }
-
-      opt.highlight = highlight;
-
-      return err
-        ? callback(err)
-        : callback(null, out);
-    };
-
-    if (!highlight || highlight.length < 3) {
-      return done();
-    }
-
-    delete opt.highlight;
-
-    if (!tokens.length) return done();
-
-    let pending = 0;
-    marked.walkTokens(tokens, function(token) {
-      if (token.type === 'code') {
-        pending++;
-        setTimeout(() => {
-          highlight(token.text, token.lang, function(err, code) {
-            if (err) {
-              return done(err);
-            }
-            if (code != null && code !== token.text) {
-              token.text = code;
-              token.escaped = true;
-            }
-
-            pending--;
-            if (pending === 0) {
-              done();
-            }
-          });
-        }, 0);
-      }
-    });
-
-    if (pending === 0) {
-      done();
-    }
-
-    return;
-  }
-
-  function onError(e) {
-    e.message += '\nPlease report this to https://github.com/markedjs/marked.';
-    if (opt.silent) {
-      return '<p>An error occurred:</p><pre>'
-        + escape(e.message + '', true)
-        + '</pre>';
-    }
-    throw e;
-  }
-
-  try {
-    const tokens = Lexer.lex(src, opt);
-    if (opt.walkTokens) {
-      if (opt.async) {
-        return Promise.all(marked.walkTokens(tokens, opt.walkTokens))
-          .then(() => {
-            return Parser.parse(tokens, opt);
-          })
-          .catch(onError);
-      }
-      marked.walkTokens(tokens, opt.walkTokens);
-    }
-    return Parser.parse(tokens, opt);
-  } catch (e) {
-    onError(e);
-  }
+  return markedInstance.parse(src, opt, callback);
 }
 
 /**
@@ -2602,7 +2889,8 @@ function marked(src, opt, callback) {
 
 marked.options =
 marked.setOptions = function(opt) {
-  merge(marked.defaults, opt);
+  markedInstance.setOptions(opt);
+  marked.defaults = markedInstance.defaults;
   changeDefaults(marked.defaults);
   return marked;
 };
@@ -2616,115 +2904,10 @@ marked.defaults = defaults;
  */
 
 marked.use = function(...args) {
-  const extensions = marked.defaults.extensions || { renderers: {}, childTokens: {} };
-
-  args.forEach((pack) => {
-    // copy options to new object
-    const opts = merge({}, pack);
-
-    // set async to true if it was set to true before
-    opts.async = marked.defaults.async || opts.async;
-
-    // ==-- Parse "addon" extensions --== //
-    if (pack.extensions) {
-      pack.extensions.forEach((ext) => {
-        if (!ext.name) {
-          throw new Error('extension name required');
-        }
-        if (ext.renderer) { // Renderer extensions
-          const prevRenderer = extensions.renderers[ext.name];
-          if (prevRenderer) {
-            // Replace extension with func to run new extension but fall back if false
-            extensions.renderers[ext.name] = function(...args) {
-              let ret = ext.renderer.apply(this, args);
-              if (ret === false) {
-                ret = prevRenderer.apply(this, args);
-              }
-              return ret;
-            };
-          } else {
-            extensions.renderers[ext.name] = ext.renderer;
-          }
-        }
-        if (ext.tokenizer) { // Tokenizer Extensions
-          if (!ext.level || (ext.level !== 'block' && ext.level !== 'inline')) {
-            throw new Error("extension level must be 'block' or 'inline'");
-          }
-          if (extensions[ext.level]) {
-            extensions[ext.level].unshift(ext.tokenizer);
-          } else {
-            extensions[ext.level] = [ext.tokenizer];
-          }
-          if (ext.start) { // Function to check for start of token
-            if (ext.level === 'block') {
-              if (extensions.startBlock) {
-                extensions.startBlock.push(ext.start);
-              } else {
-                extensions.startBlock = [ext.start];
-              }
-            } else if (ext.level === 'inline') {
-              if (extensions.startInline) {
-                extensions.startInline.push(ext.start);
-              } else {
-                extensions.startInline = [ext.start];
-              }
-            }
-          }
-        }
-        if (ext.childTokens) { // Child tokens to be visited by walkTokens
-          extensions.childTokens[ext.name] = ext.childTokens;
-        }
-      });
-      opts.extensions = extensions;
-    }
-
-    // ==-- Parse "overwrite" extensions --== //
-    if (pack.renderer) {
-      const renderer = marked.defaults.renderer || new Renderer();
-      for (const prop in pack.renderer) {
-        const prevRenderer = renderer[prop];
-        // Replace renderer with func to run extension, but fall back if false
-        renderer[prop] = (...args) => {
-          let ret = pack.renderer[prop].apply(renderer, args);
-          if (ret === false) {
-            ret = prevRenderer.apply(renderer, args);
-          }
-          return ret;
-        };
-      }
-      opts.renderer = renderer;
-    }
-    if (pack.tokenizer) {
-      const tokenizer = marked.defaults.tokenizer || new Tokenizer();
-      for (const prop in pack.tokenizer) {
-        const prevTokenizer = tokenizer[prop];
-        // Replace tokenizer with func to run extension, but fall back if false
-        tokenizer[prop] = (...args) => {
-          let ret = pack.tokenizer[prop].apply(tokenizer, args);
-          if (ret === false) {
-            ret = prevTokenizer.apply(tokenizer, args);
-          }
-          return ret;
-        };
-      }
-      opts.tokenizer = tokenizer;
-    }
-
-    // ==-- Parse WalkTokens extensions --== //
-    if (pack.walkTokens) {
-      const walkTokens = marked.defaults.walkTokens;
-      opts.walkTokens = function(token) {
-        let values = [];
-        values.push(pack.walkTokens.call(this, token));
-        if (walkTokens) {
-          values = values.concat(walkTokens.call(this, token));
-        }
-        return values;
-      };
-    }
-
-    marked.setOptions(opts);
-  });
+  markedInstance.use(...args);
+  marked.defaults = markedInstance.defaults;
+  changeDefaults(marked.defaults);
+  return marked;
 };
 
 /**
@@ -2732,72 +2915,14 @@ marked.use = function(...args) {
  */
 
 marked.walkTokens = function(tokens, callback) {
-  let values = [];
-  for (const token of tokens) {
-    values = values.concat(callback.call(marked, token));
-    switch (token.type) {
-      case 'table': {
-        for (const cell of token.header) {
-          values = values.concat(marked.walkTokens(cell.tokens, callback));
-        }
-        for (const row of token.rows) {
-          for (const cell of row) {
-            values = values.concat(marked.walkTokens(cell.tokens, callback));
-          }
-        }
-        break;
-      }
-      case 'list': {
-        values = values.concat(marked.walkTokens(token.items, callback));
-        break;
-      }
-      default: {
-        if (marked.defaults.extensions && marked.defaults.extensions.childTokens && marked.defaults.extensions.childTokens[token.type]) { // Walk any extensions
-          marked.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
-            values = values.concat(marked.walkTokens(token[childTokens], callback));
-          });
-        } else if (token.tokens) {
-          values = values.concat(marked.walkTokens(token.tokens, callback));
-        }
-      }
-    }
-  }
-  return values;
+  return markedInstance.walkTokens(tokens, callback);
 };
 
 /**
  * Parse Inline
  * @param {string} src
  */
-marked.parseInline = function(src, opt) {
-  // throw error in case of non string input
-  if (typeof src === 'undefined' || src === null) {
-    throw new Error('marked.parseInline(): input parameter is undefined or null');
-  }
-  if (typeof src !== 'string') {
-    throw new Error('marked.parseInline(): input parameter is of type '
-      + Object.prototype.toString.call(src) + ', string expected');
-  }
-
-  opt = merge({}, marked.defaults, opt || {});
-  checkSanitizeDeprecation(opt);
-
-  try {
-    const tokens = Lexer.lexInline(src, opt);
-    if (opt.walkTokens) {
-      marked.walkTokens(tokens, opt.walkTokens);
-    }
-    return Parser.parseInline(tokens, opt);
-  } catch (e) {
-    e.message += '\nPlease report this to https://github.com/markedjs/marked.';
-    if (opt.silent) {
-      return '<p>An error occurred:</p><pre>'
-        + escape(e.message + '', true)
-        + '</pre>';
-    }
-    throw e;
-  }
-};
+marked.parseInline = markedInstance.parseInline;
 
 /**
  * Expose
@@ -2810,6 +2935,7 @@ marked.Lexer = Lexer;
 marked.lexer = Lexer.lex;
 marked.Tokenizer = Tokenizer;
 marked.Slugger = Slugger;
+marked.Hooks = Hooks;
 marked.parse = marked;
 
 const options = marked.options;
@@ -2821,4 +2947,4 @@ const parse = marked;
 const parser = Parser.parse;
 const lexer = Lexer.lex;
 
-export { Lexer, Parser, Renderer, Slugger, TextRenderer, Tokenizer, defaults, getDefaults, lexer, marked, options, parse, parseInline, parser, setOptions, use, walkTokens };
+export { Hooks, Lexer, Marked, Parser, Renderer, Slugger, TextRenderer, Tokenizer, defaults, getDefaults, lexer, marked, options, parse, parseInline, parser, setOptions, use, walkTokens };
