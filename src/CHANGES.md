@@ -1,3 +1,6 @@
+#### v3.4.7
+* Added Extended Table support 
+
 #### v3.4.6
 * Fix detection of plain text signatures
   [#57](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/57)

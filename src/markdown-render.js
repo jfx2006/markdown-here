@@ -18,6 +18,7 @@ import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
 import { markedEmoji } from "./marked-emoji.js"
 import emojis from "./data/shortcodes.mjs"
+import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
@@ -134,6 +135,7 @@ export default function markdownRender(mdText, userprefs) {
   }
 
   marked.setOptions(markedOptions)
+  marked.use(markedExtendedTables())
   marked.use({ tokenizer })
   if (userprefs["math-renderer"] === "gchart") {
     markedRenderer.code = gchartCodeRenderer

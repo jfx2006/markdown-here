@@ -35,6 +35,9 @@ options page in the syntax style selection.
 marked.esm.js
 https://raw.githubusercontent.com/markedjs/marked/v5.1.2/lib/marked.esm.js
 
+marked-extended-tables.esm.js:
+https://raw.githubusercontent.com/calculuschild/marked-extended-tables/main/src/index.js
+
 TeXZilla.js
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
 (modified to be importable as an esm module)
