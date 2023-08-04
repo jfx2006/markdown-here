@@ -15,6 +15,7 @@
 
 import { marked } from "./vendor/marked.esm.js"
 import { mathBlock, mathInline } from "./marked-texzilla.js"
+import { markedHighlight } from "/vendor/marked-highlight.esm.js"
 import hljs from "./highlightjs/highlight.min.js"
 import { markedEmoji } from "./marked-emoji.js"
 import emojis from "./data/shortcodes.mjs"
@@ -121,22 +122,21 @@ export default function markdownRender(mdText, userprefs) {
     pedantic: false,
     breaks: userprefs["gfm-line-breaks-enabled"],
     smartypants: userprefs["smart-replacements-enabled"],
-    // Bit of a hack: highlight.js uses a `hljs` class to style the code block,
-    // so we'll add it by sneaking it into this config field.
-    langPrefix: "hljs language-",
-    highlight: function (codeText, codeLanguage) {
-      if (codeLanguage && hljs.getLanguage(codeLanguage.toLowerCase())) {
-        return hljs.highlight(codeText, {
-          language: codeLanguage.toLowerCase(),
-        }).value
-      }
-      return codeText
-    },
   }
 
   marked.setOptions(markedOptions)
   marked.use(markedExtendedTables())
   marked.use({ tokenizer })
+  marked.use(
+    markedHighlight({
+      langPrefix: "hljs language-",
+      highlight(code, lang) {
+        const lowerLang = lang.toLowerCase()
+        const language = hljs.getLanguage(lowerLang) ? lowerLang : "plaintext"
+        return hljs.highlight(code, { language }).value
+      },
+    })
+  )
   if (userprefs["math-renderer"] === "gchart") {
     markedRenderer.code = gchartCodeRenderer
     markedRenderer.codespan = gchartCodespanRenderer
