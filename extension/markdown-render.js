@@ -16,6 +16,7 @@
 
 import { marked } from "./vendor/marked.esm.js"
 import hljs from "./highlightjs/highlight.js"
+import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -100,6 +101,7 @@ export async function resetMarked(userprefs) {
   }
 
   marked.setOptions(markedOptions)
+  marked.use(markedExtendedTables())
   marked.use({ tokenizer })
   if (userprefs["math-renderer"] !== "disabled") {
     const { markedMath } = await import("./marked-math.js")
