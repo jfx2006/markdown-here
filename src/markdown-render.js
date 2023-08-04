@@ -20,6 +20,8 @@ import hljs from "./highlightjs/highlight.min.js"
 import { markedEmoji } from "./marked-emoji.js"
 import emojis from "./data/shortcodes.mjs"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
+import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
+import { markedSmartypants } from "./vendor/marked-smartypants.esm.js"
 
 /**
  Using the functionality provided by the functions htmlToText and markdownToHtml,
@@ -126,7 +128,11 @@ export default function markdownRender(mdText, userprefs) {
 
   marked.setOptions(markedOptions)
   marked.use(markedExtendedTables())
-  marked.use({ tokenizer })
+  marked.use(markedLinkifyIt({}, {}))
+  if (userprefs["smart-replacements-enabled"]) {
+    marked.use(markedSmartypants())
+    marked.use({ tokenizer })
+  }
   marked.use(
     markedHighlight({
       langPrefix: "hljs language-",
