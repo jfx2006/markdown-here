@@ -1,7 +1,7 @@
 mailext-options-sync/
 testing_profile/
-extension/highlightjs
-extension/vendor/
+extension/highlightjs/*.js
+extension/vendor/*.js
 extension/experiments/notificationbar/*.js
 extension/experiments/customui/*.js
 extension/options/mailext-options-sync.js
