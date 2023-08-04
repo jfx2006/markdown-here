@@ -1,10 +1,11 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.0",
+  "version": "3.4.6",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build",
     "lint": "eslint .",
+    "test102": "web-ext run --verbose -p mdhr_test_profiles/testing102 -f /home/rob/bin/thunderbird --keep-profile-changes",
     "test115": "web-ext run --verbose -p mdhr_test_profiles/testing115 -f /home/rob/bin/thunderbird115 --keep-profile-changes",
     "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
     "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f thunderbird-daily"
@@ -17,14 +18,17 @@
     "@types/thunderbird-webext-browser": "^109.0.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
+    "esbuild": "^0.18.17",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-no-unsanitized": "^4.0.2",
-    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-mailextensions-env": "file:./tools/eslint-plugin-mailextensions-env",
-    "prettier": "^3.0.0",
+    "marked-linkify-it": "^3.1.0",
+    "marked-smartypants": "^1.0.2",
+    "prettier": "^2.8.4",
     "typescript": "^5.1.6",
-    "web-ext": "^7.6.2"
+    "web-ext": "^7.5.0"
   }
 }

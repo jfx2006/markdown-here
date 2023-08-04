@@ -18,6 +18,8 @@ import { marked } from "./vendor/marked.esm.js"
 import hljs from "./highlightjs/highlight.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
+import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
+import { markedSmartypants } from "./vendor/marked-smartypants.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -87,12 +89,15 @@ export async function resetMarked(userprefs) {
     gfm: true,
     pedantic: false,
     breaks: userprefs["gfm-line-breaks-enabled"],
-    smartypants: userprefs["smart-replacements-enabled"],
   }
 
   marked.setOptions(markedOptions)
   marked.use(markedExtendedTables())
-  marked.use({ tokenizer })
+  marked.use(markedLinkifyIt({}, {}))
+  if (userprefs["smart-replacements-enabled"]) {
+    marked.use(markedSmartypants())
+    marked.use({ tokenizer })
+  }
   marked.use(
     markedHighlight({
       langPrefix: "hljs language-",
