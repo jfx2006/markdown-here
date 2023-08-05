@@ -97,6 +97,9 @@
     "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature."
   },
+  "options_page__composer_start_markdown_mode": {
+    "message": "Start composer in markdown mode."
+  },
   "options_page__features_title": {
     "message": "Markdown Features",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering"
@@ -155,11 +158,20 @@
     "message": "Start a new email message.",
     "description": "A step in the basic usage instructions"
   },
+  "options_page__start_new_message_toggle": {
+    "message": "Start a new email message. Toggle the composer to markdown mode with the action button on the format toolbar."
+  },
   "options_page__type_some_markdown": {
     "message": "Type some Markdown into the email. Try this:"
   },
   "options_page__short_markdown_example": {
     "message": "`Markdown` **Here** _Revival_!"
+  },
+  "options_page__compose_live_preview": {
+    "message": "The live preview updates as you write your message."
+  },
+  "options_page__compose_send_message": {
+    "message": "Send your message!"
   },
   "options_page__click_toggle2": {
     "message": "Click the compose action button on the format toolbar.",

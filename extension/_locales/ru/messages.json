@@ -92,15 +92,20 @@
     "message": "Настройки",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
+  "options_page__forgot_to_render_label2": {
+    "message": "Включите проверку \"забыл-отдал\".",
+    "description": "Label for the checkbox that enables the forgot-to-render feature",
+    "hash": "2c89383ef981e027e75be9e47f6d4297"
+  },
   "options_page__gfm_line_breaks_enabled_label": {
     "message": "Перенос строк как в Github (GFM).",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
-  "options_page__forgot_to_render_label2": {
-    "message": "Включите проверку \"забыл-отдал\".",
-    "description": "Label for the checkbox that enables the forgot-to-render feature",
-    "hash": "2c89383ef981e027e75be9e47f6d4297"
+  "options_page__hotkey_title": {
+    "message": "\"Горячая\"(она же \"быстрая\") комбинация клавиш",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
   "options_page__tex_math_title": {
     "message": "Поддержка математических формул TeX",
@@ -110,11 +115,6 @@
     "message": "Для рендеринга изображения для формулы, запрос отправляется Google. Это фактически означает, что вы показываете вашу формулу Google. Это также означает, что получатель вашего сообщения сделает запрос к Google, чтобы увидеть отрендеренное  изображение этой формулы.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
-  },
-    "options_page__hotkey_title": {
-    "message": "\"Горячая\"(она же \"быстрая\") комбинация клавиш",
-    "description": "A section title",
-    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
 
   "__WET_GROUP__usage": { "message": "Howto" },

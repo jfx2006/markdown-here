@@ -91,11 +91,6 @@
     "message": "Opciones",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
-  "options_page__gfm_line_breaks_enabled_label": {
-    "message": "Activar saltos de línea GFM.",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
-    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
-  },
   "options_page__forgot_to_render_label2": {
     "message": "Habilitar la comprobación de \"olvido de la rendición\".",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
@@ -106,6 +101,16 @@
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "ee2c5919a16190356cb0b5802dbe6e48"
   },
+  "options_page__gfm_line_breaks_enabled_label": {
+    "message": "Activar saltos de línea GFM.",
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
+    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
+  },
+  "options_page__hotkey_title": {
+    "message": "Combinación de teclas (también conocido como atajo de teclado)",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  },
   "options_page__tex_math_title": {
     "message": "Soporte a fórmulas matemáticas en TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
@@ -114,11 +119,6 @@
     "message": "Para generar la imagen de la fórmula, se envía una solicitud a Google. Eso significa que estás compartiendo tu fórmula con Google. También significa que los destinatarios de tu mensaje estarán haciendo una petición a Google para tener la imagen renderizada.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
-  },
-    "options_page__hotkey_title": {
-    "message": "Combinación de teclas (también conocido como atajo de teclado)",
-    "description": "A section title",
-    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
 
   "__WET_GROUP__usage": { "message": "Howto" },

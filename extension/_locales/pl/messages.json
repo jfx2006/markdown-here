@@ -92,11 +92,6 @@
     "message": "Opcje",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
-  "options_page__gfm_line_breaks_enabled_label": {
-    "message": "Stosuj podziały wiersza w stylu GFM.",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
-    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
-  },
   "options_page__forgot_to_render_label2": {
     "message": "Włączenie kontroli \"zapomniałeś renderować\".",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
@@ -107,6 +102,16 @@
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "ee2c5919a16190356cb0b5802dbe6e48"
   },
+  "options_page__gfm_line_breaks_enabled_label": {
+    "message": "Stosuj podziały wiersza w stylu GFM.",
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
+    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
+  },
+  "options_page__hotkey_title": {
+    "message": "Skrót Klawiszowy",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  },
   "options_page__tex_math_title": {
     "message": "Wsparcie dla Wzorów Matematycznych TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
@@ -115,11 +120,6 @@
     "message": "Aby wygenerować obraz wzoru, wysłane zostaje zapytanie do serwisu Google. W praktyce znaczy to, że dzielisz się swoim wzorem z serwisem Google. Znaczy to również, że odbiorcy twojej wiadomości wyślą zapytanie do serwisu Google w celu wyświetlenia obrazu.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
-  },
-    "options_page__hotkey_title": {
-    "message": "Skrót Klawiszowy",
-    "description": "A section title",
-    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
 
   "__WET_GROUP__usage": { "message": "Howto" },

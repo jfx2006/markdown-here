@@ -109,11 +109,6 @@
     "message": "Options",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
-  "options_page__gfm_line_breaks_enabled_label": {
-    "message": "<b>Enable GFM line breaks.</b>",
-    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
-    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
-  },
   "options_page__forgot_to_render_label2": {
     "message": "Enable \"forgot-to-render\" check.",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
@@ -123,6 +118,11 @@
     "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown, but forgot to render it (i.e., click \"Markdown Toggle\") before sending. This may need to be disabled if it interferes with your ability to send email.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "ee2c5919a16190356cb0b5802dbe6e48"
+  },
+  "options_page__gfm_line_breaks_enabled_label": {
+    "message": "<b>Enable GFM line breaks.</b>",
+    "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
+    "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
   "options_page__smart_replacements_enabled_label": {
     "message": "Enable \"smart\" typographic replacements",
@@ -134,6 +134,11 @@
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
+  "options_page__hotkey_title": {
+    "message": "Hotkey (aka keyboard shortcut)",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  },
   "options_page__tex_math_title": {
     "message": "TeX Mathematical Formulae Support",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
@@ -142,12 +147,6 @@
     "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
-  },
-
-  "options_page__hotkey_title": {
-    "message": "Hotkey (aka keyboard shortcut)",
-    "description": "A section title",
-    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
 
   "__WET_GROUP__usage": { "message": "Howto" },
