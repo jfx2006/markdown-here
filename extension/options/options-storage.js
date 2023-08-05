@@ -39,7 +39,6 @@ export const kOptDefaults = {
   "math-renderer-enabled": false,
   "math-renderer": "texzilla",
   "hotkey-input": hotKeyDefault(),
-  "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
   "smart-replacements-enabled": true,
   "emoji-shortcode-enabled": true,

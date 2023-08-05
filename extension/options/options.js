@@ -255,7 +255,7 @@ import OptionsStore from "./options-storage.js"
       form.dispatchEvent(
         new CustomEvent("options-sync:form-synced", {
           bubbles: true,
-        })
+        }),
       )
       showSavedMsg()
       document.getElementById("hotkey-display-str").innerText = displayHotKey

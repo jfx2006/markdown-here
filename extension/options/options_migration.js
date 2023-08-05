@@ -61,7 +61,6 @@ export async function migrate_oldHotKey(options, defaults) {
 export async function migrate_oldOptions(options, defaults) {
   const bool_options = [
     "math-enabled",
-    "forgot-to-render-check-enabled",
     "gfm-line-breaks-enabled",
   ]
   const string_options = ["main-css", "math-value"]

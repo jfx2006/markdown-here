@@ -17,7 +17,6 @@ const DEFAULTS = {
   "math-enabled": false,
   "math-value": "MATH_VALUE",
   "hotkey-input": "HOTKEY_INPUT",
-  "forgot-to-render-check-enabled": true,
   "gfm-line-breaks-enabled": true,
   "last-version": "0",
 }

@@ -197,39 +197,16 @@ messenger.commands.onCommand.addListener(async function (command) {
 })
 
 messenger.compose.onBeforeSend.addListener(async function (tab, details) {
-  let rv
   // If this is a plain text message, do not check for markdown-like content
   if (details.isPlainText) {
     return Promise.resolve({})
   }
-  let forgotToRenderCheckEnabled = await forgotToRenderEnabled()
-  if (!forgotToRenderCheckEnabled) {
-    return Promise.resolve({})
-  }
 
-  let isMarkdown = await messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" })
-  if (isMarkdown) {
-    const message = `${getMessage("forgot_to_render_prompt_info")}
-        ${getMessage("forgot_to_render_prompt_question")}`
-
-    rv = await openNotification(
-      tab.windowId,
-      message,
-      messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
-    )
-  } else {
-    rv = "ok"
-  }
-  if (rv === "ok") {
-    const msgHTML = await messenger.runtime.sendMessage({
-      action: "cp.get-content",
-      windowId: tab.windowId,
-    })
-    return Promise.resolve({ cancel: false, details: { body: msgHTML } })
-  } else {
-    return Promise.resolve({ cancel: true })
-  }
+  const msgHTML = await messenger.runtime.sendMessage({
+    action: "cp.get-content",
+    windowId: tab.windowId,
+  })
+  return Promise.resolve({ cancel: false, details: { body: msgHTML } })
 })
 
 async function composeRender(tabId) {
@@ -288,16 +265,6 @@ async function openNotification(windowId, message, priority, button_labels) {
     placement: "bottom",
   })
   return await notificationClose(notificationId)
-}
-
-function forgotToRenderEnabled() {
-  return new Promise((resolve) => {
-    let rv = false
-    OptionsStore.getAll().then((prefs) => {
-      rv = prefs["forgot-to-render-check-enabled"]
-      resolve(rv)
-    })
-  })
 }
 
 async function updateHotKey(hotkey_value, tooltip) {

@@ -7,16 +7,7 @@
 /*global MdhHtmlToText:false */
 
 function requestHandler(request, sender, sendResponse) {
-  let focusedElem, mdReturn
-
-  if (request.action === "check-forgot-render") {
-    const renderable = elementCanBeRendered(window.document.body)
-    if (renderable) {
-      const body_copy = window.document.body.cloneNode(true)
-      return Promise.resolve(looksLikeMarkdown(body_copy))
-    }
-    return Promise.resolve(renderable)
-  } else if (request.action === "request-preview") {
+  if (request.action === "request-preview") {
     return doRenderPreview()
   }
 }
