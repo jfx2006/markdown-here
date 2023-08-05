@@ -284,38 +284,6 @@ OptionsStore.get("hotkey-input").then(async (result) => {
   await updateHotKey(shortkeyStruct.shortcut, tooltip)
 })
 
-// Context menu in compose window
-async function createContextMenu() {
-  let menuId = await messenger.menus.create({
-    id: "mdhr_toggle_context_menu",
-    title: getMessage("context_menu_item"),
-    contexts: ["page", "selection"],
-    icons: {
-      16: "images/md_trnsp.svg",
-    },
-    visible: false,
-    enabled: true,
-  })
-  messenger.menus.onShown.addListener((info, tab) => {
-    if (tab.type === "messageCompose") {
-      messenger.compose.getComposeDetails(tab.id).then((details) => {
-        if (!details.isPlainText) {
-          messenger.menus.update(menuId, { visible: true })
-          messenger.menus.refresh()
-        }
-      })
-    }
-  })
-  messenger.menus.onHidden.addListener((info, tab) => {
-    messenger.menus.update(menuId, { visible: false })
-    messenger.menus.refresh()
-  })
-  messenger.menus.onClicked.addListener((info, tab) => {
-    return composeRender(tab.id)
-  })
-}
-createContextMenu()
-
 async function onComposeReady(tab) {
   let composeDetails = await messenger.compose.getComposeDetails(tab.id)
   if (["reply", "forward"].includes(composeDetails.type)) {
