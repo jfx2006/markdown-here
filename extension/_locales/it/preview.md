@@ -25,7 +25,7 @@ An image: ![Markdown Here logo](/images/icon24.png)
 > *With* **some** `markdown`.
 
 If **TeX Math** support is enabled, this is the quadratic equation:
-`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
+${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 
 # Header 1
 ## Header 2

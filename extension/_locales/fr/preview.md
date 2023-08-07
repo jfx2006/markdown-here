@@ -25,7 +25,7 @@ Une image : ![logo de Markdown Here](/images/icon24.png)
 > *Avec* **un peu de** `markdown`.
 
 Si le support des **formules mathématiques TeX** est activé, l'équation du second degré est la suivante :
-`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
+${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 
 # Titre 1
 ## Titre 2
