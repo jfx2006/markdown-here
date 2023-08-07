@@ -35,7 +35,7 @@ Ein Bild hinzufügen: ![Markdown Here logo](/images/icon24.png)
 
 
 Sofern die Unterstützung von **TeX Math** aktiviert ist, sieht eine quadratische Gleichung so aus:  
-`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
+${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 
 
 # Überschrift 1

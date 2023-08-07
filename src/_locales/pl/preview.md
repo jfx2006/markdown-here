@@ -23,7 +23,7 @@ Obraz: ![Logo Markdown Here](/images/icon24.png)
 > *Z* **odrobiną znaczników** `markdown`.
 
 Jeśli włączono wsparcie dla **zapisu matematyki w języku TeX**, oto równanie kwadratowe:
-`$${-b \pm \sqrt{b^2 - 4ac} \over 2a}$$`
+${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 
 # Nagłówek 1
 ## Nagłówek 2
