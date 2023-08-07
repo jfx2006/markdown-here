@@ -1,6 +1,9 @@
-#### v3.4.7
+#### v3.5.0
 * GFM autolinking did not work with scheme://foo URLs with emoji support enabled
   [#61](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/61)
+* Changing Markdown options (such as enabling or disabling emojis) did not
+  take effect as expected. In the case of emojis, once enabled they could
+  not be disabled without restartihg Thunderbird.
 
 
 #### v3.4.6
