@@ -1,4 +1,10 @@
+#### v3.4.7
+* GFM autolinking did not work with scheme://foo URLs with emoji support enabled
+  [#61](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/61)
+
+
 #### v3.4.6
+* Not released on ATN
 * Fix detection of plain text signatures
   [#57](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/57)
 * Attempt to fix oversized and misaligned TeXZilla math images

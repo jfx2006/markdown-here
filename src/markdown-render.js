@@ -16,7 +16,7 @@
 import { marked } from "./vendor/marked.esm.js"
 import { mathBlock, mathInline } from "./marked-texzilla.js"
 import hljs from "./highlightjs/highlight.min.js"
-import { markedEmoji } from "./marked-emoji.js"
+import { markedEmoji } from "./vendor/marked-emoji.esm.js"
 import emojis from "./data/shortcodes.mjs"
 
 /**
