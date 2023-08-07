@@ -117,7 +117,7 @@ export async function resetMarked(userprefs) {
     marked.use(markedMath(mathOptions))
   }
   if (userprefs["emoji-shortcode-enabled"]) {
-    const { markedEmoji } = await import("./marked-emoji.js")
+    const { markedEmoji } = await import("./vendor/marked-emoji.esm.js")
     const { default: emojis } = await import("./data/shortcodes.mjs")
     marked.use(markedEmoji({ emojis, unicode: true }))
   }

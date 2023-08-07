@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Markdown mode live preview
 - Added Extended Table support 
 
+### Fixed
+
+- GFM autolinking did not work with scheme://foo URLs with emoji support enabled
+  [#61](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/61)
 
 [HEAD]: https://gitlab.com/jfx2006/markdown-here-revival/-/tags/vHEAD
 

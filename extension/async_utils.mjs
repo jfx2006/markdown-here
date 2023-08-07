@@ -61,12 +61,6 @@ export async function getMainCSS() {
   return main_css["main-css"]
 }
 
-const EMOJI_SHORTCODES = "/data/emoji_codes.json"
-
-export async function getEmojiShortcodes() {
-  return fetchExtFile(EMOJI_SHORTCODES, true)
-}
-
 // Copied from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 export async function sha256Digest(text) {
   const msgUint8 = new TextEncoder().encode(text)

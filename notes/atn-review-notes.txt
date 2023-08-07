@@ -51,6 +51,13 @@ This and "smartypants" are installed in node_modules via npm and then mangled
 into an esm module with "esbuild". `make marked-smartypants` will handle all
 of this.
 
+Emoji stuff:
+data/emoji_codes.json comes from: (MIT Licensed)
+https://cdn.jsdelivr.net/npm/emojibase-data@7.0.1/en/shortcodes/github.json
+It is downloaded via tools/emoji-grab.py, this script takes the original file and
+rewrites it into a {shortcode: unicodechar} format.
+marked-emoji.esm.js:
+https://raw.githubusercontent.com/UziTech/marked-emoji/v1.2.2/src/index.js
 
 TeXZilla.js
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
