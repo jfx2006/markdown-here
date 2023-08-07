@@ -7,6 +7,7 @@ npm_install:
 all: mailext-options-sync marked-linkify-it marked-smartypants
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	npm run build
+	sh tools/gen-src.sh
 
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
