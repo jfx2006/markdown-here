@@ -21,7 +21,12 @@ import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
-const defaultMarkedOptions = Object.assign({}, marked.getDefaults())
+const defaultMarkedOptions = Object.assign({}, marked.getDefaults(), {
+  mangle: undefined,
+  headerIds: undefined,
+  headerPrefix: undefined,
+  smartypants: undefined,
+})
 
 export async function resetMarked(userprefs) {
   marked.setOptions(defaultMarkedOptions)
@@ -82,7 +87,6 @@ export async function resetMarked(userprefs) {
     gfm: true,
     pedantic: false,
     breaks: userprefs["gfm-line-breaks-enabled"],
-    smartypants: userprefs["smart-replacements-enabled"],
   }
 
   marked.setOptions(markedOptions)
