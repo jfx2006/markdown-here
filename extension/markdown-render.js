@@ -19,7 +19,6 @@ import hljs from "./highlightjs/highlight.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
-import { markedSmartypants } from "./vendor/marked-smartypants.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -95,6 +94,7 @@ export async function resetMarked(userprefs) {
   marked.use(markedExtendedTables())
   marked.use(markedLinkifyIt({}, {}))
   if (userprefs["smart-replacements-enabled"]) {
+    const { markedSmartypants } = await import("./vendor/marked-smartypants.esm.js")
     marked.use(markedSmartypants())
     marked.use({ tokenizer })
   }
