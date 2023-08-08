@@ -1,3 +1,7 @@
+#### v3.5.1
+* Added Extended Table support
+
+
 #### v3.5.0
 * GFM autolinking did not work with scheme://foo URLs with emoji support enabled
   [#61](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/61)

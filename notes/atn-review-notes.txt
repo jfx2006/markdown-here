@@ -33,7 +33,24 @@ That script also generates a styles.json file which is used in the
 options page in the syntax style selection.
 
 marked.esm.js
-https://raw.githubusercontent.com/markedjs/marked/v4.2.12/lib/marked.esm.js
+https://raw.githubusercontent.com/markedjs/marked/v5.1.2/lib/marked.esm.js
+
+marked-extended-tables.esm.js:
+https://raw.githubusercontent.com/calculuschild/marked-extended-tables/main/src/index.js
+
+marked-highlight.esm.js:
+https://raw.githubusercontent.com/markedjs/marked-highlight/v2.0.1/src/index.js
+
+marked-linkify-it.esm.js:
+This and "linkify-it" are installed in node_modules via npm and then mangled
+into an esm module with "esbuild". `make marked-linkify-it` will handle all of
+this.
+
+marked-smartypants.esm.js:
+This and "smartypants" are installed in node_modules via npm and then mangled
+into an esm module with "esbuild". `make marked-smartypants` will handle all
+of this.
+
 
 TeXZilla.js
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
