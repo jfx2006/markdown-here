@@ -186,10 +186,14 @@ import OptionsStore from "./options-storage.js"
       Utils.makeRequestToBGScript("render", { mdText: previewInput.value })
         .then((response) => {
           let style_elem = previewIframe.contentDocument.getElementById("main_css")
-          style_elem.appendChild(previewIframe.contentDocument.createTextNode(response.main_css))
+          style_elem.replaceChildren(
+            previewIframe.contentDocument.createTextNode(response.main_css)
+          )
 
           style_elem = previewIframe.contentDocument.getElementById("syntax_css")
-          style_elem.appendChild(previewIframe.contentDocument.createTextNode(response.syntax_css))
+          style_elem.replaceChildren(
+            previewIframe.contentDocument.createTextNode(response.syntax_css)
+          )
 
           previewIframe.contentDocument.body.innerHTML = escapeHTML`${response.html}`
           setPreviewScroll()
