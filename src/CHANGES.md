@@ -3,6 +3,8 @@
 
 
 #### v3.5.0
+* **Math rendering syntax unified!** If using the GChart math rendering, it's
+  no longer necessary to use backticks (\`) around the \$. 
 * GFM autolinking did not work with scheme://foo URLs with emoji support enabled
   [#61](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/61)
 * Changing Markdown options (such as enabling or disabling emojis) did not

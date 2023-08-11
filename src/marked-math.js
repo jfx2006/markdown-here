@@ -9,9 +9,9 @@ const defaultOptions = {
   render_func: undefined,
 }
 
-const inlineStartRule = /(?<=\s|^)\${1,2}(?!\$)/
-const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1(?=\s|$)/
-const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/
+const inlineStartRule = /(?<=\s|^)\$(?!\$)/
+const inlineRule = /^(\$)([^$\n]|[^$\n][\s\S]*?[^$])\1(?!\$)/
+const blockRule = /^(\$\$)([^$]|[^$][\s\S]*?[^$])\1(?!\$)/
 
 export function markedMath(options = {}) {
   const mathRenderer = createRenderer(options)
@@ -23,7 +23,7 @@ export function markedMath(options = {}) {
     async: true,
     async walkTokens(token) {
       if (token.type === "mathInline" || token.type === "mathBlock") {
-        token.html = await mathRenderer(token.math_code)
+        token.html = await mathRenderer(token.math_code, token.type === "mathBlock")
       }
     },
   }
@@ -41,9 +41,9 @@ function createRenderer(options) {
       .replace(/\{urlmathcode\}/gi, encodeURIComponent(math_code))
   }
 
-  async function mathifyTeXZilla(math_code) {
+  async function mathifyTeXZilla(math_code, isBlock) {
     const { TeX2PNG } = await import("./marked-texzilla.js")
-    return await TeX2PNG(math_code)
+    return await TeX2PNG(math_code, isBlock)
   }
 
   if (options.math_renderer === "disabled") {
@@ -65,7 +65,7 @@ function mathBlock(options, renderer) {
     name: "mathBlock",
     level: "block", // Is this a block-level or inline-level tokenizer?
     start(src) {
-      return src.indexOf("\n$")
+      return src.match(/\$\$/)?.index
     },
     tokenizer(src, tokens) {
       const match = src.match(blockRule) // Regex for the complete token
@@ -81,7 +81,7 @@ function mathBlock(options, renderer) {
     },
     renderer(token) {
       return `
-            <div style="display:block;text-align:center;">
+            <div style="display:block;text-align:center;margin-top:-1em;margin-bottom:1.2em;">
             ${token.html}
             </div>`
     },
