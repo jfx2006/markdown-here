@@ -9,23 +9,30 @@ const defaultOptions = {
   render_func: undefined,
 }
 
-export function markedMath(options) {
+const inlineStartRule = /(?<=\s|^)\${1,2}(?!\$)/
+const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])+?)(?<!\$)\1(?=\s|$)/
+const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/
+
+export function markedMath(options = {}) {
+  const mathRenderer = createRenderer(options)
+  return {
+    extensions: [
+      mathBlock(options, createRenderer(options)),
+      mathInline(options, createRenderer(options)),
+    ],
+    async: true,
+    async walkTokens(token) {
+      if (token.type === "mathInline" || token.type === "mathBlock") {
+        token.html = await mathRenderer(token.math_code)
+      }
+    },
+  }
+}
+
+function createRenderer(options) {
   options = {
     ...defaultOptions,
     ...options,
-  }
-
-  if (options.math_renderer === "disabled") {
-    throw new Error("math_renderer is disabled")
-  } else if (options.math_renderer === "gchart") {
-    if (!options.math_url) {
-      throw new Error("GChart math_renderer requires options.math_url")
-    }
-    options.render_func = mathifyGChart
-  } else if (options.math_renderer === "texzilla") {
-    options.render_func = mathifyTeXZilla
-  } else {
-    throw new Error("math_renderer is invalid!")
   }
 
   async function mathifyGChart(math_code) {
@@ -39,61 +46,76 @@ export function markedMath(options) {
     return await TeX2PNG(math_code)
   }
 
+  if (options.math_renderer === "disabled") {
+    throw new Error("math_renderer is disabled")
+  } else if (options.math_renderer === "gchart") {
+    if (!options.math_url) {
+      throw new Error("GChart math_renderer requires options.math_url")
+    }
+    return mathifyGChart
+  } else if (options.math_renderer === "texzilla") {
+    return mathifyTeXZilla
+  } else {
+    throw new Error("math_renderer is invalid!")
+  }
+}
+
+function mathBlock(options, renderer) {
   return {
-    extensions: [
-      {
-        name: "mathBlock",
-        level: "block", // Is this a block-level or inline-level tokenizer?
-        start(src) {
-          return src.indexOf("\n$$")
-        },
-        tokenizer(src, tokens) {
-          const match = src.match(/^\$\$+\n([^$]+?)\n\$\$+\n/) // Regex for the complete token
-          if (match) {
-            return {
-              // Token to generate
-              type: "mathBlock", // Should match "name" above
-              raw: match[0], // Text to consume from the source
-              math_code: match[1].trim(),
-              html: "",
-            }
-          }
-        },
-        renderer(token) {
-          return `
+    name: "mathBlock",
+    level: "block", // Is this a block-level or inline-level tokenizer?
+    start(src) {
+      return src.indexOf("\n$")
+    },
+    tokenizer(src, tokens) {
+      const match = src.match(blockRule) // Regex for the complete token
+      if (match) {
+        return {
+          // Token to generate
+          type: "mathBlock", // Should match "name" above
+          raw: match[0], // Text to consume from the source
+          math_code: match[2].trim(),
+          html: "",
+        }
+      }
+    },
+    renderer(token) {
+      return `
             <div style="display:block;text-align:center;">
             ${token.html}
             </div>`
-        },
-      },
-      {
-        name: "mathInline",
-        level: "inline", // Is this a block-level or inline-level tokenizer?
-        start(src) {
-          return src.indexOf("$")
-        },
-        tokenizer(src, tokens) {
-          const match = src.match(/^\$+([^$\n]+?)\$+/)
-          if (match) {
-            return {
-              // Token to generate
-              type: "mathInline", // Should match "name" above
-              raw: match[0], // Text to consume from the source
-              math_code: match[1].trim(),
-              html: "",
-            }
-          }
-        },
-        renderer(token) {
-          return token.html
-        },
-      },
-    ],
-    async: true,
-    async walkTokens(token) {
-      if (token.type === "mathInline" || token.type === "mathBlock") {
-        token.html = await options.render_func(token.math_code)
+    },
+  }
+}
+
+function mathInline(options, renderer) {
+  return {
+    name: "mathInline",
+    level: "inline", // Is this a block-level or inline-level tokenizer?
+    start(src) {
+      const match = src.match(inlineStartRule)
+      if (!match) {
+        return
       }
+      const possibleMath = src.substring(match.index)
+      if (possibleMath.match(inlineRule)) {
+        return match.index
+      }
+    },
+    tokenizer(src, tokens) {
+      const match = src.match(inlineRule)
+      if (match) {
+        return {
+          // Token to generate
+          type: "mathInline", // Should match "name" above
+          raw: match[0], // Text to consume from the source
+          math_code: match[2].trim(),
+          html: "",
+        }
+      }
+    },
+    renderer(token) {
+      return token.html
     },
   }
 }
