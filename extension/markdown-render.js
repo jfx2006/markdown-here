@@ -106,7 +106,7 @@ export async function resetMarked(userprefs) {
         const language = hljs.getLanguage(lowerLang) ? lowerLang : "plaintext"
         return hljs.highlight(code, { language }).value
       },
-    }),
+    })
   )
   if (userprefs["math-renderer"] !== "disabled") {
     const { markedMath } = await import("./marked-math.js")
