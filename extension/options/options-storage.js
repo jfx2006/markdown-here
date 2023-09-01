@@ -22,8 +22,7 @@ import {
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
-} from "./options_migration.js";
-
+} from "./options_migration.js"
 
 function hotKeyDefault() {
   if (navigator.platform === "MacIntel") {

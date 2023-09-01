@@ -10,4 +10,5 @@ extension/test/chai.js
 extension/test/jquery.slim.js
 extension/test/mocha.js
 extension/test/underscore.js
+tools/eslint-plugin-mailextensions-env/*.js
 web-ext-config.js

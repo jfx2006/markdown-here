@@ -3,7 +3,7 @@
  * MIT License
  */
 
-import { fetchExtFile } from "../async_utils.mjs";
+import { fetchExtFile } from "../async_utils.mjs"
 
 const EMOJI_SHORTCODES = "/data/emoji_codes.json"
 

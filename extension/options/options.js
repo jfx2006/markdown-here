@@ -235,7 +235,7 @@ import OptionsStore from "./options-storage.js"
     const appManifest = messenger.runtime.getManifest()
     document.getElementById("mdhrVersion").innerText = appManifest.version
     document.getElementById(
-      "mdhrThunderbirdVersion",
+      "mdhrThunderbirdVersion"
     ).innerText = `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
@@ -259,7 +259,7 @@ import OptionsStore from "./options-storage.js"
       form.dispatchEvent(
         new CustomEvent("options-sync:form-synced", {
           bubbles: true,
-        }),
+        })
       )
       showSavedMsg()
       document.getElementById("hotkey-display-str").innerText = displayHotKey

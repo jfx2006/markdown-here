@@ -126,7 +126,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       sender.tab.windowId,
       getMessage("unrendering_modified_markdown_warning"),
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("unrender_button"), getMessage("cancel_button")],
+      [getMessage("unrender_button"), getMessage("cancel_button")]
     )
   } else if (request.action === "test-request") {
     responseCallback("test-request-good")
@@ -301,7 +301,7 @@ async function injectMDPreview() {
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
-    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] },
+    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] }
   )
 }
 await injectMDPreview()

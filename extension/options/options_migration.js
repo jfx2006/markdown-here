@@ -61,10 +61,7 @@ export async function migrate_oldHotKey(options, defaults) {
 }
 
 export async function migrate_oldOptions(options, defaults) {
-  const bool_options = [
-    "math-enabled",
-    "gfm-line-breaks-enabled",
-  ]
+  const bool_options = ["math-enabled", "gfm-line-breaks-enabled"]
   const string_options = ["main-css", "math-value"]
   const old_option_keys = Array.prototype.concat(bool_options, string_options)
   let old_options = await EXT_STORAGE.get(old_option_keys)

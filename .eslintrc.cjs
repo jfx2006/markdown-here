@@ -9,7 +9,7 @@ module.exports = {
   root: true,
   extends: [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
+    //"plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
@@ -17,7 +17,7 @@ module.exports = {
   parserOptions: {
     sourceType: "module",
     project: true,
-    tsconfigRootDir: __dirname,
+    //tsconfigRootDir: __dirname,
   },
   rules: {
     quotes: ["error", "double", { avoidEscape: true, allowTemplateLiterals: true }],
