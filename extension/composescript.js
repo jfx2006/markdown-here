@@ -1,6 +1,7 @@
 /*
- * Copyright Adam Pritchard 2013
- * MIT License : http://adampritchard.mit-license.org/
+ * Copyright JFX 2021-2023
+ * Copyright Adam Pritchard 2013-2016
+ * MIT License
  */
 
 "use strict"

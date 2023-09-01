@@ -1,8 +1,8 @@
-/**
- * Copyright JFX 2021
- * Copyright Adam Pritchard 2016
+/*
+ * Copyright JFX 2021-2023
+ * Copyright Adam Pritchard 2013-2016
  * MIT License
- **/
+ */
 
 /*
  * Mail Extension background script.

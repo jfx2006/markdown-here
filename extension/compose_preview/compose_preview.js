@@ -1,6 +1,7 @@
 /*
- * Copyright JFX 2023
+ * Copyright JFX 2021-2023
  * MIT License
+ * https://gitlab.com/jfx2006
  */
 
 import DOMPurify from "../vendor/purify.es.js"
