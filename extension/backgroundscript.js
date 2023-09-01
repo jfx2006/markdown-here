@@ -295,13 +295,23 @@ async function onComposeReady(tab) {
   return {}
 }
 
+function str2Int(intstr) {
+  let rv = Number.parseInt(intstr, 10)
+  if (Number.isNaN(rv)) {
+    return 0
+  }
+  return rv
+}
+
 async function injectMDPreview() {
   // Register custom UI compose editor
   const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
+  const previewHidden = savedState["preview-hidden"] === "true"
+  const previewWidth = str2Int(savedState["preview-width"])
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
-    { hidden: savedState["preview-hidden"], width: savedState["preview-width"] }
+    { hidden: previewHidden, width: previewWidth }
   )
 }
 await injectMDPreview()
