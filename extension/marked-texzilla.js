@@ -38,10 +38,9 @@ function trimCanvas(ctx) {
       }
     }
   }
-  const width = brCorner.x - tlCorner.x + 6
-  const height = brCorner.y - tlCorner.y + 6
-
-  const cut = ctx.getImageData(tlCorner.x - 3, tlCorner.y - 3, width, height)
+  const width = brCorner.x - tlCorner.x + 10
+  const height = brCorner.y - tlCorner.y + 10
+  const cut = ctx.getImageData(tlCorner.x - 6, tlCorner.y - 6, width, height)
 
   canvas.width = width
   canvas.height = height
@@ -79,15 +78,37 @@ async function SVG2PNG(svgImg, imgClass) {
   })
 }
 
-export async function TeX2PNG(aTeX, aRTL, aSize) {
-  if (aRTL === undefined) {
-    aRTL = false
+class TexSizes {
+  static #inlineSize
+  static #blockSize
+  static {
+    // Temporarily insert the MathML element in the document to measure it.
+    const el = document.createElement("p")
+    el.style.visibility = "hidden"
+    el.style.position = "absolute"
+    el.style.fontSize = "1rem"
+    el.innerText = "Xg"
+    window.document.body.appendChild(el)
+    this.#blockSize = el.clientHeight
+    const fontSize = getComputedStyle(el).fontSize
+    this.#inlineSize = Number.parseInt(fontSize)
+    window.document.body.removeChild(el)
+    console.log({ blockSize: this.#blockSize, inlineSize: this.#inlineSize })
   }
+  static size(isBlock) {
+    if (isBlock) {
+      return this.#blockSize
+    }
+    return this.#inlineSize
+  }
+}
+
+export async function TeX2PNG(aTeX, isBlock = false, isRTL = false, aSize = undefined) {
   // Set default size.
   if (aSize === undefined) {
-    aSize = 16
+    aSize = TexSizes.size(isBlock)
   }
-  let svgImg = TeXZilla.toImage(aTeX, aRTL, true, aSize)
+  let svgImg = TeXZilla.toImage(aTeX, isRTL, true, aSize)
   svgImg.classList.add("math_texzilla_svg")
   return await SVG2PNG(svgImg, "math_texzilla")
 }

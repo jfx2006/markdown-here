@@ -179,3 +179,7 @@ table tr th {
  font-weight: bold;
  background-color: rgba(0,26,191,.3);
 }
+
+img.math_texzilla {
+  margin-bottom: -4px;
+}
