@@ -5,7 +5,7 @@
  */
 
 "use strict"
-/*global MdhHtmlToText:false */
+/*global MdhHtmlToText:false ExternalContent:false */
 
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
@@ -14,8 +14,11 @@ function requestHandler(request, sender, sendResponse) {
 }
 messenger.runtime.onMessage.addListener(requestHandler)
 
+let message_type
+
 messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
   if (response) {
+    message_type = response.message_type
     if (response.reply_position === "bottom") {
       let mailBody = window.document.body
       let firstChild = mailBody.firstElementChild
@@ -35,8 +38,11 @@ messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
 })
 
 async function doRenderPreview() {
+  const msgDocument = window.document.cloneNode(true)
+  ExternalContent.wrapContent(msgDocument, "reply") // msgDocument is modified in-place
+
   try {
-    const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(window.document.body)
+    const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(msgDocument.body)
     const result_html = await messenger.runtime.sendMessage({
       action: "render-md",
       mdText: mdhHtmlToText.get(),

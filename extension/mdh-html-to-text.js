@@ -47,11 +47,6 @@ isn't already present.
     // NOTE: If we end up really using `range`, we should do this:
     // if (!this.range) { this.range = new Range(); this.range.selectNodeContents(elem); }
     // ...or just make it non-optional.
-
-    // Is this insufficient? What if `elem` is in an iframe with no `src`?
-    // Maybe we should go higher in the iframe chain?
-    this.url = Utils.getTopURL(elem.ownerDocument.defaultView)
-
     this._preprocess()
   }
 

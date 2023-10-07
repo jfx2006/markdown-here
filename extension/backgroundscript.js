@@ -180,6 +180,7 @@ messenger.composeScripts.register({
     { file: "jsHtmlToText.js" },
     { file: "mdh-html-to-text.js" },
     { file: "markdown-here.js" },
+    { file: "externalcontent.js" },
     { file: "composescript.js" },
   ],
 })
@@ -290,7 +291,11 @@ async function onComposeReady(tab) {
     let identityId = composeDetails.identityId
     let replyPosition = await messenger.reply_prefs.getReplyPosition(identityId)
     let useParagraph = await messenger.reply_prefs.getUseParagraph()
-    return { reply_position: replyPosition, use_paragraph: useParagraph }
+    return {
+      message_type: composeDetails.type,
+      reply_position: replyPosition,
+      use_paragraph: useParagraph,
+    }
   }
   return {}
 }

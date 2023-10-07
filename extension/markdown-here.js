@@ -409,14 +409,7 @@ https://github.com/adam-p/markdown-here/issues/85
 
       // Wrap our pretty HTML in a <div> wrapper.
       // We'll use the wrapper as a marker to indicate that we're in a rendered state.
-      mdHtml =
-        '<div class="markdown-here-wrapper" ' +
-        'data-md-url="' +
-        Utils.getTopURL(focusedElem.ownerDocument.defaultView, true) +
-        '">' +
-        mdHtml +
-        rawHolder +
-        "</div>"
+      mdHtml = '<div class="markdown-here-wrapper">' + mdHtml + rawHolder + "</div>"
 
       wrapper = replaceRange(selectedRange, mdHtml)
 

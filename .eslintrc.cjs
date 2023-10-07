@@ -1,3 +1,9 @@
+/*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
 module.exports = {
   env: {
     browser: true,
@@ -16,7 +22,7 @@ module.exports = {
   plugins: ["@typescript-eslint", "eslint-plugin-mailextensions-env", "html", "no-unsanitized", "prettier"],
   parserOptions: {
     sourceType: "module",
-    project: true,
+    //project: true,
     //tsconfigRootDir: __dirname,
   },
   rules: {
