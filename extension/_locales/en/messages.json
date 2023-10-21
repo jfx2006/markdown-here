@@ -90,11 +90,11 @@
     "message": "Options"
   },
   "options_page__forgot_to_render_label2": {
-    "message": "Enable \"forgot-to-render\" check.",
+    "message": "Enable forgot-to-render check",
     "description": "Label for the checkbox that enables the forgot-to-render feature"
   },
   "options_page__forgot_to_render_2": {
-    "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click \"Markdown Toggle\") before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
+    "message": "When you send an email, this checks the content to see if it looks like you wrote it in Markdown,\nbut forgot to render it (i.e., click 'Markdown Toggle') before sending.\nThis may need to be disabled if it interferes with your ability to send email.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature."
   },
   "options_page__composer_start_markdown_mode": {
@@ -109,7 +109,7 @@
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks."
   },
   "options_page__smart_replacements_enabled_label": {
-    "message": "Enable \"smart\" typographic replacements",
+    "message": "Enable 'smart' typographic replacements",
     "description": "Label for enabling the smart replacements feature"
   },
   "options_page__smart_replacements_2": {
