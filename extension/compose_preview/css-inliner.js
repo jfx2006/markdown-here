@@ -163,7 +163,6 @@ export class CSSInliner {
   inlineStylesForSingleElement(element) {
     const computedStyle = getComputedStyle(element)
     const display = computedStyle.getPropertyValue("display")
-    const returnDisplay = element.style.display
     element.style.display = "none"
     if (this.#defaultStyles[element.tagName] == null) {
       this.#defaultStyles[element.tagName] = computeDefaultStyleByTagName(
@@ -173,6 +172,9 @@ export class CSSInliner {
     }
     for (let i = 0; i < computedStyle.length; i++) {
       const styleName = computedStyle[i]
+      if (styleName.startsWith("-webkit")) {
+        continue
+      }
 
       // exclude default styles
       if (this.#defaultStyles[element.tagName][styleName] !== computedStyle[styleName]) {
@@ -189,7 +191,5 @@ export class CSSInliner {
     if (element.style.length === 0) {
       element.removeAttribute("style")
     }
-
-    element.style.display = returnDisplay
   }
 }

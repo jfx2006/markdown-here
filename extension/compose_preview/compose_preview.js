@@ -26,8 +26,8 @@ async function addStyleSheet(id, css) {
 
 async function addMDPreviewStyles() {
   await Promise.all([getMainCSS(), getSyntaxCSS()]).then(async ([main_css, syntax_css]) => {
-    await addStyleSheet("main_css", main_css)
     await addStyleSheet("syntax_css", syntax_css)
+    await addStyleSheet("main_css", main_css)
   })
 }
 
