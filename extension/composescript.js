@@ -5,7 +5,7 @@
  */
 
 "use strict"
-/*global MdhHtmlToText:false ExternalContent:false */
+/*global MdhHtmlToText:false  Utils:false */
 
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
@@ -14,11 +14,8 @@ function requestHandler(request, sender, sendResponse) {
 }
 messenger.runtime.onMessage.addListener(requestHandler)
 
-let message_type
-
 messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
   if (response) {
-    message_type = response.message_type
     if (response.reply_position === "bottom") {
       let mailBody = window.document.body
       let firstChild = mailBody.firstElementChild
@@ -37,20 +34,44 @@ messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
   doRenderPreview()
 })
 
+function replaceRange(range, html) {
+  range.deleteContents()
+
+  // Create a DocumentFragment to insert and populate it with HTML
+  const documentFragment = range.createContextualFragment(html)
+  range.insertNode(documentFragment)
+
+  // In some clients (and maybe some versions of those clients), on some pages,
+  // the newly inserted rendered Markdown will be selected. It looks better and
+  // is slightly less annoying if the text is not selected, and consistency
+  // across platforms is good. So we're going to collapse the selection.
+  // Note that specifying the `toStart` argument to `true` seems to be necessary
+  // in order to actually get a cursor in the editor.
+  // Fixes #427: https://github.com/adam-p/markdown-here/issues/427
+  range.collapse(true)
+
+  return range.commonAncestorContainer
+}
+
 async function doRenderPreview() {
   const msgDocument = window.document.cloneNode(true)
-  ExternalContent.wrapContent(msgDocument, "reply") // msgDocument is modified in-place
+  const range = msgDocument.createRange()
+  range.selectNodeContents(msgDocument.body)
+  const signature = msgDocument.querySelector("body > .moz-signature")
+  range.setEndBefore(signature)
 
   try {
-    const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(msgDocument.body)
+    const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(msgDocument.body, range)
     const result_html = await messenger.runtime.sendMessage({
       action: "render-md",
       mdText: mdhHtmlToText.get(),
     })
     const renderedMarkdown = mdhHtmlToText.postprocess(result_html)
+    const finalHTML = replaceRange(range, renderedMarkdown).outerHTML
+
     return await messenger.runtime.sendMessage({
       action: "cp.render-preview",
-      payload: renderedMarkdown,
+      payload: finalHTML,
     })
   } catch (reason) {
     console.log(`Error rendering preview. ${reason}`)

@@ -1,513 +1,99 @@
+<!--
+  ~ Copyright JFX 2021-2023
+  ~ MIT License
+  ~ https://gitlab.com/jfx2006
+  -->
+
 <!DOCTYPE html>
 <html>
   <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title></title>
-    <meta charset="utf-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src data: imap: cid: mid:; child-src 'none';"
-    />
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy"
+content="default-src 'none'; style-src 'self' 'unsafe-inline'; img-src data: imap: cid: mid:; child-src 'none';">
     <style>
-      html,
-      body {
-        height: calc(100% - 15px);
-        width: calc(100% - 10px);
-        margin: 0;
-        padding: 5px;
+      html, body {
+          height: calc(100% - 15px);
+          width: calc(100% - 10px);
+          margin: 0;
+          padding: 5px;
       }
       @media (prefers-color-scheme: dark) {
-        body {
-          color: #f9f9fa;
-          background-color: #2a2a2e;
-        }
+          body {
+              color: #f9f9fa;
+              background-color: #2a2a2e;
+          }
 
-        span[_moz_quote="true"] {
-          color: #009fff;
-        }
+          span[_moz_quote="true"] {
+              color: #009fff;
+          }
       }
-    </style>
-    <style id="main_css">
-      /*
- * NOTE:
- * - The use of browser-specific styles (-moz-, -webkit-) should be avoided.
- *   If used, they may not render correctly for people reading the email in
- *   a different browser than the one from which the email was sent.
- * - The use of state-dependent styles (like a:hover) don't work because they
- *   don't match at the time the styles are made explicit. (In email, styles
- *   must be explicitly applied to all elements -- stylesheets get stripped.)
- */
-
-      /* This is the overall wrapper, it should be treated as the `body` section. */
-      .markdown-here-wrapper {
-      }
-
-      pre,
-      code {
-        font-family: Consolas, Inconsolata, Courier, monospace;
-      }
-
-      code {
-        margin: 0 0.15em;
-        padding: 0 0.3em;
-        white-space: pre-wrap;
-        font-weight: 550;
-        background-color: rgba(119, 119, 119, 0.3);
-        border-radius: 3px;
-        display: inline; /* added to fix Yahoo block display of inline code */
-      }
-
-      pre {
-        font-size: 1em;
-        line-height: 1.2em;
-      }
-
-      pre code {
-        white-space: pre;
-        overflow: auto; /* fixes issue #70: Firefox/Thunderbird: Code blocks with horizontal scroll would have bad background colour */
-        border-radius: 3px;
-        border: 1px solid #ccc;
-        padding: 0.5em 0.7em;
-        display: block;
-      }
-
-      /* This spacing has been tweaked to closely match Gmail+Chrome "paragraph" (two line breaks) spacing.
-  Note that we only use a top margin and not a bottom margin -- this prevents the
-  "blank line" look at the top of the email (issue #243).
-  */
-      p {
-        /* !important is needed here because Hotmail/Outlook.com uses !important to
-         kill the margin in <p>. We need this to win. */
-        margin: 0 0 1.2em 0 !important;
-      }
-
-      table,
-      pre,
-      dl,
-      blockquote,
-      q,
-      ul,
-      ol {
-        margin: 1.2em 0;
-      }
-
-      ul,
-      ol {
-        padding-left: 2em;
-      }
-
-      li {
-        margin: 0.5em 0;
-      }
-
-      /* Space paragraphs in a list the same as the list itself. */
-      li p {
-        /* Needs !important to override rule above. */
-        margin: 0.5em 0 !important;
-      }
-
-      /* Smaller spacing for sub-lists */
-      ul ul,
-      ul ol,
-      ol ul,
-      ol ol {
-        margin: 0;
-        padding-left: 1em;
-      }
-
-      /* Use Roman numerals for sub-ordered-lists. (Like Github.) */
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        list-style-type: lower-roman;
-      }
-
-      /* Use letters for sub-sub-ordered lists. (Like Github.) */
-      ul ul ol,
-      ul ol ol,
-      ol ul ol,
-      ol ol ol {
-        list-style-type: lower-alpha;
-      }
-
-      dl {
-        padding: 0;
-      }
-
-      dl dt {
-        font-size: 1em;
-        font-weight: bold;
-        font-style: italic;
-      }
-
-      dl dd {
-        margin: 0 0 1em;
-        padding: 0 1em;
-      }
-
-      blockquote,
-      q {
-        border-left: 4px solid #3375dd;
-        padding: 0 1em;
-        color: #777;
-        quotes: none;
-      }
-
-      blockquote::before,
-      blockquote::after,
-      q::before,
-      q::after {
-        content: none;
-      }
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        margin: 1.3em 0 1em;
-        padding: 0;
-        font-weight: bold;
-      }
-
-      h1 {
-        font-size: 1.6em;
-        border-bottom: 2px solid #777;
-      }
-
-      h2 {
-        font-size: 1.4em;
-        border-bottom: 1px solid #777;
-      }
-
-      h3 {
-        font-size: 1.3em;
-      }
-
-      h4 {
-        font-size: 1.2em;
-      }
-
-      h5 {
-        font-size: 1em;
-      }
-
-      h6 {
-        font-size: 1em;
-        color: #777;
-      }
-
-      table {
-        padding: 0;
-        border-collapse: collapse;
-        border-spacing: 0;
-        font-size: 1em;
-        border: 0;
-      }
-
-      tbody {
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-
-      table tr {
-        border: 0;
-        border-top: 1px solid #777;
-        margin: 0;
-        padding: 0;
-      }
-
-      table tr:nth-child(2n) {
-        background-color: rgba(119, 119, 119, 0.5);
-      }
-
-      table tr th,
-      table tr td {
-        font-size: 1em;
-        border: 1px solid #777;
-        margin: 0;
-        padding: 0.5em 1em;
-      }
-
-      table tr th {
-        font-weight: bold;
-        background-color: rgba(0, 26, 191, 0.3);
-      }
-    </style>
-    <style id="syntax_css">
-      /*!
-  Theme: nnfx light
-  Description: a theme inspired by Netscape Navigator/Firefox
-  Author: (c) 2020-2021 Jim Mason <jmason@ibinx.com>
-  Maintainer: @RocketMan
-  License: https://creativecommons.org/licenses/by-sa/4.0  CC BY-SA 4.0
-  Updated: 2021-05-17
-
-  @version 1.1.0
-*/
-
-      .hljs {
-        background: #fff;
-        color: #000;
-      }
-
-      .language-xml .hljs-meta,
-      .language-xml .hljs-meta-string {
-        font-weight: bold;
-        font-style: italic;
-        color: #48b;
-      }
-
-      .hljs-comment,
-      .hljs-quote {
-        font-style: italic;
-        color: #070;
-      }
-
-      .hljs-name,
-      .hljs-keyword,
-      .hljs-built_in {
-        color: #808;
-      }
-
-      .hljs-name,
-      .hljs-attr {
-        font-weight: bold;
-      }
-
-      .hljs-string {
-        font-weight: normal;
-      }
-
-      .hljs-code,
-      .hljs-string,
-      .hljs-meta .hljs-string,
-      .hljs-number,
-      .hljs-regexp,
-      .hljs-link {
-        color: #00f;
-      }
-
-      .hljs-title,
-      .hljs-symbol,
-      .hljs-bullet,
-      .hljs-variable,
-      .hljs-template-variable {
-        color: #f40;
-      }
-
-      .hljs-title.class_,
-      .hljs-class .hljs-title,
-      .hljs-type {
-        font-weight: bold;
-        color: #639;
-      }
-
-      .hljs-title.function_,
-      .hljs-function .hljs-title,
-      .hljs-attr,
-      .hljs-subst,
-      .hljs-tag {
-        color: #000;
-      }
-
-      .hljs-formula {
-        background-color: #eee;
-        font-style: italic;
-      }
-
-      .hljs-addition {
-        background-color: #beb;
-      }
-
-      .hljs-deletion {
-        background-color: #fbb;
-      }
-
-      .hljs-meta {
-        color: #269;
-      }
-
-      .hljs-section,
-      .hljs-selector-id,
-      .hljs-selector-class,
-      .hljs-selector-pseudo,
-      .hljs-selector-tag {
-        font-weight: bold;
-        color: #48b;
-      }
-
-      .hljs-selector-pseudo {
-        font-style: italic;
-      }
-
-      .hljs-doctag,
-      .hljs-strong {
-        font-weight: bold;
-      }
-
-      .hljs-emphasis {
-        font-style: italic;
-      }
-    </style>
+  </style>
+    <style>h1 { font-size: 1.6em; border-bottom: 2px solid rgb(119, 119, 119); }
+h1, h2, h3, h4, h5, h6 { margin: 1.3em 0px 1em; padding: 0px; font-weight: bold; }
+blockquote, q { border-left: 4px solid rgb(51, 117, 221); padding: 0px 1em; color: rgb(119, 119, 119); quotes: none; }
+table, pre, dl, blockquote, q, ul, ol { margin: 1.2em 0px; }
+p { margin: 0px 0px 1.2em !important; }</style>
   </head>
-  <body>
-    <p>
-      This is just a sample. You can play around with your own text right here.<br />If you change
-      any options, the preview will update.
-    </p>
-    <h1 id="markdown">Markdown</h1>
-    <p>…is really just ordinary text, <em>plain and simple</em>. How is it good for you?</p>
-    <ul>
-      <li>You just <strong>type naturally</strong>, and the result looks good.</li>
-      <li>
-        You <strong>don’t have to worry</strong> about clicking formatting buttons.
-        <ul>
-          <li>Or fiddling with indentation. (Two spaces is all you need.)</li>
-        </ul>
-      </li>
-    </ul>
-    <p>
-      To see what else you can do with Markdown (including <strong>tables</strong>,
-      <strong>images</strong>,<br /><strong>numbered lists</strong>, and more!) Try it out by
-      typing in this box!
-    </p>
-    <h1 id="how-to-use-the-demo">How To Use The Demo</h1>
-    <ol>
-      <li>Type in stuff on the left.</li>
-      <li>See the live updates on the right.</li>
-    </ol>
-    <p>That’s it. Pretty simple.</p>
-    <h1 id="more-markdown-examples">More markdown examples</h1>
-    <h2>Links</h2>
-    <p>
-      Links can be <a href="https://www.thunderbird.net">explicit</a> or automatic such<br />as
-      <a href="http://www.thunderbird.net">www.thunderbird.net</a> or
-      https://en.wikipedia.org/wiki/Invader_Zim.
-    </p>
-    <h2 id="tables">Tables</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Lunch order</th>
-          <th>Spicy</th>
-          <th align="right">Owes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Joan</td>
-          <td>saag paneer</td>
-          <td>medium</td>
-          <td align="right">$11</td>
-        </tr>
-        <tr>
-          <td>Sally</td>
-          <td>vindaloo</td>
-          <td>mild</td>
-          <td align="right">$14</td>
-        </tr>
-        <tr>
-          <td>Erin</td>
-          <td>lamb madras</td>
-          <td>HOT</td>
-          <td align="right">$5</td>
-        </tr>
-      </tbody>
-    </table>
-    <h2 id="code-syntax-highlighting">Code syntax highlighting</h2>
-    <p>
-      There are <strong>multiple syntax highlighting themes</strong> to choose from. Here’s one of
-      them:
-    </p>
-    <pre><code class="hljs language-javascript"><span class="hljs-comment">// All the code you will ever need</span>
-<span class="hljs-keyword">var</span> hw = <span class="hljs-string">"Hello World!"</span>
-<span class="hljs-title function_">alert</span>(hw);
-  </code></pre>
-    <h2 id="math-formulae">Math formulae</h2>
-    <p>
-      My math is so rusty that I barely remember the <em>quadratic equation</em>:<br /><code
-        >$${-b \\pm \\sqrt{b^2 - 4ac} \\over 2a}$$</code
-      >
-    </p>
-    <h2 id="lists">Lists</h2>
-    <ul>
-      <li>
-        Bulleted lists
-        <ul>
-          <li>
-            with nested bullets
-            <ul>
-              <li>are fun!</li>
-            </ul>
-          </li>
-          <li>and super easy</li>
-        </ul>
-      </li>
-      <li>More more more!</li>
-    </ul>
-    <ol>
-      <li>Numbered lists too!</li>
-      <li>You don’t even need to use</li>
-      <li>the right numbers</li>
-    </ol>
-    <h1 id="header-1">Header 1</h1>
-    <h2 id="header-2">Header 2</h2>
-    <h3 id="header-3">Header 3</h3>
-    <h4 id="header-4">Header 4</h4>
-    <h5 id="header-5">Header 5</h5>
-    <h6 id="header-6">Header 6</h6>
-    <p>Here’s a horizontal rule</p>
-    <hr />
-    <p>el fin.</p>
-    <p></p>
+  <body class="markdown-here-wrapper">
+    <h1>Hello ðŸ˜€</h1>
+    <p>This is some <strong>Markdown</strong> excitement right here!</p>
+    <p>And some </p>
+    <div
+style="display:block;text-align:center;margin-top:-1em;margin-bottom:1.2em;">
+      <img style="position: relative; top: 2px;" class="math_texzilla"
+        src="cid:part1.TLNFj0lA.93DdCNeR@yahoo.com" alt="a+b=c"
+        width="97" height="25"> </div>
     <div class="markdown-here-exclude">
-      <div class="moz-signature">
-        -- <br /><span style="color: blue">Jack Bogus</span><br />
-        **markdown in signature**<br />
+      <div class="moz-cite-prefix">On 7/22/23 11:07, Rob Lemley wrote:<br>
       </div>
     </div>
-    <p></p>
+    <div class="markdown-here-exclude">
+      <blockquote type="cite">
+        Bummer!<br>
+        <br>
+        <img class="" alt="" src="cid:part2.ICbCu00f.HUdncs62@yahoo.com"
+          width="100" height="113"><br>
+        <br>
+        <div class="moz-cite-prefix">On 7/22/23 10:59, Relax Jack wrote:<br>
+        </div>
+        <blockquote type="cite">
+          <title></title>
+          <style>html, body {
+height: calc(100% - 15px);
+width: calc(100% - 10px);
+margin: 0;
+padding: 5px;
+}</style>
+          <style>p { margin: 0px 0px 1.2em !important; }</style>
+          <p>Rob,,</p>
+          <p><strong>It is with great sadness</strong> that we must <em>deny
+              your claim.</em></p>
+          <p>ðŸ˜¦</p>
+          <p>Cheers,</p>
+          <div class="markdown-here-exclude">
+            <div class="moz-signature">-- <br>
+              Relax Jack<br>
+              **markdown**<br>
+            </div>
+          </div>
+        </blockquote>
+        <br>
+        <div class="moz-signature markdown-here-signature">-- <br>
+          Rob Lemley<br>
+          <a href="mailto:rob@calypsoblue.org"
+            class="moz-txt-link-abbreviated moz-txt-link-freetext">rob@calypsoblue.org</a></div>
+      </blockquote>
+    </div>
+    <div class="markdown-here-exclude">
+      <div class="moz-signature">-- <br>
+        Relax Jack<br>
+        **markdown**<br>
+      </div>
+    </div>
   </body>
-<script>
-  function dropUnusedCSS(html) {
-    const NO_MD_SELECTOR = ":not(.markdown-here-exclude,  .markdown-here-exclude *)"
-    const STYLE_ELEM_IDS = ["syntax_css", "main_css"]
-    let final_css = []
-    for (const stylesheet of html.styleSheets) {
-      if (STYLE_ELEM_IDS.includes(stylesheet.ownerNode.id)) {
-        for (let i = stylesheet.cssRules.length - 1; i >= 0; i--) {
-          const origRule = stylesheet.cssRules[i]
-          if (origRule.constructor.name === "CSSStyleRule") {
-            // CSSStyleRule
-            const rule = `:where(${origRule.selectorText}${NO_MD_SELECTOR}`
-            const selectorMatches = Array.from(html.body.querySelectorAll(rule))
-            if (selectorMatches.length > 0) {
-              final_css.push(origRule.cssText)
-            }
-          }
-        }
-      }
-    }
-    for (const removeElemId of STYLE_ELEM_IDS) {
-      html.getElementById(removeElemId).remove()
-    }
-    return final_css.join("\n")
-  }
-  const emailCSS = dropUnusedCSS(document)
-  const emailCssElem = document.createElement("style")
-  emailCssElem.replaceChildren(document.createTextNode(emailCSS))
-  document.head.appendChild(emailCssElem)
-</script>
-<script src="../extension/utils.js"></script>
-<script src="../extension/jsHtmlToText.js"></script>
-<script src="../extension/mdh-html-to-text.js"></script>
-<script>
-  let mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(window.document.body)
-</script>
-</html>
+<script type="text/javascript">
+
+</script></html>

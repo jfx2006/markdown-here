@@ -7,6 +7,11 @@
 import DOMPurify from "../vendor/purify.es.js"
 import { getMainCSS, getSyntaxCSS } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
+import { CSSInliner } from "./css-inliner.js"
+
+const STYLE_ELEM_IDS = ["syntax_css", "main_css"]
+
+let cssInliner
 
 function escapeHTML(strings, html) {
   return `${DOMPurify.sanitize(html)}`
@@ -19,15 +24,53 @@ async function addStyleSheet(id, css) {
   p_iframe.contentDocument.head.appendChild(style_elem)
 }
 
-async function setMDPreviewStyles() {
-  return Promise.all([getMainCSS(), getSyntaxCSS()]).then(async ([main_css, syntax_css]) => {
+async function addMDPreviewStyles() {
+  await Promise.all([getMainCSS(), getSyntaxCSS()]).then(async ([main_css, syntax_css]) => {
     await addStyleSheet("main_css", main_css)
     await addStyleSheet("syntax_css", syntax_css)
   })
 }
 
+function enableMDPreviewStyles() {
+  for (const styleId of STYLE_ELEM_IDS) {
+    const elem = p_iframe.contentDocument.getElementById(styleId)
+    if (elem) {
+      elem.disabled = false
+    }
+  }
+}
+
+function disableMDPreviewStyles() {
+  for (const styleId of STYLE_ELEM_IDS) {
+    const elem = p_iframe.contentDocument.getElementById(styleId)
+    if (elem) {
+      elem.disabled = true
+    }
+  }
+}
+
+function makeStylesExplicit() {
+  function filterExcluded(elem) {
+    if (elem.classList.contains("markdown-here-exclude")) {
+      return NodeFilter.FILTER_REJECT
+    }
+    return NodeFilter.FILTER_ACCEPT
+  }
+  const treeWalker = p_iframe.contentDocument.createTreeWalker(
+    p_iframe.contentDocument.body,
+    NodeFilter.SHOW_ELEMENT,
+    filterExcluded
+  )
+  while (treeWalker.nextNode()) {
+    cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)
+  }
+}
+
 async function renderMDEmail(unsanitized_html) {
+  enableMDPreviewStyles()
   p_iframe.contentDocument.body.innerHTML = escapeHTML`${unsanitized_html}`
+  makeStylesExplicit()
+  disableMDPreviewStyles()
   return true
 }
 
@@ -37,44 +80,13 @@ async function togglePreview() {
   return context.hidden
 }
 
-function dropUnusedCSS(html) {
-  const NO_MD_SELECTOR = ":not(.markdown-here-exclude,  .markdown-here-exclude *)"
-  const STYLE_ELEM_IDS = ["syntax_css", "main_css"]
-  let final_css = []
-  for (const stylesheet of html.styleSheets) {
-    if (STYLE_ELEM_IDS.includes(stylesheet.ownerNode.id)) {
-      for (let i = stylesheet.cssRules.length - 1; i >= 0; i--) {
-        const origRule = stylesheet.cssRules[i]
-        if (origRule.constructor.name === "CSSStyleRule") {
-          // CSSStyleRule
-          const rule = `:where(${origRule.selectorText}${NO_MD_SELECTOR}`
-          const selectorMatches = Array.from(html.body.querySelectorAll(rule))
-          if (selectorMatches.length > 0) {
-            final_css.push(origRule.cssText)
-          }
-        }
-      }
-    }
-  }
-  for (const removeElemId of STYLE_ELEM_IDS) {
-    html.getElementById(removeElemId).remove()
-  }
-  return final_css.join("\n")
-}
-
 async function getMsgContent() {
   const preview = await requestPreview()
   if (!preview) {
     throw new Error("Unable to render email!")
   }
-  const html_msg = p_iframe.contentDocument.cloneNode(true)
-  const emailCSS = dropUnusedCSS(html_msg)
-  const emailCssElem = html_msg.createElement("style")
-  emailCssElem.replaceChildren(html_msg.createTextNode(emailCSS))
-  html_msg.head.appendChild(emailCssElem)
-
   const serializer = new XMLSerializer()
-  return serializer.serializeToString(html_msg)
+  return serializer.serializeToString(preview)
 }
 
 const onContextChange = async function (context) {
@@ -109,7 +121,8 @@ async function requestPreview() {
 }
 
 async function previewFrameLoaded(e) {
-  await setMDPreviewStyles()
+  cssInliner = new CSSInliner(p_iframe.contentDocument)
+  await addMDPreviewStyles()
 
   const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
 
@@ -120,7 +133,7 @@ async function previewFrameLoaded(e) {
 }
 
 const p_iframe = document.getElementById("preview_frame")
-p_iframe.addEventListener("load", previewFrameLoaded)
+p_iframe.addEventListener("load", await previewFrameLoaded)
 p_iframe.src = "preview_iframe.html"
 
 messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {

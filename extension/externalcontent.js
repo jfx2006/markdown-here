@@ -27,12 +27,16 @@
   }
   customElements.define("mdhr-external-content", MDHRExternalContent)
 
+  function makeWrapperElem(msgDocument) {
+    return msgDocument.createElement("mdhr-external-content")
+  }
+
   /* wrap an element with another
    * https://dev.to/btopro/simple-wrap-unwrap-methods-explained-3k5f
    */
   function wrap(msgDocument, element) {
     if (element && element.parentNode) {
-      const wrapper = msgDocument.createElement("mdhr-external-content")
+      const wrapper = makeWrapperElem(msgDocument)
       element.parentNode.insertBefore(wrapper, element)
       wrapper.appendChild(element)
       return wrapper
@@ -45,7 +49,7 @@
    */
   function wrapAll(msgDocument, elementArray) {
     if (elementArray && elementArray.length) {
-      const wrapper = msgDocument.createElement("mdhr-external-content")
+      const wrapper = makeWrapperElem(msgDocument)
       elementArray[0].parentNode.insertBefore(wrapper, elementArray[0])
       for (let i in elementArray) {
         wrapper.appendChild(elementArray[i])
@@ -132,6 +136,14 @@
   const ExternalContent = {
     wrapContent: wrapContent,
     unwrap: unwrap,
+    _wrapStyles: wrapStyles,
+    _wrapSignature: wrapSignature,
+    _wrapQuoted: wrapQuoted,
+    _wrapForwarded: wrapForwarded,
+    _wrapBySelector: wrapBySelector,
+    _wrapAll: wrapAll,
+    _wrap: wrap,
+    _makeWrapperElem: makeWrapperElem,
   }
   if (typeof module !== "undefined") {
     module.exports = ExternalContent

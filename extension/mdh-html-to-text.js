@@ -181,7 +181,7 @@ we have the DOM available? String-processing the HTML seems suboptimal.
         this.preprocessInfo.exclusions[i].content
       )
     }
-
+    renderedMarkdown = `<div class="markdown-here-wrapper">${renderedMarkdown}</div>`
     return renderedMarkdown
   }
 

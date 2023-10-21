@@ -7,7 +7,7 @@ shift
   --bundle "$@" \
   --entry-names="[dir]/$OUTBASE" \
   --format=esm \
-  --outdir="src/vendor/" \
+  --outdir="extension/vendor/" \
   --platform="browser" \
   --target="es2022" \
   --out-extension:".js=.esm.js" \

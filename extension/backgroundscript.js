@@ -180,7 +180,6 @@ messenger.composeScripts.register({
     { file: "jsHtmlToText.js" },
     { file: "mdh-html-to-text.js" },
     { file: "markdown-here.js" },
-    { file: "externalcontent.js" },
     { file: "composescript.js" },
   ],
 })

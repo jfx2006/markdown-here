@@ -1,4 +1,10 @@
-// node_modules/smartypants/smartypants.es6.js
+/*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
+// node_modules/smartypants/smartypants.mjs
 var tags_to_skip = /<(\/?)(?:pre|code|kbd|script|math)[^>]*>/i;
 var SmartyPants = (text = "", attr = "1") => {
   var do_quotes;
@@ -222,7 +228,9 @@ var _tokenize = (str) => {
 };
 
 // node_modules/marked-smartypants/src/index.js
-function markedSmartypants() {
+function markedSmartypants({
+  config = 2
+} = {}) {
   return {
     tokenizer: {
       inlineText(src) {
@@ -239,7 +247,7 @@ function markedSmartypants() {
     },
     hooks: {
       postprocess(html) {
-        return SmartyPants(html, 2);
+        return SmartyPants(html, config);
       }
     }
   };
