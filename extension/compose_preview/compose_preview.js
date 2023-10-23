@@ -134,6 +134,9 @@ async function requestPreview() {
 async function previewFrameLoaded(e) {
   cssInliner = new CSSInliner(p_iframe.contentDocument)
   await addMDPreviewStyles()
+  p_iframe.contentWindow.onclick = function (e) {
+    e.preventDefault()
+  }
 
   const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
 

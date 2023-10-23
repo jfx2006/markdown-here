@@ -172,7 +172,7 @@ export class CSSInliner {
     }
     for (let i = 0; i < computedStyle.length; i++) {
       const styleName = computedStyle[i]
-      if (styleName.startsWith("-webkit")) {
+      if (styleName.startsWith("-webkit") || styleName === "cursor") {
         continue
       }
 
