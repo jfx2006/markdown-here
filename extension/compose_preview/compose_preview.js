@@ -49,6 +49,15 @@ function disableMDPreviewStyles() {
   }
 }
 
+function removeMDPreviewStyles(html_msg) {
+  for (const styleId of STYLE_ELEM_IDS) {
+    const elem = html_msg.getElementById(styleId)
+    if (elem) {
+      elem.remove()
+    }
+  }
+}
+
 function makeStylesExplicit() {
   function filterExcluded(elem) {
     if (elem.classList.contains("markdown-here-exclude")) {
@@ -85,8 +94,10 @@ async function getMsgContent() {
   if (!preview) {
     throw new Error("Unable to render email!")
   }
+  const html_msg = p_iframe.contentDocument.cloneNode(true)
+  removeMDPreviewStyles(html_msg)
   const serializer = new XMLSerializer()
-  return serializer.serializeToString(preview)
+  return serializer.serializeToString(html_msg)
 }
 
 const onContextChange = async function (context) {
