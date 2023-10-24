@@ -58,7 +58,9 @@ async function doRenderPreview() {
   const range = msgDocument.createRange()
   range.selectNodeContents(msgDocument.body)
   const signature = msgDocument.querySelector("body > .moz-signature")
-  range.setEndBefore(signature)
+  if (signature) {
+    range.setEndBefore(signature)
+  }
 
   try {
     const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(msgDocument.body, range)
