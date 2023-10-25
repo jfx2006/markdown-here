@@ -169,7 +169,7 @@ async function doRender(mdText) {
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {
-  return messenger.runtime.sendMessage({ action: "cp.toggle-preview", windowId: tab.windowId })
+  return composeRender(tab.windowId)
 })
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -179,7 +179,6 @@ messenger.composeScripts.register({
     { file: "utils.js" },
     { file: "jsHtmlToText.js" },
     { file: "mdh-html-to-text.js" },
-    { file: "markdown-here.js" },
     { file: "composescript.js" },
   ],
 })
@@ -189,8 +188,7 @@ messenger.commands.onCommand.addListener(async function (command) {
     let wins = await messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
     for (const win of wins) {
       if (win.focused) {
-        let tabId = win.tabs[0].id
-        return composeRender(tabId)
+        return composeRender(win.id)
       }
     }
   }
@@ -201,7 +199,11 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   if (details.isPlainText) {
     return Promise.resolve({})
   }
-
+  const savedState = await OptionsStore.get(["preview-hidden"])
+  const previewHidden = savedState["preview-hidden"] === "true"
+  if (previewHidden) {
+    return Promise.resolve({})
+  }
   const msgHTML = await messenger.runtime.sendMessage({
     action: "cp.get-content",
     windowId: tab.windowId,
@@ -209,14 +211,19 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   return Promise.resolve({ cancel: false, details: { body: msgHTML } })
 })
 
-async function composeRender(tabId) {
+async function composeRender(windowId) {
   // Send a message to the compose window to toggle markdown rendering
+  const win = await messenger.windows.get(windowId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  const tabId = win.tabs[0].id
   let composeDetails = await messenger.compose.getComposeDetails(tabId)
   // Do not try to render plain text emails
   if (composeDetails.isPlainText) {
     return
   }
-  messenger.tabs.sendMessage(tabId, { action: "toggle-markdown" })
+  return messenger.runtime.sendMessage({ action: "cp.toggle-preview", windowId: windowId })
 }
 
 async function openNotification(windowId, message, priority, button_labels) {
