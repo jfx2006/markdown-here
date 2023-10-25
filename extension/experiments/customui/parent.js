@@ -618,6 +618,10 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
           }
         },
         uninjectFromWindow(window, url) {
+          if (window.location.toString() !== "chrome://messenger/content/"
+            + "messengercompose/messengercompose.xhtml") {
+            return; // incompatible window
+          }
           const editor_elem = window.document.getElementById("messageEditor");
           const editor_wrapper = window.document.getElementById("customui-editor-wrapper");
           removeSidebarWebextFrame("compose_editor", url, window.document);
