@@ -7,9 +7,17 @@
 "use strict"
 /*global MdhHtmlToText:false  Utils:false */
 
+let previewHidden = null
+
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
     return doRenderPreview()
+  } else if (request.action === "md-preview-toggle") {
+    previewHidden = request.value
+    if (!previewHidden) {
+      const scrolled = window.document.scrollingElement
+      composeScroll(scrolled).then(() => {})
+    }
   }
 }
 messenger.runtime.onMessage.addListener(requestHandler)
@@ -31,7 +39,7 @@ messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
       }
     }
   }
-  doRenderPreview()
+  doRenderPreview().then(() => {})
 })
 
 function replaceRange(range, html) {
@@ -100,8 +108,7 @@ const clearCurrentlyScrolling = debounce(() => {
   currentlyScrolling = null
 }, 1000)
 
-async function composeScroll(e) {
-  const scrolled = e.target.scrollingElement
+async function composeScroll(scrolled) {
   const percentage = calculateScrollPercentage(scrolled)
   if (currentlyScrolling && currentlyScrolling !== scrolled) {
     return
@@ -111,14 +118,26 @@ async function composeScroll(e) {
     action: "cp.scroll-to",
     payload: { percentage: percentage },
   })
-
   clearCurrentlyScrolling()
 }
 
-window.addEventListener("scroll", composeScroll, { capture: true, passive: true })
+window.addEventListener(
+  "scroll",
+  async function (e) {
+    if (previewHidden) {
+      return
+    }
+    const scrolled = e.target.scrollingElement
+    await composeScroll(scrolled)
+  },
+  { capture: true, passive: true }
+)
 
 let MsgMutationObserver
 async function editorMutationCb(mutationList, observer) {
+  if (previewHidden) {
+    return
+  }
   return await doRenderPreview()
 }
 

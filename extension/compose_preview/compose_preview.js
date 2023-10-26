@@ -83,9 +83,25 @@ async function renderMDEmail(unsanitized_html) {
   return true
 }
 
+async function sendPreviewStateToCompose(tabId, value) {
+  if (tabId) {
+    return await messenger.tabs.sendMessage(tabId, {
+      action: "md-preview-toggle",
+      value: value,
+    })
+  }
+}
+
 async function togglePreview() {
   const context = await messenger.ex_customui.getContext()
-  await messenger.ex_customui.setLocalOptions({ hidden: !context.hidden })
+  const win = await messenger.windows.get(context.windowId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  const tabId = win.tabs[0]?.id
+  const changedHidden = !context.hidden
+  await messenger.ex_customui.setLocalOptions({ hidden: changedHidden })
+  await sendPreviewStateToCompose(tabId, changedHidden)
   return context.hidden
 }
 
@@ -144,6 +160,13 @@ async function previewFrameLoaded(e) {
     hidden: savedState.hidden,
     width: savedState.width,
   })
+  const context = await messenger.ex_customui.getContext()
+  const win = await messenger.windows.get(context.windowId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  const tabId = win.tabs[0]?.id
+  await sendPreviewStateToCompose(tabId, savedState.hidden)
 }
 
 async function scrollTo(payload) {
