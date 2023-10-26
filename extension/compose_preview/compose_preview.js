@@ -146,6 +146,14 @@ async function previewFrameLoaded(e) {
   })
 }
 
+async function scrollTo(payload) {
+  const target = p_iframe.contentDocument.scrollingElement
+  const targetAvbSpace = target.scrollHeight - target.clientHeight
+  const scrollTop = payload.percentage * targetAvbSpace
+
+  return target.scrollTo({ top: scrollTop, behavior: "smooth" })
+}
+
 const p_iframe = document.getElementById("preview_frame")
 p_iframe.addEventListener("load", await previewFrameLoaded)
 p_iframe.src = "preview_iframe.html"
@@ -185,6 +193,11 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
           return false
         }
         return getMsgContent()
+      case "cp.scroll-to":
+        if (sender.tab.windowId !== context.windowId) {
+          return false
+        }
+        return scrollTo(request.payload)
       default:
         console.log(`Compose Preview: invalid action: ${request.action}`)
     }

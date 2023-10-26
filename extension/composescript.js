@@ -80,6 +80,43 @@ async function doRenderPreview() {
   }
 }
 
+let currentlyScrolling = null
+
+function calculateScrollPercentage(elem) {
+  const scrolledAvbSpace = elem.scrollHeight - elem.clientHeight
+  const scrolledAmount = elem.scrollTop * (1 + elem.clientHeight / scrolledAvbSpace)
+  return scrolledAmount / elem.scrollHeight
+}
+
+function debounce(cb, wait = 1000) {
+  let timeout
+  return (...args) => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => cb(...args), wait)
+  }
+}
+
+const clearCurrentlyScrolling = debounce(() => {
+  currentlyScrolling = null
+}, 1000)
+
+async function composeScroll(e) {
+  const scrolled = e.target.scrollingElement
+  const percentage = calculateScrollPercentage(scrolled)
+  if (currentlyScrolling && currentlyScrolling !== scrolled) {
+    return
+  }
+  currentlyScrolling = scrolled
+  await messenger.runtime.sendMessage({
+    action: "cp.scroll-to",
+    payload: { percentage: percentage },
+  })
+
+  clearCurrentlyScrolling()
+}
+
+window.addEventListener("scroll", composeScroll, { capture: true, passive: true })
+
 let MsgMutationObserver
 async function editorMutationCb(mutationList, observer) {
   return await doRenderPreview()
