@@ -93,7 +93,6 @@ class TexSizes {
     const fontSize = getComputedStyle(el).fontSize
     this.#inlineSize = Number.parseInt(fontSize)
     window.document.body.removeChild(el)
-    console.log({ blockSize: this.#blockSize, inlineSize: this.#inlineSize })
   }
   static size(isBlock) {
     if (isBlock) {
