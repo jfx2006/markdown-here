@@ -169,7 +169,7 @@ async function doRender(mdText) {
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {
-  return composeRender(tab.windowId)
+  return toggleMDPreview(tab.windowId)
 })
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -188,7 +188,7 @@ messenger.commands.onCommand.addListener(async function (command) {
     let wins = await messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
     for (const win of wins) {
       if (win.focused) {
-        return composeRender(win.id)
+        return toggleMDPreview(win.id)
       }
     }
   }
@@ -211,7 +211,7 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   return Promise.resolve({ cancel: false, details: { body: msgHTML } })
 })
 
-async function composeRender(windowId) {
+async function toggleMDPreview(windowId) {
   // Send a message to the compose window to toggle markdown rendering
   const win = await messenger.windows.get(windowId, {
     populate: true,
