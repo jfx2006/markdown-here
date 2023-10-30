@@ -51,6 +51,13 @@ This and "smartypants" are installed in node_modules via npm and then mangled
 into an esm module with "esbuild". `make marked-smartypants` will handle all
 of this.
 
+degausser.esm.js:
+Installed in node_modules via npm and then built with esbuild. `make degausser`
+handles this.
+
+turndown.esm.js:
+Installed in node_modules via npm. The vendor esm build is copied via `make turndown`.
+
 Emoji stuff:
 data/emoji_codes.json comes from: (MIT Licensed)
 https://cdn.jsdelivr.net/npm/emojibase-data@7.0.1/en/shortcodes/github.json

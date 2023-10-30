@@ -4,7 +4,7 @@ VENDOR = $(EXTENSION)/vendor
 npm_install:
 	npm install
 
-all: mailext-options-sync marked-linkify-it marked-smartypants
+all: mailext-options-sync marked-linkify-it marked-smartypants turndown
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	npm run build
 	sh tools/gen-src.sh
@@ -29,6 +29,16 @@ $(VENDOR)/marked-smartypants.esm.js: ./node_modules/marked-smartypants/src/index
 	./tools/esmify.sh marked-smartypants ./node_modules/marked-smartypants/src/index.js
 
 marked-smartypants: npm_install $(VENDOR)/marked-smartypants.esm.js
+
+$(VENDOR)/degausser.esm.js: ./node_modules/degausser/src/degausser.js
+	./tools/esmify.sh degausser $<
+
+degausser: npm_install $(VENDOR)/degausser.esm.js
+
+$(VENDOR)/turndown.esm.js: ./node_modules/turndown/lib/turndown.browser.es.js
+	cp -v $< $@
+
+turndown: npm_install $(VENDOR)/turndown.esm.js
 
 clean:
 	rm -f mailext-options-sync/mailext-options-sync.js
