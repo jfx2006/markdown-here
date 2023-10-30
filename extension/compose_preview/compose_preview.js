@@ -68,7 +68,7 @@ function makeStylesExplicit() {
   const treeWalker = p_iframe.contentDocument.createTreeWalker(
     p_iframe.contentDocument.body,
     NodeFilter.SHOW_ELEMENT,
-    filterExcluded
+    filterExcluded,
   )
   while (treeWalker.nextNode()) {
     cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)

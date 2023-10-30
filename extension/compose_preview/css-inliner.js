@@ -167,7 +167,7 @@ export class CSSInliner {
     if (this.#defaultStyles[element.tagName] == null) {
       this.#defaultStyles[element.tagName] = computeDefaultStyleByTagName(
         this.#msgDocument,
-        element.tagName
+        element.tagName,
       )
     }
     for (let i = 0; i < computedStyle.length; i++) {
