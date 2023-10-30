@@ -5,7 +5,6 @@
  */
 
 "use strict"
-/*global MdhHtmlToText:false  Utils:false */
 
 let previewHidden = null
 
@@ -22,62 +21,37 @@ function requestHandler(request, sender, sendResponse) {
 }
 messenger.runtime.onMessage.addListener(requestHandler)
 
-messenger.runtime.sendMessage({ action: "compose-ready" }).then((response) => {
-  if (response) {
-    if (response.reply_position === "bottom") {
-      let mailBody = window.document.body
-      let firstChild = mailBody.firstElementChild
-      if (firstChild.nodeName === "DIV" && firstChild.classList.contains("moz-cite-prefix")) {
-        let insertElem
-        if (response.use_paragraph) {
-          insertElem = window.document.createElement("p")
-          insertElem.appendChild(window.document.createElement("br"))
-        } else {
-          insertElem = window.document.createElement("br")
-        }
-        mailBody.insertAdjacentElement("afterbegin", insertElem)
+messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
+  if (response.reply_position === "bottom") {
+    let mailBody = window.document.body
+    let firstChild = mailBody.firstElementChild
+    if (firstChild.nodeName === "DIV" && firstChild.classList.contains("moz-cite-prefix")) {
+      let insertElem
+      if (response.use_paragraph) {
+        insertElem = window.document.createElement("p")
+        insertElem.appendChild(window.document.createElement("br"))
+      } else {
+        insertElem = window.document.createElement("br")
       }
+      mailBody.insertAdjacentElement("afterbegin", insertElem)
     }
   }
-  doRenderPreview().then(() => {})
+  return doRenderPreview()
 })
 
-function replaceRange(range, html) {
-  range.deleteContents()
-
-  // Create a DocumentFragment to insert and populate it with HTML
-  const documentFragment = range.createContextualFragment(html)
-  range.insertNode(documentFragment)
-
-  // In some clients (and maybe some versions of those clients), on some pages,
-  // the newly inserted rendered Markdown will be selected. It looks better and
-  // is slightly less annoying if the text is not selected, and consistency
-  // across platforms is good. So we're going to collapse the selection.
-  // Note that specifying the `toStart` argument to `true` seems to be necessary
-  // in order to actually get a cursor in the editor.
-  // Fixes #427: https://github.com/adam-p/markdown-here/issues/427
-  range.collapse(true)
-
-  return range.commonAncestorContainer
-}
-
 async function doRenderPreview() {
+  const MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
+
   const msgDocument = window.document.cloneNode(true)
-  const range = msgDocument.createRange()
-  range.selectNodeContents(msgDocument.body)
-  const signature = msgDocument.querySelector("body > .moz-signature")
-  if (signature) {
-    range.setEndBefore(signature)
-  }
 
   try {
-    const mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(msgDocument.body, range)
+    const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
+    const mdText = await mdHtmlToText.preprocess()
     const result_html = await messenger.runtime.sendMessage({
       action: "render-md",
-      mdText: mdhHtmlToText.get(),
+      mdText: mdText,
     })
-    const renderedMarkdown = mdhHtmlToText.postprocess(result_html)
-    const finalHTML = replaceRange(range, renderedMarkdown).outerHTML
+    const finalHTML = mdHtmlToText.postprocess(result_html)
 
     return await messenger.runtime.sendMessage({
       action: "cp.render-preview",
@@ -130,7 +104,7 @@ window.addEventListener(
     const scrolled = e.target.scrollingElement
     await composeScroll(scrolled)
   },
-  { capture: true, passive: true }
+  { capture: true, passive: true },
 )
 
 let MsgMutationObserver

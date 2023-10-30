@@ -7,7 +7,7 @@
 /*
  * Mail Extension background script.
  */
-import { getHljsStylesheet, getMessage } from "./async_utils.mjs"
+import { getHljsStylesheet, getMessage, sha256Digest } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { resetMarked, markdownRender } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
@@ -126,7 +126,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       sender.tab.windowId,
       getMessage("unrendering_modified_markdown_warning"),
       messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("unrender_button"), getMessage("cancel_button")]
+      [getMessage("unrender_button"), getMessage("cancel_button")],
     )
   } else if (request.action === "test-request") {
     responseCallback("test-request-good")
@@ -138,10 +138,12 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return Promise.resolve(["test-bg-request", "test-bg-request-ok"])
   } else if (request.action === "update-hotkey") {
     return updateHotKey(request.hotkey_value, request.hotkey_tooltip)
-  } else if (request.action === "compose-ready") {
-    return onComposeReady(sender.tab)
+  } else if (request.action === "compose-data") {
+    return getComposeData(sender.tab)
   } else if (request.action === "renderer-reset") {
     return resetMarked()
+  } else if (request.action === "sha256") {
+    return sha256Digest(request.data)
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
@@ -175,12 +177,7 @@ messenger.composeAction.onClicked.addListener((tab) => {
 // Mail Extensions are not able to add composeScripts via manifest.json,
 // they must be added via the API.
 messenger.composeScripts.register({
-  js: [
-    { file: "utils.js" },
-    { file: "jsHtmlToText.js" },
-    { file: "mdh-html-to-text.js" },
-    { file: "composescript.js" },
-  ],
+  js: [{ file: "composescript.js" }],
 })
 
 messenger.commands.onCommand.addListener(async function (command) {
@@ -291,19 +288,19 @@ OptionsStore.get("hotkey-input").then(async (result) => {
   await updateHotKey(shortkeyStruct.shortcut, tooltip)
 })
 
-async function onComposeReady(tab) {
-  let composeDetails = await messenger.compose.getComposeDetails(tab.id)
-  if (["reply", "forward"].includes(composeDetails.type)) {
-    let identityId = composeDetails.identityId
-    let replyPosition = await messenger.reply_prefs.getReplyPosition(identityId)
-    let useParagraph = await messenger.reply_prefs.getUseParagraph()
-    return {
-      message_type: composeDetails.type,
-      reply_position: replyPosition,
-      use_paragraph: useParagraph,
-    }
+async function getComposeData(tab) {
+  const composeDetails = await messenger.compose.getComposeDetails(tab.id)
+  const rv = {
+    message_type: composeDetails.type,
+    reply_position: null,
+    use_paragraph: null,
   }
-  return {}
+  if (["reply", "forward"].includes(composeDetails.type)) {
+    const identityId = composeDetails.identityId
+    rv.reply_position = await messenger.reply_prefs.getReplyPosition(identityId)
+    rv.use_paragraph = await messenger.reply_prefs.getUseParagraph()
+  }
+  return rv
 }
 
 function str2Int(intstr) {
@@ -322,7 +319,7 @@ async function injectMDPreview() {
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
-    { hidden: previewHidden, width: previewWidth }
+    { hidden: previewHidden, width: previewWidth },
   )
 }
 await injectMDPreview()
