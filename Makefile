@@ -1,10 +1,6 @@
 EXTENSION = extension
-VENDOR = $(EXTENSION)/vendor
 
-npm_install:
-	npm install
-
-all: mailext-options-sync marked-linkify-it marked-smartypants turndown
+all: mailext-options-sync vendored.mk
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	npm run build
 	sh tools/gen-src.sh
@@ -20,25 +16,10 @@ $(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/mailext-optio
 
 mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
 
-$(VENDOR)/marked-linkify-it.esm.js: ./node_modules/marked-linkify-it/src/index.js
-	./tools/esmify.sh marked-linkify-it ./node_modules/marked-linkify-it/src/index.js
-
-marked-linkify-it: npm_install $(VENDOR)/marked-linkify-it.esm.js
-
-$(VENDOR)/marked-smartypants.esm.js: ./node_modules/marked-smartypants/src/index.js
-	./tools/esmify.sh marked-smartypants ./node_modules/marked-smartypants/src/index.js
-
-marked-smartypants: npm_install $(VENDOR)/marked-smartypants.esm.js
-
-$(VENDOR)/degausser.esm.js: ./node_modules/degausser/src/degausser.js
-	./tools/esmify.sh degausser $<
-
-degausser: npm_install $(VENDOR)/degausser.esm.js
-
-$(VENDOR)/turndown.esm.js: ./node_modules/turndown/lib/turndown.browser.es.js
-	cp -v $< $@
-
-turndown: npm_install $(VENDOR)/turndown.esm.js
+vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
+	npm install
+	python tools/mk-vendored.py
+	make -f vendored.mk all
 
 clean:
 	rm -f mailext-options-sync/mailext-options-sync.js

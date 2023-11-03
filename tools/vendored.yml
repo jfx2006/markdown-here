@@ -1,0 +1,15 @@
+marked-linkify-it:
+  path: src/index.js
+  method: esmbuild
+
+marked-smartypants:
+  path: src/index.js
+  method: esmbuild
+
+degausser:
+  path: src/degausser.js
+  method: esmbuild
+
+turndown:
+  path: lib/turndown.browser.es.js
+  method: copy
