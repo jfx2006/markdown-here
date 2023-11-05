@@ -1,3 +1,9 @@
+/*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
 const defaultOptions = {
   // emojis: {}, required
   unicode: false
@@ -57,7 +63,7 @@ export function markedEmoji(options) {
         if (token.unicode) {
           return token.emoji;
         } else {
-          return `<img alt="${token.name}" src="${token.emoji}"${this.parser.options.xhtml ? ' /' : ''}>`;
+          return `<img alt="${token.name}" src="${token.emoji}">`;
         }
       }
     }]

@@ -1,6 +1,6 @@
 EXTENSION = extension
 
-all: mailext-options-sync vendored.mk
+all: mailext-options-sync vendored
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	npm run build
 	sh tools/gen-src.sh
@@ -19,6 +19,8 @@ mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
 vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
 	npm install
 	python tools/mk-vendored.py
+
+vendored: vendored.mk
 	make -f vendored.mk all
 
 clean:

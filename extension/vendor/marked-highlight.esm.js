@@ -1,3 +1,9 @@
+/*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
 export function markedHighlight(options) {
   if (typeof options === 'function') {
     options = {
@@ -27,6 +33,9 @@ export function markedHighlight(options) {
       }
 
       const code = options.highlight(token.text, lang);
+      if (code instanceof Promise) {
+        throw new Error('markedHighlight is not set to async but the highlight function is async. Set the async option to true on markedHighlight to await the async highlight function.');
+      }
       updateToken(token)(code);
     },
     renderer: {

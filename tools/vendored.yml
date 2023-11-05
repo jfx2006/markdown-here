@@ -1,14 +1,30 @@
+marked:
+  path: lib/marked.esm.js
+  method: copy
+
 marked-linkify-it:
   path: src/index.js
-  method: esmbuild
+  method: rollup
 
 marked-smartypants:
   path: src/index.js
-  method: esmbuild
+  method: rollup
+
+marked-highlight:
+  path: src/index.js
+  method: copy
+
+marked-extended-tables:
+  path: src/index.js
+  method: copy
+
+marked-emoji:
+  path: src/index.js
+  method: copy
 
 degausser:
   path: src/degausser.js
-  method: esmbuild
+  method: rollup
 
 turndown:
   path: lib/turndown.browser.es.js

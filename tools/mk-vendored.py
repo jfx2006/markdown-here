@@ -11,7 +11,11 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 DATA = os.path.join(HERE, "vendored.yml")
 OUT = os.path.join(HERE, "..", "vendored.mk")
 
-CMDS = {"copy": "cp -v $< $@", "esmbuild": "./tools/esmify.sh {lib} $<"}
+CMDS = {
+    "copy": "cp -v $< $@",
+    "esmbuild": "./tools/esmify.sh {lib} $<",
+    "rollup": "./tools/rollup.sh {lib} $<"
+}
 
 
 class MkVendored:
