@@ -115,7 +115,7 @@ import OptionsStore from "./options-storage.js"
       }
 
       await OptionsStore.syncForm(form)
-      form.addEventListener("options-sync:form-synced", onOptionsSaved)
+      form.addEventListener("options-sync:form-synced", await onOptionsSaved)
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -129,14 +129,14 @@ import OptionsStore from "./options-storage.js"
     previewInput.addEventListener("input", handleInput, false)
     previewInput.addEventListener("scroll", setPreviewScroll, false)
 
-    checkPreviewChanged()
+    await checkPreviewChanged()
     handleMathRenderer()
   }
 
-  function onOptionsSaved(e) {
+  async function onOptionsSaved(e) {
     handleMathRenderer()
     showSavedMsg()
-    Utils.makeRequestToBGScript("renderer-reset")
+    await messenger.runtime.sendMessage({ action: "renderer-reset" })
   }
 
   function activatePillNav() {
@@ -181,30 +181,29 @@ import OptionsStore from "./options-storage.js"
     preview_scroll.scrollTop = getScrollPercent() * getScrollSize(preview_scroll)
   }
 
-  function checkPreviewChanged() {
+  async function checkPreviewChanged() {
     if (inputDirty) {
-      Utils.makeRequestToBGScript("render", { mdText: previewInput.value })
-        .then((response) => {
-          let style_elem = previewIframe.contentDocument.getElementById("main_css")
-          style_elem.replaceChildren(
-            previewIframe.contentDocument.createTextNode(response.main_css)
-          )
+      const response = await messenger.runtime.sendMessage({
+        action: "render",
+        mdText: previewInput.value,
+      })
+      try {
+        let style_elem = previewIframe.contentDocument.getElementById("main_css")
+        style_elem.replaceChildren(previewIframe.contentDocument.createTextNode(response.main_css))
 
-          style_elem = previewIframe.contentDocument.getElementById("syntax_css")
-          style_elem.replaceChildren(
-            previewIframe.contentDocument.createTextNode(response.syntax_css)
-          )
+        style_elem = previewIframe.contentDocument.getElementById("syntax_css")
+        style_elem.replaceChildren(
+          previewIframe.contentDocument.createTextNode(response.syntax_css),
+        )
 
-          previewIframe.contentDocument.body.innerHTML = escapeHTML`${response.html}`
-          setPreviewScroll()
-        })
-        .catch((reason) => {
-          console.log(`Error rendering preview. ${reason}`)
-        })
-        .finally(() => {
-          checkChangeTimeout = setTimeout(checkPreviewChanged, 100)
-          inputDirty = false
-        })
+        previewIframe.contentDocument.body.innerHTML = escapeHTML`${response.html}`
+        setPreviewScroll()
+      } catch (reason) {
+        console.log(`Error rendering preview. ${reason}`)
+      } finally {
+        checkChangeTimeout = setTimeout(checkPreviewChanged, 100)
+        inputDirty = false
+      }
     }
   }
 
@@ -215,10 +214,10 @@ import OptionsStore from "./options-storage.js"
     }
   }
 
-  function handleInput() {
+  async function handleInput() {
     if (!inputDirty) {
       inputDirty = true
-      checkPreviewChanged()
+      await checkPreviewChanged()
     }
   }
 
@@ -235,7 +234,7 @@ import OptionsStore from "./options-storage.js"
     const appManifest = messenger.runtime.getManifest()
     document.getElementById("mdhrVersion").innerText = appManifest.version
     document.getElementById(
-      "mdhrThunderbirdVersion"
+      "mdhrThunderbirdVersion",
     ).innerText = `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
@@ -244,10 +243,24 @@ import OptionsStore from "./options-storage.js"
     const changesElem = document.getElementById("mdhrChangeList")
     const changes = await fetchExtFile("/CHANGELOG.md")
 
-    const response = await Utils.makeRequestToBGScript("render-md", { mdText: changes })
+    const response = await messenger.runtime.sendMessage({ action: "render-md", mdText: changes })
     changesElem.innerHTML = escapeHTML`${response.html}`
   }
 
+  /**  
+   * The handleHotKey function is called when the user changes the hotkey value in
+   * the options page. It updates both local storage and background script with
+   * new hotkey value, then displays a message to let user know that their change was saved.
+  
+   *
+   * @param e Get the value of the hotkey input field
+  async function handlehotkeyinput(e) {
+      const newhotkey = e
+   *
+   * @return A promise
+   *
+   * @docauthor Trelent
+   */
   async function handleHotKey(e) {
     const newHotKey = e.detail.value()
     let displayHotKey = newHotKey
@@ -255,15 +268,14 @@ import OptionsStore from "./options-storage.js"
       displayHotKey = e.detail.macHotKey()
     }
     await OptionsStore.set({ "hotkey-input": newHotKey })
-    Utils.makeRequestToBGScript("update-hotkey", { hotkey_value: newHotKey }).then(() => {
-      form.dispatchEvent(
-        new CustomEvent("options-sync:form-synced", {
-          bubbles: true,
-        })
-      )
-      showSavedMsg()
-      document.getElementById("hotkey-display-str").innerText = displayHotKey
-    })
+    await messenger.runtime.sendMessage({ action: "update-hotkey", hotkey_value: newHotKey })
+    form.dispatchEvent(
+      new CustomEvent("options-sync:form-synced", {
+        bubbles: true,
+      }),
+    )
+    showSavedMsg()
+    document.getElementById("hotkey-display-str").innerText = displayHotKey
   }
 
   function handleMathRenderer(e) {
