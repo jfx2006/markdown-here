@@ -22,7 +22,8 @@ export class MdhrMangle {
     await this.excludeContent()
     this.insertLinebreaks()
     this.convertHTML()
-    return degausser(this.doc.body)
+    const text = degausser(this.doc.body)
+    return text.replaceAll(" ", " ")
   }
 
   async excludeContent() {
