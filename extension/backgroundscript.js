@@ -189,8 +189,8 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   if (details.isPlainText) {
     return Promise.resolve({})
   }
-  const savedState = await OptionsStore.get(["preview-hidden"])
-  const previewHidden = savedState["preview-hidden"] === "true"
+  const savedState = await OptionsStore.get(["enable-markdown-mode"])
+  const previewHidden = savedState["enable-markdown-mode"] === "false"
   if (previewHidden) {
     return Promise.resolve({})
   }
@@ -306,8 +306,8 @@ function str2Int(intstr) {
 
 async function injectMDPreview() {
   // Register custom UI compose editor
-  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
-  const previewHidden = savedState["preview-hidden"] === "true"
+  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
+  const previewHidden = savedState["enable-markdown-mode"] === "false"
   const previewWidth = str2Int(savedState["preview-width"])
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,

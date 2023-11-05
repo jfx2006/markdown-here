@@ -118,7 +118,10 @@ async function getMsgContent() {
 
 const onContextChange = async function (context) {
   try {
-    await OptionsStore.set({ "preview-hidden": context.hidden, "preview-width": context.width })
+    await OptionsStore.set({
+      "enable-markdown-mode": !context.hidden,
+      "preview-width": context.width,
+    })
     // ... in real code, you would do something with the contact here...
   } catch (e) {
     console.log(e)
@@ -150,15 +153,19 @@ async function requestPreview() {
 async function previewFrameLoaded(e) {
   cssInliner = new CSSInliner(p_iframe.contentDocument)
   await addMDPreviewStyles()
-  p_iframe.contentWindow.onclick = function (e) {
+  p_iframe.contentWindow.onclick = function(e) {
     e.preventDefault()
   }
 
-  const savedState = await OptionsStore.get(["preview-width", "preview-hidden"])
+  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
+
+  const hidden = !(
+    savedState["enable-markdown-mode"] === "true" || savedState["enable-markdown-mode"] === true
+  )
 
   await messenger.ex_customui.setLocalOptions({
-    hidden: savedState.hidden,
-    width: savedState.width,
+    hidden: hidden,
+    width: parseInt(savedState["preview-width"]),
   })
   const context = await messenger.ex_customui.getContext()
   const win = await messenger.windows.get(context.windowId, {

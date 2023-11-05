@@ -43,7 +43,7 @@ export const kOptDefaults = {
   "emoji-shortcode-enabled": true,
   "last-version": "0",
   "preview-width": 650,
-  "preview-hidden": false,
+  "enable-markdown-mode": true,
 }
 
 let MIGRATIONS = [
