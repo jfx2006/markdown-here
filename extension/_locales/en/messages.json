@@ -16,20 +16,9 @@
     "message": "The selected field is not valid for Markdown rendering",
     "description": "text shown when user hover mouse over disabled Markdown Toggle button"
   },
-  "plain_text_compose": {
-    "message": "You are using a plain-text compose editor. You must change to a rich editor to use $APPNAME$.",
-    "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    }
-  },
   "unrender_button": {
     "message": "Unrender",
     "description": "Button label to revert rendered Markdown"
-  },
-  "unrendering_modified_markdown_warning": {
-    "message": "The rendered Markdown appears to have been modifed.\nIf you unrender it, your changes since rendering will be lost.\n\nAre you sure you wish to unrender?",
-    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed."
   },
   "upgrade_notification_text": {
     "message": "$APPNAME$ updated",
@@ -43,10 +32,6 @@
   },
   "cancel_button": {
     "message": "Cancel"
-  },
-  "context_menu_item": {
-    "message": "Markdown Toggle",
-    "description": "Text shown on the context menu."
   },
   "forgot_to_render_back_button": {
     "message": "Back",
@@ -67,14 +52,6 @@
   "forgot_to_render_send_button": {
     "message": "Send",
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email"
-  },
-  "invalid_field": {
-    "message": "The selected field is not valid for Markdown rendering. Please use a rich editor.",
-    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered"
-  },
-  "nothing_to_render": {
-    "message": "Nothing found to render or revert",
-    "description": "Error message shown to user if there's nothing found to revert or render."
   },
 
   "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
@@ -127,9 +104,6 @@
   "options_page__tex_math_title": {
     "message": "TeX Mathematical Formulae Support"
   },
-  "options_page__tex_math_disabled": {
-    "message": "Disabled"
-  },
   "options_page__tex_math_texzilla_label": {
     "message": "TeXZilla and HTML Canvas rendering",
     "description": "Label for tex math rendering option"
@@ -154,10 +128,6 @@
   "options_page__basic_usage": {
     "message": "Basic Usage"
   },
-  "options_page__start_new_message": {
-    "message": "Start a new email message.",
-    "description": "A step in the basic usage instructions"
-  },
   "options_page__start_new_message_toggle": {
     "message": "Start a new email message. Toggle the composer to markdown mode with the action button on the format toolbar."
   },
@@ -173,17 +143,9 @@
   "options_page__compose_send_message": {
     "message": "Send your message!"
   },
-  "options_page__click_toggle2": {
-    "message": "Click the compose action button on the format toolbar.",
-    "description": "A step in the basic usage instructions"
-  },
   "options_page__toggle_hotkey": {
     "message": "Or use the hotkey:",
     "description": "A step suggestion in the basic usage instructions"
-  },
-  "options_page__pretty_cool": {
-    "message": "The message should now look pretty cool. Send it to your friends!",
-    "description": "A step in the basic usage instructions"
   },
   "options_page__resources_title": {
     "message": "Resources and Links",

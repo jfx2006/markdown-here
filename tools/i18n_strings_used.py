@@ -1,12 +1,16 @@
 #!python
 
+#  Copyright JFX 2021-2023
+#  MIT License
+#  https://gitlab.com/jfx2006
+
 import os
 import os.path as osp
 import re
 
 HTML_RE = re.compile(r'data-i18n="([a-z0-9_]+)"')
 JS_RE = re.compile(r'getMessage\("([a-z0-9_]+)"(,.+)?\)')
-
+MANIFEST_RE = re.compile(r'__MSG_([a-z0-9_]+)__')
 
 def get_strings_from_file(path, ext):
     rv = set()
@@ -17,9 +21,12 @@ def get_strings_from_file(path, ext):
             if ext == "html":
                 if "data-i18n" in line:
                     match = HTML_RE.search(line)
-            elif ext == "js":
+            elif ext in "mjs, js":
                 if "getMessage" in line:
                     match = JS_RE.search(line)
+            elif os.path.basename(path) == "manifest.json":
+                if "__MSG" in line:
+                    match = MANIFEST_RE.search(line)
             if match:
                 match_text = match.group(1)
                 if ext == "html":
@@ -34,7 +41,7 @@ def main():
     for root, dirs, files in os.walk(src_root):
         for name in files:
             a, ext = osp.splitext(name)
-            if ext in (".html", ".js"):
+            if ext in (".html", ".js", ".mjs") or name == "manifest.json":
                 path = osp.join(root, name)
                 result.update(get_strings_from_file(path, ext[1:]))
 
