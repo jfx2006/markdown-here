@@ -121,13 +121,6 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       url: request.url,
     })
     return false
-  } else if (request.action === "get-unrender-markdown-warning") {
-    return openNotification(
-      sender.tab.windowId,
-      getMessage("unrendering_modified_markdown_warning"),
-      messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-      [getMessage("unrender_button"), getMessage("cancel_button")],
-    )
   } else if (request.action === "test-request") {
     responseCallback("test-request-good")
     return false
