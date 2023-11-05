@@ -1,3 +1,9 @@
+/*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -131,7 +137,7 @@ export function getShortcutStruct(shortcutStr) {
   const remap = {
     MacCtrl: "MacCtrl",
     Command: "Command",
-    Ctrl: "Command",
+    Ctrl: "Ctrl",
     Alt: "Alt",
     Shift: "Shift",
   }
