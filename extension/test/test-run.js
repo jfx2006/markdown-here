@@ -4,11 +4,6 @@
  * https://gitlab.com/jfx2006
  */
 
-/*
- * Copyright Adam Pritchard 2013
- * MIT License : http://adampritchard.mit-license.org/
- */
-
 $(function () {
   mocha
     // I'm not sure what introduces the global "schemaTypes", but it's not
