@@ -8,7 +8,8 @@
     "gecko": {
       "id": "markdown-here-revival@xul.calypsoblue.org",
       "strict_min_version": "115.0",
-      "strict_max_version": "115.10.*"
+      "strict_max_version": "115.10.*",
+      "update_url": "https://gitlab.com/jfx2006/markdown-here-revival/-/snippets/3618629/raw/main/updates.json"
     }
   },
   "default_locale": "en",
