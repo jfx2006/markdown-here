@@ -77,7 +77,10 @@ function makeStylesExplicit() {
 
 async function renderMDEmail(unsanitized_html) {
   enableMDPreviewStyles()
-  p_iframe.contentDocument.body.innerHTML = escapeHTML`${unsanitized_html}`
+  if (!contentDiv) {
+    contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
+  }
+  contentDiv.innerHTML = escapeHTML`${unsanitized_html}`
   makeStylesExplicit()
   disableMDPreviewStyles()
   return true
@@ -153,9 +156,10 @@ async function requestPreview() {
 async function previewFrameLoaded(e) {
   cssInliner = new CSSInliner(p_iframe.contentDocument)
   await addMDPreviewStyles()
-  p_iframe.contentWindow.onclick = function(e) {
+  p_iframe.contentWindow.onclick = function (e) {
     e.preventDefault()
   }
+  contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
 
   const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
 
@@ -184,6 +188,7 @@ async function scrollTo(payload) {
   return target.scrollTo({ top: scrollTop, behavior: "smooth" })
 }
 
+let contentDiv
 const p_iframe = document.getElementById("preview_frame")
 p_iframe.addEventListener("load", await previewFrameLoaded)
 p_iframe.src = "preview_iframe.html"
