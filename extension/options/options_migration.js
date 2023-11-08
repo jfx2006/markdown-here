@@ -12,6 +12,8 @@ const OLD_CSS_SUMS = [
   "bb5a0fd030d27ce58011d9250524c83f2cf1242b07f874496b394a7ea02c49c2",
   // 3.1.0
   "72706d3e07c403c35688760180a753552af05c4ed2d5d1906dbf89b5c649342a",
+  // 3.2.0
+  "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069",
   // 3.3.1
   "67f46b9488904c869638c6f9fc2ea04d1046b5efa1115fec186a327c13a7ea96",
   // 3.5.0
@@ -19,8 +21,22 @@ const OLD_CSS_SUMS = [
 ]
 
 // Checksum of the current version of default.css
-// 3.2.0
-const DEFAULT_CSS_SUM = "fae130ec03db946b335675757ba8db507a9e4b0b2303aae0f6953945b03f7069"
+// 4.0.0
+const DEFAULT_CSS_SUM = "2dfd2ecbf89f60805829a9ebbc7506324242dba94c21dced5419395cba646918"
+
+export function testCssSum(checksum) {
+  // Checks the default.css checksum to ensure the above are correct
+  // First verify it's not in OLD_CSS_SUMS
+  if (OLD_CSS_SUMS.includes(checksum)) {
+    throw new Error(`default.css checksum ${checksum} is in OLD_CSS_SUMS when it should not be!`)
+  }
+  if (checksum !== DEFAULT_CSS_SUM) {
+    throw new Error(
+      `default.css checksum ${checksum} does not match DEFAULT_CSS_SUM ${DEFAULT_CSS_SUM}!`,
+    )
+  }
+  return true
+}
 
 const EXT_STORAGE = window.messenger?.storage.sync || window.messenger?.storage.local || {}
 

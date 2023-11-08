@@ -1,4 +1,10 @@
 /*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
+/*
  * NOTE:
  * - The use of browser-specific styles (-moz-, -webkit-) should be avoided.
  *   If used, they may not render correctly for people reading the email in
@@ -21,7 +27,7 @@ code {
   padding: 0 0.3em;
   white-space: pre-wrap;
   font-weight: 550;
-  background-color: rgba(119,119,119,.3);
+  background-color: rgba(175,184,193,0.2);
   border-radius: 3px;
   display: inline; /* added to fix Yahoo block display of inline code */
 }
@@ -100,7 +106,6 @@ dl dd {
 }
 
 blockquote, q {
-  border-left: 4px solid #3375dd;
   padding: 0 1em;
   color: #777;
   quotes: none;
@@ -177,7 +182,6 @@ table tr th, table tr td {
 
 table tr th {
  font-weight: bold;
- background-color: rgba(0,26,191,.3);
 }
 
 img.math_texzilla {

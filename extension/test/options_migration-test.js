@@ -5,11 +5,14 @@
 /* global td, describe, expect, it, before, beforeEach, after, afterEach */
 
 import {
+  testCssSum,
   migrate_badMathValue,
   migrate_MainCSS,
   migrate_setLastVersion, migrate_smartReplacements,
   migrate_syntaxCSS
 } from "../options/options_migration.js"
+
+import {fetchExtFile, sha256Digest} from "../async_utils.mjs"
 
 const DEFAULTS = {
   "main-css": "/* MAIN.CSS */",
@@ -68,6 +71,12 @@ describe("options_migrations tests", function () {
       let options = { "main-css": CUSTOM_CSS }
       let changed = await migrate_MainCSS(options, DEFAULTS)
       expect(changed).to.be.null
+    })
+    it("default.css sha256sum", async function () {
+      const default_css = await fetchExtFile("/default.css")
+      const defaultShaSum = await sha256Digest(default_css)
+      const result = testCssSum(defaultShaSum)
+      expect(result).to.be.true
     })
   })
 
