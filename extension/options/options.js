@@ -247,18 +247,13 @@ import OptionsStore from "./options-storage.js"
     changesElem.innerHTML = escapeHTML`${response.html}`
   }
 
-  /**  
+  /**
    * The handleHotKey function is called when the user changes the hotkey value in
    * the options page. It updates both local storage and background script with
    * new hotkey value, then displays a message to let user know that their change was saved.
-  
    *
    * @param e Get the value of the hotkey input field
-  async function handlehotkeyinput(e) {
-      const newhotkey = e
-   *
    * @return A promise
-   *
    * @docauthor Trelent
    */
   async function handleHotKey(e) {
