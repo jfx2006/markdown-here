@@ -1,4 +1,10 @@
 /*
+ * Copyright JFX 2021-2023
+ * MIT License
+ * https://gitlab.com/jfx2006
+ */
+
+/*
  * Copyright Adam Pritchard 2013
  * MIT License : http://adampritchard.mit-license.org/
  */
@@ -76,7 +82,7 @@ describe("Markdown-Render", function () {
       expect(await markdownRender(md)).to.equal(target)
 
       md = "```\n[a](b)\n```"
-      target = "<pre><code>[a](b)\n</code></pre>\n"
+      target = "<pre><code>[a](b)\n</code></pre>"
       expect(await markdownRender(md)).to.equal(target)
     })
 
