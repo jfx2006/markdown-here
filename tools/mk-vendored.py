@@ -33,7 +33,7 @@ class MkVendored:
         )
 
     def mk_rules(self):
-        for lib, data in self.data.items():
+        for lib, data in sorted(self.data.items()):
             self.mk_rule(lib, data)
 
     def mk_rule(self, lib, data):
