@@ -19,6 +19,7 @@ import hljs from "./highlightjs/highlight.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
+import { urlSchemify } from "./marked-link-scheme.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -70,27 +71,14 @@ export async function resetMarked(userprefs) {
     },
   }
 
-  // Hook into some of Marked's renderer customizations
-  const markedRenderer = new marked.Renderer()
-
-  const defaultLinkRenderer = markedRenderer.link
-  markedRenderer.link = function (href, title, text) {
-    // Added to fix MDH issue #57: MD links should automatically add scheme.
-    // Note that the presence of a ':' is used to indicate a scheme, so port
-    // numbers will defeat this.
-    href = href.replace(/^(?!#)([^:]+)$/, "https://$1")
-
-    return defaultLinkRenderer.call(this, href, title, text)
-  }
-
   const markedOptions = {
-    renderer: markedRenderer,
     gfm: true,
     pedantic: false,
     breaks: userprefs["gfm-line-breaks-enabled"],
   }
 
   marked.setOptions(markedOptions)
+  marked.use(urlSchemify())
   marked.use(markedExtendedTables())
   marked.use(markedLinkifyIt({}, {}))
   if (userprefs["smart-replacements-enabled"]) {
