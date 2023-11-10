@@ -158,7 +158,7 @@ describe("Markdown-Render", function () {
       // And should not break headers or m-dashes
       md = "Arrows\n==\nAnd friends\n--\n--> <-- <--> ==> <== <==> -- m-dash"
       target =
-        '<h1 id="arrows">Arrows</h1>\n<h2 id="and-friends">And friends</h2>\n<p>→ ← ↔ ⇒ ⇐ ⇔ – m-dash</p>\n'
+        '<h1>Arrows</h1>\n<h2>And friends</h2>\n<p>→ ← ↔ ⇒ ⇐ ⇔ – m-dash</p>\n'
       expect(await markdownRender(md)).to.equal(target)
     })
 

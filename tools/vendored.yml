@@ -6,10 +6,6 @@ marked-linkify-it:
   path: src/index.js
   method: rollup
 
-marked-smartypants:
-  path: src/index.js
-  method: rollup
-
 marked-highlight:
   path: src/index.js
   method: copy

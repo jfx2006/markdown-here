@@ -42,35 +42,6 @@ export async function resetMarked(userprefs) {
     userprefs = await OptionsStore.getAll()
   }
 
-  function smartarrows(text) {
-    return text
-      .replace(/<-->/g, "\u2194")
-      .replace(/<--/g, "\u2190")
-      .replace(/-->/g, "\u2192")
-      .replace(/<==>/g, "\u21d4")
-      .replace(/<==/g, "\u21d0")
-      .replace(/==>/g, "\u21d2")
-  }
-
-  const tokenizer = {
-    inlineText(src, smartypants) {
-      const cap = this.rules.inline.text.exec(src)
-      if (cap) {
-        let text
-        if (this.lexer.state.inRawBlock) {
-          text = cap[0]
-        } else {
-          text = this.options.smartypants ? smartypants(smartarrows(cap[0])) : cap[0]
-        }
-        return {
-          type: "text",
-          raw: cap[0],
-          text,
-        }
-      }
-    },
-  }
-
   const markedOptions = {
     gfm: true,
     pedantic: false,
@@ -82,9 +53,8 @@ export async function resetMarked(userprefs) {
   marked.use(markedExtendedTables())
   marked.use(markedLinkifyIt({}, {}))
   if (userprefs["smart-replacements-enabled"]) {
-    const { markedSmartypants } = await import("./vendor/marked-smartypants.esm.js")
-    marked.use(markedSmartypants())
-    marked.use({ tokenizer })
+    const { markedSmartStuff } = await import("./marked-smartstuff.esm.js")
+    marked.use(markedSmartStuff())
   }
   marked.use(
     markedHighlight({
