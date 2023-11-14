@@ -48,10 +48,14 @@ function requestMarkdownConversion(elem, range, callback) {
   var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem, range)
 
   // Send a request to the add-on script to actually do the rendering.
-  Utils.makeRequestToBGScript("render", { mdText: mdhHtmlToText.get() }).then((response) => {
-    const renderedMarkdown = mdhHtmlToText.postprocess(response.html)
-    callback(renderedMarkdown, response.main_css, response.syntax_css)
-  })
+  Utils.makeRequestToPrivilegedScript(
+    document,
+    { action: "render", mdText: mdhHtmlToText.get() },
+    function (response) {
+      var renderedMarkdown = mdhHtmlToText.postprocess(response.html)
+      callback(renderedMarkdown, response.css)
+    }
+  )
 }
 
 // When rendering (or unrendering) completed, do our interval checks.
