@@ -492,10 +492,6 @@ https://github.com/adam-p/markdown-here/issues/85
       // through our styles, explicitly applying them to matching elements.
       makeStylesExplicit(wrapper, mdCss)
 
-      // marked-texzilla produces SVG images, which are not very email friendly,
-      // convert them to PNGs
-      Utils.convertMathSVGs(wrapper)
-
       // Monitor for changes to the content of the rendered MD. This will help us
       // prevent the user from silently losing changes later.
       // We're going to set this up after a short timeout, to help prevent false
