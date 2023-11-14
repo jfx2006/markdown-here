@@ -232,6 +232,99 @@ https://github.com/adam-p/markdown-here/issues/85
 
     return newElement
   }
+
+  // Returns the stylesheet for our styles.
+  function getMarkdownStylesheet(elem, css) {
+    var styleElem, stylesheet, i
+
+    // We have to actually create a style element in the document, then pull the
+    // stylesheet out of it (and remove the element).
+
+    // Create a style element
+    styleElem = elem.ownerDocument.createElement("style")
+    styleElem.setAttribute("title", "markdown-here-styles")
+
+    // Set the CSS in the style element
+    styleElem.appendChild(elem.ownerDocument.createTextNode(css))
+
+    // Put the style element in the DOM under `elem`
+    elem.appendChild(styleElem)
+
+    // Find the stylesheet that we just created
+    for (i = 0; i < elem.ownerDocument.styleSheets.length; i++) {
+      if (elem.ownerDocument.styleSheets[i].title === "markdown-here-styles") {
+        stylesheet = elem.ownerDocument.styleSheets[i]
+        break
+      }
+    }
+
+    if (!stylesheet) {
+      throw "Markdown Here stylesheet not found!"
+    }
+
+    // Take the stylesheet element out of the DOM
+    elem.removeChild(styleElem)
+
+    return stylesheet
+  }
+
+  // Applies our styling explicitly to the elements under `wrapperElem`.
+  function makeStylesExplicit(wrapperElem, css) {
+    var stylesheet, rule, selectorMatches, i, j, styleAttr, elem
+
+    stylesheet = getMarkdownStylesheet(wrapperElem, css)
+
+    for (i = 0; i < stylesheet.cssRules.length; i++) {
+      rule = stylesheet.cssRules[i]
+
+      // Note that the CSS should not have any rules that use "body" or "html".
+
+      // We're starting our search one level above the wrapper, which means we
+      // might match stuff outside of our wrapper. We'll have to double-check below.
+      selectorMatches = wrapperElem.parentNode.querySelectorAll(rule.selectorText)
+
+      for (j = 0; j < selectorMatches.length; j++) {
+        elem = selectorMatches[j]
+
+        // Make sure the element is inside our wrapper (or is our wrapper).
+        if (elem !== wrapperElem && !Utils.isElementDescendant(wrapperElem, elem)) {
+          continue
+        }
+
+        // Make sure the selector match isn't inside an exclusion block.
+        // The check for `elem.classList` stop us if we hit a non-element node
+        // while going up through the parents.
+        while (elem && typeof elem.classList !== "undefined") {
+          if (elem.classList.contains("markdown-here-exclude")) {
+            elem = "excluded"
+            break
+          }
+          elem = elem.parentNode
+        }
+        if (elem === "excluded") {
+          // Don't style this element.
+          continue
+        }
+
+        // Get the existing styles for the element.
+        styleAttr = selectorMatches[j].getAttribute("style") || ""
+
+        // Append the new styles to the end of the existing styles. This will
+        // give the new ones precedence if any are the same as existing ones.
+
+        // Make sure existing styles end with a semicolon.
+        if (styleAttr && styleAttr.search(/;[\s]*$/) < 0) {
+          styleAttr += "; "
+        }
+
+        styleAttr += rule.style.cssText
+
+        // Set the styles back.
+        selectorMatches[j].setAttribute("style", styleAttr)
+      }
+    }
+  }
+
   function hasParentElementOfTagName(element, tagName) {
     var parent
 
@@ -364,24 +457,10 @@ https://github.com/adam-p/markdown-here/issues/85
   }
 
   function insertStylesheet(document, style_id, stylesheet) {
-    let style_elem = document.getElementById(style_id)
+    const style_elem = document.getElementById(style_id)
     if (style_elem) {
-      if (style_elem.innerHTML === stylesheet) {
-        return
-      }
-    } else {
-      style_elem = document.createElement("style")
-      style_elem.id = style_id
-      document.head.appendChild(style_elem)
-    }
-    style_elem.replaceChildren(document.createTextNode(stylesheet))
-  }
+      if (style_elem.innerHTML !== stylesheet) {
 
-  function removeStylesheets(document, ...style_ids) {
-    for (const s_id of style_ids) {
-      const style_elem = document.getElementById(s_id)
-      if (style_elem) {
-        style_elem.remove()
       }
     }
   }
@@ -395,7 +474,6 @@ https://github.com/adam-p/markdown-here/issues/85
     markdownRenderer(focusedElem, selectedRange, function (mdHtml, mdMainCss, mdSyntaxCss) {
       var wrapper, rawHolder
       const holderCSS =
-        // eslint-disable-next-line max-len
         "height:0;width:0;max-h*eight:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
 
       // Store the original Markdown-in-HTML to the `title` attribute of a separate,
@@ -418,9 +496,6 @@ https://github.com/adam-p/markdown-here/issues/85
         "</div>"
 
       wrapper = replaceRange(selectedRange, mdHtml)
-
-      insertStylesheet(focusedElem.ownerDocument, "syntax_css", mdSyntaxCss)
-      insertStylesheet(focusedElem.ownerDocument, "main_css", mdMainCss)
 
       // Some webmail (Gmail) strips off any external style block. So we need to go
       // through our styles, explicitly applying them to matching elements.
@@ -462,7 +537,6 @@ https://github.com/adam-p/markdown-here/issues/85
     originalMdHtml = Utils.base64ToUTF8String(originalMdHtml)
 
     Utils.saferSetOuterHTML(wrapperElem, originalMdHtml)
-    removeStylesheets(wrapperElem.ownerDocument, "main_css", "syntax_css")
   }
 
   // Exported function.
