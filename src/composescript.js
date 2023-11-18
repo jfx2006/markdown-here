@@ -53,7 +53,8 @@ function requestMarkdownConversion(elem, range, callback) {
     { action: "render", mdText: mdhHtmlToText.get() },
     function (response) {
       var renderedMarkdown = mdhHtmlToText.postprocess(response.html)
-      callback(renderedMarkdown, response.css)
+      const md_css = response.main_css + response.syntax_css
+      callback(renderedMarkdown, md_css)
     }
   )
 }
