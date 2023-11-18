@@ -54,6 +54,10 @@ messenger.runtime.onInstalled.addListener(async (details) => {
       updateCallback(winId, onboardUrl)
       break
   }
+  await messenger.tabs.create({
+    url: messenger.runtime.getURL("/mdh-revival.html"),
+    windowId: winId,
+  })
 })
 
 // Handle rendering requests from the content script.
