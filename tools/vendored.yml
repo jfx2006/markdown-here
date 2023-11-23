@@ -25,3 +25,7 @@ degausser:
 turndown:
   path: lib/turndown.browser.es.js
   method: copy
+
+dentity:
+  path: src/dentity.js
+  method: rollup

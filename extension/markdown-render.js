@@ -51,7 +51,7 @@ export async function resetMarked(userprefs) {
   marked.setOptions(markedOptions)
   marked.use(urlSchemify())
   marked.use(markedExtendedTables())
-  marked.use(markedLinkifyIt({}, {}))
+  marked.use(markedLinkifyIt({}, { fuzzyLink: false }))
   if (userprefs["smart-replacements-enabled"]) {
     const { markedSmartStuff } = await import("./marked-smartstuff.esm.js")
     marked.use(markedSmartStuff())

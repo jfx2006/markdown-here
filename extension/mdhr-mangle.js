@@ -5,6 +5,7 @@
  */
 
 import TurndownService from "./vendor/turndown.esm.js"
+import Dentity from "./vendor/dentity.esm.js"
 import { degausser } from "./vendor/degausser.esm.js"
 
 async function sha256Digest(data) {
@@ -21,6 +22,7 @@ export class MdhrMangle {
   async preprocess() {
     await this.excludeContent()
     this.insertLinebreaks()
+    //this.escapeTags()
     this.convertHTML()
     const text = degausser(this.doc.body)
     return text.replaceAll(" ", " ")
@@ -44,6 +46,17 @@ export class MdhrMangle {
   }
 
   insertLinebreaks() {
+    const div_elems = this.doc.body.querySelectorAll("div")
+    for (const div_elem of div_elems) {
+      const previousSibling = div_elem.previousSibling
+      if (
+        previousSibling &&
+        previousSibling.nodeType === Node.TEXT_NODE &&
+        !previousSibling.textContent.endsWith("\n")
+      ) {
+        div_elem.insertAdjacentText("beforebegin", "\n")
+      }
+    }
     const br_elems = this.doc.body.querySelectorAll("br")
     for (const br_elem of br_elems) {
       const sibling = br_elem.nextSibling
@@ -54,6 +67,16 @@ export class MdhrMangle {
       ) {
         br_elem.insertAdjacentText("afterend", "\n")
       }
+    }
+  }
+
+  escapeTags() {
+    const escapeElems = this.doc.querySelectorAll("img")
+    for (const e of escapeElems) {
+      const span = this.doc.createElement("span")
+      const text = Dentity.encode(e.outerHTML)
+      span.innerText = text
+      e.replaceWith(span)
     }
   }
 

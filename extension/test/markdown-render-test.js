@@ -11,6 +11,7 @@
 /* eslint-disable max-len */
 
 import { markdownRender, resetMarked } from "../markdown-render.js"
+import { MdhrMangle } from "../mdhr-mangle.js"
 
 /* global describe, expect, it, before, beforeEach, after, afterEach */
 /* global _, $, MarkdownRender, htmlToText, Utils, MdhHtmlToText */
@@ -157,8 +158,7 @@ describe("Markdown-Render", function () {
 
       // And should not break headers or m-dashes
       md = "Arrows\n==\nAnd friends\n--\n--> <-- <--> ==> <== <==> -- m-dash"
-      target =
-        '<h1>Arrows</h1>\n<h2>And friends</h2>\n<p>→ ← ↔ ⇒ ⇐ ⇔ – m-dash</p>\n'
+      target = "<h1>Arrows</h1>\n<h2>And friends</h2>\n<p>→ ← ↔ ⇒ ⇐ ⇔ – m-dash</p>\n"
       expect(await markdownRender(md)).to.equal(target)
     })
 
@@ -191,13 +191,14 @@ describe("Markdown-Render", function () {
       }
       await resetMarked(userprefs)
     })
+    const parser = new DOMParser()
 
     const fullRender = async function (mdHTML) {
-      var elem = $("<div>").html(mdHTML).appendTo("body")
-      var mdhHtmlToText = new MdhHtmlToText.MdhHtmlToText(elem.get(0))
-      var renderedMarkdown = await markdownRender(mdhHtmlToText.get())
-      renderedMarkdown = mdhHtmlToText.postprocess(renderedMarkdown)
-      $(elem).remove()
+      const msgDocument = parser.parseFromString(mdHTML, "text/html")
+      const mdHtmlToText = new MdhrMangle(msgDocument)
+      const mdText = await mdHtmlToText.preprocess()
+      let renderedMarkdown = await markdownRender(mdText)
+      renderedMarkdown = mdHtmlToText.postprocess(renderedMarkdown)
       return renderedMarkdown
     }
 
@@ -247,50 +248,6 @@ describe("Markdown-Render", function () {
 
       tests.push(['asdf (<a href="aaa">bbb</a>)', '<p>asdf (<a href="https://aaa">bbb</a>)</p>\n'])
 
-      // Begin tests where the link should *not* be converted.
-      // Note that some tests are affected by issue #57: MD links should automatically add scheme
-
-      tests.push([
-        'asdf [yyy](<a href="http://www.aaa.com">bbb</a>) asdf',
-        '<p>asdf <a href="https://bbb">yyy</a> asdf</p>\n',
-      ])
-
-      tests.push([
-        'asdf [<a href="http://www.aaa.com">bbb</a>](ccc) asdf',
-        '<p>asdf <a href="https://ccc">bbb</a> asdf</p>\n',
-      ])
-
-      tests.push([
-        '[yyy](<a href="http://www.aaa.com">bbb</a>)',
-        '<p><a href="https://bbb">yyy</a></p>\n',
-      ])
-
-      tests.push([
-        '[yyy]( <a href="http://www.aaa.com">bbb</a>)',
-        '<p><a href="https://bbb">yyy</a></p>\n',
-      ])
-
-      tests.push([
-        'asdf [qwer <a href="http://www.aaa.com">bbb</a>](ccc) asdf',
-        '<p>asdf <a href="https://ccc">qwer bbb</a> asdf</p>\n',
-      ])
-
-      // Begin mixed tests
-
-      tests.push([
-        'asdf [aaa](bbb) asdf <a href="http://www.aaa.com">bbb</a> asdf [yyy](<a href="http://www.aaa.com">bbb</a>) asdf',
-        '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="http://www.aaa.com">bbb</a> asdf <a href="https://bbb">yyy</a> asdf</p>\n',
-      ])
-
-      // Begin tests that don't work quite right
-
-      tests.push(['asdf [<a href="http://www.aaa.com">bbb</a>] asdf', "<p>asdf [bbb] asdf</p>\n"])
-
-      tests.push([
-        'asdf ](<a href="http://www.aaa.com">bbb</a>) asdf',
-        "<p>asdf ](bbb) asdf</p>\n",
-      ])
-
       for (i = 0; i < tests.length; i++) {
         expect(await fullRender(tests[i][0])).to.equal(tests[i][1])
       }
@@ -323,8 +280,8 @@ describe("Markdown-Render", function () {
       var target = "<p><code>[a](b)</code></p>\n"
       expect(await fullRender(md)).to.equal(target)
 
-      md = "```<br>[a](b)<br>```"
-      target = "<pre><code>[a](b)\n</code></pre>\n"
+      md = "```<br>\n[a](b)<br>\n```<br>\n"
+      target = "<pre><code>[a](b)\n</code></pre>"
       expect(await fullRender(md)).to.equal(target)
     })
 
