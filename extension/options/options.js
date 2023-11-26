@@ -134,6 +134,7 @@ import OptionsStore from "./options-storage.js"
   }
 
   async function onOptionsSaved(e) {
+    handleUIMode()
     handleMathRenderer()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "renderer-reset" })
@@ -271,6 +272,13 @@ import OptionsStore from "./options-storage.js"
     )
     showSavedMsg()
     document.getElementById("hotkey-display-str").innerText = displayHotKey
+  }
+
+  function handleUIMode(e) {
+    const mode_elem = document.querySelector("input[name='mdhr-mode']:checked")
+    const elem = document.getElementById("markdown-mode")
+    elem.disabled = mode_elem.id === "mdhr-classic"
+    messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: mode_elem.id.substring(5) })
   }
 
   function handleMathRenderer(e) {

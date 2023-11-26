@@ -44,6 +44,7 @@ export const kOptDefaults = {
   "last-version": "0",
   "preview-width": 650,
   "enable-markdown-mode": true,
+  "mdhr-mode": "modern",
 }
 
 let MIGRATIONS = [

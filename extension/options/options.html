@@ -117,13 +117,30 @@
           <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab" id="options">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
+                <span data-i18n="options_interface_mode">User Interface</span>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <div class="form-check">
+                    <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode" value="modern" checked />
+                    <label class="form-check-label" for="mdhr-modern" data-i18n="mdhr-modern-mode">Use live preview mode</label>
+                  </div>
+                  <div class="form-check">
+                    <input id="mdhr-classic" class="form-check-input" type="radio" name="mdhr-mode" value="classic"/>
+                    <label class="form-check-label" for="mdhr-classic" data-i18n="mdhr-classic-mode">Use classic (pre-4.0) mode</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card my-4 shadow">
+              <div class="card-header h4 rounded-0">
                 <span data-i18n="options_title">Options</span>
               </div>
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
                     <input id="markdown-mode" class="form-check-input" type="checkbox" name="enable-markdown-mode"/>
-                    <label class="form-check-label" for="markdown-mode" data-i18n="composer_start_markdown_mode">Start composer in markdown mode.</label>
+                    <label class="form-check-label" for="markdown-mode" data-i18n="composer_start_markdown_mode">Start composer in markdown mode</label>
                   </div>
                 </div>
                 <div class="form-group">

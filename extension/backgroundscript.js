@@ -137,6 +137,12 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return resetMarked()
   } else if (request.action === "sha256") {
     return sha256Digest(request.data)
+  } else if (request.action === "mdhr-mode-set") {
+    if (request.mode && request.mode === "classic") {
+      return unInjectMDPreview()
+    } else if (request.mode && request.mode === "modern") {
+      return injectMDPreview()
+    }
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
@@ -164,7 +170,7 @@ async function doRender(mdText) {
 
 // Add the composeAction (the button in the format toolbar) listener.
 messenger.composeAction.onClicked.addListener((tab) => {
-  return toggleMDPreview(tab.windowId)
+  return composeAction(tab.windowId)
 })
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
@@ -178,7 +184,7 @@ messenger.commands.onCommand.addListener(async function (command) {
     let wins = await messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
     for (const win of wins) {
       if (win.focused) {
-        return toggleMDPreview(win.id)
+        return composeAction(win.id)
       }
     }
   }
@@ -200,6 +206,18 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   })
   return Promise.resolve({ cancel: false, details: { body: msgHTML } })
 })
+
+async function composeAction(windowId) {
+  const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
+  if (mdhr_mode === "classic") {
+    return doClassicRender(windowId)
+  }
+  return toggleMDPreview(windowId)
+}
+
+async function doClassicRender(windowId) {
+  console.log("doClassicRender not implemented")
+}
 
 async function toggleMDPreview(windowId) {
   // Send a message to the compose window to toggle markdown rendering
@@ -315,4 +333,15 @@ async function injectMDPreview() {
     { hidden: previewHidden, width: previewWidth },
   )
 }
-await injectMDPreview()
+
+async function unInjectMDPreview() {
+  await messenger.ex_customui.remove(
+    messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
+    messenger.runtime.getURL("compose_preview/compose_preview.html"),
+  )
+}
+
+const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
+if (mdhr_mode === "modern") {
+  await injectMDPreview()
+}
