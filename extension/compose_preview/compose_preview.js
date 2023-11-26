@@ -5,7 +5,7 @@
  */
 
 import DOMPurify from "../vendor/purify.es.js"
-import { getMainCSS, getSyntaxCSS } from "../async_utils.mjs"
+import { getMainCSS, getSyntaxCSS, debounce } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
@@ -178,6 +178,14 @@ async function previewFrameLoaded(e) {
   })
   const tabId = win.tabs[0]?.id
   await sendPreviewStateToCompose(tabId, savedState.hidden)
+
+  window.addEventListener(
+    "resize",
+    debounce(function (event) {
+      const preview_width = p_iframe.parentElement.clientWidth
+      OptionsStore.set({ "preview-width": preview_width })
+    }, 500),
+  )
 }
 
 async function scrollTo(payload) {
