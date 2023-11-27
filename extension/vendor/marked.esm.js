@@ -5,7 +5,7 @@
  */
 
 /**
- * marked v9.1.5 - a markdown parser
+ * marked v9.1.6 - a markdown parser
  * Copyright (c) 2011-2023, Christopher Jeffrey. (MIT Licensed)
  * https://github.com/markedjs/marked
  */
@@ -2056,11 +2056,9 @@ class Marked {
     parse = this.#parseMarkdown(_Lexer.lex, _Parser.parse);
     parseInline = this.#parseMarkdown(_Lexer.lexInline, _Parser.parseInline);
     Parser = _Parser;
-    parser = _Parser.parse;
     Renderer = _Renderer;
     TextRenderer = _TextRenderer;
     Lexer = _Lexer;
-    lexer = _Lexer.lex;
     Tokenizer = _Tokenizer;
     Hooks = _Hooks;
     constructor(...args) {
@@ -2256,6 +2254,12 @@ class Marked {
     setOptions(opt) {
         this.defaults = { ...this.defaults, ...opt };
         return this;
+    }
+    lexer(src, options) {
+        return _Lexer.lex(src, options ?? this.defaults);
+    }
+    parser(tokens, options) {
+        return _Parser.parse(tokens, options ?? this.defaults);
     }
     #parseMarkdown(lexer, parser) {
         return (src, options) => {

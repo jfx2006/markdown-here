@@ -464,7 +464,9 @@ class StringCollector {
       case 'br':
         this.processText(false);
         this.processBreaks();
-        this.runs.push('\n');
+        if (node.parentElement.lastChild !== node) {
+          this.runs.push("\n")
+        }
 
         return true
       case 'wbr':

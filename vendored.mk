@@ -6,6 +6,11 @@ degausser: $(VENDOR)/degausser.esm.js
 $(VENDOR)/degausser.esm.js: node_modules/degausser/src/degausser.js
 	./tools/rollup.sh degausser $<
 
+dentity: $(VENDOR)/dentity.esm.js
+
+$(VENDOR)/dentity.esm.js: node_modules/dentity/src/dentity.js
+	./tools/rollup.sh dentity $<
+
 marked: $(VENDOR)/marked.esm.js
 
 $(VENDOR)/marked.esm.js: node_modules/marked/lib/marked.esm.js
@@ -36,4 +41,4 @@ turndown: $(VENDOR)/turndown.esm.js
 $(VENDOR)/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
 	cp -v $< $@
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser turndown
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser turndown dentity
