@@ -245,7 +245,7 @@ import OptionsStore from "./options-storage.js"
     const changes = await fetchExtFile("/CHANGELOG.md")
 
     const response = await messenger.runtime.sendMessage({ action: "render-md", mdText: changes })
-    changesElem.innerHTML = escapeHTML`${response.html}`
+    changesElem.innerHTML = escapeHTML`${response}`
   }
 
   /**

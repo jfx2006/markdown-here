@@ -327,3 +327,9 @@ pre {
 span.hidden {
     display: none !important;
 }
+
+#mdhrChangeList {
+    height: 30ch;
+    overflow: hidden;
+    font-size: smaller;
+}
