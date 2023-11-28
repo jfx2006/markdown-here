@@ -1,8 +1,11 @@
-## [UNRELEASED]
+## [4.0 beta 11]
 
 ### Fixed
 
 - Fix Settings page opening multiple tabs
+- Save open compose windows as drafts when installing or switching UI modes
+  to prevent lost messages - upgrades while messages are being composed may
+  continue to be a problem
 
 ## [4.0 beta 10]
 
