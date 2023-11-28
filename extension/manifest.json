@@ -20,7 +20,7 @@
     "128": "images/md_fucsia.svg",
     "512": "images/md_fucsia.svg"
   },
-  "permissions": ["accountsRead", "compose", "menus", "storage", "tabs"],
+  "permissions": ["accountsRead", "compose", "compose.save", "menus", "storage", "tabs"],
   "background": {"page": "background.html"},
   "compose_action": {
     "browser_style": true,

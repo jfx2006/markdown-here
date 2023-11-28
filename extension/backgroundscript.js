@@ -9,7 +9,7 @@
  */
 import { getHljsStylesheet, getMessage, sha256Digest } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
-import { resetMarked, markdownRender } from "./markdown-render.js"
+import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
 
 messenger.runtime.onInstalled.addListener(async (details) => {
@@ -179,9 +179,13 @@ messenger.composeScripts.register({
   js: [{ file: "composescript.js" }],
 })
 
+async function getOpenComposeWindows() {
+  return await messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
+}
+
 messenger.commands.onCommand.addListener(async function (command) {
   if (command === "toggle-markdown") {
-    let wins = await messenger.windows.getAll({ populate: true, windowTypes: ["messageCompose"] })
+    let wins = await getOpenComposeWindows()
     for (const win of wins) {
       if (win.focused) {
         return composeAction(win.id)
@@ -322,7 +326,34 @@ function str2Int(intstr) {
   return rv
 }
 
+async function saveComposed() {
+  const rv = []
+  const wins = await getOpenComposeWindows()
+  let win
+  for (win of wins) {
+    const tabId = win.tabs[0].id
+    const savedMsgHdrs = await messenger.compose.saveMessage(tabId, { mode: "draft" })
+    /*const details = {
+      id: win.id,
+      tabId: tabId,
+      details: await messenger.compose.getComposeDetails(tabId),
+    }*/
+    rv.push(...savedMsgHdrs.messages)
+    await messenger.windows.remove(win.id)
+  }
+  return rv
+}
+
+async function restoreComposed(msgHeaderList) {
+  let msgHeaders
+  for (msgHeaders of msgHeaderList) {
+    await messenger.compose.beginNew(msgHeaders.id)
+  }
+}
+
 async function injectMDPreview() {
+  // Save state of open compose Windows as drafts
+  const saved = await saveComposed()
   // Register custom UI compose editor
   const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
   const previewHidden = savedState["enable-markdown-mode"] === "false"
@@ -332,13 +363,19 @@ async function injectMDPreview() {
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
     { hidden: previewHidden, width: previewWidth },
   )
+  // Restore the saved drafts
+  await restoreComposed(saved)
 }
 
 async function unInjectMDPreview() {
+  // Save state of open compose Windows as drafts
+  const saved = await saveComposed()
   await messenger.ex_customui.remove(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
   )
+  // Restore the saved drafts
+  await restoreComposed(saved)
 }
 
 const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
