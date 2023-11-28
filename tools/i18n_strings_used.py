@@ -6,15 +6,20 @@
 
 import os
 import os.path as osp
+import json
 import re
+
+from blessings import Terminal
+# from bs4 import BeautifulSoup
 
 HTML_RE = re.compile(r'data-i18n="([a-z0-9_]+)"')
 JS_RE = re.compile(r'getMessage\("([a-z0-9_]+)"(,.+)?\)')
-MANIFEST_RE = re.compile(r'__MSG_([a-z0-9_]+)__')
+MANIFEST_RE = re.compile(r"__MSG_([a-z0-9_]+)__")
+
 
 def get_strings_from_file(path, ext):
     rv = set()
-    print("Checking {}".format(path))
+    print(f"Checking {path}")
     with open(path) as fp:
         for line in fp:
             match = None
@@ -36,6 +41,8 @@ def get_strings_from_file(path, ext):
 
 
 def main():
+    T = Terminal()
+
     result = set()
     src_root = osp.abspath(osp.join(osp.dirname(__file__), "..", "extension"))
     for root, dirs, files in os.walk(src_root):
@@ -47,9 +54,31 @@ def main():
 
     result = list(result)
     result.sort()
+    print("\n\n")
+    print(T.bold_blue("Used strings"))
     for _string in result:
         print(_string)
 
+    print("\n\n")
+    with open(osp.join(src_root, "_locales/en/messages.json")) as fp:
+        source_strings_data = json.load(fp)
 
-if __name__ == '__main__':
+    string_keys = set(source_strings_data.keys())
+    unused_strings = string_keys - set(result)
+    print(T.bold_red("Unused source strings"))
+    for _string in unused_strings:
+        if _string.startswith("__WET_"): continue
+        print(_string)
+
+    print("\n\n")
+    missing_strings = set(result) - string_keys
+    print(T.bold_red("Missing source strings"))
+    for _string in missing_strings:
+        if _string.startswith("__WET_GROUP__"): continue
+        print(_string)
+        # content = source_strings_data[_string]["message"]
+        # print(T.yellow(f"  {content}"))
+
+
+if __name__ == "__main__":
     main()

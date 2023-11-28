@@ -66,6 +66,18 @@
   "options_page__options_title": {
     "message": "Options"
   },
+  "options_page__interface_mode": {
+    "message": "User Interface",
+    "description": "Label for selecting the user interface mode (eg. modern or classic modes)"
+  },
+  "options_page__mdhr_classic_mode": {
+    "message": "Use pre-4.0 (classic) mode",
+    "description": "Label for selecting classic UI"
+  },
+  "options_page__mdhr_modern_mode": {
+    "message": "Use live preview (modern) mode",
+    "description": "Label for selecting modern UI"
+  },
   "options_page__forgot_to_render_label2": {
     "message": "Enable forgot-to-render check",
     "description": "Label for the checkbox that enables the forgot-to-render feature"
@@ -197,6 +209,18 @@
   "options_page__debug_copy_clipboard": {
     "message": "Copy to clipboard",
     "description": "button for copying debug information to the clipboard"
+  },
+  "options_page__translate": {
+    "message": "Translate",
+    "description": "Used in a link to open Locale Maker"
+  },
+  "options_page__localemaker_1": {
+    "message": "Locale Maker is blatantly copied from the FireMonkey extension for Firefox.",
+    "description": "Description of Locale Maker source."
+  },
+  "options_page__localemaker_2": {
+    "message": "Thank you to erosman for its creation.",
+    "description": "Credit to Locale Maker author."
   },
   "options_page__changelog_title": {
     "message": "Changelog"

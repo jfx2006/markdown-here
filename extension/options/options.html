@@ -18,45 +18,32 @@
 </head>
 <body class="pt-3 pb-5">
 
-  <div class="container-fluid">
-    <div class="row">
-      <nav class="col-md-3 col-lg-2 sidebar">
-        <button class="navbar-dark navbar-toggler collapsed d-block d-md-none pt-2" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse d-none d-md-block" id="sidebar">
-          <ul id="optionsTabList" class="nav nav-pills flex-column mb-2 text-uppercase" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link text-light" id="docs-tab" href="#docs" data-bs-toggle="pill"
-                 aria-controls="docs" aria-selected="true" role="tab">
-                <span data-i18n="howto">Howto</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light active" id="options-tab" href="#options" data-bs-toggle="pill"
-                 aria-controls="home" aria-selected="false" role="tab">
-              <span data-i18n="options_title">Options</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" id="theme-tab" href="#theme" data-bs-toggle="pill"
-                 aria-controls="theme" aria-selected="false" role="tab">
-                <span data-i18n="syntax_highlighting_theme_label">Theme</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" id="about-tab" href="#about" data-bs-toggle="pill"
-                 aria-controls="about" aria-selected="false" role="tab">
-                <span data-i18n="about">About</span></a>
-            </li>
-          </ul>
-          <footer class="d-none d-md-flex mt-4 mb-1 text-uppercase position-absolute small text-muted">
-            © 2021 JFX - https://gitlab.com/jfx2006
-          </footer>
-        </div>
-      </nav>
-      <main class="col-md-9 col-lg-10 offset-md-3 offset-lg-2 px-4 mt-5 mt-md-0">
-        <form id="mdh-options-form">
+<div class="container-fluid">
+  <div class="row">
+    <nav class="nav flex-column col-md-3 col-lg-2 nav-pills text-uppercase sidebar">
+      <a class="justify-content-center nav-link text-light" id="docs-tab"  data-bs-toggle="pill" data-bs-target="#docs" aria-controls="docs"
+         aria-selected="false">
+        <span data-i18n="howto">Howto</span></a>
+      <a class="justify-content-center nav-link text-light active" id="options-tab"  data-bs-toggle="pill" data-bs-target="#options" aria-controls="home"
+         aria-selected="true">
+        <span data-i18n="options_title">Options</span></a>
+      <a class="justify-content-center nav-link text-light" id="theme-tab" data-bs-target="#theme"  data-bs-toggle="pill" aria-controls="theme"
+         aria-selected="false">
+        <span data-i18n="syntax_highlighting_theme_label">Theme</span></a>
+      <a class="justify-content-center nav-link text-light" id="about-tab" data-bs-target="#about"  data-bs-toggle="pill" aria-controls="about"
+         aria-selected="false">
+        <span data-i18n="about">About</span></a>
+      <footer class="d-none d-md-flex mt-4 mb-1 text-uppercase position-absolute small text-muted">
+        © 2021 JFX - https://gitlab.com/jfx2006
+      </footer>
+    </nav>
+    <main class="col-md-9 col-lg-10 offset-md-3 offset-lg-2 px-4 mt-5 mt-md-0">
+      <form id="mdh-options-form">
         <div>
-          <h2 class="pb-3 mt-0"><img class="text-align" src="../images/md_fucsia.svg" width="96" height="96" alt="logo"/>
-          <span data-i18n="page_title" data-i18n-arg="__APP_NAME">Markdown Here Revival Options</span></h2>
+          <h2 class="pb-3 mt-0"><img class="text-align" src="../images/md_fucsia.svg" width="96"
+                                     height="96" alt="logo" />
+            <span data-i18n="page_title"
+                  data-i18n-arg="__APP_NAME">Markdown Here Revival Options</span></h2>
         </div>
 
         <div class="content">
@@ -71,14 +58,15 @@
                   <li class="my-md-2">
                     <span data-i18n="start_new_message_toggle">Start a new email message. Toggle
                       the composer to markdown mode with the action button on the format toolbar.</span>
-                    <img class="text-align" src="../images/icon36.png" alt=""/><br>
+                    <img class="text-align" src="../images/icon36.png" alt="" /><br>
                     <span data-i18n="toggle_hotkey" class="hotkey-display-wrapper">Or use the hotkey:</span>
                     <span id="hotkey-display-str" class="hotkey-display"></span>
                   </li>
                   <li class="my-md-2">
                     <span data-i18n="type_some_markdown">Type some Markdown into the email. Try this:</span>
                     <div class="my-3 border-secondary">
-                      <code data-i18n="short_markdown_example" class="p-2">_Hello_ `Markdown` **Here**!</code>
+                      <code data-i18n="short_markdown_example" class="p-2">_Hello_ `Markdown`
+                        **Here**!</code>
                     </div>
                   </li>
                   <li class="my-md-2">
@@ -97,15 +85,19 @@
               <div class="card-body">
                 <ul>
                   <li class="my-md-2">
-                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Markdown-Here-Revival-Cheatsheet"
-                       data-i18n="resources_cheatsheet_link">Markdown Here Revival Cheatsheet</a>
+                    <a
+                      href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Markdown-Here-Revival-Cheatsheet"
+                      data-i18n="resources_cheatsheet_link">Markdown Here Revival Cheatsheet</a>
                   </li>
                   <li class="my-md-2">
-                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Home" data-i18n="mdhr_wiki">
-                    Markdown Here Revival wiki</a>
+                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Home"
+                       data-i18n="mdhr_wiki">
+                      Markdown Here Revival wiki</a>
                   </li>
                   <li class="my-md-2">
-                    <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Tips-and-Tricks" data-i18n="tips_tricks_link">
+                    <a
+                      href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Tips-and-Tricks"
+                      data-i18n="tips_tricks_link">
                       Tips and Tricks</a>
                   </li>
                 </ul>
@@ -114,20 +106,24 @@
           </div>
 
           <!-- Markdown Features -->
-          <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab" id="options">
+          <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab"
+               id="options">
             <div class="card my-4 shadow">
               <div class="card-header h4 rounded-0">
-                <span data-i18n="options_interface_mode">User Interface</span>
+                <span data-i18n="interface_mode">User Interface</span>
               </div>
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode" value="modern" checked />
-                    <label class="form-check-label" for="mdhr-modern" data-i18n="mdhr-modern-mode">Use live preview mode</label>
+                    <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode"
+                           value="modern" checked />
+                    <label class="form-check-label" for="mdhr-modern" data-i18n="mdhr_modern_mode">Use live preview (modern) mode</label>
                   </div>
                   <div class="form-check">
-                    <input id="mdhr-classic" class="form-check-input" type="radio" name="mdhr-mode" value="classic"/>
-                    <label class="form-check-label" for="mdhr-classic" data-i18n="mdhr-classic-mode">Use classic (pre-4.0) mode</label>
+                    <input id="mdhr-classic" class="form-check-input" type="radio" name="mdhr-mode"
+                           value="classic" />
+                    <label class="form-check-label" for="mdhr-classic"
+                           data-i18n="mdhr_classic_mode">Use pre-4.0 (classic) mode</label>
                   </div>
                 </div>
               </div>
@@ -139,16 +135,23 @@
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="markdown-mode" class="form-check-input" type="checkbox" name="enable-markdown-mode"/>
-                    <label class="form-check-label" for="markdown-mode" data-i18n="composer_start_markdown_mode">Start composer in markdown mode</label>
+                    <input id="markdown-mode" class="form-check-input" type="checkbox"
+                           name="enable-markdown-mode" />
+                    <label class="form-check-label" for="markdown-mode"
+                           data-i18n="composer_start_markdown_mode">Start composer in markdown
+                      mode</label>
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="form-check">
-                    <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard shortcut)</label>
+                    <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard
+                      shortcut)</label>
                     <div class="input-wrapper">
-                      <input id="hotkey-input" class="form-text" name="hotkey-input" data-command="toggle-markdown"/>
-                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger" data-i18n="reset_button">Reset</button>
+                      <input id="hotkey-input" class="form-text" name="hotkey-input"
+                             data-command="toggle-markdown" />
+                      <button id="hotkey-input-reset" class="btn btn-sm btn-danger"
+                              data-i18n="reset_button">Reset
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -162,54 +165,69 @@
               <div class="card-body">
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="gfm-line-breaks" class="form-check-input" type="checkbox" name="gfm-line-breaks-enabled"/>
-                    <label class="form-check-label" for="gfm-line-breaks" data-i18n="gfm_line_breaks_enabled_label">Enable GFM line breaks</label>
+                    <input id="gfm-line-breaks" class="form-check-input" type="checkbox"
+                           name="gfm-line-breaks-enabled" />
+                    <label class="form-check-label" for="gfm-line-breaks"
+                           data-i18n="gfm_line_breaks_enabled_label">Enable GFM line breaks</label>
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="smart-replacements" class="form-check-input" type="checkbox" name="smart-replacements-enabled"/>
-                    <label class="form-check-label" for="smart-replacements" data-i18n="smart_replacements_enabled_label">Enable "smart" replacements</label>
+                    <input id="smart-replacements" class="form-check-input" type="checkbox"
+                           name="smart-replacements-enabled" />
+                    <label class="form-check-label" for="smart-replacements"
+                           data-i18n="smart_replacements_enabled_label">Enable "smart"
+                      replacements</label>
                     <div class="text-muted" data-i18n="smart_replacements_2"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="emoji-shortcode" class="form-check-input" type="checkbox" name="emoji-shortcode-enabled"/>
-                    <label class="form-check-label" for="emoji-shortcode" data-i18n="emoji_shortcode_enabled_label">Enable :emoji: (Github style) Shortcodes</label>
+                    <input id="emoji-shortcode" class="form-check-input" type="checkbox"
+                           name="emoji-shortcode-enabled" />
+                    <label class="form-check-label" for="emoji-shortcode"
+                           data-i18n="emoji_shortcode_enabled_label">Enable :emoji: (Github style)
+                      Shortcodes</label>
                     <!-- <div class="text-muted" data-i18n="smart_replacements_2"></div> -->
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="input-wrapper-block">
                     <div class="form-check">
-                      <input id="math-renderer-enabled" class="form-check-input" type="checkbox" name="math-renderer-enabled" />
-                      <label class="form-check-label" for="math-renderer-enabled" data-i18n="tex_math_title">TeX Mathematical
+                      <input id="math-renderer-enabled" class="form-check-input" type="checkbox"
+                             name="math-renderer-enabled" />
+                      <label class="form-check-label" for="math-renderer-enabled"
+                             data-i18n="tex_math_title">TeX Mathematical
                         Formulae Support</label>
                     </div>
                     <div class="input-wrapper-block">
                       <div class="form-check">
-                        <input id="math-renderer-texzilla" class="form-check-input" type="radio" name="math-renderer"
-                               value="texzilla"/>
-                        <label class="form-check-label" for="math-renderer-texzilla" data-i18n="tex_math_texzilla_label"
-                              title="Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.">
+                        <input id="math-renderer-texzilla" class="form-check-input" type="radio"
+                               name="math-renderer"
+                               value="texzilla" />
+                        <label class="form-check-label" for="math-renderer-texzilla"
+                               data-i18n="tex_math_texzilla_label">
                           TeXZilla and HTML Canvas rendering</label>
+                        <span data-i18n="tex_math_texzilla_label-Title">Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.</span>
                       </div>
                       <div class="form-check">
-                        <input id="math-renderer-gchart" class="form-check-input" type="radio" name="math-renderer"
-                               value="gchart"/>
-                        <label class="form-check-label" for="math-renderer-gchart" data-i18n="tex_math_gchart_label"
-                               title="To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.">
+                        <input id="math-renderer-gchart" class="form-check-input" type="radio"
+                               name="math-renderer"
+                               value="gchart" />
+                        <label class="form-check-label" for="math-renderer-gchart"
+                               data-i18n="tex_math_gchart_label">
                           Math rendering using Google Chart API (deprecated)</label>
-                        </div>
-                        <div id="math-gchart-url">
-                          <label class="form-check-label" for="math-value"></label>
-                          <input id="math-value" class="form-text" type="text" name="math-value"/>
-                          <button id="math-reset-button" class="btn btn-sm btn-primary reset-button" data-field-id="math-value">
-                            <span data-i18n="reset_button">Reset</span>
-                          </button>
-                        </div>
+                        <span data-i18n="tex_math_gchart_label-Title">To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.</span>
                       </div>
+                      <div id="math-gchart-url">
+                        <label class="form-check-label" for="math-value"></label>
+                        <input id="math-value" class="form-text" type="text" name="math-value" />
+                        <button id="math-reset-button" class="btn btn-sm btn-primary reset-button"
+                                data-field-id="math-value">
+                          <span data-i18n="reset_button">Reset</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -225,11 +243,12 @@
                 <div class="form-group">
                   <textarea name="main-css" id="css-edit" spellcheck="false" wrap="off"></textarea>
                 </div>
-                  <div>
-                    <button id="css-reset-button" class="btn btn-sm btn-danger reset-button" type="button" data-i18n="reset_button" data-field-id="css-edit">
-                      Reset
-                    </button>
-                  </div>
+                <div>
+                  <button id="css-reset-button" class="btn btn-sm btn-danger reset-button"
+                          type="button" data-i18n="reset_button" data-field-id="css-edit">
+                    Reset
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -240,8 +259,10 @@
               <div class="card-body">
                 <div class="form-group">
                   <div>
-                    <label for="css-syntax-select" data-i18n="syntax_highlighting_theme_label">Theme</label>
-                    <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css" id="css-syntax-select">
+                    <label for="css-syntax-select"
+                           data-i18n="syntax_highlighting_theme_label">Theme</label>
+                    <select class="form-control form-control-sm col-md-3 col-lg-2" name="syntax-css"
+                            id="css-syntax-select">
                     </select>
                   </div>
                 </div>
@@ -259,7 +280,8 @@
                     <textarea id="preview_input"></textarea>
                   </div>
                   <div class="col-6">
-                    <iframe id="preview" src="preview.html" sandbox="allow-same-origin allow-top-navigation-by-user-activation"></iframe>
+                    <iframe id="preview" src="preview.html"
+                            sandbox="allow-same-origin allow-top-navigation-by-user-activation"></iframe>
                   </div>
                 </div>
               </div>
@@ -274,7 +296,8 @@
               </div>
               <div class="card-body">
                 <p>
-                  <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/issues" data-i18n="create_gitlab_issue">
+                  <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/issues"
+                     data-i18n="create_gitlab_issue">
                     Create new issue on GitLab</a>
                   <br><span data-i18n="issue_debug_info">The following debug info can be used</span>:
                 </p>
@@ -283,7 +306,8 @@
                     <br>Thunderbird Version: <span id="mdhrThunderbirdVersion"></span>
                     <br>Operating system: <span id="mdhrOS"></span>
                   </p>
-                  <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3" data-i18n="debug_copy_clipboard">
+                  <button id="copyVersionToClipboard" class="btn btn btn-sm btn-primary ml-3"
+                          data-i18n="debug_copy_clipboard">
                     Copy to clipboard
                   </button>
                   <span class="fade">&#10004;</span>
@@ -292,9 +316,11 @@
                   <a id="tests-link" href="../test/index.html" hidden="hidden">Run Tests</a>
                 </div>
                 <div>
-                  <a id="locale_maker" href="../locale_maker/locale-maker.html" data-i18n="translate">Translate</a><br>
-                  <i data-i18n="localemaker_1">Locale Maker is blatantly copied from the FireMonkey extension for Firefox.</i>
-                  <span data-i18n="localemaker_2"Thank you to erosman for its creation.</span>
+                  <a id="locale_maker" href="../locale_maker/locale-maker.html"
+                     data-i18n="translate">Translate</a><br>
+                  <i data-i18n="localemaker_1">Locale Maker is blatantly copied from the FireMonkey
+                    extension for Firefox.</i>
+                  <span data-i18n="localemaker_2">Thank you to erosman for its creation.</span>
                   <a href="https://addons.mozilla.org/en-US/firefox/user/690471/">erosman</a>
                 </div>
               </div>
@@ -803,16 +829,16 @@
             </div>
           </div>
         </div>
-          <div style="display: none">
-            <input type="hidden" name="preview-width"/>
-          </div>
-        </form>
-      </main>
+        <div style="display: none">
+          <input type="hidden" name="preview-width" />
+        </div>
+      </form>
+    </main>
 
-    </div>
   </div>
-  <div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
-  </div>
+</div>
+<div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
+</div>
 </body>
 </html>

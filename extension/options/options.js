@@ -101,18 +101,6 @@ import OptionsStore from "./options-storage.js"
       } else {
         document.getElementById("hotkey-display-str").innerText = displayShortcut
       }
-      if (document.location.hash === "#docs") {
-        let e
-        e = document.getElementById("options-tab")
-        e.classList.remove("active")
-        e.setAttribute("aria-selected", false)
-        document.getElementById("options").classList.remove("active", "show")
-
-        e = document.getElementById("docs-tab")
-        e.classList.add("active")
-        e.setAttribute("aria-selected", true)
-        document.getElementById("docs").classList.add("active", "show")
-      }
 
       await OptionsStore.syncForm(form)
       form.addEventListener("options-sync:form-synced", await onOptionsSaved)
@@ -141,7 +129,7 @@ import OptionsStore from "./options-storage.js"
   }
 
   function activatePillNav() {
-    const triggerPillList = document.querySelectorAll("#optionsTabList a")
+    const triggerPillList = document.querySelectorAll("nav  a")
     triggerPillList.forEach((triggerEl) => {
       const pillTrigger = new bootstrap.Tab(triggerEl)
       triggerEl.addEventListener("click", (event) => {
@@ -152,7 +140,7 @@ import OptionsStore from "./options-storage.js"
   }
 
   function activatePill(url_hash) {
-    const selector = `#optionsTabList a[data-bs-toggle='pill'][href='${url_hash}']`
+    const selector = `nav a.nav-link[data-bs-toggle='pill'][data-bs-target='${url_hash}']`
     const triggerEl = document.querySelector(selector)
     bootstrap.Tab.getInstance(triggerEl).show()
   }
