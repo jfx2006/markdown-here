@@ -1,3 +1,9 @@
+## [UNRELEASED]
+
+### Fixed
+
+- Fix Settings page opening multiple tabs
+
 ## [4.0 beta 10]
 
 ### Fixed
