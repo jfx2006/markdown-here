@@ -287,12 +287,17 @@ async function openNotification(windowId, message, priority, button_labels) {
 }
 
 async function updateHotKey(hotkey_value, tooltip) {
-  await messenger.commands.update({
-    name: "toggle-markdown",
-    shortcut: hotkey_value,
-  })
-  const msg = getMessage("toggle_button_tooltip")
-  await messenger.composeAction.setTitle({ title: `${msg}\n${tooltip}` })
+  try {
+    await messenger.commands.update({
+      name: "toggle-markdown",
+      shortcut: hotkey_value,
+    })
+    const msg = getMessage("toggle_button_tooltip")
+    await messenger.composeAction.setTitle({ title: `${msg}\n${tooltip}` })
+  } catch (error) {
+    return error
+  }
+  return "ok"
 }
 OptionsStore.get("hotkey-input").then(async (result) => {
   const shortkeyStruct = getShortcutStruct(result["hotkey-input"])

@@ -25,6 +25,7 @@ import OptionsStore from "./options-storage.js"
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   let checkChangeTimeout = null
   let savedMsgToast
+  let invalidMsgToast
 
   function showSavedMsg() {
     inputDirty = true
@@ -67,6 +68,7 @@ import OptionsStore from "./options-storage.js"
       activatePill(document.location.hash)
     }
     savedMsgToast = new bootstrap.Toast("#saved-msg")
+    invalidMsgToast = new bootstrap.Toast("#invalid-msg")
 
     document.addEventListener("click", link_onClicked)
 
@@ -107,6 +109,7 @@ import OptionsStore from "./options-storage.js"
     }
 
     form.addEventListener("hotkey", handleHotKey)
+    form.addEventListener("invalid-hotkey", handleInvalidHotkey)
 
     // Reset buttons
     for (const btn of document.getElementsByClassName("reset-button")) {
@@ -222,9 +225,8 @@ import OptionsStore from "./options-storage.js"
     const browser_info = await messenger.runtime.getBrowserInfo()
     const appManifest = messenger.runtime.getManifest()
     document.getElementById("mdhrVersion").innerText = appManifest.version
-    document.getElementById(
-      "mdhrThunderbirdVersion",
-    ).innerText = `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
+    document.getElementById("mdhrThunderbirdVersion").innerText =
+      `${browser_info.name} ${browser_info.version} ${browser_info.buildID}`
     document.getElementById("mdhrOS").innerText = `${platform.os} ${platform.arch}`
   }
 
@@ -252,7 +254,6 @@ import OptionsStore from "./options-storage.js"
       displayHotKey = e.detail.macHotKey()
     }
     await OptionsStore.set({ "hotkey-input": newHotKey })
-    await messenger.runtime.sendMessage({ action: "update-hotkey", hotkey_value: newHotKey })
     form.dispatchEvent(
       new CustomEvent("options-sync:form-synced", {
         bubbles: true,
@@ -262,11 +263,25 @@ import OptionsStore from "./options-storage.js"
     document.getElementById("hotkey-display-str").innerText = displayHotKey
   }
 
+  async function handleInvalidHotkey(e) {
+    inputDirty = true
+    invalidMsgToast.show()
+    setTimeout(function () {
+      invalidMsgToast.hide()
+    }, 5000)
+  }
+
   function handleUIMode(e) {
+    const value_elem = document.getElementById("mode-radio")
+    const old_value = value_elem.dataset.value
     const mode_elem = document.querySelector("input[name='mdhr-mode']:checked")
-    const elem = document.getElementById("markdown-mode")
-    elem.disabled = mode_elem.id === "mdhr-classic"
-    messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: mode_elem.id.substring(5) })
+    const new_value = mode_elem.id
+    if (old_value !== new_value) {
+      const elem = document.getElementById("markdown-mode")
+      elem.disabled = new_value === "mdhr-classic"
+      value_elem.dataset.value = new_value
+      messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: mode_elem.id.substring(5) })
+    }
   }
 
   function handleMathRenderer(e) {

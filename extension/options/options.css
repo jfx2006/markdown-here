@@ -284,15 +284,22 @@ pre {
     margin-left: 20px;
 }
 
-#saved-msg {
+#saved-msg, #invalid-msg {
     position: fixed;
     top: 20px;
     right: 20px;
     font-size: xx-large;
+}
+
+#saved-msg {
     background: linear-gradient(225deg, #326b29, #357e2a);
 }
 
-#saved-msg > .toast-header {
+#invalid-msg {
+    background: linear-gradient(225deg, #ef1212, #b44343);
+}
+
+.toast-header {
     background-color: transparent;
     color: #202020;
 }

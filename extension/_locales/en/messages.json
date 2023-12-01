@@ -229,6 +229,10 @@
     "message": "Changes saved",
     "description": "message that shows when user changes have been saved"
   },
+  "options_page__invalid_hotkey": {
+    "message": "Invalid hotkey!",
+    "description": "message that shows when an invalid hotkey combination was entered"
+  },
   "options_page__reset_button": {
     "message": "Reset",
     "description": "used for resetting certain options to the default"

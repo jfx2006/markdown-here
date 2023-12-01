@@ -215,14 +215,27 @@ export default class HotkeyHandler {
       bubbles: true,
       detail: { value: () => this.inputElem.value, macHotKey: () => this.hiddenElem.innerText },
     })
+    this.invalidEvent = new CustomEvent("invalid-hotkey", {
+      bubbles: true,
+      detail: { value: () => "invalid" },
+    })
   }
   setValidKey(shortcutStruct) {
     this.inputElem.value = shortcutStruct.shortcut
+    let tooltip = this.inputElem.value
     if (shortcutStruct.macShortcut) {
       this.hiddenElem.innerText = shortcutStruct.macShortcut
       this.hiddenElem.classList.remove("hidden")
+      tooltip = this.hiddenElem.innerText
     }
-    this.inputElem.dispatchEvent(this.updateEvent)
+    messenger.runtime.sendMessage({ action: "update-hotkey", hotkey_value: this.inputElem.value, hotkey_tooltip: tooltip })
+      .then(result => {
+        if (result !== "ok") {
+          this.setInvalidKey()
+          return
+        }
+        this.inputElem.dispatchEvent(this.updateEvent)
+      })
   }
 
   setMacShortcutDisplay(shortcutStr) {
@@ -235,7 +248,7 @@ export default class HotkeyHandler {
   }
 
   setInvalidKey() {
-    this.hiddenElem.classList.remove("hidden")
+    this.inputElem.dispatchEvent(this.invalidEvent)
   }
 
   async shortCutChanged(e) {

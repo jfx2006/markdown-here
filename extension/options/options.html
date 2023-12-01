@@ -113,7 +113,7 @@
                 <span data-i18n="interface_mode">User Interface</span>
               </div>
               <div class="card-body">
-                <div class="form-group">
+                <div id="mode-radio" class="form-group" data-value="mdhr-modern">
                   <div class="form-check">
                     <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode"
                            value="modern" checked />
@@ -149,6 +149,7 @@
                     <div class="input-wrapper">
                       <input id="hotkey-input" class="form-text" name="hotkey-input"
                              data-command="toggle-markdown" />
+                      <span id="hotkey-input-hidden" class="hidden"></span>
                       <button id="hotkey-input-reset" class="btn btn-sm btn-danger"
                               data-i18n="reset_button">Reset
                       </button>
@@ -839,6 +840,9 @@
 </div>
 <div id="saved-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header" data-i18n="changes_saved">Changes saved</div>
+</div>
+<div id="invalid-msg" class="toast shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header" data-i18n="invalid_hotkey">Invalid hotkey!</div>
 </div>
 </body>
 </html>
