@@ -12,6 +12,9 @@ import OptionsStore from "./options/options-storage.js"
 import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
 
+const ICON_INACTIVE = "images/md_bw.svg"
+const ICON_RENDERED = "images/md_fucsia.svg"
+
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
   const APP_NAME = getMessage("app_name")
@@ -78,44 +81,30 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       responseCallback(prefs)
     })
     return true
-  } else if (request.action === "show-toggle-button") {
-    if (request.show) {
-      messenger.composeAction.enable(sender.tab.id)
-      messenger.menus.update("mdhr_toggle_context_menu", { enabled: true })
-      messenger.composeAction.setTitle({
-        title: getMessage("toggle_button_tooltip"),
-        tabId: sender.tab.id,
-      })
-      messenger.composeAction.setIcon({
-        path: {
-          16: messenger.runtime.getURL("/images/md_bw.svg"),
-          19: messenger.runtime.getURL("/images/md_bw.svg"),
-          32: messenger.runtime.getURL("/images/md_fucsia.svg"),
-          38: messenger.runtime.getURL("/images/md_fucsia.svg"),
-          64: messenger.runtime.getURL("/images/md_fucsia.svg"),
-        },
-        tabId: sender.tab.id,
-      })
-      return false
-    } else {
-      messenger.composeAction.disable(sender.tab.id)
-      messenger.menus.update("mdhr_toggle_context_menu", { enabled: false })
-      messenger.composeAction.setTitle({
-        title: getMessage("toggle_button_tooltip_disabled"),
-        tabId: sender.tab.id,
-      })
-      messenger.composeAction.setIcon({
-        path: {
-          16: messenger.runtime.getURL("/images/md_trnsp.svg"),
-          19: messenger.runtime.getURL("/images/md_trnsp.svg"),
-          32: messenger.runtime.getURL("/images/md_trnsp.svg"),
-          38: messenger.runtime.getURL("/images/md_trnsp.svg"),
-          64: messenger.runtime.getURL("/images/md_trnsp.svg"),
-        },
-        tabId: sender.tab.id,
-      })
-      return false
-    }
+  } else if (request.action === "set-composeaction-purple") {
+    messenger.composeAction.setIcon({
+      path: {
+        16: "images/md_fucsia.svg",
+        19: "images/md_fucsia.svg",
+        32: "images/md_fucsia.svg",
+        38: "images/md_fucsia.svg",
+        64: "images/md_fucsia.svg",
+      },
+      tabId: sender.tab.id,
+    })
+    return false
+  } else if (request.action === "set-composeaction-bw") {
+    messenger.composeAction.setIcon({
+      path: {
+        16: "images/md_bw.svg",
+        19: "images/md_bw.svg",
+        32: "images/md_bw.svg",
+        38: "images/md_bw.svg",
+        64: "images/md_bw.svg",
+      },
+      tabId: sender.tab.id,
+    })
+    return false
   } else if (request.action === "open-tab") {
     messenger.tabs.create({
       url: request.url,
@@ -139,9 +128,9 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return sha256Digest(request.data)
   } else if (request.action === "mdhr-mode-set") {
     if (request.mode && request.mode === "classic") {
-      return unInjectMDPreview()
+      return setClassicMode()
     } else if (request.mode && request.mode === "modern") {
-      return injectMDPreview()
+      return setModernMode()
     }
   } else {
     console.log("unmatched request action", request.action)
@@ -220,7 +209,38 @@ async function composeAction(windowId) {
 }
 
 async function doClassicRender(windowId) {
-  console.log("doClassicRender not implemented")
+  const win = await messenger.windows.get(windowId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  const icon_type = await messenger.runtime.sendMessage({
+    action: "cp.toggle-classic-preview",
+    windowId: windowId,
+  })
+  const tabId = win.tabs[0].id
+  if (icon_type === "rendered") {
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_RENDERED,
+        19: ICON_RENDERED,
+        32: ICON_RENDERED,
+        38: ICON_RENDERED,
+        64: ICON_RENDERED,
+      },
+      tabId: tabId,
+    })
+  } else {
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_INACTIVE,
+        19: ICON_INACTIVE,
+        32: ICON_INACTIVE,
+        38: ICON_INACTIVE,
+        64: ICON_INACTIVE,
+      },
+      tabId: tabId,
+    })
+  }
 }
 
 async function toggleMDPreview(windowId) {
@@ -235,7 +255,33 @@ async function toggleMDPreview(windowId) {
   if (composeDetails.isPlainText) {
     return
   }
-  return messenger.runtime.sendMessage({ action: "cp.toggle-preview", windowId: windowId })
+  const icon_type = await messenger.runtime.sendMessage({
+    action: "cp.toggle-preview",
+    windowId: windowId,
+  })
+  if (icon_type === "rendered") {
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_RENDERED,
+        19: ICON_RENDERED,
+        32: ICON_RENDERED,
+        38: ICON_RENDERED,
+        64: ICON_RENDERED,
+      },
+      tabId: tabId,
+    })
+  } else {
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_INACTIVE,
+        19: ICON_INACTIVE,
+        32: ICON_INACTIVE,
+        38: ICON_INACTIVE,
+        64: ICON_INACTIVE,
+      },
+      tabId: tabId,
+    })
+  }
 }
 
 async function openNotification(windowId, message, priority, button_labels) {
@@ -308,6 +354,46 @@ OptionsStore.get("hotkey-input").then(async (result) => {
   await updateHotKey(shortkeyStruct.shortcut, tooltip)
 })
 
+async function setClassicMode() {
+  const wins = await getOpenComposeWindows()
+  for (const win of wins) {
+    await messenger.runtime.sendMessage({
+      action: "cp.set-classic-mode",
+      windowId: win,
+    })
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_INACTIVE,
+        19: ICON_INACTIVE,
+        32: ICON_INACTIVE,
+        38: ICON_INACTIVE,
+        64: ICON_INACTIVE,
+      },
+      tabId: win.tabs[0].id,
+    })
+  }
+}
+
+async function setModernMode() {
+  const wins = await getOpenComposeWindows()
+  for (const win of wins) {
+    await messenger.runtime.sendMessage({
+      action: "cp.set-modern-mode",
+      windowId: win,
+    })
+    await messenger.composeAction.setIcon({
+      path: {
+        16: ICON_INACTIVE,
+        19: ICON_INACTIVE,
+        32: ICON_INACTIVE,
+        38: ICON_INACTIVE,
+        64: ICON_INACTIVE,
+      },
+      tabId: win.tabs[0].id,
+    })
+  }
+}
+
 async function getComposeData(tab) {
   const composeDetails = await messenger.compose.getComposeDetails(tab.id)
   const rv = {
@@ -319,14 +405,6 @@ async function getComposeData(tab) {
     const identityId = composeDetails.identityId
     rv.reply_position = await messenger.reply_prefs.getReplyPosition(identityId)
     rv.use_paragraph = await messenger.reply_prefs.getUseParagraph()
-  }
-  return rv
-}
-
-function str2Int(intstr) {
-  let rv = Number.parseInt(intstr, 10)
-  if (Number.isNaN(rv)) {
-    return 0
   }
   return rv
 }
@@ -357,19 +435,29 @@ async function restoreComposed(msgHeaderList) {
 }
 
 async function injectMDPreview() {
+  const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   // Save state of open compose Windows as drafts
   const saved = await saveComposed()
   // Register custom UI compose editor
   const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
   const previewHidden = savedState["enable-markdown-mode"] === "false"
-  const previewWidth = str2Int(savedState["preview-width"])
+  let previewWidth = 0
+  const options = { hidden: previewHidden }
+  if (mdhr_mode === "modern") {
+    options["width"] = parseInt(previewWidth)
+  }
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
     messenger.runtime.getURL("compose_preview/compose_preview.html"),
-    { hidden: previewHidden, width: previewWidth },
+    options,
   )
   // Restore the saved drafts
   await restoreComposed(saved)
+  if (mdhr_mode === "modern") {
+    await setModernMode()
+  } else if (mdhr_mode === "classic") {
+    await setClassicMode()
+  }
 }
 
 async function unInjectMDPreview() {
@@ -383,7 +471,4 @@ async function unInjectMDPreview() {
   await restoreComposed(saved)
 }
 
-const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
-if (mdhr_mode === "modern") {
-  await injectMDPreview()
-}
+await injectMDPreview()

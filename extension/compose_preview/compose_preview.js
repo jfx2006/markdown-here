@@ -70,6 +70,9 @@ function makeStylesExplicit() {
     NodeFilter.SHOW_ELEMENT,
     filterExcluded,
   )
+  if (!cssInliner) {
+    cssInliner = new CSSInliner(p_iframe.contentDocument)
+  }
   while (treeWalker.nextNode()) {
     cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)
   }
@@ -105,7 +108,41 @@ async function togglePreview() {
   const changedHidden = !context.hidden
   await messenger.ex_customui.setLocalOptions({ hidden: changedHidden })
   await sendPreviewStateToCompose(tabId, changedHidden)
-  return context.hidden
+  if (changedHidden) {
+    return "inactive"
+  }
+  return "rendered"
+}
+
+async function toggleClassicPreview() {
+  const context = await messenger.ex_customui.getContext()
+  const changedHidden = !context.hidden
+  await messenger.ex_customui.setLocalOptions({ hidden: changedHidden })
+  if (changedHidden) {
+    return "inactive"
+  }
+  return "rendered"
+}
+
+async function setClassicMode() {
+  await messenger.ex_customui.setLocalOptions({ mode: "classic", hidden: true })
+  await messenger.runtime.sendMessage({ action: "set-composeaction-bw" })
+}
+
+async function setModernMode() {
+  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
+  const preview_width = savedState["preview-width"]
+  const hidden = !savedState["enable-markdown-mode"]
+  await messenger.ex_customui.setLocalOptions({
+    mode: "modern",
+    width: preview_width,
+    hidden: hidden,
+  })
+  if (!hidden) {
+    await messenger.runtime.sendMessage({ action: "set-composeaction-purple" })
+  } else {
+    await messenger.runtime.sendMessage({ action: "set-composeaction-bw" })
+  }
 }
 
 async function getMsgContent() {
@@ -120,12 +157,22 @@ async function getMsgContent() {
 }
 
 const onContextChange = async function (context) {
+  const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
+  const data = { "enable-markdown-mode": !context.hidden }
+  if (mdhr_mode === "modern") {
+    let preview_width = context.width
+    if (Boolean(context.width) && context.width < 30) {
+      preview_width = 300
+    }
+    data["preview-width"] = preview_width
+  } else {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (Boolean(data["preview-width"])) {
+      delete data["preview-width"]
+    }
+  }
   try {
-    await OptionsStore.set({
-      "enable-markdown-mode": !context.hidden,
-      "preview-width": context.width,
-    })
-    // ... in real code, you would do something with the contact here...
+    await OptionsStore.set(data)
   } catch (e) {
     console.log(e)
   }
@@ -154,36 +201,35 @@ async function requestPreview() {
 }
 
 async function previewFrameLoaded(e) {
-  cssInliner = new CSSInliner(p_iframe.contentDocument)
   await addMDPreviewStyles()
   p_iframe.contentWindow.onclick = function (e) {
     e.preventDefault()
   }
   contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
-
-  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
-
-  const hidden = !(
-    savedState["enable-markdown-mode"] === "true" || savedState["enable-markdown-mode"] === true
-  )
-
-  await messenger.ex_customui.setLocalOptions({
-    hidden: hidden,
-    width: parseInt(savedState["preview-width"]),
-  })
+  const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
+  if (mdhr_mode === "modern") {
+    await setModernMode()
+  } else {
+    await setClassicMode()
+  }
   const context = await messenger.ex_customui.getContext()
-  const win = await messenger.windows.get(context.windowId, {
-    populate: true,
-    windowTypes: ["messageCompose"],
-  })
-  const tabId = win.tabs[0]?.id
-  await sendPreviewStateToCompose(tabId, savedState.hidden)
+  if (context.windowId) {
+    const win = await messenger.windows.get(context.windowId, {
+      populate: true,
+      windowTypes: ["messageCompose"],
+    })
+    const tabId = win.tabs[0]?.id
+    const hidden = !(await OptionsStore.get("enable-markdown-mode"))["enable-markdown-mode"]
+    await sendPreviewStateToCompose(tabId, hidden)
+  }
 
   window.addEventListener(
     "resize",
     debounce(function (event) {
       const preview_width = p_iframe.parentElement.clientWidth
-      OptionsStore.set({ "preview-width": preview_width })
+      if (preview_width > 0) {
+        OptionsStore.set({ "preview-width": preview_width })
+      }
     }, 500),
   )
 }
@@ -241,6 +287,21 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
           return false
         }
         return scrollTo(request.payload)
+      case "cp.toggle-classic-preview":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return toggleClassicPreview()
+      case "cp.set-classic-mode":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return setClassicMode()
+      case "cp.set-modern-mode":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return setModernMode()
       default:
         console.log(`Compose Preview: invalid action: ${request.action}`)
     }

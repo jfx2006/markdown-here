@@ -280,7 +280,7 @@ import OptionsStore from "./options-storage.js"
       const elem = document.getElementById("markdown-mode")
       elem.disabled = new_value === "mdhr-classic"
       value_elem.dataset.value = new_value
-      messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: mode_elem.id.substring(5) })
+      messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: new_value.substring(5) })
     }
   }
 

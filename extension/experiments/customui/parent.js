@@ -266,23 +266,42 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
 
     // Sets sensible sizes for an editor sidebar frame
     const setWebextFrameSizesForEditor = function(frame, options) {
-      frame.parentElement.style.display = options.hidden ? "none" : "inline";
-      frame.parentElement.style.width = (options.width || 650) + "px";
+      const previewCol = frame.parentElement;
+      const wrapper = previewCol.parentElement;
+      const editorCol = wrapper.firstChild;
+      previewCol.style.display = options.hidden ? "none" : "inline";
+      previewCol.style.width = (options.width || 650) + "px";
+      previewCol.setAttribute("width", (options.width || 650));
       frame.style.height = "100%";
       frame.style.width = "100%";
       frame.style.display = "block";
       frame.addCustomUILocalOptionsListener(lOptions => {
         if (typeof lOptions.width === "number") {
-          frame.parentElement.style.width = lOptions.width + "px";
-          frame.setCustomUIContextProperty("width", lOptions.width)
+          const wrapperWidth = wrapper.clientWidth;
+          let new_width = true;
+          if (lOptions.width === -1) {
+            // Hack for setting full width preview
+            new_width = false;
+            editorCol.style.width = "0px";
+          } else if (lOptions.width === 0) {
+            new_width = false;
+            editorCol.style.width = "100%";
+          }
+          previewCol.style.width = lOptions.width + "px";
+          previewCol.setAttribute("width", lOptions.width);
+          if (new_width) {
+            frame.setCustomUIContextProperty("width", lOptions.width);
+          }
         }
         if (typeof lOptions.hidden === "boolean") {
-          frame.parentElement.style.display = lOptions.hidden ? "none" : "inline";
-          frame.setCustomUIContextProperty("hidden", lOptions.hidden)
+          previewCol.style.display = lOptions.hidden ? "none" : "inline";
+          frame.setCustomUIContextProperty("hidden", lOptions.hidden);
         }
       });
-      frame.setCustomUIContextProperty("hidden", options.hidden)
-      frame.setCustomUIContextProperty("width", options.width)
+      frame.setCustomUIContextProperty("hidden", options.hidden);
+      if (options.width !== 0 && options.width !== wrapper.clientWidth) {
+        frame.setCustomUIContextProperty("width", options.width);
+      }
     };
 
     // Creates and inserts the WebExtension frame for the given URL and location
@@ -594,10 +613,10 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
           if (!editor_wrapper) {
             editor_wrapper = window.document.createElement("div")
             editor_wrapper.id = editorWrapperId
-            editor_wrapper.style = "display: flex; flex: 1 1 0; height: 100%;"
+            editor_wrapper.style = "display: flex; height: 100%; width: 100%"
             const editor_column = window.document.createElement("div")
             editor_column.id = "customui-editor-col"
-            editor_column.style = "display: flex; flex-direction: column; width: 100%;"
+            editor_column.style = "display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 1;"
             editor_wrapper.appendChild(editor_column)
             const editor_elem = window.document.getElementById("messageEditor");
             editor_elem.insertAdjacentElement("beforebegin", editor_wrapper)
