@@ -589,31 +589,32 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             + "messengercompose/messengercompose.xhtml") {
             return; // incompatible window
           }
-          // Wrap the editor in a div
           const editorWrapperId = "customui-editor-wrapper";
           let editor_wrapper = window.document.getElementById(editorWrapperId);
           if (!editor_wrapper) {
+            editor_wrapper = window.document.createElement("div")
+            editor_wrapper.id = editorWrapperId
+            editor_wrapper.style = "display: flex; flex: 1 1 0; height: 100%;"
+            const editor_column = window.document.createElement("div")
+            editor_column.id = "customui-editor-col"
+            editor_column.style = "display: flex; flex-direction: column; width: 100%;"
+            editor_wrapper.appendChild(editor_column)
             const editor_elem = window.document.getElementById("messageEditor");
-            editor_wrapper = window.document.createElement("div");
-            editor_wrapper.id = editorWrapperId;
-            editor_wrapper.style = "display: flex; flex: 1 1 0;";
-            editor_elem.insertAdjacentElement("beforebegin", editor_wrapper);
-            editor_wrapper.appendChild(editor_elem);
-
+            editor_elem.insertAdjacentElement("beforebegin", editor_wrapper)
+            editor_column.appendChild(editor_elem);
             // Add the "sidebar"
             const frame = insertSidebarWebextFrame(
               "compose_editor",
               url,
               window.document,
-              "customui-editor-wrapper"
+              editorWrapperId
             );
             const win = context.extension.windowManager.convert(window);
-            options.width = Math.floor(win.width / 2)
+            //options.width = Math.floor(win.width / 2)
             setWebextFrameSizesForEditor(frame, options);
 
             frame.setCustomUIContextProperty("windowId", win.id);
             frame.setCustomUIContextProperty("windowType", win.type)
-
             editor_wrapper.querySelector("splitter").style.appearance = "initial";
           }
         },
