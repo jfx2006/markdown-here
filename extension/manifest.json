@@ -15,8 +15,8 @@
   "default_locale": "en",
   "icons": {
     "16": "images/md_fucsia.svg",
-    "32": "images/md_bw.svg",
-    "48": "images/md_bw.svg",
+    "32": "images/md_fucsia.svg",
+    "48": "images/md_fucsia.svg",
     "128": "images/md_fucsia.svg",
     "512": "images/md_fucsia.svg"
   },
@@ -26,8 +26,8 @@
     "browser_style": true,
     "default_area": "formattoolbar",
     "default_icon": {
-      "16": "images/md_bw.svg",
-      "19": "images/md_bw.svg",
+      "16": "images/md_fucsia.svg",
+      "19": "images/md_fucsia.svg",
       "32": "images/md_fucsia.svg",
       "38": "images/md_fucsia.svg",
       "64": "images/md_fucsia.svg"
