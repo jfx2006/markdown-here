@@ -130,3 +130,12 @@ export function debounce(func, wait, immediate) {
     }
   }
 }
+
+export function toInt(value) {
+  // Wrapper around parseInt to always return an integer value or throw if not
+  const rv = parseInt(value)
+  if (isNaN(rv)) {
+    throw new Error(`Not an integer ${value}!`)
+  }
+  return rv
+}

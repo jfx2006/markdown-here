@@ -22,6 +22,11 @@
             "type": "boolean",
             "optional": "true",
             "description": "If set to true, the custom UI component will not be visible (and thus not take up any screen space). This field is useful to selectively show or hide a component using local options."
+          },
+          "mode": {
+            "type": "string",
+            "optional": "true",
+            "description": "modern or classic mode"
           }
         }
       }

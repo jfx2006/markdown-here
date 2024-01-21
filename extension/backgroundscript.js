@@ -7,7 +7,7 @@
 /*
  * Mail Extension background script.
  */
-import { getHljsStylesheet, getMessage, sha256Digest } from "./async_utils.mjs"
+import { getHljsStylesheet, getMessage, sha256Digest, toInt } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
@@ -219,6 +219,7 @@ async function doClassicRender(windowId) {
   })
   const tabId = win.tabs[0].id
   if (icon_type === "rendered") {
+    await messenger.tabs.sendMessage(tabId, { action: "request-preview" })
     await messenger.composeAction.setIcon({
       path: {
         16: ICON_RENDERED,
@@ -435,16 +436,20 @@ async function restoreComposed(msgHeaderList) {
 }
 
 async function injectMDPreview() {
-  const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   // Save state of open compose Windows as drafts
   const saved = await saveComposed()
   // Register custom UI compose editor
-  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
-  const previewHidden = savedState["enable-markdown-mode"] === "false"
-  let previewWidth = 0
-  const options = { hidden: previewHidden }
-  if (mdhr_mode === "modern") {
-    options["width"] = parseInt(previewWidth)
+  const savedState = await OptionsStore.get(["mdhr-mode", "preview-width", "enable-markdown-mode"])
+  const options = { mode: savedState["mdhr-mode"] }
+  if (savedState["mdhr-mode"] === "modern") {
+    try {
+      options["width"] = toInt(savedState["preview-width"])
+    } catch (e) {
+      options["width"] = 300
+    }
+    options["hidden"] = savedState["enable-markdown-mode"] === "false"
+  } else {
+    options["hidden"] = true
   }
   await messenger.ex_customui.add(
     messenger.ex_customui.LOCATION_COMPOSE_EDITOR,
@@ -453,11 +458,6 @@ async function injectMDPreview() {
   )
   // Restore the saved drafts
   await restoreComposed(saved)
-  if (mdhr_mode === "modern") {
-    await setModernMode()
-  } else if (mdhr_mode === "classic") {
-    await setClassicMode()
-  }
 }
 
 async function unInjectMDPreview() {

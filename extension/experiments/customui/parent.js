@@ -276,32 +276,40 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
       frame.style.width = "100%";
       frame.style.display = "block";
       frame.addCustomUILocalOptionsListener(lOptions => {
-        if (typeof lOptions.width === "number") {
-          const wrapperWidth = wrapper.clientWidth;
-          let new_width = true;
-          if (lOptions.width === -1) {
-            // Hack for setting full width preview
-            new_width = false;
-            editorCol.style.width = "0px";
-          } else if (lOptions.width === 0) {
-            new_width = false;
-            editorCol.style.width = "100%";
-          }
-          previewCol.style.width = lOptions.width + "px";
-          previewCol.setAttribute("width", lOptions.width);
-          if (new_width) {
-            frame.setCustomUIContextProperty("width", lOptions.width);
-          }
+        const mode = frame.getAttribute("data-mode")
+        if (typeof lOptions.mode === "string") {
+          frame.setCustomUIContextProperty("mdhr_mode", lOptions.mode);
+          frame.setAttribute("data-mode", lOptions.mode);
         }
         if (typeof lOptions.hidden === "boolean") {
           previewCol.style.display = lOptions.hidden ? "none" : "inline";
           frame.setCustomUIContextProperty("hidden", lOptions.hidden);
+          if (mode === "classic") {
+            const wrapperWidth = wrapper.clientWidth;
+            if (!lOptions.hidden) {
+              // Hack for setting full width preview
+              editorCol.style.width = "0px";
+              previewCol.style.width = "100%";
+            } else {
+              editorCol.style.width = "100%";
+              previewCol.style.width = "0px";
+            }
+          }
+        }
+        if (typeof lOptions.width === "number") {
+          if (mode === "modern") {
+            previewCol.style.width = lOptions.width + "px";
+            previewCol.setAttribute("width", lOptions.width);
+            frame.setCustomUIContextProperty("width", lOptions.width);
+          }
         }
       });
       frame.setCustomUIContextProperty("hidden", options.hidden);
-      if (options.width !== 0 && options.width !== wrapper.clientWidth) {
+      if (options.mode === "modern") {
         frame.setCustomUIContextProperty("width", options.width);
       }
+      frame.setAttribute("data-mode", options.mode);
+      frame.setCustomUIContextProperty("mdhr_mode", options.mode);
     };
 
     // Creates and inserts the WebExtension frame for the given URL and location
