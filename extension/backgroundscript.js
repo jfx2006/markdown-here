@@ -15,6 +15,8 @@ import { getShortcutStruct } from "./options/shortcuts.js"
 const ICON_INACTIVE = "images/md_bw.svg"
 const ICON_RENDERED = "images/md_fucsia.svg"
 
+const MDHR_ATTACHMENT_NAME = "mdhr-markdown.md"
+
 messenger.runtime.onInstalled.addListener(async (details) => {
   console.log(`onInstalled running... ${details.reason}`)
   const APP_NAME = getMessage("app_name")
@@ -188,10 +190,41 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   if (details.isPlainText) {
     return Promise.resolve({})
   }
-  const savedState = await OptionsStore.get(["enable-markdown-mode"])
-  const previewHidden = savedState["enable-markdown-mode"] === "false"
-  if (previewHidden) {
-    return Promise.resolve({})
+  const savedState = await OptionsStore.get([
+    "forgot-to-render-check-enabled",
+    "enable-markdown-mode",
+    "attach-md-source",
+  ])
+  const markdownEnabled = savedState["enable-markdown-mode"]
+  const forgotToRenderCheckEnabled = savedState["forgot-to-render-check-enabled"]
+  if (!markdownEnabled && forgotToRenderCheckEnabled) {
+    const isMarkdown = await messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" })
+    if (isMarkdown) {
+      const message = `${getMessage("forgot_to_render_prompt_info")}
+          ${getMessage("forgot_to_render_prompt_question")}`
+      const rv = await openNotification(
+        tab.windowId,
+        message,
+        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+        [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+      )
+      if (rv !== "ok") {
+        return Promise.resolve({ cancel: true }) // Markdown disabled and is markdown content
+      }
+    }
+    return Promise.resolve({}) // Markdown disabled and not markdown content
+  }
+  // Markdown is enabled
+  if (savedState["attach-md-source"]) {
+    const attachments = await messenger.compose.listAttachments(tab.id)
+    for (const old_attachment of attachments) {
+      if (old_attachment.name === MDHR_ATTACHMENT_NAME) {
+        await messenger.compose.removeAttachment(tab.id, old_attachment.id)
+      }
+    }
+    const mdText = await messenger.tabs.sendMessage(tab.id, { action: "get-md-source" })
+    const attachment = new File([mdText], MDHR_ATTACHMENT_NAME, { type: "text/markdown" })
+    await messenger.compose.addAttachment(tab.id, { file: attachment, name: MDHR_ATTACHMENT_NAME })
   }
   const msgHTML = await messenger.runtime.sendMessage({
     action: "cp.get-content",

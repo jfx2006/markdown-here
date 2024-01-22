@@ -122,6 +122,7 @@ import OptionsStore from "./options-storage.js"
 
     await checkPreviewChanged()
     handleMathRenderer()
+    handleUIMode()
   }
 
   async function onOptionsSaved(e) {

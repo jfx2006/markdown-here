@@ -1,3 +1,13 @@
+## [4.0 beta 12]
+
+### Fixed
+
+- "Classic" mode now works (I hope)
+- Compose Action icon is now purple when in preview (Classic) or if
+  markdown mode is active (modern)
+- QuickText workaround that may or may not work
+- Save markdown source as attachment text/markdown
+
 ## [4.0 beta 11]
 
 ### Fixed

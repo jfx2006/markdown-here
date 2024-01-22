@@ -89,6 +89,12 @@
   "options_page__composer_start_markdown_mode": {
     "message": "Start composer in markdown mode."
   },
+  "options_page__attach_md_source": {
+    "message": "Attach markdown source to outgoing messages."
+  },
+  "options_page__attach_md_source_2": {
+    "message": "A 'text/markdown' attachment will be added to outgoing emails with the original markdown text."
+  },
   "options_page__features_title": {
     "message": "Markdown Features",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering"
