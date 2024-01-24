@@ -42,7 +42,7 @@ export const kOptDefaults = {
   "forgot-to-render-check-enabled": true,
   "smart-replacements-enabled": true,
   "emoji-shortcode-enabled": true,
-  "attach-md-source": true,
+  "attach-md-source-enabled": false,
   "last-version": "0",
   "preview-width": 650,
   "enable-markdown-mode": true,
