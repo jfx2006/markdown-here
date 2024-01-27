@@ -5,7 +5,7 @@
  */
 
 import DOMPurify from "../vendor/purify.es.js"
-import { getMainCSS, getSyntaxCSS, debounce } from "../async_utils.mjs"
+import { getMainCSS, getSyntaxCSS, debounce, toInt } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
@@ -131,7 +131,7 @@ async function setClassicMode() {
 
 async function setModernMode() {
   const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
-  const preview_width = savedState["preview-width"]
+  const preview_width = toInt(savedState["preview-width"])
   const hidden = !savedState["enable-markdown-mode"]
   await messenger.ex_customui.setLocalOptions({
     mode: "modern",
