@@ -1,3 +1,11 @@
+## [4.0 beta 13]
+
+### Fixed
+
+- Fixed saving boolean (checkbox) options
+- Fixed restoring preview width
+- Resized images are resized in output as well
+
 ## [4.0 beta 12]
 
 ### Fixed
