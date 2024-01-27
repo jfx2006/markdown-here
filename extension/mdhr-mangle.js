@@ -31,7 +31,7 @@ export class MdhrMangle {
   async excludeContent() {
     const excluded = this.doc.querySelectorAll(
       // eslint-disable-next-line max-len
-      "body > div.moz-cite-prefix, body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container",
+      "body > div.moz-cite-prefix, body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
     )
     for (const e of excluded) {
       const range = this.doc.createRange()
@@ -81,7 +81,7 @@ export class MdhrMangle {
   }
 
   convertHTML() {
-    const convertElems = this.doc.body.querySelectorAll("a, img, b, strong, i, em")
+    const convertElems = this.doc.body.querySelectorAll("a, b, strong, i, em")
     const td = new TurndownService()
     for (const e of convertElems) {
       const md = this.doc.createElement("span")

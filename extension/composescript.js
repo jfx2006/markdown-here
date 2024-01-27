@@ -180,13 +180,16 @@ async function editorMutationCb(mutationList, observer) {
   if (previewHidden) {
     return
   }
+  if (mutationList.type === "attributes" && mutationList.target.nodeName !== "IMG") {
+    return
+  }
   return await doRenderPreview()
 }
 
 ;(async () => {
   MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
-    attributes: false,
+    attributes: true,
     childList: true,
     subtree: true,
     characterData: true,
