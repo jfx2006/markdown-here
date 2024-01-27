@@ -231,7 +231,7 @@ class OptionsSync<UserOptions extends Options> {
 		const _keys = Object.keys(this.defaults);
 		const storageResults = await this.storage.get(_keys);
 		for (const key of Object.keys(this.defaults)) {
-			if (!storageResults[key]) {
+			if (!Object.hasOwn(storageResults, key)) {
 				storageResults[key] = this.defaults[key];
 			}
 		}

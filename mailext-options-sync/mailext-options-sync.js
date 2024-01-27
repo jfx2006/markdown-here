@@ -732,7 +732,8 @@ class OptionsSync {
     const _keys = Object.keys(this.defaults)
     const storageResults = await this.storage.get(_keys)
     for (const key of Object.keys(this.defaults))
-      storageResults[key] || (storageResults[key] = this.defaults[key])
+      Object.hasOwn(storageResults, key) ||
+        (storageResults[key] = this.defaults[key])
     return storageResults
   }
   async _get(_keys) {
