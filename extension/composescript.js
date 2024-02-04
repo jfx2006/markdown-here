@@ -7,7 +7,6 @@
 "use strict"
 
 let previewHidden = null
-let MdhrMangle
 
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
@@ -18,11 +17,6 @@ function requestHandler(request, sender, sendResponse) {
       const scrolled = window.document.scrollingElement
       composeScroll(scrolled).then(() => {})
     }
-  } else if (request.action === "check-forgot-render") {
-    const body_copy = window.document.cloneNode(true)
-    return Promise.resolve(looksLikeMarkdown(body_copy))
-  } else if (request.action === "get-md-source") {
-    return getMdText()
   }
 }
 messenger.runtime.onMessage.addListener(requestHandler)
@@ -45,73 +39,11 @@ messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
   return doRenderPreview()
 })
 
-async function looksLikeMarkdown(msgDocument) {
-  const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
-  let mdMaybe = await mdHtmlToText.preprocess()
-  // Ensure that we're not checking on enormous amounts of text.
-  if (mdMaybe.length > 10000) {
-    mdMaybe = mdMaybe.slice(0, 10000)
-  }
-  // At least two bullet points
-  const bulletList = mdMaybe.match(/^[*+-] /gm)
-  if (bulletList && bulletList.length > 1) {
-    return true
-  }
-
-  // Backticks == code. Does anyone use backticks for anything else?
-  const backticks = mdMaybe.match(/`/)
-  if (backticks) {
-    return true
-  }
-
-  // Math
-  const math = mdMaybe.match(/\$([^ \t\n$]([^$]*[^ \t\n$])?)\$/)
-  if (math) {
-    return true
-  }
-
-  // We're going to look for strong emphasis (e.g., double asterisk), but not
-  // light emphasis (e.g., single asterisk). Rationale: people use surrounding
-  // single asterisks pretty often in ordinary, non-MD text, and we don't want
-  // to be annoying.
-  // TODO: If we ever get really fancy with MD detection, the presence of light
-  // emphasis should still contribute towards the determination.
-  const emphasis = mdMaybe.match(/__([\s\S]+?)__(?!_)|\*\*([\s\S]+?)\*\*(?!\*)/)
-  if (emphasis) {
-    return true
-  }
-
-  // Headers. (But not hash-mark-H1, since that seems more likely to false-positive, and
-  // less likely to be used. And underlines of at least length 5.)
-  const header = mdMaybe.match(/(^\s{0,3}#{2,6}[^#])|(^\s*[-=]{5,}\s*$)/m)
-  if (header) {
-    return true
-  }
-
-  // Links
-  // I'm worried about incorrectly catching square brackets in rendered code
-  // blocks, so we're only going to look for '](' and '][' (which still aren't
-  // immune to the problem, but a little better). This means we won't match
-  // reference links (where the text in the square brackes is used elsewhere for
-  // for the link).
-  const link = mdMaybe.match(/\]\(|\]\[/)
-  if (link) {
-    return true
-  }
-
-  return false
-}
-
-async function getMdText() {
-  const body_copy = window.document.cloneNode(true)
-  const mdHtmlToText = new MdhrMangle.MdhrMangle(body_copy)
-  const pre_process = await mdHtmlToText.preprocess()
-  return mdHtmlToText.postprocess(pre_process)
-}
-
 async function doRenderPreview() {
   const MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
+
   const msgDocument = window.document.cloneNode(true)
+
   try {
     const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
     const mdText = await mdHtmlToText.preprocess()
@@ -187,7 +119,6 @@ async function editorMutationCb(mutationList, observer) {
 }
 
 ;(async () => {
-  MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,
     childList: true,
