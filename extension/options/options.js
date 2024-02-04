@@ -128,6 +128,7 @@ import OptionsStore from "./options-storage.js"
   async function onOptionsSaved(e) {
     handleUIMode()
     handleMathRenderer()
+    await handleInput()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "renderer-reset" })
   }
@@ -313,6 +314,10 @@ import OptionsStore from "./options-storage.js"
       document.getElementById("math-value").disabled = true
       document.getElementById("math-reset-button").disabled = true
     }
+  }
+
+  function handlePreview() {
+
   }
 
   const SUBS = { __APP_NAME: getMessage("app_name") }
