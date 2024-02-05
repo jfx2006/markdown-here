@@ -5,6 +5,8 @@
 - Fixed saving boolean (checkbox) options
 - Fixed restoring preview width
 - Resized images are resized in output as well
+- Remove "save markdown source as attachment" option
+- Force options preview to rerender when options change
 
 ## [4.0 beta 12]
 
@@ -14,6 +16,7 @@
 - Compose Action icon is now purple when in preview (Classic) or if
   markdown mode is active (modern)
 - QuickText workaround that may or may not work
+- Save markdown source as attachment text/markdown
 
 ## [4.0 beta 11]
 

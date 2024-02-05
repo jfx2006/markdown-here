@@ -5,6 +5,8 @@
 - Fixed saving boolean (checkbox) options
 - Fixed restoring preview width
 - Resized images are resized in output as well
+- Remove "save markdown source as attachment" option
+- Force options preview to rerender when options change
 
 ## [4.0 beta 12]
 
