@@ -34,10 +34,8 @@ export class MdhrMangle {
       "body > div.moz-cite-prefix, body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
     )
     for (const e of excluded) {
-      const range = this.doc.createRange()
-      range.selectNode(e)
-      const excludeContent = range.cloneContents()
-      const placeholder = `MDHR-${await sha256Digest(excludeContent.textContent)}`
+      const excludeContent = e.outerHTML
+      const placeholder = `MDHR-${await sha256Digest(excludeContent)}`
       this.#excludedContent.set(placeholder, excludeContent)
       const placeholderElem = this.doc.createElement("span")
       placeholderElem.innerText = placeholder
@@ -96,12 +94,7 @@ export class MdhrMangle {
 
   postprocess(result_html) {
     this.#excludedContent.forEach(function (value, key, map) {
-      let replacement = ""
-      for (const child of value.children) {
-        child.classList.add("markdown-here-exclude")
-        replacement = `${replacement}${child.outerHTML}`
-      }
-      result_html = result_html.replace(key, replacement)
+      result_html = result_html.replace(key, value)
     })
     this.#result_html = result_html
     return this.#result_html

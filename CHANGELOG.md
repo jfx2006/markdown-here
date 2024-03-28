@@ -1,3 +1,9 @@
+## [4.0 beta 14]
+
+### Fixed
+
+- Fix handling of multiple images.  Fixes #76.
+
 ## [4.0 beta 13]
 
 ### Fixed
