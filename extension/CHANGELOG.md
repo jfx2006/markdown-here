@@ -2,7 +2,8 @@
 
 ### Fixed
 
-- Fix handling of multiple images.  Fixes #76.
+- Fix handling of multiple images.  #76.
+- Stylesheet did not apply to emails. #83.
 
 ## [4.0 beta 13]
 

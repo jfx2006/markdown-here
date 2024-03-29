@@ -9,7 +9,8 @@ import { getMainCSS, getSyntaxCSS, debounce, toInt } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
-const STYLE_ELEM_IDS = ["syntax_css", "main_css"]
+const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
+const REMOVE_ELEM_IDS = STYLE_ELEM_IDS.concat(["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style"])
 
 let cssInliner
 
@@ -25,10 +26,10 @@ async function addStyleSheet(id, css) {
 }
 
 async function addMDPreviewStyles() {
-  await Promise.all([getMainCSS(), getSyntaxCSS()]).then(async ([main_css, syntax_css]) => {
-    await addStyleSheet("syntax_css", syntax_css)
-    await addStyleSheet("main_css", main_css)
-  })
+  const main_css = await getMainCSS()
+  const syntax_css = await getSyntaxCSS()
+  await addStyleSheet("MDHR_syntax_css", syntax_css)
+  await addStyleSheet("MDHR_main_css", main_css)
 }
 
 function enableMDPreviewStyles() {
@@ -50,7 +51,7 @@ function disableMDPreviewStyles() {
 }
 
 function removeMDPreviewStyles(html_msg) {
-  for (const styleId of STYLE_ELEM_IDS) {
+  for (const styleId of REMOVE_ELEM_IDS) {
     const elem = html_msg.getElementById(styleId)
     if (elem) {
       elem.remove()
@@ -181,8 +182,6 @@ const onContextChange = async function (context) {
 messenger.ex_customui.onEvent.addListener(async (type, details) => {
   switch (type) {
     case "context":
-      // This event fires if the context is changed dynamically: for example,
-      // the user might alter the address book to create a new contact in
       await onContextChange(details)
       return
   }
