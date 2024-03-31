@@ -31,7 +31,7 @@ export class MdhrMangle {
   async excludeContent() {
     const excluded = this.doc.querySelectorAll(
       // eslint-disable-next-line max-len
-      "body > div.moz-cite-prefix, body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
+      "body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
     )
     for (const e of excluded) {
       const excludeContent = e.outerHTML

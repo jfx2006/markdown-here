@@ -5,7 +5,7 @@
  */
 
 import DOMPurify from "../vendor/purify.es.js"
-import { getMainCSS, getSyntaxCSS, debounce, toInt } from "../async_utils.mjs"
+import { getMainCSS, getSyntaxCSS, debounce, toInt, fetchExtFile } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
@@ -51,6 +51,7 @@ function disableMDPreviewStyles() {
 }
 
 function removeMDPreviewStyles(html_msg) {
+  makeStylesExplicit(html_msg)
   for (const styleId of REMOVE_ELEM_IDS) {
     const elem = html_msg.getElementById(styleId)
     if (elem) {
@@ -59,20 +60,20 @@ function removeMDPreviewStyles(html_msg) {
   }
 }
 
-function makeStylesExplicit() {
+function makeStylesExplicit(html_msg) {
   function filterExcluded(elem) {
     if (elem.classList.contains("markdown-here-exclude")) {
       return NodeFilter.FILTER_REJECT
     }
     return NodeFilter.FILTER_ACCEPT
   }
-  const treeWalker = p_iframe.contentDocument.createTreeWalker(
-    p_iframe.contentDocument.body,
+  const treeWalker = html_msg.createTreeWalker(
+    html_msg.body,
     NodeFilter.SHOW_ELEMENT,
     filterExcluded,
   )
   if (!cssInliner) {
-    cssInliner = new CSSInliner(p_iframe.contentDocument)
+    cssInliner = new CSSInliner(html_msg)
   }
   while (treeWalker.nextNode()) {
     cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)
@@ -147,11 +148,7 @@ async function setModernMode() {
 }
 
 async function getMsgContent() {
-  const preview = await requestPreview()
-  if (!preview) {
-    throw new Error("Unable to render email!")
-  }
-  const html_msg = p_iframe.contentDocument.cloneNode(true)
+  const html_msg = p_iframe.contentDocument
   removeMDPreviewStyles(html_msg)
   const serializer = new XMLSerializer()
   return serializer.serializeToString(html_msg)
@@ -200,7 +197,7 @@ async function requestPreview() {
 }
 
 async function previewFrameLoaded(e) {
-  await addMDPreviewStyles()
+  // await addMDPreviewStyles()
   p_iframe.contentWindow.onclick = function (e) {
     e.preventDefault()
   }
@@ -241,10 +238,29 @@ async function scrollTo(payload) {
   return target.scrollTo({ top: scrollTop, behavior: "smooth" })
 }
 
+function parseHTMLFromString(string) {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(string, "text/html")
+  return doc
+}
+
 let contentDiv
 const p_iframe = document.getElementById("preview_frame")
-p_iframe.addEventListener("load", await previewFrameLoaded)
-p_iframe.src = "preview_iframe.html"
+//p_iframe.addEventListener("load", await previewFrameLoaded)
+// p_iframe.src = "preview_iframe.html"
+
+async function loadIFrame() {
+  const main_css = await getMainCSS()
+  const syntax_css = await getSyntaxCSS()
+  const html = await fetchExtFile("/compose_preview/preview_iframe.html")
+  const srcdoc = html.replace("@SYNTAX_CSS@", syntax_css).replace("@MAIN_CSS@", main_css)
+  const doc = parseHTMLFromString(srcdoc)
+  p_iframe.srcdoc = `<!DOCTYPE html>\n${doc.documentElement.outerHTML}`
+}
+
+loadIFrame().then(async () => {
+  await previewFrameLoaded()
+})
 
 messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
   if (
