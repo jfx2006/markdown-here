@@ -80,14 +80,45 @@ function makeStylesExplicit(html_msg) {
   }
 }
 
+function wrapExternal(doc) {
+  const elements = doc.querySelectorAll(
+    "body > blockquote[type='cite'], body > div.moz-forward-container",
+  )
+  let i = 0
+  for (const element of elements) {
+    const wrapper = doc.createElement("div")
+    const id = `extcontent-${i}`
+    wrapper.classList.add("external-content")
+    wrapper.id = id
+    const shadow = wrapper.attachShadow({ mode: "open" })
+    element.parentNode.insertBefore(wrapper, element)
+    shadow.appendChild(element)
+  }
+  return doc
+}
+
+function deShadowRoot(doc) {
+  const elements = doc.querySelectorAll("div.external-content")
+  for (const element of elements) {
+    if (!element.shadowRoot) {
+      continue
+    }
+    //const shadowStyles = element.shadowRoot.querySelectorAll("link[rel='stylesheet'], style")
+    element.replaceChildren(...element.shadowRoot.children)
+  }
+}
+
 async function renderMDEmail(unsanitized_html) {
-  enableMDPreviewStyles()
+  //enableMDPreviewStyles()
+  let doc = parseHTMLFromString(unsanitized_html)
+  doc = wrapExternal(doc)
   if (!contentDiv) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
   }
-  contentDiv.innerHTML = escapeHTML`${unsanitized_html}`
-  makeStylesExplicit()
-  disableMDPreviewStyles()
+  contentDiv.replaceChildren(...doc.body.children)
+  //contentDiv.innerHTML = escapeHTML`${unsanitized_html}`
+  //makeStylesExplicit()
+  //disableMDPreviewStyles()
   return true
 }
 
@@ -150,6 +181,7 @@ async function setModernMode() {
 async function getMsgContent() {
   const html_msg = p_iframe.contentDocument
   removeMDPreviewStyles(html_msg)
+  deShadowRoot(html_msg)
   const serializer = new XMLSerializer()
   return serializer.serializeToString(html_msg)
 }
