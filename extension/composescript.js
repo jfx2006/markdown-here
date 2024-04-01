@@ -44,6 +44,7 @@ async function doRenderPreview() {
 
   const msgDocument = window.document.cloneNode(true)
 
+  let finalHTML
   try {
     const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
     const mdText = await mdHtmlToText.preprocess()
@@ -51,14 +52,28 @@ async function doRenderPreview() {
       action: "render-md",
       mdText: mdText,
     })
-    const finalHTML = mdHtmlToText.postprocess(result_html)
+    finalHTML = mdHtmlToText.postprocess(result_html)
+  } catch (reason) {
+    console.log(`Error rendering markdown. ${reason}`)
+    return
+  }
+  await sendToPreview(finalHTML)
+}
 
+async function sendToPreview(finalHTML, attempts = 1) {
+  // Called by doRenderPreview
+  try {
     return await messenger.runtime.sendMessage({
       action: "cp.render-preview",
       payload: finalHTML,
     })
   } catch (reason) {
-    console.log(`Error rendering preview. ${reason}`)
+    if (!reason.includes("contentDiv") && attempts > 0) {
+      // Not sure about this error. Throw
+      throw new Error(reason)
+    }
+    console.log(`Error sending HTML to preview. ${reason}. Retrying`)
+    await sendToPreview(finalHTML, 0)
   }
 }
 
