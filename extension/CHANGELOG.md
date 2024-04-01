@@ -3,7 +3,27 @@
 ### Fixed
 
 - Fix handling of multiple images.  #76.
-- Stylesheet did not apply to emails. #83.
+- Custom CSS styles did not apply to emails. #83.
+
+### Changed
+
+- Live preview: Move external (reply quotes and forwards) content into a shadow
+  root'd div to prevent CSS style collision. The shadow root is removed after
+  markdown CSS is inlined prior to sending.
+- CSS Inliner now operates off a blank document when setting up the default
+  styles.
+- The CSP `<meta>` element used in the preview pane was previously left in-tact
+  when the message was finally sent. It is now removed prior to sending. The
+  CSP is intentionally restrictive; among other things it prevents loading
+  remote images and CSS. I may create a way to loosen this up a bit for users
+  who want remote images and such. In any case, the CSP really does not need to
+  be applied in the recipient's email client. I'm not even sure it would be in
+  most cases anyway.
+- Removed some other miscellaneous stylesheets applied to the preview pane that
+  are not needed when the recipient reads an email.
+- Live preview iframe now loads from a srcdoc: string. This allows setting the
+  default markdown and highlighter CSS as `<style>` elements right away. This
+  should reduce cases of unstyled or unrendered messages in the preview.
 
 ## [4.0 beta 13]
 
