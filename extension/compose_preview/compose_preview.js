@@ -18,38 +18,6 @@ function escapeHTML(strings, html) {
   return `${DOMPurify.sanitize(html)}`
 }
 
-async function addStyleSheet(id, css) {
-  const style_elem = p_iframe.contentDocument.createElement("style")
-  style_elem.id = id
-  style_elem.replaceChildren(p_iframe.contentDocument.createTextNode(css))
-  p_iframe.contentDocument.head.appendChild(style_elem)
-}
-
-async function addMDPreviewStyles() {
-  const main_css = await getMainCSS()
-  const syntax_css = await getSyntaxCSS()
-  await addStyleSheet("MDHR_syntax_css", syntax_css)
-  await addStyleSheet("MDHR_main_css", main_css)
-}
-
-function enableMDPreviewStyles() {
-  for (const styleId of STYLE_ELEM_IDS) {
-    const elem = p_iframe.contentDocument.getElementById(styleId)
-    if (elem) {
-      elem.disabled = false
-    }
-  }
-}
-
-function disableMDPreviewStyles() {
-  for (const styleId of STYLE_ELEM_IDS) {
-    const elem = p_iframe.contentDocument.getElementById(styleId)
-    if (elem) {
-      elem.disabled = true
-    }
-  }
-}
-
 function removeMDPreviewStyles(html_msg) {
   makeStylesExplicit(html_msg)
   for (const styleId of REMOVE_ELEM_IDS) {
@@ -103,22 +71,17 @@ function deShadowRoot(doc) {
     if (!element.shadowRoot) {
       continue
     }
-    //const shadowStyles = element.shadowRoot.querySelectorAll("link[rel='stylesheet'], style")
     element.replaceChildren(...element.shadowRoot.children)
   }
 }
 
 async function renderMDEmail(unsanitized_html) {
-  //enableMDPreviewStyles()
-  let doc = parseHTMLFromString(unsanitized_html)
+  let doc = parseHTMLFromString(escapeHTML`${unsanitized_html}`)
   doc = wrapExternal(doc)
   if (!contentDiv) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
   }
   contentDiv.replaceChildren(...doc.body.children)
-  //contentDiv.innerHTML = escapeHTML`${unsanitized_html}`
-  //makeStylesExplicit()
-  //disableMDPreviewStyles()
   return true
 }
 
@@ -216,18 +179,6 @@ messenger.ex_customui.onEvent.addListener(async (type, details) => {
   }
 })
 
-async function requestPreview() {
-  const context = await messenger.ex_customui.getContext()
-  const win = await messenger.windows.get(context.windowId, {
-    populate: true,
-    windowTypes: ["messageCompose"],
-  })
-  const tabId = win.tabs[0]?.id
-  if (tabId) {
-    return await messenger.tabs.sendMessage(tabId, { action: "request-preview" })
-  }
-}
-
 async function previewFrameLoaded(e) {
   // await addMDPreviewStyles()
   p_iframe.contentWindow.onclick = function (e) {
@@ -278,8 +229,6 @@ function parseHTMLFromString(string) {
 
 let contentDiv
 const p_iframe = document.getElementById("preview_frame")
-//p_iframe.addEventListener("load", await previewFrameLoaded)
-// p_iframe.src = "preview_iframe.html"
 
 async function loadIFrame() {
   const main_css = await getMainCSS()
@@ -290,9 +239,13 @@ async function loadIFrame() {
   p_iframe.srcdoc = `<!DOCTYPE html>\n${doc.documentElement.outerHTML}`
 }
 
-loadIFrame().then(async () => {
-  await previewFrameLoaded()
-})
+loadIFrame()
+  .then(async () => {
+    await previewFrameLoaded()
+  })
+  .then(async () => {
+    cssInliner = new CSSInliner()
+  })
 
 messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
   if (
