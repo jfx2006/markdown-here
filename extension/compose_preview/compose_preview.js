@@ -73,7 +73,7 @@ function makeStylesExplicit(html_msg) {
     filterExcluded,
   )
   if (!cssInliner) {
-    cssInliner = new CSSInliner(html_msg)
+    cssInliner = new CSSInliner()
   }
   while (treeWalker.nextNode()) {
     cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)

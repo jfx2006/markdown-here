@@ -137,6 +137,14 @@ const precomputeTags = [
   "WBR",
 ]
 
+function mkBlankDocument() {
+  const parser = new DOMParser()
+  return parser.parseFromString(
+    '<!doctype html>\n<html lang="en"><head><title></title></head><body></body></html>',
+    "text/html",
+  )
+}
+
 function computeDefaults(msgDocument) {
   const defaults = {}
   if (msgDocument.body === null) {
@@ -150,10 +158,10 @@ function computeDefaults(msgDocument) {
 
 export class CSSInliner {
   #defaultStyles
-  #msgDocument
-  constructor(msgDocument) {
-    this.#defaultStyles = computeDefaults(msgDocument)
-    this.#msgDocument = msgDocument
+  #blankDocument
+  constructor() {
+    this.#blankDocument = mkBlankDocument()
+    this.#defaultStyles = computeDefaults(this.#blankDocument)
   }
   // inlineStylesForSingleElement(element, target): inlines the styles for a
   // single element, but not it's children
@@ -166,7 +174,7 @@ export class CSSInliner {
     element.style.display = "none"
     if (this.#defaultStyles[element.tagName] == null) {
       this.#defaultStyles[element.tagName] = computeDefaultStyleByTagName(
-        this.#msgDocument,
+        this.#blankDocument,
         element.tagName,
       )
     }
