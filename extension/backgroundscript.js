@@ -162,6 +162,22 @@ messenger.composeAction.onClicked.addListener((tab) => {
   return composeAction(tab.windowId)
 })
 
+// Add a context menu to the composeAction button
+await messenger.menus.create({
+  id: "mdhr-reset-preview",
+  title: "Reset Preview",
+  contexts: ["compose_action"],
+})
+messenger.menus.onClicked.addListener(async (info, tab) => {
+  console.log(info)
+  const saved = await saveComposed()
+  await unInjectMDPreview()
+  await OptionsStore.set({ "mdhr-mode": "modern", hidden: "false" })
+  await OptionsStore.reset("preview-width")
+  await injectMDPreview()
+  await restoreComposed(saved)
+})
+
 // Mail Extensions are not able to add composeScripts via manifest.json,
 // they must be added via the API.
 messenger.composeScripts.register({
@@ -372,6 +388,7 @@ async function setClassicMode() {
       },
       tabId: win.tabs[0].id,
     })
+    await messenger.menus.update("mdhr-reset-preview", { enabled: false })
   }
 }
 
@@ -392,6 +409,7 @@ async function setModernMode() {
       },
       tabId: win.tabs[0].id,
     })
+    await messenger.menus.update("mdhr-reset-preview", { enabled: true })
   }
 }
 
