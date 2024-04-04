@@ -68,7 +68,7 @@ async function sendToPreview(finalHTML, attempts = 1) {
       payload: finalHTML,
     })
   } catch (reason) {
-    if (!reason.includes("contentDiv") && attempts > 0) {
+    if (!reason.message.includes("contentDiv") && attempts > 0) {
       // Not sure about this error. Throw
       throw new Error(reason)
     }
