@@ -87,7 +87,7 @@
     "description": "Descriptive text explaining the 'forgot-to-render' feature."
   },
   "options_page__composer_start_markdown_mode": {
-    "message": "Start composer in markdown mode."
+    "message": "Start composer in markdown mode"
   },
   "options_page__features_title": {
     "message": "Markdown Features",

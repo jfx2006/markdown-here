@@ -278,11 +278,32 @@ import OptionsStore from "./options-storage.js"
     const mode_elem = document.querySelector("input[name='mdhr-mode']:checked")
     const new_value = mode_elem.id
     if (old_value !== new_value) {
-      const elem = document.getElementById("markdown-mode")
-      elem.disabled = new_value === "mdhr-classic"
+      if (new_value === "mdhr-classic") {
+        enableClassicOptions()
+      } else {
+        enableModernOptions()
+      }
       value_elem.dataset.value = new_value
       messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: new_value.substring(5) })
     }
+  }
+
+  function enableClassicOptions() {
+    // This is the "Start Composer in Markdown Mode" checkbox, disabled in Classic Mode
+    let elem = document.getElementById("markdown-mode")
+    elem.disabled = true
+    // This is the "Forgot to Render" option, enable it in Classic Mode
+    elem = document.getElementById("forgot-to-render")
+    elem.disabled = false
+  }
+
+  function enableModernOptions() {
+    // This is the "Start Composer in Markdown Mode" checkbox, enabled in Modern Mode
+    let elem = document.getElementById("markdown-mode")
+    elem.disabled = false
+    // This is the "Forgot to Render" option, disable it in Modern Mode
+    elem = document.getElementById("forgot-to-render")
+    elem.disabled = true
   }
 
   function handleMathRenderer(e) {
@@ -315,9 +336,7 @@ import OptionsStore from "./options-storage.js"
     }
   }
 
-  function handlePreview() {
-
-  }
+  function handlePreview() {}
 
   const SUBS = { __APP_NAME: getMessage("app_name") }
   async function localizePage() {

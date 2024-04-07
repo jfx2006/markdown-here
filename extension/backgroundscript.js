@@ -7,7 +7,12 @@
 /*
  * Mail Extension background script.
  */
-import { getHljsStylesheet, getMessage, sha256Digest, toInt } from "./async_utils.mjs"
+import {
+  getHljsStylesheet,
+  getMessage,
+  sha256Digest,
+  toInt,
+} from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
@@ -204,7 +209,29 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   if (details.isPlainText) {
     return Promise.resolve({})
   }
-  const savedState = await OptionsStore.get(["enable-markdown-mode"])
+  const savedState = await OptionsStore.get([
+    "forgot-to-render-check-enabled",
+    "enable-markdown-mode",
+  ])
+  const markdownEnabled = savedState["enable-markdown-mode"]
+  const forgotToRenderCheckEnabled = savedState["forgot-to-render-check-enabled"]
+  if (!markdownEnabled && forgotToRenderCheckEnabled) {
+    const isMarkdown = await messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" })
+    if (isMarkdown) {
+      const message = `${getMessage("forgot_to_render_prompt_info")}
+          ${getMessage("forgot_to_render_prompt_question")}`
+      const rv = await openNotification(
+        tab.windowId,
+        message,
+        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+        [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+      )
+      if (rv !== "ok") {
+        return Promise.resolve({ cancel: true }) // Markdown disabled and is markdown content
+      }
+    }
+    return Promise.resolve({}) // Markdown disabled and not markdown content
+  }
   const previewHidden = savedState["enable-markdown-mode"] === "false"
   if (previewHidden) {
     return Promise.resolve({})
@@ -213,7 +240,8 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
     action: "cp.get-content",
     windowId: tab.windowId,
   })
-  return Promise.resolve({ cancel: false, details: { body: msgHTML } })
+  const finalDetails = { body: msgHTML }
+  return Promise.resolve({ cancel: false, details: finalDetails })
 })
 
 async function composeAction(windowId) {
