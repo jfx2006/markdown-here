@@ -55,12 +55,12 @@ function wrapExternal(doc) {
   let i = 0
   for (const element of elements) {
     const wrapper = doc.createElement("div")
-    const id = `extcontent-${i}`
     wrapper.classList.add("external-content")
-    wrapper.id = id
+    wrapper.id = `extcontent-${i}`
+    i++
     const shadow = wrapper.attachShadow({ mode: "open" })
-    element.parentNode.insertBefore(wrapper, element)
-    shadow.appendChild(element)
+    shadow.replaceChildren(...element.children)
+    element.insertAdjacentElement("afterbegin", wrapper)
   }
   return doc
 }
