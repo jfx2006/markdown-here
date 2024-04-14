@@ -304,6 +304,8 @@ import OptionsStore from "./options-storage.js"
     // This is the "Forgot to Render" option, disable it in Modern Mode
     elem = document.getElementById("forgot-to-render")
     elem.disabled = true
+    elem = document.getElementById("preview-width")
+    elem.setAttribute("value", "650")
   }
 
   function handleMathRenderer(e) {

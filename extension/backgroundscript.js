@@ -491,7 +491,7 @@ async function injectMDPreview() {
     try {
       options["width"] = toInt(savedState["preview-width"])
     } catch (e) {
-      options["width"] = 300
+      options["width"] = 650
     }
     options["hidden"] = savedState["enable-markdown-mode"] === "false"
   } else {
