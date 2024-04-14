@@ -28,10 +28,12 @@ export function markedSmartStuff() {
           // en-dashes
           .replace(/--/g, "\u2013")
           // opening singles
+          // eslint-disable-next-line no-useless-escape
           .replace(/(^|[-\u2014/(\[{"\s])'/g, "$1\u2018")
           // closing singles & apostrophes
           .replace(/'/g, "\u2019")
           // opening doubles
+          // eslint-disable-next-line no-useless-escape
           .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, "$1\u201c")
           // closing doubles
           .replace(/"/g, "\u201d")

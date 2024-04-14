@@ -7,12 +7,7 @@
 /*
  * Mail Extension background script.
  */
-import {
-  getHljsStylesheet,
-  getMessage,
-  sha256Digest,
-  toInt,
-} from "./async_utils.mjs"
+import { getHljsStylesheet, getMessage, sha256Digest, toInt } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"

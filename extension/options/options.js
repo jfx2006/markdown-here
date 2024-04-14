@@ -338,8 +338,6 @@ import OptionsStore from "./options-storage.js"
     }
   }
 
-  function handlePreview() {}
-
   const SUBS = { __APP_NAME: getMessage("app_name") }
   async function localizePage() {
     const page_prefix = "options_page"

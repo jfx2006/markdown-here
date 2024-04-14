@@ -26,7 +26,7 @@ var reply_prefs = class extends ExtensionCommon.ExtensionAPI {
           const identityStr = String(identityId)
           try {
             const positionVal = Services.prefs.getIntPref(
-              `${BASE_PREF_NAME}${identityStr}${PREF_REPLY_POS}`
+              `${BASE_PREF_NAME}${identityStr}${PREF_REPLY_POS}`,
             )
             return POSITION_MAP[positionVal]
           } catch (ex) {
