@@ -1,4 +1,7 @@
 
+stages:
+  - build
+  - release
 
 docker-build:
   image: docker:cli
@@ -24,9 +27,25 @@ docker-build:
     - changes:
         - CI/Dockerfile
 
+mdhr-version:
+  stage: build
+  image: bash:latest
+  script:
+    - >
+      if [[ -n "$CI_COMMIT_TAG" ]]; then
+        echo RELEASE_NAME="$CI_COMMIT_TAG" > release.env
+      else
+        echo RELEASE_NAME=$(git rev-parse --short HEAD) > release.env
+      fi
+  artifacts:
+    reports:
+      dotenv: release.env
+
 mdhr-build:
   stage: build
-  needs: ["docker-build"]
+  needs:
+    - job: docker-build
+      optional: true
   image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
   rules:
     - if: $CI_COMMIT_TAG
@@ -54,3 +73,39 @@ mdhr-build:
   artifacts:
     paths:
       - web-ext-artifacts/*
+
+mdhr-release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli
+  needs:
+    - job: mdhr-build
+      artifacts: true
+    - job: mdhr-version
+      artifacts: true
+  variables:
+      PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
+      XPI_FILENAME: "markdown_here_revival-${CI_COMMIT_TAG}.xpi"
+      SOURCE_FILENAME: "mdhr-source.tar.gz"
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+  script:
+    - echo "Running the release job."
+    - python tools/rel_notes.py
+    - curl --location --output artifacts.zip https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/jobs/artifacts/main/download?job=mdhr-build
+    - unzip artifacts.zip
+    - >
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/$XPI_FILENAME "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
+    - >
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/$SOURCE_FILENAME "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
+  release:
+    tag_name: $RELEASE_NAME
+    ref: $CI_COMMIT_SHA
+    name: $RELEASE_NAME
+    description: "./notes.md"
+    assets:
+      links:
+        - name: ${XPI_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
+        - name: ${SOURCE_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
