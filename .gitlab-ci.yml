@@ -1,0 +1,103 @@
+
+workflow:
+  rules:
+    - if: ($CI_TAG_NAME || $CI_COMMIT_BRANCH == "CI")
+
+stages:
+  - build
+  - release
+
+docker-build:
+  image: docker:cli
+  stage: build
+  services:
+    - docker:dind
+  variables:
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME" CI/.
+    - docker push "$DOCKER_IMAGE_NAME"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
+        docker push "$CI_REGISTRY_IMAGE:latest"
+      fi
+  # Run this job in a branch where a Dockerfile exists
+  rules:
+    - changes:
+        - CI/Dockerfile
+
+mdhr-build:
+  stage: build
+  needs:
+    - job: docker-build
+      optional: true
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
+  before_script:
+  - python --version ; pip --version  # For debugging
+  - python -m venv venv
+  - source venv/bin/activate
+  - pip install -r requirements.in
+  script:
+  - make all
+  artifacts:
+    paths:
+      - web-ext-artifacts/markdown-here-revival.xpi
+      - web-ext-artifacts/mdhr-source.tar.gz
+      - notes.md
+      - updates.json
+    reports:
+      dotenv: version.env
+
+mdhr-release:
+  stage: release
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  needs:
+    - job: mdhr-build
+      artifacts: true
+    - job: docker-build
+      optional: true
+  variables:
+      PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
+      XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
+      SOURCE_FILENAME: "mdhr-source.tar.gz"
+      SNIPPIT_ID: 3618629
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+  script:
+    - echo "Running the release job."
+    - >
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
+    - >
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/mdhr-source.tar.gz "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
+  release:
+    tag_name: "v$PACKAGE_VERSION"
+    ref: $CI_COMMIT_SHA
+    name: $RELEASE_NAME
+    description: "./notes.md"
+    assets:
+      links:
+        - name: ${XPI_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
+          filepath: downloads/${XPI_FILENAME}
+          link_type: other
+        - name: ${SOURCE_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
+          filepath: downloads/${SOURCE_FILENAME}
+          link_type: other
+  after_script:
+    - >
+      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
+       --header 'Content-Type: application/json' \
+       --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}" \
+       -d @updates.json
