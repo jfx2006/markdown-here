@@ -2,7 +2,7 @@ EXTENSION = extension
 
 all: node_modules mailext-options-sync vendored
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
-	npm run build
+	npm run release
 	sh tools/gen-src.sh
 	python tools/rel_notes.py
 	python tools/version_env.py

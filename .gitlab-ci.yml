@@ -50,7 +50,8 @@ mdhr-build:
   - make all
   artifacts:
     paths:
-      - web-ext-artifacts/*
+      - web-ext-artifacts/markdown-here-revival.xpi
+      - web-ext-artifacts/mdhr-source.tar.gz
     reports:
       dotenv: version.env
 
@@ -71,12 +72,10 @@ mdhr-release:
     - when: manual
   script:
     - echo "Running the release job."
-    - curl --location --output artifacts.zip https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/jobs/artifacts/main/download?job=mdhr-build
-    - unzip artifacts.zip
     - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/$XPI_FILENAME "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
     - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/$SOURCE_FILENAME "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/mdhr-source.tar.gz "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
   release:
     tag_name: $RELEASE_NAME
     ref: $CI_COMMIT_SHA
