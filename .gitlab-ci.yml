@@ -28,7 +28,7 @@ docker-build:
 mdhr-build:
   stage: build
   needs: ["docker-build"]
-  image: "registry.gitlab.com/jfx2006/markdown-here-revival"
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
