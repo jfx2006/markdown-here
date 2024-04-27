@@ -22,6 +22,8 @@ def main():
     with open(NOTES_FILE, "w") as f:
         f.writelines(lines)
 
+    print(f"Wrote {NOTES_FILE}.")
+
 
 if __name__ == '__main__':
     main()

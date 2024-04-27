@@ -4,6 +4,7 @@ all: node_modules mailext-options-sync vendored
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	npm run build
 	sh tools/gen-src.sh
+	python tools/rel_notes.py
 
 node_modules: package.json
 	npm install
