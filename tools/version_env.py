@@ -12,7 +12,7 @@ VERSION_ENV = TOP / "version.env"
 
 
 def main():
-    if ref := os.environ.get("CI_COMMIT_ID") is None:
+    if not (ref := os.environ.get("CI_COMMIT_SHA")):
         return
     with open(MANIFEST_FILE, "r") as f:
         manifest = json.load(f)
@@ -26,8 +26,8 @@ def main():
         version = f"{version}+{ref[:12]}"
 
     with open(VERSION_ENV, "w") as f:
-        f.write("PACKAGE_VERSION=\"{version}\"\n")
-        f.write("RELEASE_NAME=\"v{version}\"\n")
+        f.write(f"PACKAGE_VERSION=\"{version}\"\n")
+        f.write(f"RELEASE_NAME=\"v{version}\"\n")
 
     print(f"Version {version} written to {VERSION_ENV}.")
 
