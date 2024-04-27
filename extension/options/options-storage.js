@@ -44,6 +44,7 @@ export const kOptDefaults = {
   "emoji-shortcode-enabled": true,
   "last-version": "0",
   "preview-width": 650,
+  "saved-preview-width": 650,
   "enable-markdown-mode": true,
   "mdhr-mode": "modern",
 }

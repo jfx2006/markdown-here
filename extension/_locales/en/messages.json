@@ -8,17 +8,13 @@
   },
 
   "__WET_GROUP__application": { "message": "Application" },
-  "toggle_button_tooltip": {
-    "message": "Click to toggle Markdown rendering",
+  "toggle_button_tooltip_enable": {
+    "message": "Enable markdown preview",
     "description": "text shown when user hovers mouse over Markdown Toggle button"
   },
-  "toggle_button_tooltip_disabled": {
-    "message": "The selected field is not valid for Markdown rendering",
-    "description": "text shown when user hover mouse over disabled Markdown Toggle button"
-  },
-  "unrender_button": {
-    "message": "Unrender",
-    "description": "Button label to revert rendered Markdown"
+  "toggle_button_tooltip_disable": {
+    "message": "Disable markdown preview",
+    "description": "text shown when user hovers mouse over Markdown Toggle button"
   },
   "upgrade_notification_text": {
     "message": "$APPNAME$ updated",

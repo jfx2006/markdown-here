@@ -55,6 +55,7 @@ messenger.runtime.onInstalled.addListener(async (details) => {
       updateCallback(winId, onboardUrl)
       break
   }
+  await doStartup()
 })
 
 // Handle rendering requests from the content script.
@@ -128,17 +129,15 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return sha256Digest(request.data)
   } else if (request.action === "mdhr-mode-set") {
     if (request.mode && request.mode === "classic") {
-      return setClassicMode()
+      return setClassicMode(request.hidden)
     } else if (request.mode && request.mode === "modern") {
-      return setModernMode()
+      return setModernMode(request.hidden)
     }
   } else {
     console.log("unmatched request action", request.action)
     throw "unmatched request action: " + request.action
   }
 })
-
-await resetMarked()
 
 async function doRender(mdText) {
   async function getSyntaxCSS() {
@@ -170,14 +169,23 @@ const menu_reset_id = await messenger.menus.create({
 })
 messenger.menus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === menu_reset_id) {
-    const saved = await saveComposed()
-    await unInjectMDPreview()
-    await OptionsStore.set({ "mdhr-mode": "modern", hidden: "false" })
-    await OptionsStore.reset("preview-width")
-    await injectMDPreview()
-    await restoreComposed(saved)
+    await resetModernMode()
   }
 })
+
+async function resetModernMode(preview = true, width = true) {
+  const savedPreviewWidth = (await OptionsStore.get("saved-preview-width"))["saved-preview-width"]
+  const saved = await saveComposed()
+  await unInjectMDPreview()
+  await OptionsStore.set({
+    "mdhr-mode": "modern",
+    "enable-markdown-mode": "true",
+    "preview-width": savedPreviewWidth,
+  })
+  //await OptionsStore.reset("preview-width")
+  await injectMDPreview()
+  await restoreComposed(saved)
+}
 
 // Mail Extensions are not able to add composeScripts via manifest.json,
 // they must be added via the API.
@@ -270,6 +278,7 @@ async function doClassicRender(windowId) {
       },
       tabId: tabId,
     })
+    await updateHotKey(true)
   } else {
     await messenger.composeAction.setIcon({
       path: {
@@ -281,6 +290,7 @@ async function doClassicRender(windowId) {
       },
       tabId: tabId,
     })
+    await updateHotKey(false)
   }
 }
 
@@ -311,6 +321,7 @@ async function toggleMDPreview(windowId) {
       },
       tabId: tabId,
     })
+    await updateHotKey(false)
   } else {
     await messenger.composeAction.setIcon({
       path: {
@@ -322,6 +333,7 @@ async function toggleMDPreview(windowId) {
       },
       tabId: tabId,
     })
+    await updateHotKey(true)
   }
 }
 
@@ -373,29 +385,49 @@ async function openNotification(windowId, message, priority, button_labels) {
   return await notificationClose(notificationId)
 }
 
-async function updateHotKey(hotkey_value, tooltip) {
-  try {
-    await messenger.commands.update({
-      name: "toggle-markdown",
-      shortcut: hotkey_value,
-    })
-    const msg = getMessage("toggle_button_tooltip")
-    await messenger.composeAction.setTitle({ title: `${msg}\n${tooltip}` })
-  } catch (error) {
-    return error
-  }
-  return "ok"
+async function updateHotKey(rendered = null) {
+  OptionsStore.get(["hotkey-input", "mdhr-mode", "enable-markdown-mode"]).then(
+    async ({
+      "hotkey-input": hotkey_value,
+      "mdhr-mode": mdhr_mode,
+      "enable-markdown-mode": enable_preview,
+    }) => {
+      const shortkeyStruct = getShortcutStruct(hotkey_value)
+      let tooltip
+      if (!shortkeyStruct.macShortcut) {
+        tooltip = shortkeyStruct.shortcut
+      } else {
+        tooltip = shortkeyStruct.macShortcut
+      }
+      try {
+        await messenger.commands.update({
+          name: "toggle-markdown",
+          shortcut: hotkey_value,
+        })
+        if (rendered !== null) {
+          enable_preview = rendered
+        }
+        let tooltip_msg
+        if (mdhr_mode === "classic") {
+          tooltip_msg = !enable_preview ? "enable" : "disable"
+        } else if (mdhr_mode === "modern") {
+          tooltip_msg = enable_preview ? "enable" : "disable"
+        } else {
+          tooltip_msg = "disable"
+        }
+        const msg = getMessage(`toggle_button_tooltip_${tooltip_msg}`)
+        await messenger.composeAction.setTitle({ title: `${msg}\n${tooltip}` })
+      } catch (error) {
+        return error
+      }
+      return "ok"
+    },
+  )
 }
-OptionsStore.get("hotkey-input").then(async (result) => {
-  const shortkeyStruct = getShortcutStruct(result["hotkey-input"])
-  let tooltip = shortkeyStruct.shortcut
-  if (shortkeyStruct.macShortcut) {
-    tooltip = shortkeyStruct.macShortcut
-  }
-  await updateHotKey(shortkeyStruct.shortcut, tooltip)
-})
 
-async function setClassicMode() {
+async function setClassicMode(hidden = true) {
+  const previewWidth = (await OptionsStore.get("preview-width"))["preview-width"]
+  await OptionsStore.set({ "saved-preview-width": previewWidth })
   const wins = await getOpenComposeWindows()
   for (const win of wins) {
     await messenger.runtime.sendMessage({
@@ -412,11 +444,14 @@ async function setClassicMode() {
       },
       tabId: win.tabs[0].id,
     })
+    await updateHotKey(!hidden)
     await messenger.menus.update("mdhr-reset-preview", { enabled: false })
   }
 }
 
-async function setModernMode() {
+async function setModernMode(hidden = false) {
+  const savedPreviewWidth = (await OptionsStore.get("saved-preview-width"))["saved-preview-width"]
+  await OptionsStore.set({ "preview-width": savedPreviewWidth })
   const wins = await getOpenComposeWindows()
   for (const win of wins) {
     await messenger.runtime.sendMessage({
@@ -425,14 +460,15 @@ async function setModernMode() {
     })
     await messenger.composeAction.setIcon({
       path: {
-        16: ICON_INACTIVE,
-        19: ICON_INACTIVE,
-        32: ICON_INACTIVE,
-        38: ICON_INACTIVE,
-        64: ICON_INACTIVE,
+        16: ICON_RENDERED,
+        19: ICON_RENDERED,
+        32: ICON_RENDERED,
+        38: ICON_RENDERED,
+        64: ICON_RENDERED,
       },
       tabId: win.tabs[0].id,
     })
+    await updateHotKey(hidden)
     await messenger.menus.update("mdhr-reset-preview", { enabled: true })
   }
 }
@@ -481,13 +517,18 @@ async function injectMDPreview() {
   // Save state of open compose Windows as drafts
   const saved = await saveComposed()
   // Register custom UI compose editor
-  const savedState = await OptionsStore.get(["mdhr-mode", "preview-width", "enable-markdown-mode"])
+  const savedState = await OptionsStore.get([
+    "mdhr-mode",
+    "preview-width",
+    "enable-markdown-mode",
+    "saved-preview-width",
+  ])
   const options = { mode: savedState["mdhr-mode"] }
   if (savedState["mdhr-mode"] === "modern") {
     try {
       options["width"] = toInt(savedState["preview-width"])
     } catch (e) {
-      options["width"] = 650
+      options["width"] = toInt(savedState["saved-preview-width"])
     }
     options["hidden"] = savedState["enable-markdown-mode"] === "false"
   } else {
@@ -513,4 +554,15 @@ async function unInjectMDPreview() {
   await restoreComposed(saved)
 }
 
-await injectMDPreview()
+async function doStartup() {
+  const savedState = await OptionsStore.get(["mdhr-mode", "preview-width"])
+  if (savedState["mdhr-mode"] === "modern") {
+    await OptionsStore.set({ "saved-preview-width": savedState["preview-width"] })
+  }
+  await updateHotKey()
+  await resetMarked()
+  await injectMDPreview()
+}
+messenger.runtime.onStartup.addListener(async function () {
+  await doStartup()
+})

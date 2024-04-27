@@ -122,10 +122,11 @@ import OptionsStore from "./options-storage.js"
 
     await checkPreviewChanged()
     handleMathRenderer()
+    await handleUIMode(null, true)
   }
 
   async function onOptionsSaved(e) {
-    handleUIMode()
+    await handleUIMode()
     handleMathRenderer()
     await handleInput()
     showSavedMsg()
@@ -272,40 +273,42 @@ import OptionsStore from "./options-storage.js"
     }, 5000)
   }
 
-  function handleUIMode(e) {
+  async function handleUIMode(e, force = false) {
     const value_elem = document.getElementById("mode-radio")
     const old_value = value_elem.dataset.value
     const mode_elem = document.querySelector("input[name='mdhr-mode']:checked")
     const new_value = mode_elem.id
-    if (old_value !== new_value) {
+    if (old_value !== new_value || force) {
       if (new_value === "mdhr-classic") {
-        enableClassicOptions()
+        await enableClassicOptions()
       } else {
-        enableModernOptions()
+        await enableModernOptions()
       }
       value_elem.dataset.value = new_value
-      messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: new_value.substring(5) })
     }
   }
 
-  function enableClassicOptions() {
+  async function enableClassicOptions() {
     // This is the "Start Composer in Markdown Mode" checkbox, disabled in Classic Mode
+    await OptionsStore.set({ "enable-markdown-mode": false })
     let elem = document.getElementById("markdown-mode")
     elem.disabled = true
     // This is the "Forgot to Render" option, enable it in Classic Mode
     elem = document.getElementById("forgot-to-render")
     elem.disabled = false
+    await messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: "classic" })
   }
 
-  function enableModernOptions() {
+  async function enableModernOptions() {
     // This is the "Start Composer in Markdown Mode" checkbox, enabled in Modern Mode
     let elem = document.getElementById("markdown-mode")
     elem.disabled = false
+    elem.checked = true
+    await OptionsStore.set({ "enable-markdown-mode": true })
     // This is the "Forgot to Render" option, disable it in Modern Mode
     elem = document.getElementById("forgot-to-render")
     elem.disabled = true
-    elem = document.getElementById("preview-width")
-    elem.setAttribute("value", "650")
+    await messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: "modern" })
   }
 
   function handleMathRenderer(e) {
