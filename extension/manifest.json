@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_app_name__",
-  "version": "3.999.14",
+  "version": "3.999.15",
   "description": "__MSG_app_slogan__",
   "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
   "applications": {
@@ -54,16 +54,14 @@
        "size": 64
       }
     ],
-
-    "default_title": "__MSG_toggle_button_tooltip__"
+    "default_title": "__MSG_toggle_button_tooltip_enable__"
   },
   "commands": {
     "toggle-markdown": {
       "suggested_key": {
         "default": "Ctrl+Alt+M",
         "mac": "MacCtrl+Ctrl+M"
-      },
-      "description": "__MSG_toggle_button_tooltip__"
+      }
     }
   },
   "options_ui": {
