@@ -56,10 +56,12 @@ mdhr-build:
 
 mdhr-release:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
   needs:
     - job: mdhr-build
       artifacts: true
+    - job: docker-build
+      optional: true
   variables:
       PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"

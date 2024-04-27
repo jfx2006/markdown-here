@@ -58,5 +58,9 @@ RUN curl -fsSLO --compressed $PYTHON_URL \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
+ENV RELEASE_CLI_VER 0.17.0
+
+RUN curl --location --output /usr/local/bin/release-cli "https://gitlab.com/api/v4/projects/gitlab-org%2Frelease-cli/packages/generic/release-cli/v${RELEASE_CLI_VER}/release-cli-linux-amd64" \
+    && chmod +x /usr/local/bin/release-cli
 
 SHELL ["/bin/bash", "-l"]
