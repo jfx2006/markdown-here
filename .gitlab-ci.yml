@@ -27,20 +27,6 @@ docker-build:
     - changes:
         - CI/Dockerfile
 
-mdhr-version:
-  stage: build
-  image: bash:latest
-  script:
-    - >
-      if [[ -n "$CI_COMMIT_TAG" ]]; then
-        echo RELEASE_NAME="$CI_COMMIT_TAG" > release.env
-      else
-        echo RELEASE_NAME=$(git rev-parse --short HEAD) > release.env
-      fi
-  artifacts:
-    reports:
-      dotenv: release.env
-
 mdhr-build:
   stage: build
   needs:
@@ -65,6 +51,8 @@ mdhr-build:
   artifacts:
     paths:
       - web-ext-artifacts/*
+    reports:
+      dotenv: version.env
 
 mdhr-release:
   stage: release
@@ -72,11 +60,9 @@ mdhr-release:
   needs:
     - job: mdhr-build
       artifacts: true
-    - job: mdhr-version
-      artifacts: true
   variables:
       PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
-      XPI_FILENAME: "markdown_here_revival-${CI_COMMIT_TAG}.xpi"
+      XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
       SOURCE_FILENAME: "mdhr-source.tar.gz"
   rules:
     - if: $CI_COMMIT_TAG
