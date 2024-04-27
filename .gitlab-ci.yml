@@ -1,0 +1,53 @@
+
+
+docker-build:
+  image: docker:cli
+  stage: build
+  services:
+    - docker:dind
+  variables:
+    DOCKER_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  # All branches are tagged with $DOCKER_IMAGE_NAME (defaults to commit ref slug)
+  # Default branch is also tagged with `latest`
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_NAME" CI/.
+    - docker push "$DOCKER_IMAGE_NAME"
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
+        docker push "$CI_REGISTRY_IMAGE:latest"
+      fi
+  # Run this job in a branch where a Dockerfile exists
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      exists:
+        - CI/Dockerfile
+
+mdhr-build:
+  stage: build
+  needs: ["docker-build"]
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival"
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
+  before_script:
+  - python --version ; pip --version  # For debugging
+  - python -m venv venv
+  - source venv/bin/activate
+
+#  test:
+#    script:
+#      - pip install ruff tox  # you can also use tox
+#      - pip install --editable ".[test]"
+#      - tox -e py,ruff
+
+  script:
+    - pip install -r requirements.in
+    - make all
+  artifacts:
+    paths:
+      - web-ext-artifacts/*
