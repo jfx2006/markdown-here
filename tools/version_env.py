@@ -19,7 +19,7 @@ def main():
 
     version = manifest["version"]
     if CI_TAG := os.environ.get("CI_COMMIT_TAG"):
-        if f"v{version}" != CI_TAG:
+        if CI_TAG.startswith(f"{version}"):
             print(f"Tag and manifest version mismatch! {version} != {CI_TAG}")
             sys.exit(1)
     else:
