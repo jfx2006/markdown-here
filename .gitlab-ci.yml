@@ -52,6 +52,7 @@ mdhr-build:
     paths:
       - web-ext-artifacts/markdown-here-revival.xpi
       - web-ext-artifacts/mdhr-source.tar.gz
+      - notes.md
     reports:
       dotenv: version.env
 
@@ -77,7 +78,7 @@ mdhr-release:
     - >
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/mdhr-source.tar.gz "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
   release:
-    tag_name: $RELEASE_NAME
+    tag_name: "v$PACKAGE_VERSION"
     ref: $CI_COMMIT_SHA
     name: $RELEASE_NAME
     description: "./notes.md"
