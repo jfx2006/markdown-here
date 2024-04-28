@@ -99,5 +99,5 @@ mdhr-release:
     - >
       curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
        --header 'Content-Type: application/json' \
-       --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN} \
+       --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}" \
        -d @updates.json
