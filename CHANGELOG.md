@@ -4,6 +4,7 @@
 
 - Fix up modern mode after using classic mode. #77
 - Add a "Reset Preview" item to the compose action context menu. 
+- Automate release workflow as much as possible.
 
 ## [4.0 beta 14]
 

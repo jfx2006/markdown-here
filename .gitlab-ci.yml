@@ -53,6 +53,7 @@ mdhr-build:
       - web-ext-artifacts/markdown-here-revival.xpi
       - web-ext-artifacts/mdhr-source.tar.gz
       - notes.md
+      - updates.json
     reports:
       dotenv: version.env
 
@@ -86,5 +87,27 @@ mdhr-release:
       links:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
+          filepath: ${XPI_FILENAME}
+          link_type: other
         - name: ${SOURCE_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
+          filepath: ${SOURCE_FILENAME}
+          link_type: other
+  artifacts:
+    paths:
+      - updates.json
+
+updater:
+  stage: release
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  variables:
+    SNIPPIT_ID: 3618629
+  needs:
+    - job: mdhr-release
+      artifacts: true
+  script:
+    - >
+      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID"} \
+       --header 'Content-Type: application/json' \
+       --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN} \
+       -d @updates.json

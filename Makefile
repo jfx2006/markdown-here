@@ -6,6 +6,7 @@ all: node_modules mailext-options-sync vendored
 	sh tools/gen-src.sh
 	python tools/rel_notes.py
 	python tools/version_env.py
+	python tools/updates.py
 
 node_modules: package.json
 	npm install

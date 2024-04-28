@@ -1,5 +1,7 @@
 # <img src="extension/images/md_fucsia.svg" alt="MDHR Logo" height="24" width="24" align="bottom"> Markdown Here Revival
 
+[![Latest Release](https://gitlab.com/jfx2006/markdown-here-revival/-/badges/release.svg)](https://gitlab.com/jfx2006/markdown-here-revival/-/releases) 
+
 *Markdown Here Revival* is a fork of [Markdown Here](https://markdown-here.com/), 
 the popular browser extension in order to specifically target modern Thunderbird versions.
 
