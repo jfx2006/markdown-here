@@ -86,11 +86,11 @@ mdhr-release:
     assets:
       links:
         - name: ${XPI_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/downloads/${XPI_FILENAME}
           filepath: ${XPI_FILENAME}
           link_type: other
         - name: ${SOURCE_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/downloads/${SOURCE_FILENAME}
           filepath: ${SOURCE_FILENAME}
           link_type: other
   artifacts:
