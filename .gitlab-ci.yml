@@ -86,12 +86,12 @@ mdhr-release:
     assets:
       links:
         - name: ${XPI_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/downloads/${XPI_FILENAME}
-          filepath: ${XPI_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
+          filepath: downloads/${XPI_FILENAME}
           link_type: other
         - name: ${SOURCE_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/downloads/${SOURCE_FILENAME}
-          filepath: ${SOURCE_FILENAME}
+          url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
+          filepath: downloads/${SOURCE_FILENAME}
           link_type: other
 
 updater:
@@ -104,7 +104,7 @@ updater:
       artifacts: true
   script:
     - >
-      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID"} \
+      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
        --header 'Content-Type: application/json' \
        --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN} \
        -d @updates.json
