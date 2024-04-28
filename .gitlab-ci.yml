@@ -1,7 +1,7 @@
 
 workflow:
   rules:
-    - if: ($CI_TAG_NAME || $CI_COMMIT_BRANCH == "CI")
+    - if: $CI_COMMIT_TAG
 
 stages:
   - build
@@ -71,9 +71,6 @@ mdhr-release:
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
       SOURCE_FILENAME: "mdhr-source.tar.gz"
       SNIPPIT_ID: 3618629
-  rules:
-    - if: $CI_COMMIT_TAG
-    - when: manual
   script:
     - echo "Running the release job."
     - >
@@ -97,7 +94,7 @@ mdhr-release:
           link_type: other
   after_script:
     - >
-      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
+      curl --request PUT "https://gitlab.com/api/v4/snippets/${SNIPPIT_ID}" \
        --header 'Content-Type: application/json' \
        --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}" \
        -d @updates.json
