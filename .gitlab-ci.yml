@@ -1,4 +1,8 @@
 
+workflow:
+  rules:
+    - if: ($CI_TAG_NAME || $CI_COMMIT_BRANCH == "CI")
+
 stages:
   - build
   - release
@@ -33,9 +37,6 @@ mdhr-build:
     - job: docker-build
       optional: true
   image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
-  rules:
-    - if: $CI_COMMIT_TAG
-    - when: manual
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
@@ -69,6 +70,7 @@ mdhr-release:
       PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
       SOURCE_FILENAME: "mdhr-source.tar.gz"
+      SNIPPIT_ID: 3618629
   rules:
     - if: $CI_COMMIT_TAG
     - when: manual
@@ -93,16 +95,7 @@ mdhr-release:
           url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
           filepath: downloads/${SOURCE_FILENAME}
           link_type: other
-
-updater:
-  stage: release
-  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
-  variables:
-    SNIPPIT_ID: 3618629
-  needs:
-    - job: mdhr-build
-      artifacts: true
-  script:
+  after_script:
     - >
       curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
        --header 'Content-Type: application/json' \
