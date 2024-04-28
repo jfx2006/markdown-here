@@ -8,8 +8,8 @@ from pathlib import Path
 import requests
 
 TOP = Path(__file__).parent.parent
-UPDATES_FILE = TOP / "tools/updates.json"
-VERSION_ENV = TOP/ "version.env"
+UPDATES_FILE = TOP / "updates.json"
+VERSION_ENV = TOP / "version.env"
 RELEASE_FILE = TOP / "web-ext-artifacts/markdown-here-revival.xpi"
 ADDON_ID = "markdown-here-revival@xul.calypsoblue.org"
 UPDATES_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/snippets/3618629/raw/main/updates.json?inline=false"

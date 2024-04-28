@@ -93,9 +93,6 @@ mdhr-release:
           url: ${PACKAGE_REGISTRY_URL}/downloads/${SOURCE_FILENAME}
           filepath: ${SOURCE_FILENAME}
           link_type: other
-  artifacts:
-    paths:
-      - updates.json
 
 updater:
   stage: release
@@ -103,7 +100,7 @@ updater:
   variables:
     SNIPPIT_ID: 3618629
   needs:
-    - job: mdhr-release
+    - job: mdhr-build
       artifacts: true
   script:
     - >
