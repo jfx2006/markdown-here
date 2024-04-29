@@ -29,6 +29,8 @@ docker-build:
   # Run this job in a branch where a Dockerfile exists
   rules:
     - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_TAG
       changes:
         - CI/Dockerfile
 
@@ -77,9 +79,7 @@ mdhr-release:
     - >
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
     - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/mdhr-source.tar.gz "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
-    - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${UPDATES}" "${PACKAGE_REGISTRY_URL}/${UPDATES }"
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${UPDATES}" "${PACKAGE_REGISTRY_URL}/${UPDATES}"
   release:
     tag_name: "v$PACKAGE_VERSION"
     ref: $CI_COMMIT_SHA
@@ -90,10 +90,6 @@ mdhr-release:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
           filepath: /${XPI_FILENAME}
-          link_type: other
-        - name: ${SOURCE_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
-          filepath: /${SOURCE_FILENAME}
           link_type: other
         - name: ${UPDATES}
           url: ${PACKAGE_REGISTRY_URL}/${UPDATES}

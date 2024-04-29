@@ -1,7 +1,6 @@
 #!python
 """Update updates.json for auto updates."""
 
-import copy
 import hashlib
 import json
 from pathlib import Path
@@ -13,7 +12,7 @@ UPDATES_FILE = TOP / "updates.json"
 VERSION_ENV = TOP / "version.env"
 RELEASE_FILE = TOP / "web-ext-artifacts/markdown-here-revival.xpi"
 ADDON_ID = "markdown-here-revival@xul.calypsoblue.org"
-
+UPDATES_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
 XPI_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/{version}/downloads/markdown_here_revival-{version}.xpi"
 
 
@@ -43,10 +42,8 @@ def main():
         raise Exception(f"PACKAGE_VERSION not found in {VERSION_ENV}.")
     version = version.strip('"\n')
 
-    # req = requests.get(UPDATES_URL)
-    # updates = req.json()
-    with open("updates.json", "r") as f:
-        updates = json.load(f)
+    req = requests.get(UPDATES_URL)
+    updates = req.json()
 
     update = {"version": version, "update_link": XPI_URL.format(version=version), "update_hash": f"sha256:{sha256sum}"}
     updates["addons"][ADDON_ID]["updates"].append(update)
