@@ -1,7 +1,7 @@
 
 workflow:
   rules:
-    - if: ($CI_TAG_NAME || $CI_COMMIT_BRANCH == "CI")
+    - if: $CI_COMMIT_TAG
 
 stages:
   - build
@@ -21,14 +21,15 @@ docker-build:
   script:
     - docker build --pull -t "$DOCKER_IMAGE_NAME" CI/.
     - docker push "$DOCKER_IMAGE_NAME"
-    - |
+    - >
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
         docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
         docker push "$CI_REGISTRY_IMAGE:latest"
       fi
   # Run this job in a branch where a Dockerfile exists
   rules:
-    - changes:
+    - if: $CI_COMMIT_TAG
+      changes:
         - CI/Dockerfile
 
 mdhr-build:
@@ -70,16 +71,15 @@ mdhr-release:
       PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
       SOURCE_FILENAME: "mdhr-source.tar.gz"
-      SNIPPIT_ID: 3618629
-  rules:
-    - if: $CI_COMMIT_TAG
-    - when: manual
+      UPDATES: updates.json
   script:
     - echo "Running the release job."
     - >
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
     - >
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/mdhr-source.tar.gz "${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}"
+    - >
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${UPDATES}" "${PACKAGE_REGISTRY_URL}/${UPDATES }"
   release:
     tag_name: "v$PACKAGE_VERSION"
     ref: $CI_COMMIT_SHA
@@ -89,15 +89,13 @@ mdhr-release:
       links:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
-          filepath: downloads/${XPI_FILENAME}
+          filepath: /${XPI_FILENAME}
           link_type: other
         - name: ${SOURCE_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${SOURCE_FILENAME}
-          filepath: downloads/${SOURCE_FILENAME}
+          filepath: /${SOURCE_FILENAME}
           link_type: other
-  after_script:
-    - >
-      curl --request PUT "https://gitlab.example.com/api/v4/snippets/${SNIPPIT_ID}" \
-       --header 'Content-Type: application/json' \
-       --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}" \
-       -d @updates.json
+        - name: ${UPDATES}
+          url: ${PACKAGE_REGISTRY_URL}/${UPDATES}
+          filepath: /${UPDATES}
+          link_type: other
