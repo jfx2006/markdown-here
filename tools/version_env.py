@@ -28,8 +28,8 @@ def main():
 
     release_name = version.replace("3.999.", "4.0 beta ")
     with open(VERSION_ENV, "w") as f:
-        f.write(f"PACKAGE_VERSION={version}")
-        f.write(f"RELEASE_NAME={release_name}")
+        f.write(f"PACKAGE_VERSION={version}\n")
+        f.write(f"RELEASE_NAME={release_name}\n")
 
     print(f"Version {version} written to {VERSION_ENV}.")
 
