@@ -12,9 +12,8 @@ UPDATES_FILE = TOP / "updates.json"
 VERSION_ENV = TOP / "version.env"
 RELEASE_FILE = TOP / "web-ext-artifacts/markdown-here-revival.xpi"
 ADDON_ID = "markdown-here-revival@xul.calypsoblue.org"
-UPDATES_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/snippets/3618629/raw/main/updates.json?inline=false"
-
-XPI_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/{version}/downloads/markdown_here_revival-${version}.xpi"
+UPDATES_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
+XPI_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/{version}/downloads/markdown_here_revival-{version}.xpi"
 
 
 def hash_file(path):
@@ -41,23 +40,19 @@ def main():
                 break
     if version is None:
         raise Exception(f"PACKAGE_VERSION not found in {VERSION_ENV}.")
+    version = version.strip('"\n')
 
     req = requests.get(UPDATES_URL)
     updates = req.json()
 
-    update = {
-        "version": version,
-        "update_link": XPI_URL.format(version=version),
-        "update_hash": f"sha256:{sha256sum}"
-    }
+    update = {"version": version, "update_link": XPI_URL.format(version=version), "update_hash": f"sha256:{sha256sum}"}
     updates["addons"][ADDON_ID]["updates"].append(update)
 
     with open(UPDATES_FILE, "w") as f:
-        json.dump(updates, f, indent=2, sort_keys=True, ensure_ascii=False, separators=(',', ': '))
+        json.dump(updates, f, indent=2, sort_keys=True, ensure_ascii=False, separators=(",", ": "))
 
     print(f"Updates file created at {UPDATES_FILE}.")
 
 
 if __name__ == "__main__":
     main()
-

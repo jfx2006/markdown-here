@@ -3,6 +3,7 @@
 
 import json
 import os
+import requests
 import sys
 from pathlib import Path
 
