@@ -76,7 +76,9 @@ function deShadowRoot(doc) {
 }
 
 async function renderMDEmail(unsanitized_html) {
-  let doc = parseHTMLFromString(escapeHTML`${unsanitized_html}`)
+  /* cp.render-preview */
+  let doc = addDoctype(unsanitized_html)
+  doc = parseHTMLFromString(escapeHTML`${doc}`)
   doc = wrapExternal(doc)
   if (!contentDiv) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
@@ -219,6 +221,11 @@ async function scrollTo(payload) {
   const scrollTop = payload.percentage * targetAvbSpace
 
   return target.scrollTo({ top: scrollTop, behavior: "smooth" })
+}
+
+function addDoctype(html_string) {
+  // Eliminate quirks mode warnings
+  return `<!doctype html>\n${html_string}\n`
 }
 
 function parseHTMLFromString(string) {
