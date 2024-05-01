@@ -59,7 +59,7 @@ function wrapExternal(doc) {
     wrapper.id = `extcontent-${i}`
     i++
     const shadow = wrapper.attachShadow({ mode: "open" })
-    shadow.replaceChildren(...element.children)
+    shadow.replaceChildren(...element.childNodes)
     element.insertAdjacentElement("afterbegin", wrapper)
   }
   return doc
@@ -71,7 +71,7 @@ function deShadowRoot(doc) {
     if (!element.shadowRoot) {
       continue
     }
-    element.replaceChildren(...element.shadowRoot.children)
+    element.replaceChildren(...element.shadowRoot.childNodes)
   }
 }
 
@@ -81,7 +81,7 @@ async function renderMDEmail(unsanitized_html) {
   if (!contentDiv) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
   }
-  contentDiv.replaceChildren(...doc.body.children)
+  contentDiv.replaceChildren(...doc.body.childNodes)
   return true
 }
 
