@@ -1,3 +1,10 @@
+## [4.0 beta 16]
+
+### Fixed
+
+- Replying to plain text or "body text" formatted emails lost inline reply content #85.
+- Suppress quirks mode warnings in console log
+
 ## [4.0 beta 15]
 
 ### Fixed

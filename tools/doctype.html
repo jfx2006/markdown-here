@@ -1,0 +1,7 @@
+<!doctype html>
+<h1>hello world!</h1>
+<script type="text/javascript">
+  const p = new DOMParser()
+  const doc = p.parseFromString("<!doctype html><h2>Yo!</h2>", "text/html")
+  console.log(doc)
+</script>
