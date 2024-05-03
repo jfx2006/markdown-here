@@ -39,7 +39,8 @@ RUN export GNUPGHOME="$(mktemp -d)" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
   # smoke tests
   && node --version \
-  && npm --version
+  && corepack enable \
+  && corepack prepare pnpm@latest --activate
 
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.

@@ -4,8 +4,8 @@ The HTML editor must be enabled.
 REPRODUCING THE BUILD
 
 Requirements:
-nodejs: 18.12.1
-npm: 8.19.2
+nodejs: 20.x
+pnpm: 9.x
 GNU Make
 tar
 A UNIX style shell (bash)
@@ -42,21 +42,21 @@ marked-highlight.esm.js:
 https://raw.githubusercontent.com/markedjs/marked-highlight/v2.0.1/src/index.js
 
 marked-linkify-it.esm.js:
-This and "linkify-it" are installed in node_modules via npm and then mangled
+This and "linkify-it" are installed in node_modules via pnpm and then mangled
 into an esm module with "esbuild". `make marked-linkify-it` will handle all of
 this.
 
 marked-smartypants.esm.js:
-This and "smartypants" are installed in node_modules via npm and then mangled
+This and "smartypants" are installed in node_modules via pnpm and then mangled
 into an esm module with "esbuild". `make marked-smartypants` will handle all
 of this.
 
 degausser.esm.js:
-Installed in node_modules via npm and then built with esbuild. `make degausser`
+Installed in node_modules via pnpm and then built with esbuild. `make degausser`
 handles this.
 
 turndown.esm.js:
-Installed in node_modules via npm. The vendor esm build is copied via `make turndown`.
+Installed in node_modules via pnpm. The vendor esm build is copied via `make turndown`.
 
 Emoji stuff:
 data/emoji_codes.json comes from: (MIT Licensed)

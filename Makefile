@@ -2,20 +2,20 @@ EXTENSION = extension
 
 all: node_modules mailext-options-sync vendored
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
-	npm run release
+	pnpm run release
 	sh tools/gen-src.sh
 	python tools/rel_notes.py
 	python tools/version_env.py
 	python tools/updates.py
 
 node_modules: package.json
-	npm install
+	pnpm install
 
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
 
 mailext-options-sync/mailext-options-sync.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
-	cd mailext-options-sync && npm install && npm run build
+	cd mailext-options-sync && pnpm install && npm run build
 
 $(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/mailext-options-sync.js
 	cp -v $< $@

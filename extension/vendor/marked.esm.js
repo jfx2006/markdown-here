@@ -1,5 +1,5 @@
 /**
- * marked v11.2.0 - a markdown parser
+ * marked v12.0.2 - a markdown parser
  * Copyright (c) 2011-2024, Christopher Jeffrey. (MIT Licensed)
  * https://github.com/markedjs/marked
  */
@@ -322,7 +322,9 @@ class _Tokenizer {
     blockquote(src) {
         const cap = this.rules.block.blockquote.exec(src);
         if (cap) {
-            const text = rtrim(cap[0].replace(/^ *>[ \t]?/gm, ''), '\n');
+            // precede setext continuation with 4 spaces so it isn't a setext
+            let text = cap[0].replace(/\n {0,3}((?:=+|-+) *)(?=\n|$)/g, '\n    $1');
+            text = rtrim(text.replace(/^ *>[ \t]?/gm, ''), '\n');
             const top = this.lexer.state.top;
             this.lexer.state.top = true;
             const tokens = this.lexer.blockTokens(text);
@@ -916,8 +918,13 @@ const fences = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\
 const hr = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/;
 const heading = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/;
 const bullet = /(?:[*+-]|\d{1,9}[.)])/;
-const lheading = edit(/^(?!bull )((?:.|\n(?!\s*?\n|bull ))+?)\n {0,3}(=+|-+) *(?:\n+|$)/)
+const lheading = edit(/^(?!bull |blockCode|fences|blockquote|heading|html)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html))+?)\n {0,3}(=+|-+) *(?:\n+|$)/)
     .replace(/bull/g, bullet) // lists can interrupt
+    .replace(/blockCode/g, / {4}/) // indented code blocks can interrupt
+    .replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/) // fenced code blocks can interrupt
+    .replace(/blockquote/g, / {0,3}>/) // blockquote can interrupt
+    .replace(/heading/g, / {0,3}#{1,6}/) // ATX heading can interrupt
+    .replace(/html/g, / {0,3}<[^\n>]+>\n/) // block html can interrupt
     .getRegex();
 const _paragraph = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/;
 const blockText = /^[^\n]+/;
@@ -933,9 +940,9 @@ const _tag = 'address|article|aside|base|basefont|blockquote|body|caption'
     + '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption'
     + '|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe'
     + '|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option'
-    + '|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr'
-    + '|track|ul';
-const _comment = /<!--(?!-?>)[\s\S]*?(?:-->|$)/;
+    + '|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title'
+    + '|tr|track|ul';
+const _comment = /<!--(?:-?>|[\s\S]*?(?:-->|$))/;
 const html = edit('^ {0,3}(?:' // optional indentation
     + '<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' // (1)
     + '|comment[^\\n]*(\\n+|$)' // (2)
@@ -953,7 +960,7 @@ const html = edit('^ {0,3}(?:' // optional indentation
 const paragraph = edit(_paragraph)
     .replace('hr', hr)
     .replace('heading', ' {0,3}#{1,6}(?:\\s|$)')
-    .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
+    .replace('|lheading', '') // setext headings don't interrupt commonmark paragraphs
     .replace('|table', '')
     .replace('blockquote', ' {0,3}>')
     .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
@@ -1003,7 +1010,7 @@ const blockGfm = {
     paragraph: edit(_paragraph)
         .replace('hr', hr)
         .replace('heading', ' {0,3}#{1,6}(?:\\s|$)')
-        .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
+        .replace('|lheading', '') // setext headings don't interrupt commonmark paragraphs
         .replace('table', gfmTable) // interrupt paragraphs with table
         .replace('blockquote', ' {0,3}>')
         .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
@@ -1050,7 +1057,7 @@ const inlineCode = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/;
 const br = /^( {2,}|\\)\n(?!\s*$)/;
 const inlineText = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/;
 // list of unicode punctuation marks, plus any missing characters from CommonMark spec
-const _punctuation = '\\p{P}$+<=>`^|~';
+const _punctuation = '\\p{P}\\p{S}';
 const punctuation = edit(/^((?![*_])[\spunctuation])/, 'u')
     .replace(/punctuation/g, _punctuation).getRegex();
 // sequences em should skip over [title](link), `code`, <html>

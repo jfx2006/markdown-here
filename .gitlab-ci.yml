@@ -45,7 +45,9 @@ mdhr-build:
   cache:
     paths:
       - .cache/pip
+      - .pnpm-store
   before_script:
+  - pnpm config set store-dir .pnpm-store
   - python --version ; pip --version  # For debugging
   - python -m venv venv
   - source venv/bin/activate

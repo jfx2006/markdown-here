@@ -71,7 +71,7 @@ git clone https://github.com/highlightjs/highlight.js hljs
 git -C hljs checkout "${HLJS_VER}"
 
 cd hljs || exit 1
-npm i
+pnpm i
 # shellcheck disable=SC2086
 node tools/build.js -t cdn ${HLJS_LANGS[*]}
 
