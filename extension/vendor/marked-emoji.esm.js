@@ -1,12 +1,7 @@
-/*
- * Copyright JFX 2021-2023
- * MIT License
- * https://gitlab.com/jfx2006
- */
-
 const defaultOptions = {
   // emojis: {}, required
-  unicode: false
+  unicode: false, // deprecated
+  renderer: undefined
 };
 
 export function markedEmoji(options) {
@@ -36,9 +31,9 @@ export function markedEmoji(options) {
 
         const name = match[1];
         let emoji = options.emojis[name];
-        let unicode = options.unicode;
+        let unicode = options.renderer ? undefined : options.unicode;
 
-        if (typeof emoji !== 'string') {
+        if (typeof emoji !== 'string' && !options.renderer) {
           if (typeof emoji.char === 'string') {
             emoji = emoji.char;
             unicode = true;
@@ -60,6 +55,10 @@ export function markedEmoji(options) {
         };
       },
       renderer(token) {
+        if (options.renderer) {
+          return options.renderer(token);
+        }
+
         if (token.unicode) {
           return token.emoji;
         } else {

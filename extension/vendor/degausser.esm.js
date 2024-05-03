@@ -1,9 +1,3 @@
-/*
- * Copyright JFX 2021-2023
- * MIT License
- * https://gitlab.com/jfx2006
- */
-
 function autoBind() {
   for (let prop of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
     if (prop === 'constructor' || typeof this[prop] !== 'function') continue
@@ -464,9 +458,7 @@ class StringCollector {
       case 'br':
         this.processText(false);
         this.processBreaks();
-        if (node.parentElement.lastChild !== node) {
-          this.runs.push("\n")
-        }
+        this.runs.push('\n');
 
         return true
       case 'wbr':
