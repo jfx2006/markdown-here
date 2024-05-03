@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extended-table Column Spanning 1`] = `
+"<table><thead><tr><th>H1</th>
+<th>H2</th>
+<th>H3</th>
+</tr></thead><tbody><tr><td colspan=3>This cell spans 3 columns</td>
+</tr></tbody></table>"
+`;
+
+exports[`extended-table Multi-row headers 1`] = `
+"<table><thead><tr><th colspan=2 rowspan=2>This header spans two columns <em>and</em> two rows </th>
+<th>Header A</th>
+</tr><tr><th>Header B</th>
+</tr></thead><tbody><tr><td>Cell A</td>
+<td>Cell B</td>
+<td>Cell C</td>
+</tr></tbody></table>"
+`;
+
+exports[`extended-table Row Spanning 1`] = `
+"<table><thead><tr><th>H1</th>
+<th>H2</th>
+</tr></thead><tbody><tr><td rowspan=3>This cell spans three  rows        </td>
+<td>Cell A</td>
+</tr><tr><td>Cell B</td>
+</tr><tr><td>Cell C</td>
+</tr></tbody></table>"
+`;

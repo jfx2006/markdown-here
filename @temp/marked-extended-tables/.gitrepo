@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/ingydotnet/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/calculuschild/marked-extended-tables
+	branch = tags/v1.0.8
+	commit = 0db452887ede1866dacfd00139498096eb9f7602
+	parent = 53c76e4f16073f2dd4a8d6e34ed5d3d8f45bb2df
+	method = merge
+	cmdver = 0.4.6
