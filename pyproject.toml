@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 99
+target-version = ['py312']
+include = "\\.py$"
+
+[tool.ruff]
+include = [
+    ".py",
+]

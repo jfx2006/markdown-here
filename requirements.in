@@ -1,6 +1,9 @@
+black==24.4.2
 blessings==1.7
 ruamel.yaml==0.18.5
 ruamel.yaml.clib==0.2.8
+ruff==0.4.3
+ruff-lsp==0.0.53
 beautifulsoup4==4.12.2
 html5lib==1.1
 requests==2.31.0
