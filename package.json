@@ -28,6 +28,7 @@
     "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
     "eslint-plugin-no-unsanitized": "^4.0.2",
     "eslint-plugin-prettier": "^5.1.3",
+    "highlight.js": "^11.9.0",
     "marked": "^12.0.2",
     "marked-emoji": "^1.4.0",
     "marked-extended-tables": "file:@temp/marked-extended-tables",

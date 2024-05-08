@@ -1,44 +1,65 @@
 EXTENSION = extension
-VENDOR = $(EXTENSION)/vendor
 
-degausser: $(VENDOR)/degausser.esm.js
+degausser: $(EXTENSION)/vendor/degausser.esm.js
 
-$(VENDOR)/degausser.esm.js: node_modules/degausser/src/degausser.js
+$(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
 	./tools/rollup.sh degausser $<
 
-dentity: $(VENDOR)/dentity.esm.js
+dentity: $(EXTENSION)/vendor/dentity.esm.js
 
-$(VENDOR)/dentity.esm.js: node_modules/dentity/src/dentity.js
+$(EXTENSION)/vendor/dentity.esm.js: node_modules/dentity/src/dentity.js
 	./tools/rollup.sh dentity $<
 
-marked: $(VENDOR)/marked.esm.js
+highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
-$(VENDOR)/marked.esm.js: node_modules/marked/lib/marked.esm.js
+$(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.js
+	./node_modules/.bin/rollup --format es \
+	--file "$(EXTENSION)/highlightjs/highlightjs.esm.js" \
+	-p @rollup/plugin-node-resolve \
+	-p @rollup/plugin-commonjs \
+	$<
+	python ./tools/highlightjs_styles.py node_modules/highlight.js/styles $(EXTENSION)/highlightjs/styles
+
+marked: $(EXTENSION)/vendor/marked.esm.js
+
+$(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
 	cp -v $< $@
 
-marked-emoji: $(VENDOR)/marked-emoji.esm.js
+marked-emoji: $(EXTENSION)/vendor/marked-emoji.esm.js
 
-$(VENDOR)/marked-emoji.esm.js: node_modules/marked-emoji/src/index.js
+$(EXTENSION)/vendor/marked-emoji.esm.js: node_modules/marked-emoji/src/index.js
 	cp -v $< $@
 
-marked-extended-tables: $(VENDOR)/marked-extended-tables.esm.js
+marked-extended-tables: $(EXTENSION)/vendor/marked-extended-tables.esm.js
 
-$(VENDOR)/marked-extended-tables.esm.js: node_modules/marked-extended-tables/src/index.js
+$(EXTENSION)/vendor/marked-extended-tables.esm.js: node_modules/marked-extended-tables/src/index.js
 	cp -v $< $@
 
-marked-highlight: $(VENDOR)/marked-highlight.esm.js
+marked-highlight: $(EXTENSION)/vendor/marked-highlight.esm.js
 
-$(VENDOR)/marked-highlight.esm.js: node_modules/marked-highlight/src/index.js
+$(EXTENSION)/vendor/marked-highlight.esm.js: node_modules/marked-highlight/src/index.js
 	cp -v $< $@
 
-marked-linkify-it: $(VENDOR)/marked-linkify-it.esm.js
+marked-linkify-it: $(EXTENSION)/vendor/marked-linkify-it.esm.js
 
-$(VENDOR)/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src/index.js
+$(EXTENSION)/vendor/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src/index.js
 	./tools/rollup.sh marked-linkify-it $<
 
-turndown: $(VENDOR)/turndown.esm.js
+turndown: $(EXTENSION)/vendor/turndown.esm.js
 
-$(VENDOR)/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
+$(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
 	cp -v $< $@
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser turndown dentity
+clean:
+	rm -f $(EXTENSION)/vendor/degausser.esm.js
+	rm -f $(EXTENSION)/vendor/dentity.esm.js
+	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
+	rm -rf $(EXTENSION)/highlightjs/styles
+	rm -f $(EXTENSION)/vendor/marked.esm.js
+	rm -f $(EXTENSION)/vendor/marked-emoji.esm.js
+	rm -f $(EXTENSION)/vendor/marked-extended-tables.esm.js
+	rm -f $(EXTENSION)/vendor/marked-highlight.esm.js
+	rm -f $(EXTENSION)/vendor/marked-linkify-it.esm.js
+	rm -f $(EXTENSION)/vendor/turndown.esm.js
+
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity

@@ -33,5 +33,6 @@ clean:
 	rm -f $(EXTENSION)/options/mailext-options-sync.js
 	rm -rf mailext-options-sync/node_modules
 	rm -rf node_modules
+	make -f vendored.mk clean
 
 

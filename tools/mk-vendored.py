@@ -11,45 +11,78 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 DATA = os.path.join(HERE, "vendored.yml")
 OUT = os.path.join(HERE, "..", "vendored.mk")
 
-CMDS = {
+CMDS_v1 = {
     "copy": "cp -v $< $@",
     "esmbuild": "./tools/esmify.sh {lib} $<",
-    "rollup": "./tools/rollup.sh {lib} $<"
+    "rollup": "./tools/rollup.sh {lib} $<",
 }
 
 
 class MkVendored:
     def __init__(self):
         yaml = YAML(typ="safe")
-        self.data = yaml.load(open(DATA))
+        yaml_data = yaml.load(open(DATA))
+        if yaml_data["version"] == 2:
+            self.commands = yaml_data["commands"]
+            self.vendored = yaml_data["vendored"]
+        else:
+            self.commands = CMDS_v1
+            self.vendored = yaml_data
         self.out = open(OUT, "w")
 
     def mk_header(self):
         self.out.writelines(
             [
-                "EXTENSION = extension\n" "VENDOR = $(EXTENSION)/vendor\n",
+                "EXTENSION = extension\n",
                 "\n",
             ]
         )
 
     def mk_rules(self):
-        for lib, data in sorted(self.data.items()):
-            self.mk_rule(lib, data)
+        clean_cmds = []
+        for lib, data in sorted(self.vendored.items()):
+            clean_cmds.extend(self.mk_rule(lib, data))
 
-    def mk_rule(self, lib, data):
-        cmd = CMDS[data["method"]].format(lib=lib)
+        self.out.writelines([
+            "clean:\n",
+        ] + [f"\t{cmd}\n" for cmd in clean_cmds])
 
-        self.out.writelines(
+    def mk_rule(self, lib, context):
+        if "vendor_prefix" not in context:
+            context["vendor_prefix"] = "vendor"
+        if "node_pkg" not in context:
+            context["node_pkg"] = lib
+        context["lib"] = lib
+        method = context.pop("method")
+        if method == "bash":
+            cmds = context.pop("cmds")
+        else:
+            cmds = [self.commands[method].format(**context)]
+
+        context["target_file"] = "$(EXTENSION)/{vendor_prefix}/{lib}.esm.js".format(**context)
+
+        rule = (
             [
-                f"{lib}: $(VENDOR)/{lib}.esm.js\n" "\n" f"$(VENDOR)/{lib}.esm.js: node_modules/{lib}/{data['path']}\n",
-                f"\t{cmd}\n",
-                "\n",
+                "{lib}: {target_file}".format(**context),
+                "",
+                "{target_file}: node_modules/{node_pkg}/{path}".format(**context),
+            ]
+            + ["\t" + cmd.format(**context) for cmd in cmds]
+            + [
+                "",
             ]
         )
 
+        self.out.writelines([f"{line}\n" for line in rule])
+
+        yield "rm -f {target_file}".format(**context)
+        if "clean" in context:
+            cmd = context.pop("clean")
+            yield cmd.format(**context)
+
     def mk_footer(self):
-        libs = " ".join(self.data.keys())
-        self.out.writelines([f"all: {libs}\n"])
+        libs = " ".join(self.vendored.keys())
+        self.out.writelines([f"\nall: {libs}\n"])
 
 
 def main():

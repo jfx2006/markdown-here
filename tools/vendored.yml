@@ -1,31 +1,55 @@
-marked:
-  path: lib/marked.esm.js
-  method: copy
+---
+version: 2
+vendor_prefix: vendor
 
-marked-linkify-it:
-  path: src/index.js
-  method: rollup
+commands:
+  copy: cp -v $< $@
+  rollup: ./tools/rollup.sh {node_pkg} $<
+  bash: null
 
-marked-highlight:
-  path: src/index.js
-  method: copy
+vendored:
+  marked:
+    path: lib/marked.esm.js
+    method: copy
 
-marked-extended-tables:
-  path: src/index.js
-  method: copy
+  marked-linkify-it:
+    path: src/index.js
+    method: rollup
 
-marked-emoji:
-  path: src/index.js
-  method: copy
+  marked-highlight:
+    path: src/index.js
+    method: copy
 
-degausser:
-  path: src/degausser.js
-  method: rollup
+  marked-extended-tables:
+    path: src/index.js
+    method: copy
 
-turndown:
-  path: lib/turndown.browser.es.js
-  method: copy
+  marked-emoji:
+    path: src/index.js
+    method: copy
 
-dentity:
-  path: src/dentity.js
-  method: rollup
+  degausser:
+    path: src/degausser.js
+    method: rollup
+
+  highlightjs:
+    path: es/index.js
+    method: bash
+    vendor_prefix: highlightjs
+    node_pkg: highlight.js
+    clean: "rm -rf $(EXTENSION)/{vendor_prefix}/styles"
+    cmds:
+      - ./node_modules/.bin/rollup --format es \
+      - --file "$(EXTENSION)/{vendor_prefix}/highlightjs.esm.js" \
+      - -p @rollup/plugin-node-resolve \
+      - -p @rollup/plugin-commonjs \
+      - "$<"
+      - "python ./tools/highlightjs_styles.py node_modules/{node_pkg}/styles $(EXTENSION)/{vendor_prefix}/styles"
+
+  turndown:
+    path: lib/turndown.browser.es.js
+    method: copy
+
+  dentity:
+    path: src/dentity.js
+    method: rollup

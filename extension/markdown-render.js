@@ -15,7 +15,7 @@
  */
 
 import { marked } from "./vendor/marked.esm.js"
-import hljs from "./highlightjs/highlight.js"
+import hljs from "./highlightjs/highlightjs.esm.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
