@@ -1,3 +1,13 @@
+## [4.0 beta 17]
+
+### Changed
+
+- Update Marked to 12.0.2, update Marked extensions, Turndown, Highlightjs
+
+### Fixed
+
+- Disable MDHR for plain text messages. Fixes #84.
+
 ## [4.0 beta 16]
 
 ### Fixed

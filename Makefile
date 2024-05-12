@@ -1,12 +1,17 @@
 EXTENSION = extension
 
-all: node_modules mailext-options-sync vendored
+all: node_modules mailext-options-sync vendored changelog
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 	pnpm run release
 	sh tools/gen-src.sh
 	python tools/rel_notes.py
 	python tools/version_env.py
 	python tools/updates.py
+
+changelog: $(EXTENSION)/CHANGELOG.md _changelog
+
+_changelog: CHANGELOG.md
+	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 
 node_modules: package.json
 	pnpm install
