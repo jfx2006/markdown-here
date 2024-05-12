@@ -248,6 +248,20 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   return Promise.resolve({ cancel: false, details: finalDetails })
 })
 
+messenger.windows.onCreated.addListener(async function (win) {
+  if (win.type !== "messageCompose") {
+    return
+  }
+  win = await messenger.windows.get(win.id, { populate: true })
+  const composeDetails = await messenger.compose.getComposeDetails(win.tabs[0].id)
+  if (composeDetails.isPlainText) {
+    await messenger.runtime.sendMessage({
+      action: "cp.disableForPlainText",
+      windowId: win.id,
+    })
+  }
+})
+
 async function composeAction(windowId) {
   const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   if (mdhr_mode === "classic") {

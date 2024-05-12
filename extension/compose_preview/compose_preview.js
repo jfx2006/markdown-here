@@ -96,6 +96,19 @@ async function sendPreviewStateToCompose(tabId, value) {
   }
 }
 
+async function disableForPlainText() {
+  const context = await messenger.ex_customui.getContext()
+  const win = await messenger.windows.get(context.windowId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  const tabId = win.tabs[0]?.id
+  const hidden = true
+  await messenger.ex_customui.setLocalOptions({ hidden: hidden })
+  await sendPreviewStateToCompose(tabId, hidden)
+  return "inactive"
+}
+
 async function togglePreview() {
   const context = await messenger.ex_customui.getContext()
   const win = await messenger.windows.get(context.windowId, {
@@ -284,6 +297,11 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
           return false
         }
         return togglePreview()
+      case "cp.disableForPlainText":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return disableForPlainText()
       case "cp.get-content":
         if (request.windowId !== context.windowId) {
           return false
