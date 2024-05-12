@@ -110,8 +110,6 @@ async function getMdText() {
 }
 
 async function doRenderPreview() {
-  const MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
-
   const msgDocument = window.document.cloneNode(true)
 
   let finalHTML
