@@ -8,9 +8,9 @@ all: node_modules mailext-options-sync vendored changelog
 	python tools/version_env.py
 	python tools/updates.py
 
-changelog: $(EXTENSION)/CHANGELOG.md _changelog
+changelog:  $(EXTENSION)/CHANGELOG.md
 
-_changelog: CHANGELOG.md
+$(EXTENSION)/CHANGELOG.md: CHANGELOG.md
 	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
 
 node_modules: package.json
