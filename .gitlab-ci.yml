@@ -21,11 +21,8 @@ docker-build:
   script:
     - docker build --pull -t "$DOCKER_IMAGE_NAME" CI/.
     - docker push "$DOCKER_IMAGE_NAME"
-    - >
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:latest"
-        docker push "$CI_REGISTRY_IMAGE:latest"
-      fi
+    - docker tag "$DOCKER_IMAGE_NAME" "$CI_REGISTRY_IMAGE:ci"
+    - docker push "$CI_REGISTRY_IMAGE:ci"
   # Run this job in a branch where a Dockerfile exists
   rules:
     - changes:
