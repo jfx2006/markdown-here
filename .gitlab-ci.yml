@@ -28,10 +28,7 @@ docker-build:
       fi
   # Run this job in a branch where a Dockerfile exists
   rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - if: $CI_COMMIT_TAG
-      changes:
+    - changes:
         - CI/Dockerfile
 
 mdhr-build:
