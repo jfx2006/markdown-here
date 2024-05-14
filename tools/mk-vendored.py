@@ -48,37 +48,46 @@ class MkVendored:
         ] + [f"\t{cmd}\n" for cmd in clean_cmds])
 
     def mk_rule(self, lib, context):
-        if "vendor_prefix" not in context:
-            context["vendor_prefix"] = "vendor"
+        vendor_prefix = context.pop("vendor_prefix", "vendor")
+        context["vendor_prefix"] = vendor_prefix
         if "node_pkg" not in context:
             context["node_pkg"] = lib
         context["lib"] = lib
+
+        if path := context.pop("path", None):
+            paths = {f"{lib}.esm.js": path}
+        else:
+            paths = context.pop("paths")
+
         method = context.pop("method")
         if method == "bash":
             cmds = context.pop("cmds")
         else:
             cmds = [self.commands[method].format(**context)]
 
-        context["target_file"] = "$(EXTENSION)/{vendor_prefix}/{lib}.esm.js".format(**context)
+        target_files = [f"$(EXTENSION)/{vendor_prefix}/{tf}" for tf in paths.keys()]
+        tf_str = " ".join(target_files)
+        self.out.writelines([f"{lib}: {tf_str}\n\n"])
 
-        rule = (
-            [
-                "{lib}: {target_file}".format(**context),
-                "",
-                "{target_file}: node_modules/{node_pkg}/{path}".format(**context),
-            ]
-            + ["\t" + cmd.format(**context) for cmd in cmds]
-            + [
-                "",
-            ]
-        )
+        for dest, src in paths.items():
+            context.update({"dest": f"$(EXTENSION)/{vendor_prefix}/{dest}", "src": src})
 
-        self.out.writelines([f"{line}\n" for line in rule])
+            rule = (
+                [
+                    "{dest}: node_modules/{node_pkg}/{src}".format(**context),
+                ]
+                + ["\t" + cmd.format(**context) for cmd in cmds]
+                + [
+                    "",
+                ]
+            )
 
-        yield "rm -f {target_file}".format(**context)
-        if "clean" in context:
-            cmd = context.pop("clean")
-            yield cmd.format(**context)
+            self.out.writelines([f"{line}\n" for line in rule])
+
+            yield "rm -f {dest}".format(**context)
+            if "clean" in context:
+                cmd = context.pop("clean")
+                yield cmd.format(**context)
 
     def mk_footer(self):
         libs = " ".join(self.vendored.keys())
