@@ -201,7 +201,18 @@ async function editorMutationCb(mutationList, observer) {
   return await doRenderPreview()
 }
 
+async function loadEmojiCompleter() {
+  const emojiCompleterEnabled = false
+  if (emojiCompleterEnabled) {
+    const autoEmoji = await import(messenger.runtime.getURL("./auto-emoji.js"))
+    return autoEmoji.init()
+  }
+  return null
+}
+
+let emojiDestroy
 ;(async () => {
+  emojiDestroy = await loadEmojiCompleter()
   MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,

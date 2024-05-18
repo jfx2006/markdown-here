@@ -53,3 +53,11 @@ vendored:
   dentity:
     path: src/dentity.js
     method: rollup
+
+  textcomplete:
+    path: contenteditable/src/index.ts
+    method: bash
+    node_pkg: '@textcomplete'
+    cmds:
+      - node tools/bundle-textcomplete.mjs
+      - cp -v textcomplete-bundle.mjs $@

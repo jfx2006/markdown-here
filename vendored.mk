@@ -45,6 +45,12 @@ marked-linkify-it: $(EXTENSION)/vendor/marked-linkify-it.esm.js
 $(EXTENSION)/vendor/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src/index.js
 	./tools/rollup.sh marked-linkify-it $<
 
+textcomplete: $(EXTENSION)/vendor/textcomplete.esm.js
+
+$(EXTENSION)/vendor/textcomplete.esm.js: node_modules/@textcomplete/contenteditable/src/index.ts
+	node tools/bundle-textcomplete.mjs
+	cp -v textcomplete-bundle.mjs $@
+
 turndown: $(EXTENSION)/vendor/turndown.esm.js
 
 $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
@@ -60,6 +66,7 @@ clean:
 	rm -f $(EXTENSION)/vendor/marked-extended-tables.esm.js
 	rm -f $(EXTENSION)/vendor/marked-highlight.esm.js
 	rm -f $(EXTENSION)/vendor/marked-linkify-it.esm.js
+	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity textcomplete
