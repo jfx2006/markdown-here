@@ -19,7 +19,7 @@ const loadEmoji = async () => {
     const _emojis = Object.entries(await response.json()).map(
       ([k, v]) => new Object({ key: k.replaceAll("_", " "), value: v }),
     )
-    _fuse = new Fuse(_emojis, { keys: ["key"] })
+    _fuse = new Fuse(_emojis, { keys: ["key"], includeMatches: true, includeScore: true })
   }
   return _fuse
 }
@@ -46,7 +46,7 @@ const loadEmoji = async () => {
 async function gatherCandidates(term, limit = 10) {
   const fuse = await loadEmoji()
   const results = fuse.search(term)
-  return results.slice(limit).map((obj) => [obj.item.key, obj.item.value])
+  return results.slice(0, limit).map((obj) => [obj.item.key, obj.item.value])
 }
 
 const CODEBLOCK = /`{3}/g
@@ -83,6 +83,9 @@ export function init() {
 
   const editor = new ContenteditableEditor(document.body)
   const textcomplete = new Textcomplete(editor, [EMOJI_STRATEGY])
+
+  textcomplete.dropdown.el.contentEditable = false
+  textcomplete.dropdown.el.setAttribute("_moz_resizing", false)
 
   const destroy = function () {
     linkElem.remove()

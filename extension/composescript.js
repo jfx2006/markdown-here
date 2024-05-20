@@ -212,7 +212,6 @@ async function loadEmojiCompleter() {
 
 let emojiDestroy
 ;(async () => {
-  emojiDestroy = await loadEmojiCompleter()
   MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,
@@ -222,4 +221,5 @@ let emojiDestroy
   }
   MsgMutationObserver = new MutationObserver(editorMutationCb)
   MsgMutationObserver.observe(window.document.body, mutation_config)
+  emojiDestroy = await loadEmojiCompleter()
 })()

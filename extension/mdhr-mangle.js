@@ -29,6 +29,9 @@ export class MdhrMangle {
   }
 
   async excludeContent() {
+    const emojiDrop = this.doc.querySelector("ul.dropdown-menu")
+    emojiDrop.remove()
+
     const excluded = this.doc.querySelectorAll(
       // eslint-disable-next-line max-len
       "body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
