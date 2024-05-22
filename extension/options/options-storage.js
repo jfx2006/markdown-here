@@ -42,6 +42,7 @@ export const kOptDefaults = {
   "forgot-to-render-check-enabled": true,
   "smart-replacements-enabled": true,
   "emoji-shortcode-enabled": true,
+  "emoji-autocomplete-enabled": true,
   "last-version": "0",
   "preview-width": 650,
   "saved-preview-width": 650,

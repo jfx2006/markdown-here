@@ -1,22 +1,21 @@
 .textcomplete-dropdown {
-  border: 1px solid #ddd;
-  background-color: white;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  border: 1px solid #aaa;
+  border-radius: 0.5rem;
+  background-color: Canvas;
   list-style: none;
   padding: 0;
   margin: 0;
+  min-width: 15rem;
 }
 .textcomplete-dropdown li {
   margin: 0;
 }
-.textcomplete-footer,
 .textcomplete-item {
-  border-top: 1px solid #ddd;
-}
-.textcomplete-item {
-  padding: 2px 5px;
+  padding: .5rem 1rem;
   cursor: pointer;
 }
 .textcomplete-item:hover,
 .textcomplete-item.active {
-  background-color: rgb(110, 183, 219);
+  background-color: rgb(154, 173, 243);
 }

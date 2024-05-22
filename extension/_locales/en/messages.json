@@ -105,6 +105,10 @@
     "message": "Enable :emoji: (Github style) Shortcodes",
     "description": "Label for enabling emoji shortcodes"
   },
+  "options_page__emoji_autocomplete_enabled_label": {
+    "message": "Enable Emoji auto-complete popup",
+    "description": "Label for enabling an auto-complete popup for emoji shortcodes"
+  },
   "options_page__hotkey_title": {
     "message": "Hotkey (aka keyboard shortcut)",
     "description": "A section title"

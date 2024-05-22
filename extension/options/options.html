@@ -105,10 +105,11 @@
             </div>
           </div>
 
-          <!-- Markdown Features -->
+          <!-- Options Page -->
           <div role="tabpanel" class="tab-pane fade active show" aria-labelledby="options-tab"
                id="options">
             <div class="card my-4 shadow">
+              <!-- User Interface -->
               <div class="card-header h4 rounded-0">
                 <span data-i18n="interface_mode">User Interface</span>
               </div>
@@ -129,6 +130,7 @@
               </div>
             </div>
             <div class="card my-4 shadow">
+              <!-- Options -->
               <div class="card-header h4 rounded-0">
                 <span data-i18n="options_title">Options</span>
               </div>
@@ -171,6 +173,7 @@
             </div>
 
             <div class="card my-4 shadow">
+              <!-- Markdown Features -->
               <div class="card-header h4 rounded-0">
                 <span data-i18n="features_title">Markdown Features</span>
               </div>
@@ -188,8 +191,7 @@
                     <input id="smart-replacements" class="form-check-input" type="checkbox"
                            name="smart-replacements-enabled" />
                     <label class="form-check-label" for="smart-replacements"
-                           data-i18n="smart_replacements_enabled_label">Enable "smart"
-                      replacements</label>
+                           data-i18n="smart_replacements_enabled_label">Enable "smart" replacements</label>
                     <div class="text-muted" data-i18n="smart_replacements_2"></div>
                   </div>
                 </div>
@@ -200,7 +202,12 @@
                     <label class="form-check-label" for="emoji-shortcode"
                            data-i18n="emoji_shortcode_enabled_label">Enable :emoji: (Github style)
                       Shortcodes</label>
-                    <!-- <div class="text-muted" data-i18n="smart_replacements_2"></div> -->
+                  </div>
+                  <div class="form-check" style="padding-left: 3em">
+                    <input id="emoji-autocomplete" class="form-check-input" type="checkbox"
+                           name="emoji-autocomplete-enabled" />
+                    <label class="form-check-label" for="emoji-autocomplete"
+                           data-i18n="emoji_autocomplete_enabled_label">Enable Emoji auto-complete popup</label>
                   </div>
                 </div>
                 <div class="form-group">
@@ -209,8 +216,7 @@
                       <input id="math-renderer-enabled" class="form-check-input" type="checkbox"
                              name="math-renderer-enabled" />
                       <label class="form-check-label" for="math-renderer-enabled"
-                             data-i18n="tex_math_title">TeX Mathematical
-                        Formulae Support</label>
+                             data-i18n="tex_math_title">TeX Mathematical Formulae Support</label>
                     </div>
                     <div class="input-wrapper-block">
                       <div class="form-check">

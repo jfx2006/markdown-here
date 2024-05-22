@@ -202,8 +202,9 @@ async function editorMutationCb(mutationList, observer) {
 }
 
 async function loadEmojiCompleter() {
-  const emojiCompleterEnabled = false
-  if (emojiCompleterEnabled) {
+  const OptionsStore = await import(messenger.runtime.getURL("/options/options-storage.js"))
+  const emojiCompleterEnabled = await OptionsStore.get("emoji-autocomplete-enabled")
+  if (emojiCompleterEnabled["emoji-autocomplete-enabled"] === "true") {
     const autoEmoji = await import(messenger.runtime.getURL("./auto-emoji.js"))
     return autoEmoji.init()
   }
