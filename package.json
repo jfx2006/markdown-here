@@ -25,6 +25,7 @@
     "@typescript-eslint/parser": "^7.8.0",
     "degausser": "^2.4.4",
     "dentity": "^1.2.1",
+    "emojibase-data": "^15.3.0",
     "esbuild": "^0.21.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",

@@ -59,10 +59,8 @@ turndown.esm.js:
 Installed in node_modules via pnpm. The vendor esm build is copied via `make turndown`.
 
 Emoji stuff:
-data/emoji_codes.json comes from: (MIT Licensed)
-https://cdn.jsdelivr.net/npm/emojibase-data@7.0.1/en/shortcodes/github.json
-It is downloaded via tools/emoji-grab.py, this script takes the original file and
-rewrites it into a {shortcode: unicodechar} format.
+Installed in node_modules via pnpm. The vendor esm build is copied via `make turndown`.
+
 marked-emoji.esm.js:
 https://raw.githubusercontent.com/UziTech/marked-emoji/v1.2.2/src/index.js
 

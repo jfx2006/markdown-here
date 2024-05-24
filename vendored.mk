@@ -10,6 +10,11 @@ dentity: $(EXTENSION)/vendor/dentity.esm.js
 $(EXTENSION)/vendor/dentity.esm.js: node_modules/dentity/src/dentity.js
 	./tools/rollup.sh dentity $<
 
+emoji_codes: $(EXTENSION)/data/emoji_codes.json
+
+$(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/github.json
+	python ./tools/emoji-grab.py $< $@
+
 highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
 $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.js
@@ -59,6 +64,7 @@ $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.
 clean:
 	rm -f $(EXTENSION)/vendor/degausser.esm.js
 	rm -f $(EXTENSION)/vendor/dentity.esm.js
+	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
 	rm -rf $(EXTENSION)/highlightjs/styles
 	rm -f $(EXTENSION)/vendor/marked.esm.js
@@ -69,4 +75,4 @@ clean:
 	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity textcomplete
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity textcomplete emoji_codes

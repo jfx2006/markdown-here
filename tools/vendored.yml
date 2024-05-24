@@ -61,3 +61,12 @@ vendored:
     cmds:
       - node tools/bundle-textcomplete.mjs
       - cp -v textcomplete-bundle.mjs $@
+
+  emoji_codes:
+    paths:
+      emoji_codes.json: en/shortcodes/github.json
+    method: bash
+    node_pkg: emojibase-data
+    vendor_prefix: data
+    cmds:
+      - python ./tools/emoji-grab.py $< $@

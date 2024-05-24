@@ -3,32 +3,13 @@
 Build emoji_codes.json file for the marked-emoji plugin.
 Uses emojbase-data to get the Github shortcodes.
 """
-import base64
-import hashlib
 import json
-import urllib.request
-
-EMOJI_DATA_URL = (
-    "https://cdn.jsdelivr.net/npm/emojibase-data@7.0.1/en/shortcodes/github.json"
-)
-SRI = "sha256-5a7Eb4HZlJ96h5mEoGiwQCCr3muluHSDcNOYktzP86A="
+import sys
 
 
-def check_sri(content, sri):
-    alg, hash = sri.split("-")
-    if alg not in ("sha256", "sha384", "sha512"):
-        raise Exception(f"Unsupported hash algorithm {alg}!")
-    hasher = hashlib.new(alg, content)
-    digest = hasher.digest()
-    my_hash = base64.standard_b64encode(digest).decode("ascii")
-    assert my_hash == hash
-
-
-def get_data(url):
-    with urllib.request.urlopen(url) as f:
-        data = f.read()
-    check_sri(data, SRI)
-    return json.loads(data)
+def get_data(source_file):
+    with open(source_file) as f:
+        return json.load(f)
 
 
 def gh_uni2entities(code):
@@ -49,8 +30,8 @@ def gh_uni2char(code):
     return char
 
 
-def main():
-    emoji_data = get_data(EMOJI_DATA_URL)
+def main(source, dest):
+    emoji_data = get_data(source)
     emoji_shortcuts = {}
     for gh_code, shortcuts in emoji_data.items():
         if type(shortcuts) == str:
@@ -59,7 +40,7 @@ def main():
         for s in shortcuts:
             emoji_shortcuts[s] = entities
 
-    with open("../extension/data/emoji_codes.json", "w") as fp:
+    with open(dest, "w") as fp:
         json.dump(
             emoji_shortcuts,
             fp,
@@ -70,4 +51,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1], sys.argv[2])
