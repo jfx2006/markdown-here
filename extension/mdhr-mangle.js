@@ -30,7 +30,9 @@ export class MdhrMangle {
 
   async excludeContent() {
     const emojiDrop = this.doc.querySelector("ul.dropdown-menu")
-    emojiDrop.remove()
+    if (emojiDrop) {
+      emojiDrop.remove()
+    }
 
     const excluded = this.doc.querySelectorAll(
       // eslint-disable-next-line max-len

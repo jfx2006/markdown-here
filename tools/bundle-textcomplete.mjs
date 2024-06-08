@@ -1,6 +1,14 @@
 import * as esbuild from "esbuild"
+import replacePlugin from "esbuild-plugin-replace-regex"
 
 let result = await esbuild.build({
+  plugins: [
+    replacePlugin({
+      filter: /Dropdown.ts$/,
+      patterns: [['addEventListener."click"', 'addEventListener("mousedown"']],
+      loader: "ts",
+    }),
+  ],
   alias: {
     "@textcomplete/core": "./node_modules/@textcomplete/core/src",
     "@textcomplete/contenteditable": "./node_modules/@textcomplete/contenteditable/src",

@@ -47,6 +47,9 @@ importers:
       esbuild:
         specifier: ^0.21.3
         version: 0.21.3
+      esbuild-plugin-replace-regex:
+        specifier: ^0.0.2
+        version: 0.0.2
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -1015,6 +1018,9 @@ packages:
   es6-promisify@7.0.0:
     resolution: {integrity: sha512-ginqzK3J90Rd4/Yz7qRrqUeIpe3TwSXTPPZtPne7tGBPeAaQiU8qt4fpKApnxHcq1AwtUdHVg5P77x/yrggG8Q==}
     engines: {node: '>=6'}
+
+  esbuild-plugin-replace-regex@0.0.2:
+    resolution: {integrity: sha512-kU3zfnr7cNMC5S0xIY+RdiFcJrUr1P892QAdFsD3FSefUk0C6rEWb1Oz/paRbwrU73x+Bu9YiwoenbtqSmtykg==}
 
   esbuild@0.21.3:
     resolution: {integrity: sha512-Kgq0/ZsAPzKrbOjCQcjoSmPoWhlcVnGAUo7jvaLHoxW1Drto0KGkR1xBNg2Cp43b9ImvxmPEJZ9xkfcnqPsfBw==}
@@ -3300,6 +3306,8 @@ snapshots:
   es6-error@4.1.1: {}
 
   es6-promisify@7.0.0: {}
+
+  esbuild-plugin-replace-regex@0.0.2: {}
 
   esbuild@0.21.3:
     optionalDependencies:
