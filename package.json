@@ -1,6 +1,6 @@
 {
   "name": "markdown-here-revival",
-  "version": "3.999.17",
+  "version": "3.999.18",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build",
@@ -14,7 +14,7 @@
   "author": "JFX",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@textcomplete/contenteditable": "^0.1.13",
     "@textcomplete/core": "^0.1.13",
@@ -22,11 +22,11 @@
     "@types/mocha": "^10.0.6",
     "@types/thunderbird-webext-browser": "^109.0.4",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/parser": "^7.12.0",
     "degausser": "^2.4.4",
     "dentity": "^1.2.1",
-    "emojibase-data": "^15.3.0",
-    "esbuild": "^0.21.3",
+    "emojibase-data": "^15.3.1",
+    "esbuild": "^0.21.4",
     "esbuild-plugin-replace-regex": "^0.0.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -41,10 +41,10 @@
     "marked-extended-tables": "file:@temp/marked-extended-tables",
     "marked-highlight": "^2.1.1",
     "marked-linkify-it": "^3.1.9",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.1",
     "rollup": "^4.17.2",
-    "turndown": "^7.1.3",
+    "turndown": "^7.2.0",
     "typescript": "^5.4.5",
-    "web-ext": "^7.11.0"
+    "web-ext": "^7.12.0"
   }
 }

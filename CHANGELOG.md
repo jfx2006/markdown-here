@@ -1,3 +1,9 @@
+## [4.0 beta 18]
+
+## New
+
+- Emoji autocomplete popup thingy
+
 ## [4.0 beta 17]
 
 ### Changed
