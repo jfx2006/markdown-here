@@ -9,7 +9,7 @@
  * Requires https://github.com/fregante/webext-options-sync
  */
 
-import { fetchExtFile } from "../async_utils.mjs"
+import { fetchExtFile } from "../wxfetch.mjs"
 import OptionsSync from "./mailext-options-sync.js"
 import {
   migrate_badMathValue,
@@ -82,4 +82,5 @@ function MDHROptionsStore() {
   })
 }
 
-export default MDHROptionsStore()
+export const OptionsStore = MDHROptionsStore()
+export default OptionsStore

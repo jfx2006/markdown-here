@@ -5,32 +5,9 @@
  */
 
 import OptionsStore from "./options/options-storage.js"
+import { fetchExtFile, wxGetUrl } from "./wxfetch.mjs"
 
-export function wxGetUrl(path) {
-  const url = window.messenger?.runtime.getURL(path)
-  if (url) {
-    return url
-  }
-  if (path.startsWith("/")) {
-    const slashroot = document.querySelector("meta[name=slashroot]").content || "."
-    path = `${slashroot}${path}`
-  }
-  const u = new URL(path, location.href)
-  return u.href
-}
-
-export async function fetchExtFile(path, json = false) {
-  const url = wxGetUrl(path)
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(`Error fetching ${path}: ${response.status}`)
-  }
-  if (json) {
-    return await response.json()
-  } else {
-    return await response.text()
-  }
-}
+export { fetchExtFile, wxGetUrl } from "./wxfetch.mjs"
 
 export const HLJS_STYLES_PATH = "/highlightjs/styles"
 const FALLBACK_HLJS_CSS = "nnfx-light.css"
