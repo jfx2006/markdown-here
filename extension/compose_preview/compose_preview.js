@@ -109,6 +109,7 @@ async function disableForPlainText(winId) {
 }
 
 async function togglePreview(winId) {
+  const context = await messenger.ex_customui.getContext()
   const win = await messenger.windows.get(winId, {
     populate: true,
     windowTypes: ["messageCompose"],
