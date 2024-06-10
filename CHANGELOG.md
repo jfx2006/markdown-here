@@ -1,3 +1,9 @@
+## [4.0 beta 19]
+
+## Fixed
+
+- Preview toggle issues
+
 ## [4.0 beta 18]
 
 ## New
