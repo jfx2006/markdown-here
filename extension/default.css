@@ -187,3 +187,12 @@ table tr th {
 img.math_texzilla {
   margin-bottom: -4px;
 }
+
+/* task list */
+.task-list-item {
+	list-style: none;
+}
+.task-list-item-checkbox {
+    margin: 0 .2em .25em -1.6em;
+    vertical-align: middle;
+}

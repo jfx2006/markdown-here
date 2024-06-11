@@ -1,3 +1,9 @@
+## [4.0 beta 20]
+
+## Fixed
+
+- Update default CSS to handle GFM tasklists like Github does (no bullets) #87
+
 ## [4.0 beta 19]
 
 ## Fixed
