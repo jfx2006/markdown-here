@@ -81,8 +81,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(marked@12.0.2)
       marked-extended-tables:
-        specifier: file:@temp/marked-extended-tables
-        version: file:@temp/marked-extended-tables(marked@12.0.2)
+        specifier: 1.0.8
+        version: 1.0.8(marked@12.0.2)
       marked-highlight:
         specifier: ^2.1.1
         version: 2.1.1(marked@12.0.2)
@@ -1626,10 +1626,10 @@ packages:
     peerDependencies:
       marked: '>=4 <13'
 
-  marked-extended-tables@file:@temp/marked-extended-tables:
-    resolution: {directory: '@temp/marked-extended-tables', type: directory}
+  marked-extended-tables@1.0.8:
+    resolution: {integrity: sha512-GcVQP7EnfQ98o09ooqM4t4M0qfpKdKuk7/z4qZfgkLyXTXsIyFS1eeBmfC36o1NbR6aSq8ynL/LeTz3w4RS27Q==}
     peerDependencies:
-      marked: '>=3 <13'
+      marked: '>=3 <12'
 
   marked-highlight@2.1.1:
     resolution: {integrity: sha512-ktdqwtBne8rim5mb+vvZ9FzElGFb+CHCgkx/g6DSzTjaSrVnxsJdSzB5YgCkknFrcOW+viocM1lGyIjC0oa3fg==}
@@ -3902,7 +3902,7 @@ snapshots:
     dependencies:
       marked: 12.0.2
 
-  marked-extended-tables@file:@temp/marked-extended-tables(marked@12.0.2):
+  marked-extended-tables@1.0.8(marked@12.0.2):
     dependencies:
       marked: 12.0.2
 

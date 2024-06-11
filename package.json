@@ -13,6 +13,13 @@
   "private": true,
   "author": "JFX",
   "license": "MIT",
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "marked-extended-tables@1.0.8>marked": "12"
+      }
+    }
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -38,7 +45,7 @@
     "highlight.js": "^11.9.0",
     "marked": "^12.0.2",
     "marked-emoji": "^1.4.0",
-    "marked-extended-tables": "file:@temp/marked-extended-tables",
+    "marked-extended-tables": "1.0.8",
     "marked-highlight": "^2.1.1",
     "marked-linkify-it": "^3.1.9",
     "prettier": "^3.3.1",
