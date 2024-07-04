@@ -93,10 +93,14 @@ class LocaleMaker {
     this.default = JSON.parse(JSON.stringify(data))
     const docfrag = document.createDocumentFragment()
 
-    Object.keys(data).forEach((item) => {
+    let item
+    for (item of Object.keys(data)) {
       if (item === "extensionName") {
         document.title += " - " + data[item].message
         return // keep extension name
+      }
+      if (item === "__WET_LOCALE__") {
+        continue
       }
       const tr = this.trTemplate.cloneNode(true)
       if (item.startsWith("__WET_GROUP__")) {
@@ -115,7 +119,7 @@ class LocaleMaker {
         )
       }
       docfrag.appendChild(tr)
-    })
+    }
     this.tbody.appendChild(docfrag)
 
     this.inputs = document.querySelectorAll("td input")
