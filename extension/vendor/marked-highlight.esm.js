@@ -32,8 +32,15 @@ export function markedHighlight(options) {
       }
       updateToken(token)(code);
     },
+    useNewRenderer: true,
     renderer: {
       code(code, infoString, escaped) {
+        // istanbul ignore next
+        if (typeof code === 'object') {
+          escaped = code.escaped;
+          infoString = code.lang;
+          code = code.text;
+        }
         const lang = getLang(infoString);
         const classAttr = lang
           ? ` class="${options.langPrefix}${escape(lang)}"`

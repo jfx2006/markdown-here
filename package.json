@@ -16,7 +16,7 @@
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
-        "marked-extended-tables@1.0.8>marked": "12"
+        "marked-extended-tables@1.0.8>marked": "13"
       }
     }
   },
@@ -26,32 +26,32 @@
     "@textcomplete/contenteditable": "^0.1.13",
     "@textcomplete/core": "^0.1.13",
     "@textcomplete/utils": "^0.1.13",
-    "@types/mocha": "^10.0.6",
-    "@types/thunderbird-webext-browser": "^109.0.4",
+    "@types/mocha": "^10.0.7",
+    "@types/thunderbird-webext-browser": "^127.0.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.12.0",
+    "@typescript-eslint/parser": "^7.16.1",
     "degausser": "^2.4.4",
     "dentity": "^1.2.1",
-    "emojibase-data": "^15.3.1",
-    "esbuild": "^0.21.4",
+    "emojibase-data": "^15.3.2",
+    "esbuild": "^0.23.0",
     "esbuild-plugin-replace-regex": "^0.0.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-html": "^8.1.1",
     "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
     "eslint-plugin-no-unsanitized": "^4.0.2",
-    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-prettier": "^5.2.1",
     "eventemitter3": "^5.0.1",
     "highlight.js": "^11.9.0",
-    "marked": "^12.0.2",
-    "marked-emoji": "^1.4.0",
+    "marked": "^13.0.2",
+    "marked-emoji": "^1.4.1",
     "marked-extended-tables": "1.0.8",
-    "marked-highlight": "^2.1.1",
-    "marked-linkify-it": "^3.1.9",
-    "prettier": "^3.3.1",
+    "marked-highlight": "^2.1.3",
+    "marked-linkify-it": "^3.1.10",
+    "prettier": "^3.3.3",
     "rollup": "^4.17.2",
     "turndown": "^7.2.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.3",
     "web-ext": "^7.12.0"
   }
 }
