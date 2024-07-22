@@ -24,7 +24,7 @@ const OLD_CSS_SUMS = [
 
 // Checksum of the current version of default.css
 // 3.999.20
-const DEFAULT_CSS_SUM = "e88222817d037cc4f2d5ae63c207dcadaf8153ef0e52f66b2392b68f915543b9"
+const DEFAULT_CSS_SUM = "9a35df2a345ea9a92cdbe0b6660d47a0dc5a88b096890a34d1e4388ea813e59c"
 
 export function testCssSum(checksum) {
   // Checks the default.css checksum to ensure the above are correct

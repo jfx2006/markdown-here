@@ -20,7 +20,6 @@ import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
 import { urlSchemify } from "./marked-link-scheme.esm.js"
-import { taskListRenderer } from "./marked-tasklists.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -50,7 +49,6 @@ export async function resetMarked(userprefs) {
   }
 
   marked.setOptions(markedOptions)
-  marked.use(taskListRenderer())
   marked.use(urlSchemify())
   marked.use(markedExtendedTables())
   marked.use(markedLinkifyIt({}, { fuzzyLink: false }))

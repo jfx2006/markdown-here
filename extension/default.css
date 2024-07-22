@@ -189,10 +189,10 @@ img.math_texzilla {
 }
 
 /* task list */
-.task-list-item {
+li:has(> input) {
 	list-style: none;
 }
-.task-list-item-checkbox {
+li > input{
     margin: 0 .2em .25em -1.6em;
     vertical-align: middle;
 }
