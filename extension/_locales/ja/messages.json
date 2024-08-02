@@ -5,59 +5,40 @@
     "hash": "edf09063590176700ead1a22bf3a5937"
   },
   "app_slogan": {
-    "message": "Markdown emails for Mozilla Thunderbird",
+    "message": "Mozilla ThunderbirdのMarkdownメール",
     "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
-
-  "__WET_GROUP__application": { "message": "Application" },
-  "toggle_button_tooltip": {
-    "message": "クリックでMarkdownにレンダリング",
+  "__WET_GROUP__application": {
+    "message": "アプリケーション",
+    "hash": "705a7139d345ac5faa9a3cfc7114e189"
+  },
+  "toggle_button_tooltip_enable": {
+    "message": "マークダウンプレビューを有効にする",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
-    "hash": "3bc9f4a63b89c5b8074cda8fb4899226"
+    "hash": "d9cb83c089cf43059f988f5bb25d6ad9"
   },
-  "toggle_button_tooltip_disabled": {
-    "message": "このフィールドではレンダリングできません",
-    "description": "text shown when user hover mouse over disabled Markdown Toggle button",
-    "hash": "2af454f8549b5eaf47e81091f9608279"
-  },
-  "plain_text_compose": {
-    "message": "プレーンテキストエディタでは使用できません。$APPNAME$を使うためにはリッチエディタに変更する必要があります。",
-    "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    },
-    "hash": "d4193cf5d1751aef08b349322be35a5a"
-  },
-  "unrender_button": {
-    "message": "Unrender",
-    "description": "Button label to revert rendered Markdown",
-    "hash": "2084a9f0d626e52ba79a1ecaf470497e"
-  },
-  "unrendering_modified_markdown_warning": {
-    "message": "このテキストはレンダリング後に変更されています。\nMarkdownに戻した場合、それらの変更は失われます。\n\nMarkdownに戻しますか?",
-    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed.",
-    "hash": "f66b39d56c77dd84c6c2bdabad1f29fb"
+  "toggle_button_tooltip_disable": {
+    "message": "無効なマークダウンプレビュー",
+    "description": "text shown when user hovers mouse over Markdown Toggle button",
+    "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
   "upgrade_notification_text": {
     "message": "$APPNAME$ がアップデートされました",
     "description": "Text on the notification shown when Markdown Here has been updated",
     "placeholders": {
-      "appname": { "content": "$1" }
+      "appname": {
+        "content": "$1"
+      }
     },
     "hash": "76796ecd460f742236be591169ce278b"
   },
   "update_notes_button": {
-    "message": "Update Notes",
+    "message": "更新情報",
     "hash": "fef3aae852e44ea637393db11e0da28a"
   },
   "cancel_button": {
-    "message": "Cancel",
+    "message": "キャンセル",
     "hash": "17aa19f18a894459ab6ff21156e8a341"
-  },
-  "context_menu_item": {
-    "message": "Markdownを有効化/無効化",
-    "description": "Text shown on the context menu.",
-    "hash": "a1a283d948a9ceae00725349176065ab"
   },
   "forgot_to_render_back_button": {
     "message": "戻る",
@@ -84,55 +65,85 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
-  "invalid_field": {
-    "message": "このテキストフィールドではMarkdownにレンダリングできません。リッチテキストフィールドで行なってください。",
-    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered",
-    "hash": "b872064a02c3f0ecfa92a225e6d30ccf"
+  "__WET_GROUP__settings": {
+    "message": "拡張設定ページ",
+    "hash": "ce17411c17caa2a7736b05051cd1b2e2"
   },
-  "nothing_to_render": {
-    "message": "レンダリングするものも元に戻すものも見つかりませんでした。",
-    "description": "Error message shown to user if there's nothing found to revert or render.",
-    "hash": "1cdbc3e0314a985039d6c9cf27e20c9e"
-  },
-
-  "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
     "message": "$APPNAME$ の設定",
     "placeholders": {
-      "appname": { "content": "$1" }
+      "appname": {
+        "content": "$1"
+      }
     },
     "hash": "fefb9554fa7cc03466d11dd0e706bb2e"
   },
-
-  "__WET_GROUP__options": { "message": "Options" },
+  "__WET_GROUP__options": {
+    "message": "オプション",
+    "hash": "531dad0078a72193602b18495f0ad4e9"
+  },
   "options_page__options_title": {
     "message": "の設定",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
+  "options_page__interface_mode": {
+    "message": "ユーザーインターフェイス",
+    "description": "Label for selecting the user interface mode (eg. modern or classic modes)",
+    "hash": "a827c951ef7fe2da75ebc58baf88287f"
+  },
+  "options_page__mdhr_classic_mode": {
+    "message": "pre-4.0 (classic) モードを使用する",
+    "description": "Label for selecting classic UI",
+    "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
+  },
+  "options_page__mdhr_modern_mode": {
+    "message": "ライブプレビュー(モダン)モードを使用する",
+    "description": "Label for selecting modern UI",
+    "hash": "fd781763933043b55578498058686099"
+  },
   "options_page__forgot_to_render_label2": {
-    "message": "レンダリング忘れ」チェックを有効にする。",
+    "message": "レジデントツーベンダーチェックを有効にします",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
-    "hash": "2c89383ef981e027e75be9e47f6d4297"
+    "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "メールを送るとき、レンダリングせずに生のMarkdownテキストのまま (つまり、\"Markdown 切り替え\"を押し忘れている) かどうか送信前にチェックします。うっとうしい場合は無効にすることを推奨します。",
+    "message": "メールを送ると、Markdownで書いたような内容が確認されるので、\nしかし、それをレンダリングするのを忘れないでください(すなわち、送信する前に「マークダウントグル」をクリックします)。\nこれは、電子メールを送信するあなたの能力を妨げる場合は、無効にする必要があります。",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
-    "hash": "ee2c5919a16190356cb0b5802dbe6e48"
+    "hash": "1c100cda3b6f6da50138458b785b47cb"
+  },
+  "options_page__composer_start_markdown_mode": {
+    "message": "マークダウンモードでコンポーザーを起動する",
+    "hash": "97a0a3d24c0345f5347393de128d07d0"
+  },
+  "options_page__features_title": {
+    "message": "マークダウンの特徴",
+    "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",
+    "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
   "options_page__gfm_line_breaks_enabled_label": {
-    "message": "<b>Enable GFM line breaks.</b>",
+    "message": "GFM ラインブレイクを有効にします。",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
   "options_page__smart_replacements_enabled_label": {
-    "message": "Enable \"smart\" typographic replacements",
+    "message": "'smart' のタイポグラフィ交換を有効にします。",
     "description": "Label for enabling the smart replacements feature",
-    "hash": "a460151f688d7d592aa246379fcbb609"
+    "hash": "d53c8006f33df32034b4e13dec238738"
   },
   "options_page__smart_replacements_2": {
-    "message": "Smart replacements include: unicode quotes, en- and em-dash, ellipses, and arrow replacements",
+    "message": "スマートな取り替えは下記のものを含んでいます:Unicodeの引用符、enおよびemダッシュ、楕円および矢の取り替え",
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
+  },
+  "options_page__emoji_shortcode_enabled_label": {
+    "message": ":emoji を有効にする: (Github スタイル) ショートコード",
+    "description": "Label for enabling emoji shortcodes",
+    "hash": "b20f1c09d205160478c354cfd2aefc59"
+  },
+  "options_page__emoji_autocomplete_enabled_label": {
+    "message": "Emojiオートコンプリートポップアップを有効にする",
+    "description": "Label for enabling an auto-complete popup for emoji shortcodes",
+    "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
   "options_page__hotkey_title": {
     "message": "ホットキー (キーボード・ショートカット)",
@@ -143,44 +154,62 @@
     "message": "TeXでの数式記述サポート",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
+  "options_page__tex_math_texzilla_label": {
+    "message": "TeXZillaとHTMLキャンバスレンダリング",
+    "description": "Label for tex math rendering option",
+    "hash": "c210e3a6960c6d788491ac424f16c7a3"
+  },
+  "options_page__tex_math_texzilla_label-Title": {
+    "message": "ブラウザのキャンバスを使ってTeXZilla.jsで数学の式がレンダリングされます。 ネットワーク送信は行いません。",
+    "description": "description how math is rendered when TexZilla option is selected",
+    "hash": "ead94268f19cef4441fc69f97689d9b6"
+  },
+  "options_page__tex_math_gchart_label": {
+    "message": "Google チャート API を使用した数学レンダリング(非推奨)",
+    "description": "Label for GChart math rendering option",
+    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  },
   "options_page__tex_math_gchart_label-Title": {
     "message": "数式の画像を生成するためにGoogleにリクエストを送信します。 これはGoogleにあなたの数式が共有されることを意味します。 また、レンダリングされた画像を取得するためにGoogleにリクエストを送信することも意味します。",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
   },
-
-  "__WET_GROUP__usage": { "message": "Howto" },
+  "__WET_GROUP__usage": {
+    "message": "ハウツー",
+    "hash": "71ec48cc2984647ec331a3bcee3a9610"
+  },
+  "options_page__howto": {
+    "message": "ハウツー",
+    "hash": "71ec48cc2984647ec331a3bcee3a9610"
+  },
   "options_page__basic_usage": {
     "message": "基本的な使い方",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
-  "options_page__start_new_message": {
-    "message": "電子メールの画面を開きます。",
-    "description": "A step in the basic usage instructions",
-    "hash": "b109e639b6a4a080cbf6533b363953b9"
+  "options_page__start_new_message_toggle": {
+    "message": "新しいメールメッセージを開始する。 コンポーザーをツールバーのアクションボタンでマークダウンモードに切り替えます。",
+    "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
     "message": "Markdownで電子メールを書いてみましょう。<br/>例: <code>*Hello* `Markdown` **Here**!</code>",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "`Markdown` **Here** _Revival_!",
+    "message": "マークダウン **Here** _リバイバル_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
-  "options_page__click_toggle2": {
-    "message": "Click the compose action button on the format toolbar.",
-    "description": "A step in the basic usage instructions",
-    "hash": "5cff03024fcd99c85e11e5ef45a9ff8d"
+  "options_page__compose_live_preview": {
+    "message": "ライブプレビューの更新は、メッセージを書きます。",
+    "hash": "549af642c5b973f9b4c4c304eb004475"
+  },
+  "options_page__compose_send_message": {
+    "message": "お問い合わせ",
+    "hash": "4ab42a8334e6c82218c00d007d10fae5"
   },
   "options_page__toggle_hotkey": {
-    "message": "Or use the hotkey:",
+    "message": "またはホットキーを使用する:",
     "description": "A step suggestion in the basic usage instructions",
     "hash": "64f745514a24fa38ae148ef25745c835"
-  },
-  "options_page__pretty_cool": {
-    "message": "メッセージが綺麗に格好よくなります。 さぁ、友達に送信しよう!",
-    "description": "A step in the basic usage instructions",
-    "hash": "6edecd307fe1c627181b007fbe1cc456"
   },
   "options_page__resources_title": {
     "message": "レファレンスとリンク",
@@ -192,15 +221,17 @@
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
-    "message": "Markdown Here Revival wiki",
+    "message": "マークダウン ここでリバイバルウィキ",
     "hash": "31514a95d56ddc2d8df5c4d15439d17f"
   },
   "options_page__tips_tricks_link": {
-    "message": "Tips and Tricks",
-    "hash": "0c17546aca51dff7b1014d20502cb526"
+    "message": "ヒントとコツ",
+    "hash": "c17546aca51dff7b1014d20502cb526"
   },
-
-  "__WET_GROUP__theme": { "message": "Theme" },
+  "__WET_GROUP__theme": {
+    "message": "テーマ:",
+    "hash": "9da24ca7508eb181c632829fd698be9a"
+  },
   "options_page__primary_css_title": {
     "message": "スタイリングCSS",
     "description": "section title",
@@ -221,29 +252,50 @@
     "description": "section title for the Markdown preview section",
     "hash": "b2ce6f78ea0a002ab97efea02562c3c0"
   },
-
-  "__WET_GROUP__about": { "message": "About" },
+  "__WET_GROUP__about": {
+    "message": "お問い合わせ",
+    "hash": "da73d37076fcb711ec18ea36c7efb1d5"
+  },
+  "options_page__about": {
+    "message": "お問い合わせ",
+    "hash": "da73d37076fcb711ec18ea36c7efb1d5"
+  },
   "options_page__report_bugs_title": {
-    "message": "Report bugs",
+    "message": "バグ報告",
     "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
   },
   "options_page__create_gitlab_issue": {
-    "message": "Create new issue on GitLab",
+    "message": "GitLabの新しい問題を作成する",
     "description": "Text linking to Gitlab issue creation page",
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
   "options_page__issue_debug_info": {
-    "message": "The following debug info can be used:",
+    "message": "以下のデバッグ情報を使うことができます。",
     "description": "header for some extension debug information",
     "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
   },
   "options_page__debug_copy_clipboard": {
-    "message": "Copy to clipboard",
+    "message": "クリップボードへのコピー",
     "description": "button for copying debug information to the clipboard",
     "hash": "17b6a865f4e197dcff670c9ac12517a1"
   },
+  "options_page__translate": {
+    "message": "ログイン",
+    "description": "Used in a link to open Locale Maker",
+    "hash": "a8d574720117a40a83469771b9a4825d"
+  },
+  "options_page__localemaker_1": {
+    "message": "Locale Maker は、Firefox 用の FireMonkey エクステンションからブラント的にコピーされます。",
+    "description": "Description of Locale Maker source.",
+    "hash": "22a4387b17e1ba4776709abc0543afa4"
+  },
+  "options_page__localemaker_2": {
+    "message": "誠に有難うございます。",
+    "description": "Credit to Locale Maker author.",
+    "hash": "fa17dd5843873b9c6fe69dfbedb640a3"
+  },
   "options_page__changelog_title": {
-    "message": "Changelog",
+    "message": "変更履歴",
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
@@ -251,11 +303,18 @@
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
-  "options_page__reset_button": {
-    "message": "Reset",
-    "description": "used for resetting certain options to the default",
-    "hash": "0d25968a7dfc21f95043a86dd5373b81"
+  "options_page__invalid_hotkey": {
+    "message": "無効なホットキー!",
+    "description": "message that shows when an invalid hotkey combination was entered",
+    "hash": "54331fedbb67ec446035ce5b0b51b92"
   },
-
-  "__WET_LOCALE__": { "message": "ja" }
+  "options_page__reset_button": {
+    "message": "リセット",
+    "description": "used for resetting certain options to the default",
+    "hash": "d25968a7dfc21f95043a86dd5373b81"
+  },
+  "__WET_LOCALE__": {
+    "message": "お問い合わせ",
+    "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
+  }
 }

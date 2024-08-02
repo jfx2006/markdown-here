@@ -8,43 +8,37 @@
     "message": "Courriels en format Markdown pour Mozilla Thunderbird",
     "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
-
-  "__WET_GROUP__application": { "message": "Application" },
-  "toggle_button_tooltip": {
-    "message": "Cliquez pour basculer vers le rendu Markdown",
+  "__WET_GROUP__application": {
+    "message": "Demande",
+    "hash": "705a7139d345ac5faa9a3cfc7114e189"
+  },
+  "toggle_button_tooltip_enable": {
+    "message": "Activer l'aperçu de balisage",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
-    "hash": "3bc9f4a63b89c5b8074cda8fb4899226"
+    "hash": "d9cb83c089cf43059f988f5bb25d6ad9"
   },
-  "toggle_button_tooltip_disabled": {
-    "message": "Le champ sélectionné n'est pas valide pour un rendu avec Markdown",
-    "description": "text shown when user hover mouse over disabled Markdown Toggle button",
-    "hash": "2af454f8549b5eaf47e81091f9608279"
-  },
-  "plain_text_compose": {
-    "message": "Vous utilisez un éditeur de texte simple. Changez pour un éditeur de texte enrichi pour utiliser $APPNAME$.",
-    "description": "Shown in an alert dialog if the user has their email compose app set to plain text",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    },
-    "hash": "d4193cf5d1751aef08b349322be35a5a"
-  },
-  "unrendering_modified_markdown_warning": {
-    "message": "Le rendu Markdown semble avoir été modifié.\nBasculer fera perdre tous les changements.\n\nVoulez-vous vraiment basculer le rendu ?",
-    "description": "Warning shown to the user if she tries to revert some rendered Markdown that they've modified since rendering. The user will lose their modifications if they proceed.",
-    "hash": "f66b39d56c77dd84c6c2bdabad1f29fb"
+  "toggle_button_tooltip_disable": {
+    "message": "Désactiver l'aperçu du balisage",
+    "description": "text shown when user hovers mouse over Markdown Toggle button",
+    "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
   "upgrade_notification_text": {
     "message": "$APPNAME$ mis à jour",
     "description": "Text on the notification shown when Markdown Here has been updated",
     "placeholders": {
-      "appname": { "content": "$1" }
+      "appname": {
+        "content": "$1"
+      }
     },
     "hash": "76796ecd460f742236be591169ce278b"
   },
-  "context_menu_item": {
-    "message": "Basculer vers Markdown",
-    "description": "Text shown on the context menu.",
-    "hash": "a1a283d948a9ceae00725349176065ab"
+  "update_notes_button": {
+    "message": "Mise à jour des notes",
+    "hash": "fef3aae852e44ea637393db11e0da28a"
+  },
+  "cancel_button": {
+    "message": "Annuler",
+    "hash": "17aa19f18a894459ab6ff21156e8a341"
   },
   "forgot_to_render_back_button": {
     "message": "Retour",
@@ -71,45 +65,85 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
-  "invalid_field": {
-    "message": "Le champ sélectionné n'est pas valide pour un rendu avec Markdown. Utilisez un éditeur de texte enrichi.",
-    "description": "Shown in an alert dialog if the user tries to render a field that cannot be rendered",
-    "hash": "b872064a02c3f0ecfa92a225e6d30ccf"
+  "__WET_GROUP__settings": {
+    "message": "Paramètres d'extension Pages",
+    "hash": "ce17411c17caa2a7736b05051cd1b2e2"
   },
-  "nothing_to_render": {
-    "message": "Il n'y a rien à rendre en Markdown ou à rétablir",
-    "description": "Error message shown to user if there's nothing found to revert or render.",
-    "hash": "1cdbc3e0314a985039d6c9cf27e20c9e"
-  },
-
-  "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
     "message": "Options de $APPNAME$",
     "placeholders": {
-      "appname": { "content": "$1" }
+      "appname": {
+        "content": "$1"
+      }
     },
     "hash": "fefb9554fa7cc03466d11dd0e706bb2e"
   },
-
-  "__WET_GROUP__options": { "message": "Options" },
+  "__WET_GROUP__options": {
+    "message": "Options",
+    "hash": "531dad0078a72193602b18495f0ad4e9"
+  },
   "options_page__options_title": {
     "message": "Options",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
+  "options_page__interface_mode": {
+    "message": "Interface utilisateur",
+    "description": "Label for selecting the user interface mode (eg. modern or classic modes)",
+    "hash": "a827c951ef7fe2da75ebc58baf88287f"
+  },
+  "options_page__mdhr_classic_mode": {
+    "message": "Utiliser le mode pré-4.0 (classique)",
+    "description": "Label for selecting classic UI",
+    "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
+  },
+  "options_page__mdhr_modern_mode": {
+    "message": "Utiliser le mode de prévisualisation en direct (moderne)",
+    "description": "Label for selecting modern UI",
+    "hash": "fd781763933043b55578498058686099"
+  },
   "options_page__forgot_to_render_label2": {
-    "message": "Activez la vérification de l'oubli.",
+    "message": "Activer la vérification de l'oubli de la soumission",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
-    "hash": "2c89383ef981e027e75be9e47f6d4297"
+    "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "Lorsque vous envoyez un courriel, l'extension vérifie le contenu pour voir si vous l'avez écrit en Markdown, mais que vous avez oublié de faire le rendu (en cliquant sur « Basculer vers Markdown ») avant de l'envoyer. Cette option peut être désactivée si elle interfère avec votre capacité à envoyer des courriels.",
+    "message": "Lorsque vous envoyez un email, cela vérifie le contenu pour voir s'il ressemble à vous l'avez écrit dans Markdown,\nmais a oublié de le rendre (c.-à-d., cliquez sur 'Markdown Toggle') avant d'envoyer.\nCela peut être désactivé s'il interfère avec votre capacité d'envoyer des courriels.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
-    "hash": "ee2c5919a16190356cb0b5802dbe6e48"
+    "hash": "1c100cda3b6f6da50138458b785b47cb"
+  },
+  "options_page__composer_start_markdown_mode": {
+    "message": "Démarrer le compositeur en mode balisage",
+    "hash": "97a0a3d24c0345f5347393de128d07d0"
+  },
+  "options_page__features_title": {
+    "message": "Caractéristiques du marquage",
+    "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",
+    "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
   "options_page__gfm_line_breaks_enabled_label": {
     "message": "Activer les sauts de ligne GFM.",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
+  },
+  "options_page__smart_replacements_enabled_label": {
+    "message": "Activer les remplacements typographiques « intelligents »",
+    "description": "Label for enabling the smart replacements feature",
+    "hash": "d53c8006f33df32034b4e13dec238738"
+  },
+  "options_page__smart_replacements_2": {
+    "message": "Les remplacements intelligents comprennent : guillemets unicode, en- et em-dash, ellipses et remplacements de flèches",
+    "description": "An explanation of what smart replacements are",
+    "hash": "5f91244199941f295456a0c754f51ddf"
+  },
+  "options_page__emoji_shortcode_enabled_label": {
+    "message": "Activer :emoji : (style github) Codes courts",
+    "description": "Label for enabling emoji shortcodes",
+    "hash": "b20f1c09d205160478c354cfd2aefc59"
+  },
+  "options_page__emoji_autocomplete_enabled_label": {
+    "message": "Activer le popup Emoji automatique",
+    "description": "Label for enabling an auto-complete popup for emoji shortcodes",
+    "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
   "options_page__hotkey_title": {
     "message": "Raccourci clavier",
@@ -120,34 +154,62 @@
     "message": "Support des formules mathématiques TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
+  "options_page__tex_math_texzilla_label": {
+    "message": "rendu TeXZilla et HTML Canvas",
+    "description": "Label for tex math rendering option",
+    "hash": "c210e3a6960c6d788491ac424f16c7a3"
+  },
+  "options_page__tex_math_texzilla_label-Title": {
+    "message": "Les formules mathématiques sont rendues avec TeXZilla.js en utilisant la toile du navigateur. Aucune demande de réseau n'est envoyée.",
+    "description": "description how math is rendered when TexZilla option is selected",
+    "hash": "ead94268f19cef4441fc69f97689d9b6"
+  },
+  "options_page__tex_math_gchart_label": {
+    "message": "rendu de mathématiques en utilisant l'API Google Chart (déprécié)",
+    "description": "Label for GChart math rendering option",
+    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  },
   "options_page__tex_math_gchart_label-Title": {
     "message": "Afin de générer une image pour la formule, une requête est effectuée chez Google. Cela signifie concrètement que vous partagez cette formule avec Google. Cela signifie également que les destinataires de votre message feront également une requête chez Google pour afficher cette image.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
   },
-
-  "__WET_GROUP__usage": { "message": "Howto" },
+  "__WET_GROUP__usage": {
+    "message": "Comment",
+    "hash": "71ec48cc2984647ec331a3bcee3a9610"
+  },
+  "options_page__howto": {
+    "message": "Comment",
+    "hash": "71ec48cc2984647ec331a3bcee3a9610"
+  },
   "options_page__basic_usage": {
     "message": "Utilisation de base",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
-  "options_page__start_new_message": {
-    "message": "Commencez un nouveau courriel.",
-    "description": "A step in the basic usage instructions",
-    "hash": "b109e639b6a4a080cbf6533b363953b9"
+  "options_page__start_new_message_toggle": {
+    "message": "Démarrer un nouveau courriel. Basculez le compositeur en mode balisage avec le bouton action de la barre d'outils format.",
+    "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
     "message": "Écrivez un peu de Markdown dans le courriel. Essayez ceci:",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "`Markdown` **Here** _Revival_!",
+    "message": "'Marquage' **Voici** _Renouveau_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
-  "options_page__pretty_cool": {
-    "message": "Le courriel devrait maintenant être plutôt attrayant. Envoyez-le à vos amis!",
-    "description": "A step in the basic usage instructions",
-    "hash": "6edecd307fe1c627181b007fbe1cc456"
+  "options_page__compose_live_preview": {
+    "message": "Les mises à jour d'aperçu en direct lorsque vous écrivez votre message.",
+    "hash": "549af642c5b973f9b4c4c304eb004475"
+  },
+  "options_page__compose_send_message": {
+    "message": "Envoyez votre message !",
+    "hash": "4ab42a8334e6c82218c00d007d10fae5"
+  },
+  "options_page__toggle_hotkey": {
+    "message": "Ou utilisez la touche :",
+    "description": "A step suggestion in the basic usage instructions",
+    "hash": "64f745514a24fa38ae148ef25745c835"
   },
   "options_page__resources_title": {
     "message": "Ressources et Liens",
@@ -158,8 +220,18 @@
     "message": "l'aide mémoire Markdown Here",
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
-
-  "__WET_GROUP__theme": { "message": "Theme" },
+  "options_page__mdhr_wiki": {
+    "message": "Markdown ici Revival wiki",
+    "hash": "31514a95d56ddc2d8df5c4d15439d17f"
+  },
+  "options_page__tips_tricks_link": {
+    "message": "Conseils et astuces",
+    "hash": "c17546aca51dff7b1014d20502cb526"
+  },
+  "__WET_GROUP__theme": {
+    "message": "Thème",
+    "hash": "9da24ca7508eb181c632829fd698be9a"
+  },
   "options_page__primary_css_title": {
     "message": "Styles de base CSS",
     "description": "section title",
@@ -180,13 +252,69 @@
     "description": "section title for the Markdown preview section",
     "hash": "b2ce6f78ea0a002ab97efea02562c3c0"
   },
-
-  "__WET_GROUP__about": { "message": "About" },
+  "__WET_GROUP__about": {
+    "message": "À propos",
+    "hash": "da73d37076fcb711ec18ea36c7efb1d5"
+  },
+  "options_page__about": {
+    "message": "À propos",
+    "hash": "da73d37076fcb711ec18ea36c7efb1d5"
+  },
+  "options_page__report_bugs_title": {
+    "message": "Signaler les bogues",
+    "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
+  },
+  "options_page__create_gitlab_issue": {
+    "message": "Créer un nouveau numéro sur GitLab",
+    "description": "Text linking to Gitlab issue creation page",
+    "hash": "43410ee226a64717592bd271c54ac2e0"
+  },
+  "options_page__issue_debug_info": {
+    "message": "Les informations de débogage suivantes peuvent être utilisées:",
+    "description": "header for some extension debug information",
+    "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
+  },
+  "options_page__debug_copy_clipboard": {
+    "message": "Copier dans le presse-papiers",
+    "description": "button for copying debug information to the clipboard",
+    "hash": "17b6a865f4e197dcff670c9ac12517a1"
+  },
+  "options_page__translate": {
+    "message": "Traduire",
+    "description": "Used in a link to open Locale Maker",
+    "hash": "a8d574720117a40a83469771b9a4825d"
+  },
+  "options_page__localemaker_1": {
+    "message": "Locale Maker est visiblement copié à partir de l'extension FireMonkey pour Firefox.",
+    "description": "Description of Locale Maker source.",
+    "hash": "22a4387b17e1ba4776709abc0543afa4"
+  },
+  "options_page__localemaker_2": {
+    "message": "Merci à Erosman pour sa création.",
+    "description": "Credit to Locale Maker author.",
+    "hash": "fa17dd5843873b9c6fe69dfbedb640a3"
+  },
+  "options_page__changelog_title": {
+    "message": "Changer de journal",
+    "hash": "d1f539e046abe83e76dcf2163f9a143c"
+  },
   "options_page__changes_saved": {
     "message": "Modifications sauvegardées",
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
-
-  "__WET_LOCALE__": { "message": "fr" }
+  "options_page__invalid_hotkey": {
+    "message": "C'est nul !",
+    "description": "message that shows when an invalid hotkey combination was entered",
+    "hash": "54331fedbb67ec446035ce5b0b51b92"
+  },
+  "options_page__reset_button": {
+    "message": "Réinitialiser",
+    "description": "used for resetting certain options to the default",
+    "hash": "d25968a7dfc21f95043a86dd5373b81"
+  },
+  "__WET_LOCALE__": {
+    "message": "en",
+    "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
+  }
 }
