@@ -2,9 +2,6 @@
 
 /*global ChromeUtils:false Services:false */
 
-// Get various parts of the WebExtension framework that we need.
-var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm")
-
 // This is the base preference name for all your legacy prefs.
 const BASE_PREF_NAME = "mail.identity."
 const PREF_REPLY_POS = ".reply_on_top"
