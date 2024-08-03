@@ -1,12 +1,11 @@
 /*eslint no-fallthrough: ["error", { "commentPattern": "break[\\s\\w]*omitted" }]*/
 
+// Works in Thunderbird 128+
+
 'use strict';
 
 var { EventEmitter, EventManager, ExtensionAPI } = ExtensionCommon;
 var { ExtensionError } = ExtensionUtils;
-var Services = globalThis.Services || ChromeUtils.import(
-  'resource://gre/modules/Services.jsm'
-).Services;
 
 class ExtensionNotification {
   constructor(notificationId, properties, parent) {
@@ -14,13 +13,14 @@ class ExtensionNotification {
     this.properties = properties;
     this.parent = parent;
     this.notificationId = notificationId;
-    this.tbVersion = this.getThunderbirdVersion().major;
+  }
 
-    const { buttons, icon, label, priority, style, windowId } = properties;
+  async append() {
+    const { buttons, icon, label, priority, style, windowId } = this.properties;
 
     const iconURL =
       icon && !icon.includes(':')
-        ? parent.extension.baseURI.resolve(icon)
+        ? this.parent.extension.baseURI.resolve(icon)
         : null;
 
     const buttonSet = buttons.map(({ id, label, accesskey }) => ({
@@ -31,7 +31,7 @@ class ExtensionNotification {
         // Fire the event and keep the notification open, decided to close it
         // based on the return values later.
         this.parent.emitter
-          .emit('buttonclicked', windowId, notificationId, id)
+          .emit('buttonclicked', windowId, this.notificationId, id)
           .then((rv) => {
             let keepOpen = rv.some((value) => value?.close === false);
             if (!keepOpen) {
@@ -47,23 +47,20 @@ class ExtensionNotification {
 
     const getContainerElement = (element) => {
       // Supernova introduced a container element in TB112.
-      if (this.tbVersion >= 112) {
         return element.shadowRoot.querySelector(".container");
       }
-      return null;
-    }
 
     const notificationBarCallback = (event) => {
       // Every dismissed notification will also generate a removed notification
       if (event === 'dismissed') {
-        this.parent.emitter.emit('dismissed', windowId, notificationId);
+        this.parent.emitter.emit('dismissed', windowId, this.notificationId);
       }
 
       if (event === 'removed') {
         this.parent.emitter.emit(
           'closed',
           windowId,
-          notificationId,
+          this.notificationId,
           this.closedByUser
         );
 
@@ -71,19 +68,8 @@ class ExtensionNotification {
       }
     };
 
-    let element;
-    if (this.tbVersion < 94) {
-      element = this.getNotificationBox().appendNotification(
-        label,
-        `extension-notification-${notificationId}`,
-        iconURL,
-        priority,
-        buttonSet,
-        notificationBarCallback
-      );
-    } else {
-      element = this.getNotificationBox().appendNotification(
-        `extension-notification-${notificationId}`,
+    let element = await this.getNotificationBox().appendNotification(
+      `extension-notification-${this.notificationId}`,
         {
           label,
           image: iconURL,
@@ -92,7 +78,6 @@ class ExtensionNotification {
         },
         buttonSet,
       );
-    }
 
     if (!element)
       return;
@@ -131,93 +116,7 @@ class ExtensionNotification {
     }
   }
 
-  getThunderbirdVersion() {
-    let [major, minor, revision = 0] = Services.appinfo.version
-      .split('.')
-      .map((chunk) => parseInt(chunk, 10));
-    return {
-      major,
-      minor,
-      revision,
-    };
-  }
-
-  getNotificationBoxPreSupernova() {
-    const w = this.parent.extension.windowManager.get(
-      this.properties.windowId,
-      this.parent.context
-    ).window;
-    switch (this.properties.placement) {
-      case 'top':
-        if (!w.gExtensionNotificationTopBox) {
-          // try to add it before the toolbox, if that fails add it firstmost
-          const toolbox = w.document.querySelector('toolbox');
-          if (toolbox) {
-            w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
-              (element) => {
-                element.id = 'extension-notification-top-box';
-                element.setAttribute('notificationside', 'top');
-                toolbox.parentElement.insertBefore(
-                  element,
-                  toolbox.nextElementSibling
-                );
-              }
-            );
-          } else {
-            w.gExtensionNotificationTopBox = new w.MozElements.NotificationBox(
-              (element) => {
-                element.id = 'extension-notification-top-box';
-                element.setAttribute('notificationside', 'top');
-                w.document.documentElement.insertBefore(
-                  element,
-                  w.document.documentElement.firstChild
-                );
-              }
-            );
-          }
-        }
-        return w.gExtensionNotificationTopBox;
-        break;
-
-      case 'message':
-        // below the receipient list in the message preview window
-        if (w.gMessageNotificationBar) {
-          return w.gMessageNotificationBar.msgNotificationBar;
-        }
-      // break omitted
-
-      default:
-      case 'bottom':
-        // default bottom notification in the mail3:pane
-        if (w.specialTabs) {
-          return w.specialTabs.msgNotificationBar;
-        }
-        // default bottom notification in message composer window and
-        // most calendar dialogs (currently windows.onCreated event does not see these)
-        if (w.gNotification) {
-          return w.gNotification.notificationbox;
-        }
-        // if there is no default bottom box, use our own
-        if (!w.gExtensionNotificationBottomBox) {
-          let statusbar = w.document.querySelector('[class~="statusbar"]');
-          w.gExtensionNotificationBottomBox = new w.MozElements.NotificationBox(
-            (element) => {
-              element.id = 'extension-notification-bottom-box';
-              element.setAttribute('notificationside', 'bottom');
-              if (statusbar) {
-                statusbar.parentNode.insertBefore(element, statusbar);
-              } else {
-                w.document.documentElement.append(element);
-              }
-            }
-          );
-        }
-        return w.gExtensionNotificationBottomBox;
-        break;
-    }
-  }
-
-  getNotificationBoxPostSupernova() {
+  getNotificationBox() {
     const w = this.parent.extension.windowManager.get(
       this.properties.windowId,
       this.parent.context
@@ -294,16 +193,33 @@ class ExtensionNotification {
 
       default:
       case 'bottom':
-        return this.getNotificationBoxPreSupernova();
+        // default bottom notification in the mail3:pane
+        if (w.specialTabs) {
+          return w.specialTabs.msgNotificationBar;
+        }
+        // default bottom notification in message composer window and
+        // most calendar dialogs (currently windows.onCreated event does not see these)
+        if (w.gNotification) {
+          return w.gNotification.notificationbox;
+        }
+        // if there is no default bottom box, use our own
+        if (!w.gExtensionNotificationBottomBox) {
+          let statusbar = w.document.querySelector('[class~="statusbar"]');
+          w.gExtensionNotificationBottomBox = new w.MozElements.NotificationBox(
+            (element) => {
+              element.id = 'extension-notification-bottom-box';
+              element.setAttribute('notificationside', 'bottom');
+              if (statusbar) {
+                statusbar.parentNode.insertBefore(element, statusbar);
+              } else {
+                w.document.documentElement.append(element);
+              }
+            }
+          );
+        }
+        return w.gExtensionNotificationBottomBox;
         break;
     }
-  }
-
-  getNotificationBox() {
-    if (this.tbVersion >= 112) {
-      return this.getNotificationBoxPostSupernova();
-    }
-    return this.getNotificationBoxPreSupernova();
   }
 
   remove(closedByUser) {
@@ -358,10 +274,12 @@ var notificationbar = class extends ExtensionAPI {
       notificationbar: {
         async create(properties) {
           const notificationId = self.nextId++;
+          const extensionNotification = new ExtensionNotification(notificationId, properties, self);
           self.notificationsMap.set(
             notificationId,
-            new ExtensionNotification(notificationId, properties, self)
+            extensionNotification,
           );
+          await extensionNotification.append();
           return notificationId;
         },
 
