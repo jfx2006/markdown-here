@@ -1,3 +1,8 @@
+#### v3.6.0
+* Fix some issues saving options
+* Show error message when using GChart Image API for Math Rendering
+  [#91](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/91)
+
 #### v3.5.1
 * Revert CSS changes that messed up reply and forwarded content
 * Add preview announcement for MDHR 4.0 beta
