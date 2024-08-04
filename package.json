@@ -1,12 +1,12 @@
 {
   "name": "markdown-here-revival",
-  "version": "3.5.1",
+  "version": "3.6.0",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build",
     "lint": "eslint .",
-    "test102": "web-ext run --verbose -p mdhr_test_profiles/testing102 -f /home/rob/bin/thunderbird --keep-profile-changes",
     "test115": "web-ext run --verbose -p mdhr_test_profiles/testing115 -f /home/rob/bin/thunderbird115 --keep-profile-changes",
+    "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f /home/rob/bin/thunderbird128 --keep-profile-changes",
     "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
     "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f thunderbird-daily"
   },
