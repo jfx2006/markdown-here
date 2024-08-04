@@ -77,6 +77,11 @@
     "description": "Error message shown to user if there's nothing found to revert or render.",
     "hash": "1cdbc3e0314a985039d6c9cf27e20c9e"
   },
+  "set_math_api_url": {
+    "message": "Установите API URL для рендеринга математики в настройках.",
+    "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
+    "hash": "265f98a913e4f279878a79f3dabbb39c"
+  },
 
   "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
@@ -102,6 +107,11 @@
     "description": "Label for the checkbox that enables the forgot-to-render feature",
     "hash": "2c89383ef981e027e75be9e47f6d4297"
   },
+  "options_page__hotkey_title": {
+    "message": "\"Горячая\"(она же \"быстрая\") комбинация клавиш",
+    "description": "A section title",
+    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  },
   "options_page__tex_math_title": {
     "message": "Поддержка математических формул TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
@@ -116,10 +126,10 @@
     "description": "one of the TeX math privacy concerns",
     "hash": "6377d919509c05850fd38caccbcfbda4"
   },
-  "options_page__hotkey_title": {
-    "message": "\"Горячая\"(она же \"быстрая\") комбинация клавиш",
-    "description": "A section title",
-    "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
+  "options_page__tex_math_gchart_discontinued": {
+    "message": "Google Image Chart API был закрыт.",
+    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
+    "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
 
   "__WET_GROUP__usage": { "message": "Howto" },

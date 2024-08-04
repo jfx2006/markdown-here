@@ -195,11 +195,14 @@
                     </ul>
                   </div>
                   <div class="form-check">
-                    <div class="input-wrapper">
+                    <div class="text-muted input-wrapper">
                       <input id="math-renderer-gchart" class="form-check-input" type="radio" name="math-renderer"
                              value="gchart"/>
                       <label class="form-check-label" for="math-renderer-gchart" data-i18n="tex_math_gchart_label">
                         Math rendering using Google Chart API (deprecated)</label>
+                    </div>
+                    <div class="alert alert-warning" role="alert" data-i18n="tex_math_gchart_discontinued">
+                        <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Google-Image-Charts-API-discontinued" alt="Info Link">Google Image Chart API is discontinued.</a>
                     </div>
                     <div>
                       <label class="form-check-label" for="math-value"></label>
@@ -215,11 +218,8 @@
                       <li data-i18n="tex_math_privacy_issue_2">
                         If you customize the formula rendering tag, you should use a secure (https://) path. Not all rendering services provide a secure option.
                       </li>
-                      <li data-i18n="tex_math_gchart_backtick">
-                        With this option, you must surround your math code with backticks.
-                      </li>
                       <li>
-                        <code>`$a^2 + b^2 = c^2$`</code>
+                        <code>$a^2 + b^2 = c^2$</code>
                       </li>
                     </ul>
                   </div>

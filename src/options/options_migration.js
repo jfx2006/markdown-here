@@ -158,7 +158,7 @@ export async function migrate_smartReplacements(options, defaults) {
 
 export async function migrate_mathRenderer(options, defaults) {
   if (options["math-enabled"] === true) {
-    return { "math-renderer": "gchart" }
+    return { "math-renderer": "texzilla" }
   }
   return null
 }

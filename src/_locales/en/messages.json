@@ -76,6 +76,10 @@
     "message": "Nothing found to render or revert",
     "description": "Error message shown to user if there's nothing found to revert or render."
   },
+  "set_math_api_url": {
+    "message": "Set an API URL for Math rendering in Settings.",
+    "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set."
+  },
 
   "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
@@ -151,7 +155,10 @@
     "message": "With this option, you must surround your math code with backticks.",
     "description": "additional note for Gchart math rendering"
   },
-
+  "options_page__tex_math_gchart_discontinued": {
+    "message": "Google Image Chart API is discontinued.",
+    "description": "Information about the discontinued GChart Image API formerly used to render math formula."
+  },
 
   "__WET_GROUP__usage": { "message": "Howto" },
   "options_page__howto": {
