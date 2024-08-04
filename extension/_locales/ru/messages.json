@@ -65,6 +65,11 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "set_math_api_url": {
+    "message": "Установите API URL для рендеринга математики в настройках.",
+    "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
+    "hash": "265f98a913e4f279878a79f3dabbb39c"
+  },
   "__WET_GROUP__settings": {
     "message": "Настройки расширений Страницы",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
@@ -173,6 +178,11 @@
     "message": "Для рендеринга изображения для формулы, запрос отправляется Google. Это фактически означает, что вы показываете вашу формулу Google. Это также означает, что получатель вашего сообщения сделает запрос к Google, чтобы увидеть отрендеренное  изображение этой формулы.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
+  },
+  "options_page__tex_math_gchart_discontinued": {
+    "message": "Google Image Chart API был закрыт.",
+    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
+    "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "__WET_GROUP__usage": {
     "message": "Как",

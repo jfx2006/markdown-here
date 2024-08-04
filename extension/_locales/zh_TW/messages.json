@@ -65,6 +65,11 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "set_math_api_url": {
+    "message": "在設定中設定數學渲染的 API 網址 。",
+    "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
+    "hash": "265f98a913e4f279878a79f3dabbb39c"
+  },
   "__WET_GROUP__settings": {
     "message": "延伸設定頁面",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
@@ -173,6 +178,11 @@
     "message": "為了產生公式的圖片, 瀏覽器會向Google發送請求。這等同於你在和Google分享公式，而且收件人也會向Google發送請求來顯示圖片。",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
+  },
+  "options_page__tex_math_gchart_discontinued": {
+    "message": "Google 影像圖 API 已停止 。",
+    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
+    "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "__WET_GROUP__usage": {
     "message": "如何做",

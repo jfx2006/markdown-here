@@ -65,6 +65,11 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "set_math_api_url": {
+    "message": "Defina uma URL API para renderização em Configurações.",
+    "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
+    "hash": "265f98a913e4f279878a79f3dabbb39c"
+  },
   "__WET_GROUP__settings": {
     "message": "Páginas de configurações de extensão",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
@@ -173,6 +178,11 @@
     "message": "Para gerar a imagem da fórmula, um pedido é enviado ao Google. Isso efetivamente significa que você está compartilhando sua fórmula com o Google. Também significa que os destinatários da sua mensagem farão um pedido ao Google para ter a imagem renderizada.",
     "description": "one of the TeX math privacy concerns",
     "hash": "45421bd5f89bb7b4209792e558a5684f"
+  },
+  "options_page__tex_math_gchart_discontinued": {
+    "message": "A API do Google Image Chart está descontinuada.",
+    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
+    "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "__WET_GROUP__usage": {
     "message": "Como",
