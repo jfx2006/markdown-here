@@ -8,38 +8,47 @@
  * Throttle execution of a function. Especially useful for rate limiting
  * execution of handlers on events like resize and scroll.
  *
- * @param  {number}    delay -          A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
- * @param  {boolean}   [noTrailing] -   Optional, defaults to false. If noTrailing is true, callback will only execute every `delay` milliseconds while the
- *                                    throttled-function is being called. If noTrailing is false or unspecified, callback will be executed one final time
- *                                    after the last throttled-function call. (After the throttled-function has not been called for `delay` milliseconds,
- *                                    the internal counter is reset).
- * @param  {Function}  callback -       A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
- *                                    to `callback` when the throttled-function is executed.
- * @param  {boolean}   [debounceMode] - If `debounceMode` is true (at begin), schedule `clear` to execute after `delay` ms. If `debounceMode` is false (at end),
- *                                    schedule `callback` to execute after `delay` ms.
+ * @param {number} delay -                  A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher)
+ *                                            are most useful.
+ * @param {Function} callback -               A function to be executed after delay milliseconds. The `this` context and all arguments are passed through,
+ *                                            as-is, to `callback` when the throttled-function is executed.
+ * @param {object} [options] -              An object to configure options.
+ * @param {boolean} [options.noTrailing] -   Optional, defaults to false. If noTrailing is true, callback will only execute every `delay` milliseconds
+ *                                            while the throttled-function is being called. If noTrailing is false or unspecified, callback will be executed
+ *                                            one final time after the last throttled-function call. (After the throttled-function has not been called for
+ *                                            `delay` milliseconds, the internal counter is reset).
+ * @param {boolean} [options.noLeading] -   Optional, defaults to false. If noLeading is false, the first throttled-function call will execute callback
+ *                                            immediately. If noLeading is true, the first the callback execution will be skipped. It should be noted that
+ *                                            callback will never executed if both noLeading = true and noTrailing = true.
+ * @param {boolean} [options.debounceMode] - If `debounceMode` is true (at begin), schedule `clear` to execute after `delay` ms. If `debounceMode` is
+ *                                            false (at end), schedule `callback` to execute after `delay` ms.
  *
- * @returns {Function}  A new, throttled, function.
+ * @returns {Function} A new, throttled, function.
  */
-function throttle(delay, noTrailing, callback, debounceMode) {
+function throttle(delay, callback, options) {
+  var _ref = options || {},
+    _ref$noTrailing = _ref.noTrailing,
+    noTrailing = void 0 !== _ref$noTrailing && _ref$noTrailing,
+    _ref$noLeading = _ref.noLeading,
+    noLeading = void 0 !== _ref$noLeading && _ref$noLeading,
+    _ref$debounceMode = _ref.debounceMode,
+    debounceMode = void 0 === _ref$debounceMode ? void 0 : _ref$debounceMode
+
   /*
    * After wrapper has stopped being called, this timeout ensures that
    * `callback` is executed at the proper times in `throttle` and `end`
    * debounce modes.
-   */
-  var timeoutID
+   */ var timeoutID
   var cancelled = false // Keep track of the last time `callback` was executed.
   var lastExec = 0 // Function to clear existing timeout
   function clearExistingTimeout() {
     timeoutID && clearTimeout(timeoutID)
   } // Function to cancel next exec
-  function cancel() {
+  function cancel(options) {
+    var _ref2$upcomingOnly = (options || {}).upcomingOnly,
+      upcomingOnly = void 0 !== _ref2$upcomingOnly && _ref2$upcomingOnly
     clearExistingTimeout()
-    cancelled = true
-  } // `noTrailing` defaults to falsy.
-  if ("boolean" != typeof noTrailing) {
-    debounceMode = callback
-    callback = noTrailing
-    noTrailing = void 0
+    cancelled = !upcomingOnly
   }
   /*
    * The `wrapper` function encapsulates all of the throttling / debouncing
@@ -55,21 +64,33 @@ function throttle(delay, noTrailing, callback, debounceMode) {
     var self = this
     var elapsed = Date.now() - lastExec
     if (!cancelled) {
-      debounceMode &&
-        !timeoutID &&
+      noLeading ||
+        !debounceMode ||
+        timeoutID ||
         /*
          * Since `wrapper` is being called for the first time and
-         * `debounceMode` is true (at begin), execute `callback`.
+         * `debounceMode` is true (at begin), execute `callback`
+         * and noLeading != true.
          */
         exec()
       clearExistingTimeout()
-      void 0 === debounceMode && elapsed > delay
-        ? /*
-           * In throttle mode, if `delay` time has been exceeded, execute
-           * `callback`.
+      if (void 0 === debounceMode && elapsed > delay)
+        if (noLeading) {
+          /*
+           * In throttle mode with noLeading, if `delay` time has
+           * been exceeded, update `lastExec` and schedule `callback`
+           * to execute after `delay` ms.
            */
-          exec()
-        : true !== noTrailing &&
+          lastExec = Date.now()
+          noTrailing ||
+            (timeoutID = setTimeout(debounceMode ? clear : exec, delay))
+        } else exec()
+        /*
+         * In throttle mode without noLeading, if `delay` time has been exceeded, execute
+         * `callback`.
+         */
+      else
+        true !== noTrailing &&
           /*
            * In trailing throttle mode, since `delay` time has not been
            * exceeded, schedule `callback` to execute `delay` ms after most
@@ -106,62 +127,199 @@ function throttle(delay, noTrailing, callback, debounceMode) {
  * guarantees that a function is only executed a single time, either at the
  * very beginning of a series of calls, or at the very end.
  *
- * @param  {number}   delay -         A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
- * @param  {boolean}  [atBegin] -     Optional, defaults to false. If atBegin is false or unspecified, callback will only be executed `delay` milliseconds
- *                                  after the last debounced-function call. If atBegin is true, callback will be executed only at the first debounced-function call.
- *                                  (After the throttled-function has not been called for `delay` milliseconds, the internal counter is reset).
- * @param  {Function} callback -      A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
- *                                  to `callback` when the debounced-function is executed.
+ * @param {number} delay -               A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param {Function} callback -          A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                        to `callback` when the debounced-function is executed.
+ * @param {object} [options] -           An object to configure options.
+ * @param {boolean} [options.atBegin] -  Optional, defaults to false. If atBegin is false or unspecified, callback will only be executed `delay` milliseconds
+ *                                        after the last debounced-function call. If atBegin is true, callback will be executed only at the first debounced-function call.
+ *                                        (After the throttled-function has not been called for `delay` milliseconds, the internal counter is reset).
  *
  * @returns {Function} A new, debounced function.
- */ function debounce(delay, atBegin, callback) {
-  return void 0 === callback
-    ? throttle(delay, atBegin, false)
-    : throttle(delay, callback, false !== atBegin)
+ */ function debounce(delay, callback, options) {
+  var _ref$atBegin = (options || {}).atBegin
+  return throttle(delay, callback, {
+    debounceMode: false !== (void 0 !== _ref$atBegin && _ref$atBegin),
+  })
 }
-class TypeRegistry {
-  constructor(initial = {}) {
+function isCurrentPathname(path) {
+  if (!path) return false
+  try {
+    const { pathname: pathname } = new URL(path, location.origin)
+    return pathname === location.pathname
+  } catch {
+    return false
+  }
+}
+function getManifest(_version) {
+  return globalThis.chrome?.runtime?.getManifest?.()
+}
+function once(function_) {
+  let result
+  return () => {
+    void 0 === result && (result = function_())
+    return result
+  }
+}
+/** Indicates whether the code is being run in a background context */ const isBackground =
+  () => isBackgroundPage() || isBackgroundWorker()
+/** Indicates whether the code is being run in a background page */
+const isBackgroundPage = once(() => {
+  const manifest = getManifest()
+  return (
+    !(
+      !manifest ||
+      !isCurrentPathname(manifest.background_page || manifest.background?.page)
+    ) ||
+    Boolean(
+      manifest?.background?.scripts &&
+        isCurrentPathname("/_generated_background_page.html")
+    )
+  )
+})
+
+/** Indicates whether the code is being run in a background worker */ const isBackgroundWorker =
+  once(() => isCurrentPathname(getManifest()?.background?.service_worker))
+var _typeof =
+  "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
+    ? function (obj) {
+        return typeof obj
+      }
+    : function (obj) {
+        return obj &&
+          "function" == typeof Symbol &&
+          obj.constructor === Symbol &&
+          obj !== Symbol.prototype
+          ? "symbol"
+          : typeof obj
+      }
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor))
+    throw new TypeError("Cannot call a class as a function")
+}
+var createClass = (function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i]
+      descriptor.enumerable = descriptor.enumerable || false
+      descriptor.configurable = true
+      "value" in descriptor && (descriptor.writable = true)
+      Object.defineProperty(target, descriptor.key, descriptor)
+    }
+  }
+  return function (Constructor, protoProps, staticProps) {
+    protoProps && defineProperties(Constructor.prototype, protoProps)
+    staticProps && defineProperties(Constructor, staticProps)
+    return Constructor
+  }
+})()
+var inherits = function (subClass, superClass) {
+  if ("function" != typeof superClass && null !== superClass)
+    throw new TypeError(
+      "Super expression must either be null or a function, not " +
+        typeof superClass
+    )
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  })
+  superClass &&
+    (Object.setPrototypeOf
+      ? Object.setPrototypeOf(subClass, superClass)
+      : (subClass.__proto__ = superClass))
+}
+var possibleConstructorReturn = function (self, call) {
+  if (!self)
+    throw new ReferenceError(
+      "this hasn't been initialised - super() hasn't been called"
+    )
+  return !call || ("object" != typeof call && "function" != typeof call)
+    ? self
+    : call
+}
+var TypeRegistry = (function () {
+  function TypeRegistry() {
+    var initial =
+      arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
+    classCallCheck(this, TypeRegistry)
     this.registeredTypes = initial
   }
-  get(type) {
-    return void 0 !== this.registeredTypes[type]
-      ? this.registeredTypes[type]
-      : this.registeredTypes.default
+  createClass(TypeRegistry, [
+    {
+      key: "get",
+      value: function (type) {
+        return void 0 !== this.registeredTypes[type]
+          ? this.registeredTypes[type]
+          : this.registeredTypes.default
+      },
+    },
+    {
+      key: "register",
+      value: function (type, item) {
+        void 0 === this.registeredTypes[type] &&
+          (this.registeredTypes[type] = item)
+      },
+    },
+    {
+      key: "registerDefault",
+      value: function (item) {
+        this.register("default", item)
+      },
+    },
+  ])
+  return TypeRegistry
+})()
+var KeyExtractors = (function (_TypeRegistry) {
+  inherits(KeyExtractors, TypeRegistry)
+  function KeyExtractors(options) {
+    classCallCheck(this, KeyExtractors)
+    var _this = possibleConstructorReturn(
+      this,
+      (KeyExtractors.__proto__ || Object.getPrototypeOf(KeyExtractors)).call(
+        this,
+        options
+      )
+    )
+    _this.registerDefault(function (el) {
+      return el.getAttribute("name") || ""
+    })
+    return _this
   }
-  register(type, item) {
-    void 0 === this.registeredTypes[type] && (this.registeredTypes[type] = item)
-  }
-  registerDefault(item) {
-    this.register("default", item)
-  }
-}
-class KeyExtractors extends TypeRegistry {
-  constructor(options) {
-    super(options)
-    this.registerDefault((el) => el.getAttribute("name") || "")
-  }
-}
-class InputReaders extends TypeRegistry {
-  constructor(options) {
-    super(options)
-    this.registerDefault((el) => el.value)
-    this.register("checkbox", (el) =>
-      null !== el.getAttribute("value")
+  return KeyExtractors
+})()
+var InputReaders = (function (_TypeRegistry) {
+  inherits(InputReaders, TypeRegistry)
+  function InputReaders(options) {
+    classCallCheck(this, InputReaders)
+    var _this = possibleConstructorReturn(
+      this,
+      (InputReaders.__proto__ || Object.getPrototypeOf(InputReaders)).call(
+        this,
+        options
+      )
+    )
+    _this.registerDefault(function (el) {
+      return el.value
+    })
+    _this.register("checkbox", function (el) {
+      return null !== el.getAttribute("value")
         ? el.checked
           ? el.getAttribute("value")
           : null
         : el.checked
-    )
-    this.register("select", (el) => getSelectValue(el))
+    })
+    _this.register("select", function (el) {
+      return getSelectValue(el)
+    })
+    return _this
   }
-}
-/**
- * Read select values
- *
- * @see {@link https://github.com/jquery/jquery/blob/master/src/attributes/val.js|Github}
- * @param {object} Select element
- * @return {string|Array} Select value(s)
- */ function getSelectValue(elem) {
+  return InputReaders
+})()
+function getSelectValue(elem) {
   var value, option, i
   var options = elem.options
   var index = elem.selectedIndex
@@ -188,16 +346,30 @@ class InputReaders extends TypeRegistry {
     }
   return values
 }
-class KeyAssignmentValidators extends TypeRegistry {
-  constructor(options) {
-    super(options)
-    this.registerDefault(() => true)
-    this.register("radio", (el) => el.checked)
+var KeyAssignmentValidators = (function (_TypeRegistry) {
+  inherits(KeyAssignmentValidators, TypeRegistry)
+  function KeyAssignmentValidators(options) {
+    classCallCheck(this, KeyAssignmentValidators)
+    var _this = possibleConstructorReturn(
+      this,
+      (
+        KeyAssignmentValidators.__proto__ ||
+        Object.getPrototypeOf(KeyAssignmentValidators)
+      ).call(this, options)
+    )
+    _this.registerDefault(function () {
+      return true
+    })
+    _this.register("radio", function (el) {
+      return el.checked
+    })
+    return _this
   }
-}
+  return KeyAssignmentValidators
+})()
 function keySplitter(key) {
-  let matches = key.match(/[^[\]]+/g)
-  let lastKey
+  var matches = key.match(/[^[\]]+/g)
+  var lastKey = void 0
   if (key.length > 1 && key.indexOf("[]") === key.length - 2) {
     lastKey = matches.pop()
     matches.push([lastKey])
@@ -205,37 +377,54 @@ function keySplitter(key) {
   return matches
 }
 function getElementType(el) {
-  let typeAttr
-  let tagName = el.tagName
-  let type = tagName
-  if ("input" === tagName.toLowerCase()) {
-    typeAttr = el.getAttribute("type")
-    type = typeAttr || "text"
-  }
+  var tagName = el.tagName
+  var type = tagName
+  "input" === tagName.toLowerCase() &&
+    (type = el.getAttribute("type") || "text")
   return type.toLowerCase()
 }
 function getInputElements(element, options) {
   return Array.prototype.filter.call(
     element.querySelectorAll("input,select,textarea"),
-    (el) => {
+    function (el) {
       if (
         "input" === el.tagName.toLowerCase() &&
         ("submit" === el.type || "reset" === el.type)
       )
         return false
-      let myType = getElementType(el)
-      let identifier = options.keyExtractors.get(myType)(el)
-      let foundInInclude = -1 !== (options.include || []).indexOf(identifier)
-      let foundInExclude = -1 !== (options.exclude || []).indexOf(identifier)
-      let foundInIgnored = false
-      let reject = false
-      if (options.ignoredTypes)
-        for (let selector of options.ignoredTypes)
-          el.matches(selector) && (foundInIgnored = true)
-      reject =
+      var myType = getElementType(el)
+      var identifier = options.keyExtractors.get(myType)(el)
+      var foundInInclude = -1 !== (options.include || []).indexOf(identifier)
+      var foundInExclude = -1 !== (options.exclude || []).indexOf(identifier)
+      var foundInIgnored = false
+      if (options.ignoredTypes) {
+        var _iteratorNormalCompletion = true
+        var _didIteratorError = false
+        var _iteratorError = void 0
+        try {
+          for (
+            var _step, _iterator = options.ignoredTypes[Symbol.iterator]();
+            !(_iteratorNormalCompletion = (_step = _iterator.next()).done);
+            _iteratorNormalCompletion = true
+          ) {
+            var selector = _step.value
+            el.matches(selector) && (foundInIgnored = true)
+          }
+        } catch (err) {
+          _didIteratorError = true
+          _iteratorError = err
+        } finally {
+          try {
+            !_iteratorNormalCompletion && _iterator.return && _iterator.return()
+          } finally {
+            if (_didIteratorError) throw _iteratorError
+          }
+        }
+      }
+      return !(
         !foundInInclude &&
         (!!options.include || foundInExclude || foundInIgnored)
-      return !reject
+      )
     }
   )
 }
@@ -264,44 +453,59 @@ function assignKeyValue(obj, keychain, value) {
  * @param {string[]} options.exclude
  * @param {string[]} options.ignoredTypes
  * @return {object}
- */ function serialize(element, options = {}) {
-  let data = {}
+ */ function serialize(element) {
+  var options =
+    arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}
+  var data = {}
   options.keySplitter = options.keySplitter || keySplitter
   options.keyExtractors = new KeyExtractors(options.keyExtractors || {})
   options.inputReaders = new InputReaders(options.inputReaders || {})
   options.keyAssignmentValidators = new KeyAssignmentValidators(
     options.keyAssignmentValidators || {}
   )
-  Array.prototype.forEach.call(getInputElements(element, options), (el) => {
-    let type = getElementType(el)
-    let key = options.keyExtractors.get(type)(el)
-    let value = options.inputReaders.get(type)(el)
-    if (options.keyAssignmentValidators.get(type)(el, key, value)) {
-      let keychain = options.keySplitter(key)
-      data = assignKeyValue(data, keychain, value)
+  Array.prototype.forEach.call(
+    getInputElements(element, options),
+    function (el) {
+      var type = getElementType(el)
+      var key = options.keyExtractors.get(type)(el)
+      var value = options.inputReaders.get(type)(el)
+      if (options.keyAssignmentValidators.get(type)(el, key, value)) {
+        var keychain = options.keySplitter(key)
+        data = assignKeyValue(data, keychain, value)
+      }
     }
-  })
+  )
   return data
 }
-class InputWriters extends TypeRegistry {
-  constructor(options) {
-    super(options)
-    this.registerDefault((el, value) => {
+var InputWriters = (function (_TypeRegistry) {
+  inherits(InputWriters, TypeRegistry)
+  function InputWriters(options) {
+    classCallCheck(this, InputWriters)
+    var _this = possibleConstructorReturn(
+      this,
+      (InputWriters.__proto__ || Object.getPrototypeOf(InputWriters)).call(
+        this,
+        options
+      )
+    )
+    _this.registerDefault(function (el, value) {
       el.value = value
     })
-    this.register("checkbox", (el, value) => {
+    _this.register("checkbox", function (el, value) {
       null === value
         ? (el.indeterminate = true)
         : (el.checked = Array.isArray(value)
             ? -1 !== value.indexOf(el.value)
             : value)
     })
-    this.register("radio", function (el, value) {
+    _this.register("radio", function (el, value) {
       void 0 !== value && (el.checked = el.value === value.toString())
     })
-    this.register("select", setSelectValue)
+    _this.register("select", setSelectValue)
+    return _this
   }
-}
+  return InputWriters
+})()
 function makeArray(arr) {
   var ret = []
   null !== arr &&
@@ -333,25 +537,27 @@ function makeArray(arr) {
 function keyJoiner(parentKey, childKey) {
   return parentKey + "[" + childKey + "]"
 }
-function flattenData(data, parentKey, options = {}) {
-  let flatData = {}
-  let keyJoiner$1 = options.keyJoiner || keyJoiner
-  for (let keyName in data) {
-    if (!data.hasOwnProperty(keyName)) continue
-    let value = data[keyName]
-    let hash = {} // If there is a parent key, join it with
+function flattenData(data, parentKey) {
+  var options =
+    arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
+  var flatData = {}
+  var keyJoiner$$ = options.keyJoiner || keyJoiner
+  for (var keyName in data)
+    if (data.hasOwnProperty(keyName)) {
+      var value = data[keyName]
+      var hash = {} // If there is a parent key, join it with
 
-    // the current, child key.
-    parentKey && (keyName = keyJoiner$1(parentKey, keyName))
-    if (Array.isArray(value)) {
-      hash[keyName + "[]"] = value
-      hash[keyName] = value
-    } else
-      "object" == typeof value
-        ? (hash = flattenData(value, keyName, options))
-        : (hash[keyName] = value)
-    Object.assign(flatData, hash)
-  }
+      // the current, child key.
+      parentKey && (keyName = keyJoiner$$(parentKey, keyName))
+      if (Array.isArray(value)) {
+        hash[keyName + "[]"] = value
+        hash[keyName] = value
+      } else
+        "object" === (void 0 === value ? "undefined" : _typeof(value))
+          ? (hash = flattenData(value, keyName, options))
+          : (hash[keyName] = value)
+      Object.assign(flatData, hash)
+    }
   return flatData
 }
 /**
@@ -365,103 +571,75 @@ function flattenData(data, parentKey, options = {}) {
  * @param {string[]} options.include
  * @param {string[]} options.exclude
  * @param {string[]} options.ignoredTypes
- */ function deserialize(form, data, options = {}) {
-  let flattenedData = flattenData(data, null, options)
+ */ function deserialize(form, data) {
+  var options =
+    arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
+  var flattenedData = flattenData(data, null, options)
   options.keyExtractors = new KeyExtractors(options.keyExtractors || {})
   options.inputWriters = new InputWriters(options.inputWriters || {})
-  Array.prototype.forEach.call(getInputElements(form, options), (el) => {
-    let type = getElementType(el)
-    let key = options.keyExtractors.get(type)(el)
+  Array.prototype.forEach.call(getInputElements(form, options), function (el) {
+    var type = getElementType(el)
+    var key = options.keyExtractors.get(type)(el)
     options.inputWriters.get(type)(el, flattenedData[key])
   })
 }
-const isExtensionContext =
-  "object" == typeof chrome && chrome && "object" == typeof chrome.extension
-const globalWindow = "object" == typeof window ? window : void 0
-"object" == typeof location && location.protocol.startsWith("http")
-function isBackgroundPage() {
-  var _a, _b
+/* @license
+   Modified version of webext-options-sync from
+   https://github.com/fregante/webext-options-sync
+
+   Renamed chrome.* to messenger.*
+   Use mail-ext-types.d.ts
+   Remove lz4 compression
+   Async migration functions
+ */ async function shouldRunMigrations() {
+  const self = await messenger.management?.getSelf() // Always run migrations during development #25
+
   return (
-    isExtensionContext &&
-    ("/_generated_background_page.html" === location.pathname ||
-      (null ===
-        (_b =
-          null === (_a = chrome.extension) || void 0 === _a
-            ? void 0
-            : _a.getBackgroundPage) || void 0 === _b
-        ? void 0
-        : _b.call(_a)) === globalWindow)
+    "development" === self?.installType ||
+    new Promise((resolve) => {
+      // Run migrations when the extension is installed or updated
+      messenger.runtime.onInstalled.addListener(() => {
+        resolve(true)
+      }) // If `onInstalled` isn't fired, then migrations should not be run
+      setTimeout(resolve, 500, false)
+    })
   )
 }
-/*@license
-  Modified version of webext-options-sync from
-  https://github.com/fregante/webext-options-sync
-
-  Renamed chrome.* to messenger.*
-  Use mail-ext-types.d.ts
-  Remove lz4 compression
- */ async function shouldRunMigrations() {
-  return new Promise((resolve) => {
-    var _a
-    const callback = (installType) => {
-      // Always run migrations during development #25
-      if ("development" !== installType) {
-        // Run migrations when the extension is installed or updated
-        // This broke other onInstalled functions!
-        messenger.runtime.onInstalled.addListener(() => resolve(true)) // If `onInstalled` isn't fired, then migrations should not be run
-        setTimeout(resolve, 500, false)
-      } else resolve(true)
-    }
-    ;(
-      null === (_a = messenger.management) || void 0 === _a
-        ? void 0
-        : _a.getSelf
-    )
-      ? messenger.management.getSelf().then((r) => callback(r.installType))
-      : callback("unknown")
-  })
-}
 class OptionsSync {
-  /**
+  static migrations = {
+    /**
+        Helper method that removes any option that isn't defined in the defaults. It's useful to avoid leaving old options taking up space.
+        */
+    removeUnused(options, defaults) {
+      for (const key of Object.keys(options))
+        key in defaults || delete options[key]
+    },
+  }
+  storageType
+  defaults
+  _form
+  _migrations /**
     @constructor Returns an instance linked to the chosen storage.
     @param setup - Configuration for `webext-options-sync`
-     */
+    */
   constructor({
     defaults:
       // `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
       defaults = {},
     migrations: migrations = [],
     logging: logging = true,
+    storageType: storageType = "sync",
   } = {}) {
-    Object.defineProperty(this, "defaults", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0,
-    })
-    Object.defineProperty(this, "_form", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0,
-    })
-    Object.defineProperty(this, "_migrations", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0,
-    })
     this.defaults = defaults
-    this._handleFormInput = debounce(300, this._handleFormInput.bind(this))
-    this._handleStorageChangeOnForm = this._handleStorageChangeOnForm.bind(this)
-    logging ||
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      (OptionsSync._log = () => {})
+    this.storageType = storageType
+    logging || (this._log = () => {})
     this._migrations = this._runMigrations(migrations)
   }
+  get storage() {
+    return messenger.storage[this.storageType]
+  }
   /**
-    Retrieves all the options stored. Based on keys from the provided defaults.
-     **Not truly ALL**
+    Retrieves all the options stored.
 
     @returns Promise that will resolve with **all** the options stored, as an object.
 
@@ -472,9 +650,9 @@ class OptionsSync {
     if (options.color) {
         document.body.style.color = color;
     }
-     */ async getAll() {
+    */ async getAll() {
     await this._migrations
-    return this._get()
+    return this._getAll()
   }
   /**
     Retrieves stored options for given keys.
@@ -497,7 +675,7 @@ class OptionsSync {
     Overrides **all** the options stored with your `options`.
 
     @param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-     */ async setAll(newOptions) {
+    */ async setAll(newOptions) {
     await this._migrations
     return this._setAll(newOptions)
   }
@@ -505,7 +683,7 @@ class OptionsSync {
     Merges new options with the existing stored options.
 
     @param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-     */ async set(newOptions) {
+    */ async set(newOptions) {
     return this.setAll({ ...(await this.getAll()), ...newOptions })
   }
   /**
@@ -519,17 +697,15 @@ class OptionsSync {
     await this._migrations
     try {
       await this._remove(_key)
-      this._updateForm(this._form, await this.get(_key))
-    } catch (e) {
-      return
-    }
+      this._form && this._updateForm(this._form, await this.get(_key))
+    } catch {}
   }
   /**
-    Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved via `messenger.storage.sync`.
+    Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved to storage
 
-    @param form - The `<form>` that needs to be synchronized or a CSS selector (one element).
+    @param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
     The form fields' `name` attributes will have to match the option names.
-     */ async syncForm(form) {
+    */ async syncForm(form) {
     this._form =
       form instanceof HTMLFormElement ? form : document.querySelector(form)
     this._form.addEventListener("input", this._handleFormInput)
@@ -539,62 +715,53 @@ class OptionsSync {
   }
   /**
     Removes any listeners added by `syncForm`
-     */ async stopSyncForm() {
+    */ async stopSyncForm() {
     if (this._form) {
       this._form.removeEventListener("input", this._handleFormInput)
       this._form.removeEventListener("submit", this._handleFormSubmit)
       messenger.storage.onChanged.removeListener(
         this._handleStorageChangeOnForm
       )
-      /* @ts-expect-error cuz i said so*/ delete this._form
+      delete this._form
     }
   }
-  static _log(method, ...args) {
+  _log(method, ...args) {
     console[method](...args)
   }
+  async _getAll() {
+    const _keys = Object.keys(this.defaults)
+    const storageResults = await this.storage.get(_keys)
+    for (const key of Object.keys(this.defaults))
+      Object.hasOwn(storageResults, key) ||
+        (storageResults[key] = this.defaults[key])
+    return storageResults
+  }
   async _get(_keys) {
-    void 0 === _keys && (_keys = Object.keys(this.defaults))
     "string" == typeof _keys && (_keys = [_keys])
-    const storage_results = await messenger.storage.sync.get(_keys)
+    const storageResults = await this.storage.get(_keys)
     // eslint-disable-next-line no-prototype-builtins
     for (const key of _keys)
-      storage_results.hasOwnProperty(key) ||
-        // eslint-disable-next-line no-prototype-builtins
-        (this.defaults.hasOwnProperty(key) &&
-          (storage_results[key] = this.defaults[key])) // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return storage_results
+      !storageResults.hasOwnProperty(key) &&
+        this.defaults.hasOwnProperty(key) &&
+        (storageResults[key] = this.defaults[key]) // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return storageResults
   }
   async _setAll(newOptions) {
-    // OptionsSync._log("log", "Saving options", newOptions)
-    return new Promise((resolve, reject) => {
-      messenger.storage.sync.set(newOptions).then(() => {
-        messenger.runtime.lastError
-          ? reject(messenger.runtime.lastError)
-          : resolve()
-      })
-    })
+    await this.storage.set(newOptions)
   }
   async _remove(_key) {
-    // OptionsSync._log("log", "Resetting options", _key)
-    return new Promise((resolve, reject) => {
-      messenger.storage.sync.remove(_key).then(() => {
-        messenger.runtime.lastError
-          ? reject(messenger.runtime.lastError)
-          : resolve()
-      })
-    })
+    await this.storage.remove(_key)
   }
   async _runMigrations(migrations) {
     if (
       0 === migrations.length ||
-      !isBackgroundPage() ||
+      !isBackground() ||
       !(await shouldRunMigrations())
     )
       return
-    const options = await this._get() //OptionsSync._log("log", "Found these stored options", { ...options })
-
-    OptionsSync._log(
+    const options = await this._getAll()
+    this._log(
       "info",
       "Will run",
       migrations.length,
@@ -606,7 +773,8 @@ class OptionsSync {
       null !== changes && (await this._setAll(changes))
     }
   }
-  async _handleFormInput({ target: target }) {
+  // eslint-disable-next-line @typescript-eslint/member-ordering -- Needs to be near _handleFormSubmit
+  _handleFormInput = debounce(300, async ({ target: target }) => {
     const field = target
     if (field.name) {
       await this.set(this._parseForm(field.form))
@@ -614,7 +782,7 @@ class OptionsSync {
         new CustomEvent("options-sync:form-synced", { bubbles: true })
       )
     }
-  }
+  })
   _handleFormSubmit(event) {
     event.preventDefault()
   }
@@ -638,24 +806,20 @@ class OptionsSync {
         include.push(field.name.replace(/\[.*]/, ""))
     return serialize(form, { include: include })
   }
-  _handleStorageChangeOnForm(changes, areaName) {
-    "sync" !== areaName ||
-      (document.hasFocus() && this._form.contains(document.activeElement)) ||
-      this._updateForm(this._form, changes.newValue)
+  _handleStorageChangeOnForm = (changes, areaName) => {
+    if (
+      areaName === this.storageType &&
+      changes &&
+      (!document.hasFocus() || !this._form.contains(document.activeElement))
+    ) {
+      const newValues = {}
+      for (const change in changes)
+        void 0 !== changes[change].newValue &&
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          (newValues[change] = changes[change].newValue)
+      Object.keys(newValues).length > 0 &&
+        this._updateForm(this._form, newValues)
+    }
   }
 }
-Object.defineProperty(OptionsSync, "migrations", {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value: {
-    /**
-        Helper method that removes any option that isn't defined in the defaults. It's useful to avoid leaving old options taking up space.
-         */
-    removeUnused(options, defaults) {
-      for (const key of Object.keys(options))
-        key in defaults || delete options[key]
-    },
-  },
-})
-export default OptionsSync
+export { OptionsSync as default }

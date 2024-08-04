@@ -1,41 +1,37 @@
-/*@license
-  Modified version of webext-options-sync from
-  https://github.com/fregante/webext-options-sync
+/* @license
+   Modified version of webext-options-sync from
+   https://github.com/fregante/webext-options-sync
 
-  Renamed chrome.* to messenger.*
-  Use mail-ext-types.d.ts
-  Remove lz4 compression
+   Renamed chrome.* to messenger.*
+   Use mail-ext-types.d.ts
+   Remove lz4 compression
+   Async migration functions
  */
 
-import {debounce} from "throttle-debounce"
-import serialize from "dom-form-serializer/lib/serialize"
-import deserialize from "dom-form-serializer/lib/deserialize"
-import {isBackgroundPage} from "webext-detect-page"
+import {debounce} from 'throttle-debounce';
+import {isBackground} from 'webext-detect-page';
+import {serialize, deserialize} from 'dom-form-serializer/dist/dom-form-serializer.mjs';
 
 async function shouldRunMigrations(): Promise<boolean> {
-	return new Promise((resolve) => {
-		const callback = (installType: string): void => {
-			// Always run migrations during development #25
-			if (installType === "development") {
-				resolve(true)
-				return
-			}
+	const self = await messenger.management?.getSelf();
 
-			// Run migrations when the extension is installed or updated
-			// This broke other onInstalled functions!
-			messenger.runtime.onInstalled.addListener(() => resolve(true))
+	// Always run migrations during development #25
+	if (self?.installType === 'development') {
+		return true;
+	}
 
-			// If `onInstalled` isn't fired, then migrations should not be run
-			setTimeout(resolve, 500, false)
-		}
+	return new Promise(resolve => {
+		// Run migrations when the extension is installed or updated
+		messenger.runtime.onInstalled.addListener(() => {
+			resolve(true);
+		});
 
-		if (messenger.management?.getSelf) {
-			messenger.management.getSelf().then((r) => callback(r.installType))
-		} else {
-			callback("unknown")
-		}
-	})
+		// If `onInstalled` isn't fired, then migrations should not be run
+		setTimeout(resolve, 500, false);
+	});
 }
+
+export type StorageType = 'sync' | 'local';
 
 /**
 @example
@@ -53,80 +49,79 @@ async function shouldRunMigrations(): Promise<boolean> {
 		}
 	],
 }
- */
-export interface Setup<TOptions extends Options> {
+*/
+export type Setup<UserOptions extends Options> = {
 	logging?: boolean;
-	defaults?: TOptions;
+	defaults?: UserOptions;
 	/**
 	 * A list of functions to call when the extension is updated.
 	 */
-	migrations?: Array<Migration<TOptions>>;
-}
+	migrations?: Array<Migration<UserOptions>>;
+	storageType?: StorageType;
+};
 
 /**
 A map of options as strings or booleans. The keys will have to match the form fields' `name` attributes.
- */
+*/
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style -- Interfaces are extendable
-export interface Options {
+export type Options = {
 	[key: string]: string | number | boolean;
-}
+};
 
 /*
 Handler signature for when an extension updates.
 */
-export type Migration<TOptions extends Options> = (
-	savedOptions: TOptions,
-	defaults: TOptions
-) => TOptions;
+export type Migration<UserOptions extends Options> = (savedOptions: UserOptions, defaults: UserOptions) => Promise<UserOptions>;
 
-class OptionsSync<TOptions extends Options> {
+class OptionsSync<UserOptions extends Options> {
 	public static migrations = {
 		/**
 		Helper method that removes any option that isn't defined in the defaults. It's useful to avoid leaving old options taking up space.
-		 */
+		*/
 		removeUnused(options: Options, defaults: Options) {
 			for (const key of Object.keys(options)) {
 				if (!(key in defaults)) {
-					delete options[key]
+					delete options[key];
 				}
 			}
 		},
 	};
 
-	defaults: TOptions;
+	storageType: StorageType;
 
-	_form!: HTMLFormElement;
+	defaults: UserOptions;
+
+	_form: HTMLFormElement | undefined;
 
 	private readonly _migrations: Promise<void>;
 
 	/**
 	@constructor Returns an instance linked to the chosen storage.
 	@param setup - Configuration for `webext-options-sync`
-	 */
+	*/
 	constructor({
-					// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
-					defaults = {} as TOptions,
-					migrations = [],
-					logging = true,
-				}: Setup<TOptions> = {}) {
-		this.defaults = defaults
-		this._handleFormInput = debounce(300, this._handleFormInput.bind(this))
-		this._handleStorageChangeOnForm = this._handleStorageChangeOnForm.bind(
-			this
-		)
+		// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
+		defaults = {} as UserOptions,
+		migrations = [],
+		logging = true,
+		storageType = 'sync',
+	}: Setup<UserOptions> = {}) {
+		this.defaults = defaults;
+		this.storageType = storageType;
 
 		if (!logging) {
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
-			OptionsSync._log = () => {
-			}
+			this._log = () => {};
 		}
 
-		this._migrations = this._runMigrations(migrations)
+		this._migrations = this._runMigrations(migrations);
+	}
+
+	private get storage(): messenger.storage.StorageArea {
+		return messenger.storage[this.storageType];
 	}
 
 	/**
-	Retrieves all the options stored. Based on keys from the provided defaults.
-	 **Not truly ALL**
+	Retrieves all the options stored.
 
 	@returns Promise that will resolve with **all** the options stored, as an object.
 
@@ -137,10 +132,10 @@ class OptionsSync<TOptions extends Options> {
 	if (options.color) {
 		document.body.style.color = color;
 	}
-	 */
-	async getAll(): Promise<TOptions> {
-		await this._migrations
-		return this._get()
+	*/
+	async getAll(): Promise<UserOptions> {
+		await this._migrations;
+		return this._getAll();
 	}
 
 	/**
@@ -157,28 +152,28 @@ class OptionsSync<TOptions extends Options> {
 		document.body.style.color = color;
 	}
 	 */
-	async get(_keys: string | string[]): Promise<TOptions> {
-		await this._migrations
-		return this._get(_keys)
+	async get(_keys: string | string[]): Promise<UserOptions> {
+		await this._migrations;
+		return this._get(_keys);
 	}
 
 	/**
 	Overrides **all** the options stored with your `options`.
 
 	@param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-	 */
-	async setAll(newOptions: TOptions): Promise<void> {
-		await this._migrations
-		return this._setAll(newOptions)
+	*/
+	async setAll(newOptions: UserOptions): Promise<void> {
+		await this._migrations;
+		return this._setAll(newOptions);
 	}
 
 	/**
 	Merges new options with the existing stored options.
 
 	@param newOptions - A map of default options as strings or booleans. The keys will have to match the form fields' `name` attributes.
-	 */
-	async set(newOptions: Partial<TOptions>): Promise<void> {
-		return this.setAll({...(await this.getAll()), ...newOptions})
+	*/
+	async set(newOptions: Partial<UserOptions>): Promise<void> {
+		return this.setAll({...await this.getAll(), ...newOptions});
 	}
 
 	/**
@@ -189,189 +184,171 @@ class OptionsSync<TOptions extends Options> {
 	 @example
 	 optionsStorage.reset("color");
 	 */
-	async reset(_key: string): Promise<TOptions | void> {
-		await this._migrations
+	async reset(_key: string): Promise<UserOptions | void> {
+		await this._migrations;
 		try {
-			await this._remove(_key)
-			this._updateForm(this._form, await this.get(_key))
-		} catch (e) {
-			return
-		}
+			await this._remove(_key);
+			if (this._form) {
+				this._updateForm(this._form, await this.get(_key));
+			}
+		} catch {}
 	}
 
 	/**
-	Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved via `messenger.storage.sync`.
+	Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved to storage
 
-	@param form - The `<form>` that needs to be synchronized or a CSS selector (one element).
+	@param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
 	The form fields' `name` attributes will have to match the option names.
-	 */
+	*/
 	async syncForm(form: string | HTMLFormElement): Promise<void> {
-		this._form =
-			form instanceof HTMLFormElement
-				? form
-				: document.querySelector<HTMLFormElement>(form)!
+		this._form = form instanceof HTMLFormElement
+			? form
+			: document.querySelector<HTMLFormElement>(form)!;
 
-		this._form.addEventListener("input", this._handleFormInput)
-		this._form.addEventListener("submit", this._handleFormSubmit)
-		messenger.storage.onChanged.addListener(this._handleStorageChangeOnForm)
-		this._updateForm(this._form, await this.getAll())
+		this._form.addEventListener('input', this._handleFormInput);
+		this._form.addEventListener('submit', this._handleFormSubmit);
+		messenger.storage.onChanged.addListener(this._handleStorageChangeOnForm);
+		this._updateForm(this._form, await this.getAll());
 	}
 
 	/**
 	Removes any listeners added by `syncForm`
-	 */
+	*/
 	async stopSyncForm(): Promise<void> {
 		if (this._form) {
-			this._form.removeEventListener("input", this._handleFormInput)
-			this._form.removeEventListener("submit", this._handleFormSubmit)
-			messenger.storage.onChanged.removeListener(
-				this._handleStorageChangeOnForm
-			)
-			/* @ts-expect-error cuz i said so*/
-			delete this._form
+			this._form.removeEventListener('input', this._handleFormInput);
+			this._form.removeEventListener('submit', this._handleFormSubmit);
+			messenger.storage.onChanged.removeListener(this._handleStorageChangeOnForm);
+			delete this._form;
 		}
 	}
 
-	private static _log(method: 'log' | 'info', ...args: any[]): void {
-		console[method](...args)
+	private _log(method: 'log' | 'info', ...args: any[]): void {
+		console[method](...args);
 	}
 
-	private async _get(_keys?: string | string[]): Promise<TOptions> {
-		if (typeof _keys === "undefined") {
-			_keys = Object.keys(this.defaults)
-		}
-		if (typeof _keys === "string") {
-			_keys = [_keys]
-		}
-		const storage_results = await messenger.storage.sync.get(_keys)
-		for (const key of _keys) {
-			// eslint-disable-next-line no-prototype-builtins
-			if (!storage_results.hasOwnProperty(key)) {
-				// eslint-disable-next-line no-prototype-builtins
-				if (this.defaults.hasOwnProperty(key)) {
-					storage_results[key] = this.defaults[key]
-				}
+	private async _getAll(): Promise<UserOptions> {
+		const _keys = Object.keys(this.defaults);
+		const storageResults = await this.storage.get(_keys);
+		for (const key of Object.keys(this.defaults)) {
+			if (!Object.hasOwn(storageResults, key)) {
+				storageResults[key] = this.defaults[key];
 			}
 		}
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return storage_results
+
+		return storageResults as UserOptions;
 	}
 
-	private async _setAll(newOptions: TOptions): Promise<void> {
-		// OptionsSync._log("log", "Saving options", newOptions)
-		return new Promise((resolve, reject) => {
-			messenger.storage.sync.set(newOptions).then(() => {
-				if (messenger.runtime.lastError) {
-					reject(messenger.runtime.lastError)
-				} else {
-					resolve()
-				}
-			})
-		})
+	private async _get(_keys: string | string[]): Promise<UserOptions> {
+		if (typeof _keys === 'string') {
+			_keys = [_keys];
+		}
+
+		const storageResults = await this.storage.get(_keys);
+		for (const key of _keys) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (!storageResults.hasOwnProperty(key) // eslint-disable-next-line no-prototype-builtins
+				&& this.defaults.hasOwnProperty(key)) {
+				storageResults[key] = this.defaults[key];
+			}
+		}
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		return storageResults;
+	}
+
+	private async _setAll(newOptions: UserOptions): Promise<void> {
+		await this.storage.set(newOptions);
 	}
 
 	private async _remove(_key: string): Promise<void> {
-		// OptionsSync._log("log", "Resetting options", _key)
-		return new Promise((resolve, reject) => {
-			messenger.storage.sync.remove(_key).then(() => {
-				if (messenger.runtime.lastError) {
-					reject(messenger.runtime.lastError)
-				} else {
-					resolve()
-				}
-			})
-		})
+		await this.storage.remove(_key);
 	}
 
-	private async _runMigrations(
-		migrations: Array<Migration<TOptions>>
-	): Promise<void> {
-		if (
-			migrations.length === 0 ||
-			!isBackgroundPage() ||
-			!(await shouldRunMigrations())
-		) {
-			return
+	private async _runMigrations(migrations: Array<Migration<UserOptions>>): Promise<void> {
+		if (migrations.length === 0 || !isBackground() || !await shouldRunMigrations()) {
+			return;
 		}
-		const options = await this._get()
 
-		//OptionsSync._log("log", "Found these stored options", { ...options })
-		OptionsSync._log(
-			"info",
-			"Will run",
-			migrations.length,
-			migrations.length === 1 ? "migration" : " migrations"
-		)
+		const options = await this._getAll();
 
-		let _migrateFunc: Migration<TOptions>
+		this._log('info', 'Will run', migrations.length, migrations.length === 1 ? 'migration' : ' migrations');
+		let _migrateFunc: (Migration<UserOptions>);
 		for (_migrateFunc of migrations) {
-			const changes: TOptions = await _migrateFunc(options, this.defaults)
+			const changes: UserOptions = await _migrateFunc(options, this.defaults);
 			if (changes !== null) {
-				await this._setAll(changes)
+				await this._setAll(changes);
 			}
 		}
 	}
 
-	private async _handleFormInput({target}: Event): Promise<void> {
-		const field = target as HTMLInputElement
+	// eslint-disable-next-line @typescript-eslint/member-ordering -- Needs to be near _handleFormSubmit
+	private readonly _handleFormInput = debounce(300, async ({target}: Event): Promise<void> => {
+		const field = target as HTMLInputElement;
 		if (!field.name) {
-			return
+			return;
 		}
 
-		await this.set(this._parseForm(field.form!))
-		field.form!.dispatchEvent(
-			new CustomEvent("options-sync:form-synced", {
-				bubbles: true,
-			})
-		)
-	}
+		await this.set(this._parseForm(field.form!));
+		field.form!.dispatchEvent(new CustomEvent('options-sync:form-synced', {
+			bubbles: true,
+		}));
+	});
 
 	private _handleFormSubmit(event: Event): void {
-		event.preventDefault()
+		event.preventDefault();
 	}
 
-	private _updateForm(form: HTMLFormElement, options: TOptions): void {
+	private _updateForm(form: HTMLFormElement, options: UserOptions): void {
 		// Reduce changes to only values that have changed
-		const currentFormState = this._parseForm(form)
+		const currentFormState = this._parseForm(form);
 		for (const [key, value] of Object.entries(options)) {
 			if (currentFormState[key] === value) {
-				delete options[key]
+				delete options[key];
 			}
 		}
 
-		const include = Object.keys(options)
+		const include = Object.keys(options);
 		if (include.length > 0) {
 			// Limits `deserialize` to only the specified fields. Without it, it will try to set the every field, even if they're missing from the supplied `options`
-			deserialize(form, options, {include})
+			deserialize(form, options, {include});
 		}
 	}
 
 	// Parse form into object, except invalid fields
-	private _parseForm(form: HTMLFormElement): Partial<TOptions> {
-		const include: string[] = []
+	private _parseForm(form: HTMLFormElement): Partial<UserOptions> {
+		const include: string[] = [];
 
 		// Don't serialize disabled and invalid fields
-		for (const field of form.querySelectorAll<HTMLInputElement>("[name]")) {
+		for (const field of form.querySelectorAll<HTMLInputElement>('[name]')) {
 			if (field.validity.valid && !field.disabled) {
-				include.push(field.name.replace(/\[.*]/, ""))
+				include.push(field.name.replace(/\[.*]/, ''));
 			}
 		}
 
-		return serialize(form, {include})
+		return serialize(form, {include});
 	}
 
-	private _handleStorageChangeOnForm(
-		changes: Record<string, any>,
-		areaName: string
-	): void {
+	private readonly _handleStorageChangeOnForm = (changes: Record<string, any>, areaName: string): void => {
 		if (
-			areaName === "sync" &&
-			(!document.hasFocus() || !this._form.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
+			areaName === this.storageType
+			&& changes
+			&& (!document.hasFocus() || !this._form!.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
 		) {
-			this._updateForm(this._form, changes.newValue)
+			const newValues: Record<string, any> = {};
+			for (const change in changes) {
+				if (changes[change].newValue !== undefined) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					newValues[change] = changes[change].newValue;
+				}
+			}
+
+			if (Object.keys(newValues).length > 0) {
+				this._updateForm(this._form!, newValues as UserOptions);
+			}
 		}
-	}
+	};
 }
 
-export default OptionsSync
+export default OptionsSync;

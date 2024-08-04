@@ -12,27 +12,6 @@ Main features:
 - Add autoload and autosave to your options `<form>`
 - Run migrations on update
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Table of contents
-
-- [Install](#install)
-- [Usage](#usage)
-  - [Simple usage](#simple-usage)
-  - [Advanced usage](#advanced-usage)
-  - [Form autosave and autoload](#form-autosave-and-autoload)
-    - [Input validation](#input-validation)
-- [API](#api)
-    - [const optionsStorage = new OptionsSync([setup])](#const-optionsstorage--new-optionssyncsetup)
-    - [opts.set(options)](#optssetoptions)
-    - [opts.setAll(options)](#optssetalloptions)
-    - [opts.getAll()](#optsgetall)
-    - [opts.syncForm(form)](#optssyncformform)
-    - [opts.stopSyncForm()](#optsstopsyncform)
-- [Related](#related)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 ## Install
 
 Use `npm`:
@@ -42,7 +21,7 @@ yarn run build
 ```
 
 ```js
-import OptionsSync from 'webext-options-sync';
+import OptionsSync from 'mailext-options-sync';
 ```
 
 ## Usage
@@ -72,7 +51,7 @@ const options = await optionsStorage.getAll();
 // {showStars: 10}
 ```
 
-**Note:** `OptionsSync` relies on `chrome.storage.sync`, so its [limitations](https://developer.chrome.com/apps/storage#properties) apply, both the size limit and the type of data stored (which must be compatible with JSON).
+**Note:** `OptionsSync` relies on `messenger.storage.sync`, so its [limitations](https://developer.chrome.com/apps/storage#properties) apply, both the size limit and the type of data stored (which must be compatible with JSON).
 
 ### Advanced usage
 
@@ -151,7 +130,7 @@ And also enable autosaving in your options page:
 	<label>Stars: <input name="numbersAreFine"/></label><br>
 </form>
 
-<script src="mailext-options-sync.js"></script>
+<script src="webext-options-sync.js"></script>
 <script src="options-storage.js"></script>
 <script src="options.js"></script>
 ```
@@ -263,6 +242,19 @@ Default: `true`
 
 Whether info and warnings (on sync, updating form, etc.) should be logged to the console or not.
 
+###### storageType
+
+Type: `'local' | 'sync'`
+Default: `sync`
+
+What storage area type to use (sync storage vs local storage). Sync storage is used by default.
+
+**Considerations for selecting which option to use:**
+
+- Sync is default as it's likely more convenient for users.
+- Firefox requires [`browser_specific_settings.gecko.id`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_specific_settings) for the `sync` storage to work locally.
+- Sync storage is subject to much tighter [quota limitations](https://developer.chrome.com/docs/extensions/reference/storage/#property-sync), and may cause privacy concerns if the data being stored is confidential. 
+
 #### optionsStorage.set(options)
 
 This will merge the existing options with the object provided.
@@ -301,4 +293,4 @@ Removes any listeners added by `syncForm`.
 
 ## License
 
-MIT © [Federico Brigante](https://bfred.it)
+MIT © [Federico Brigante](https://fregante.com)
