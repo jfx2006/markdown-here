@@ -1,0 +1,5 @@
+-r requirements.in
+argostranslate
+argos-translate-files
+blessings
+mintrans

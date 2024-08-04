@@ -1,0 +1,7 @@
+black
+pip
+pip-tools
+pip-compile-multi
+ruff
+ruff-lsp
+setuptools
