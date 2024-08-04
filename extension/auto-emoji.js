@@ -24,25 +24,6 @@ const loadEmoji = async () => {
   return _fuse
 }
 
-/*const gatherCandidates = async (term, limit = 10) => {
-  const kvs = await loadEmoji()
-  const results = []
-  // Whether previous key started with the term
-  let prevMatch = false
-  for (const [key, url] of kvs) {
-    if (key.startsWith(term)) {
-      results.push([key, url])
-      if (results.length === limit) {
-        break
-      }
-      prevMatch = true
-    } else if (prevMatch) {
-      break
-    }
-  }
-  return results
-}*/
-
 async function gatherCandidates(term, limit = 10) {
   const fuse = await loadEmoji()
   const results = fuse.search(term)
@@ -58,7 +39,7 @@ const EMOJI_STRATEGY = {
   search: async (term, callback) => {
     callback(await gatherCandidates(term))
   },
-  replace: ([key]) => `:${key}: `,
+  replace: ([key]) => `:${key.replaceAll(" ", "_")}: `,
   template: ([key, emoji_unicode]) => `${emoji_unicode}&nbsp;<small>${key}</small>`,
   context: (text) => {
     const blockmatch = text.match(CODEBLOCK)

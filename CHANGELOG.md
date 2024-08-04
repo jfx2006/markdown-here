@@ -6,6 +6,8 @@
 - Show error message when using GChart Image API for Math Rendering
   [#91](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/91)
 - Updated translations
+- Fixed issue with spaces in emoji picker
+  [#93](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/93)
 
 ## [4.0 beta 19]
 
