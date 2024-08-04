@@ -45,7 +45,7 @@ mdhr-build:
   - python --version ; pip --version  # For debugging
   - python -m venv venv
   - source venv/bin/activate
-  - pip install -r requirements.in
+  - pip install -r requirements/requirements.txt
   script:
   - make all
   artifacts:
@@ -85,9 +85,9 @@ mdhr-release:
       links:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
-          filepath: /${XPI_FILENAME}
+          direct_asset_path: /${XPI_FILENAME}
           link_type: other
         - name: ${UPDATES}
           url: ${PACKAGE_REGISTRY_URL}/${UPDATES}
-          filepath: /${UPDATES}
+          direct_asset_path: /${UPDATES}
           link_type: other
