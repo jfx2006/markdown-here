@@ -3,6 +3,9 @@
 ## Fixed
 
 - Update default CSS to handle GFM tasklists like Github does (no bullets) #87
+- Show error message when using GChart Image API for Math Rendering
+  [#91](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/91)
+- Updated translations
 
 ## [4.0 beta 19]
 
