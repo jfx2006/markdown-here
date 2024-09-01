@@ -27,6 +27,28 @@ function requestHandler(request, sender, sendResponse) {
 }
 messenger.runtime.onMessage.addListener(requestHandler)
 
+function base64ToStr(base64) {
+  const binString = atob(base64)
+  const arr = Uint8Array.from(binString, (m) => m.codePointAt(0))
+  return new TextDecoder().decode(arr)
+}
+
+async function loadOldMarkdown() {
+  const DOMPurify = await import(messenger.runtime.getURL("../vendor/purify.es.js"))
+
+  function escapeHTML(strings, html) {
+    return `${DOMPurify.default.sanitize(html)}`
+  }
+
+  const mailBody = window.document.body
+  const rawMDHR = mailBody.querySelectorAll(".mdhr-raw")
+  for (const raw of rawMDHR) {
+    const data = raw.title.substring(4)
+    const origMD = base64ToStr(data)
+    mailBody.innerHTML = escapeHTML`${origMD}`
+  }
+}
+
 messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
   if (response.reply_position === "bottom") {
     let mailBody = window.document.body
@@ -215,8 +237,10 @@ async function loadEmojiCompleter() {
   return null
 }
 
+// eslint-disable-next-line no-unused-vars
 let emojiDestroy
 ;(async () => {
+  await loadOldMarkdown()
   MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,
