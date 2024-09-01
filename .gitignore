@@ -6,3 +6,5 @@ node_modules
 
 # profiles for testing
 /mdhr_test_profiles/
+
+venv

@@ -8,8 +8,18 @@ import TurndownService from "./vendor/turndown.esm.js"
 import Dentity from "./vendor/dentity.esm.js"
 import { degausser } from "./vendor/degausser.esm.js"
 
+const MDHR_RAW_PREFIX = "MDH:"
+const MDHR_RAW_CSS =
+  "height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
+
 async function sha256Digest(data) {
   return messenger.runtime.sendMessage({ action: "sha256", data: data })
+}
+
+function strToBase64(str) {
+  const bytes = new TextEncoder().encode(str)
+  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("")
+  return btoa(binString)
 }
 
 export class MdhrMangle {
@@ -20,12 +30,25 @@ export class MdhrMangle {
   }
 
   async preprocess() {
+    await this.saveContent()
     await this.excludeContent()
     this.insertLinebreaks()
     //this.escapeTags()
     this.convertHTML()
     const text = degausser(this.doc.body)
     return text.replaceAll(" ", " ")
+  }
+
+  async saveContent() {
+    const content = `${this.doc.body.innerHTML}`
+    const rawHolder = this.doc.createElement("div")
+    rawHolder.classList.add("mdhr-raw")
+    rawHolder.setAttribute("style", MDHR_RAW_CSS)
+    rawHolder.setAttribute("aria-hidden", "true")
+    rawHolder.innerText = "&#8203;"
+    const encoded = strToBase64(content)
+    rawHolder.title = `${MDHR_RAW_PREFIX}${encoded}`
+    this.doc.body.insertAdjacentElement("beforeend", rawHolder)
   }
 
   async excludeContent() {
@@ -36,7 +59,7 @@ export class MdhrMangle {
 
     const excluded = this.doc.querySelectorAll(
       // eslint-disable-next-line max-len
-      "body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img",
+      "body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img, div.mdhr-raw",
     )
     for (const e of excluded) {
       const excludeContent = e.outerHTML
