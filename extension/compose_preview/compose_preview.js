@@ -50,7 +50,7 @@ function makeStylesExplicit(html_msg) {
 
 function wrapExternal(doc) {
   const elements = doc.querySelectorAll(
-    "body > blockquote[type='cite'], body > div.moz-forward-container",
+    "body > blockquote[type='cite'], body > div.moz-forward-container, body > .moz-signature",
   )
   let i = 0
   for (const element of elements) {
