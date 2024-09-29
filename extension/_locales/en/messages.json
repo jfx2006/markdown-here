@@ -53,6 +53,14 @@
     "message": "Set an API URL for Math rendering in Settings.",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set."
   },
+  "reset_preview": {
+    "message": "Reset Preview",
+    "description": "Context menu item displayed on the compose action that resets the live preview to a usable state."
+  },
+  "edit_as_new_markdown_message": {
+    "message": "Edit as new Markdown message",
+    "description": "Context menu item displayed from message list"
+  },
 
   "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {

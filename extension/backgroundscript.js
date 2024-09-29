@@ -164,12 +164,50 @@ messenger.composeAction.onClicked.addListener((tab) => {
 // Add a context menu to the composeAction button
 const menu_reset_id = await messenger.menus.create({
   id: "mdhr-reset-preview",
-  title: "Reset Preview",
+  title: getMessage("reset_preview"),
   contexts: ["compose_action"],
 })
 messenger.menus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === menu_reset_id) {
     await resetModernMode()
+  }
+})
+
+// Add context menu to message list allowing editing of markdown of a previously sent message
+const menu_edit_markdown_id = await messenger.menus.create({
+  id: "mdhr-message-edit-as-new",
+  title: getMessage("edit_as_new_markdown_message"),
+  contexts: ["message_list"],
+})
+
+function base64ToStr(base64) {
+  const binString = atob(base64)
+  const arr = Uint8Array.from(binString, (m) => m.codePointAt(0))
+  return new TextDecoder().decode(arr)
+}
+
+function loadOldMarkdown(bodyHTML) {
+  const mailDocument = new DOMParser().parseFromString(bodyHTML, "text/html")
+  const rawMDHR = mailDocument.body.querySelectorAll(".mdhr-raw")
+  if (rawMDHR.length === 1) {
+    const data = rawMDHR[0].title.substring(4)
+    return base64ToStr(data)
+  }
+}
+
+messenger.menus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId === menu_edit_markdown_id) {
+    for (const msgHeader of info.selectedMessages.messages) {
+      const messageId = msgHeader.id
+      let details = {}
+      const textParts = await messenger.messages.listInlineTextParts(messageId)
+      for (const part of textParts) {
+        if (part.contentType === "text/html") {
+          details["body"] = loadOldMarkdown(part.content)
+        }
+      }
+      await messenger.compose.beginNew(messageId, details)
+    }
   }
 })
 

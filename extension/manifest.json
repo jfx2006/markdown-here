@@ -8,7 +8,8 @@
     "gecko": {
       "id": "markdown-here-revival@xul.calypsoblue.org",
       "strict_min_version": "128.0",
-      "strict_max_version": "128.*"
+      "strict_max_version": "128.*",
+      "update_url": "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
     }
   },
   "default_locale": "en",
@@ -19,8 +20,16 @@
     "128": "images/md_fucsia.svg",
     "512": "images/md_fucsia.svg"
   },
-  "permissions": ["accountsRead", "compose", "compose.save", "menus", "storage", "tabs"],
-  "background": {"page": "background.html"},
+  "permissions": [
+    "accountsRead",
+    "compose",
+    "compose.save",
+    "menus",
+    "messagesRead",
+    "storage",
+    "tabs"
+  ],
+  "background": { "page": "background.html" },
   "compose_action": {
     "browser_style": true,
     "default_area": "formattoolbar",
@@ -50,7 +59,7 @@
       {
         "dark": "images/md_fucsia.svg",
         "light": "images/md_fucsia.svg",
-       "size": 64
+        "size": 64
       }
     ],
     "default_title": "__MSG_toggle_button_tooltip_enable__"

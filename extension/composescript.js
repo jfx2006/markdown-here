@@ -23,6 +23,8 @@ function requestHandler(request, sender, sendResponse) {
     return Promise.resolve(looksLikeMarkdown(body_copy))
   } else if (request.action === "get-md-source") {
     return getMdText()
+  } else if (request.action === "edit-as-new-markdown") {
+    return loadOldMarkdown()
   }
 }
 messenger.runtime.onMessage.addListener(requestHandler)
@@ -42,10 +44,12 @@ async function loadOldMarkdown() {
 
   const mailBody = window.document.body
   const rawMDHR = mailBody.querySelectorAll(".mdhr-raw")
-  for (const raw of rawMDHR) {
-    const data = raw.title.substring(4)
-    const origMD = base64ToStr(data)
-    mailBody.innerHTML = escapeHTML`${origMD}`
+  if (rawMDHR.length > 0) {
+    for (const raw of rawMDHR) {
+      const data = raw.title.substring(4)
+      const origMD = base64ToStr(data)
+      mailBody.innerHTML = escapeHTML`${origMD}`
+    }
   }
 }
 
@@ -240,7 +244,6 @@ async function loadEmojiCompleter() {
 // eslint-disable-next-line no-unused-vars
 let emojiDestroy
 ;(async () => {
-  await loadOldMarkdown()
   MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,

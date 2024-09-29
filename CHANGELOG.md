@@ -1,3 +1,14 @@
+## [4.0 beta 21]
+
+## New
+
+- Restore ability to edit the markdown of a sent email via "Edit as New Message"
+  [#73](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/73)
+
+## Fixed
+
+- Exclude signature from Markdown CSS. [#95](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/95)
+
 ## [4.0 beta 20]
 
 ## Fixed
