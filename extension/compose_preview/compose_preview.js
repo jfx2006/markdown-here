@@ -253,7 +253,9 @@ async function loadIFrame() {
   const main_css = await getMainCSS()
   const syntax_css = await getSyntaxCSS()
   const html = await fetchExtFile("/compose_preview/preview_iframe.html")
-  const srcdoc = html.replace("@SYNTAX_CSS@", syntax_css).replace("@MAIN_CSS@", main_css)
+  const srcdoc = html
+    .replace("<!-- @SYNTAX_CSS@ -->", `<style id="MDHR_syntax_css">${syntax_css}</style>`)
+    .replace("<!-- @MAIN_CSS@ -->", `<style id="MDHR_main_css">${main_css}</style>`)
   const doc = parseHTMLFromString(srcdoc)
   p_iframe.srcdoc = `<!DOCTYPE html>\n${doc.documentElement.outerHTML}`
 }
