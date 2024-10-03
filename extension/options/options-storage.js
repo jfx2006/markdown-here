@@ -22,6 +22,7 @@ import {
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
+  migrate_toStructured,
 } from "./options_migration.js"
 
 function hotKeyDefault() {
@@ -60,6 +61,7 @@ let MIGRATIONS = [
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
+  migrate_toStructured,
   migrate_removeUnused,
 ]
 

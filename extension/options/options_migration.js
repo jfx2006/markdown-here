@@ -190,3 +190,9 @@ export async function migrate_macHotkeys(options, defaults) {
   }
   return null
 }
+
+export async function migrate_toStructured(options, defaults) {
+  const old_options = await EXT_STORAGE.get(Object.keys(defaults))
+  await EXT_STORAGE.remove(Object.keys(defaults))
+  return Object.assign(options, defaults, old_options)
+}
