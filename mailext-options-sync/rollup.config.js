@@ -1,5 +1,4 @@
 import typescript from '@rollup/plugin-typescript';
-import {terser} from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import prettier from 'rollup-plugin-prettier';
@@ -24,22 +23,6 @@ const config = {
 			include: ['mail-ext-types.d.ts',
 				'globals.d.ts',
 				'index.ts'],
-		}),
-		terser({
-			toplevel: true,
-			output: {
-				comments: true,
-				semicolons: false,
-				preamble: PREAMBLE,
-			},
-			mangle: false,
-			compress: {
-				join_vars: false, // eslint-disable-line camelcase
-				booleans: false,
-				expression: false,
-				sequences: false,
-				reduce_vars: false, // eslint-disable-line camelcase
-			},
 		}),
 		prettier({
 			tabwidth: 2,

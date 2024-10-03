@@ -9,8 +9,9 @@
  */
 
 import {debounce} from 'throttle-debounce';
-import {isBackground} from 'webext-detect-page';
+import {isBackground} from 'webext-detect';
 import {serialize, deserialize} from 'dom-form-serializer/dist/dom-form-serializer.mjs';
+import {onContextInvalidated} from 'webext-events';
 
 async function shouldRunMigrations(): Promise<boolean> {
 	const self = await messenger.management?.getSelf();
@@ -50,7 +51,9 @@ export type StorageType = 'sync' | 'local';
 	],
 }
 */
-export type Setup<UserOptions extends Options> = {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Maybe later
+export interface Setup<UserOptions extends Options> {
+	storageName?: string;
 	logging?: boolean;
 	defaults?: UserOptions;
 	/**
@@ -58,20 +61,20 @@ export type Setup<UserOptions extends Options> = {
 	 */
 	migrations?: Array<Migration<UserOptions>>;
 	storageType?: StorageType;
-};
+}
 
 /**
 A map of options as strings or booleans. The keys will have to match the form fields' `name` attributes.
 */
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style -- Interfaces are extendable
-export type Options = {
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style, @typescript-eslint/consistent-type-definitions -- Interfaces are extendable
+export interface Options {
 	[key: string]: string | number | boolean;
-};
+}
 
 /*
 Handler signature for when an extension updates.
 */
-export type Migration<UserOptions extends Options> = (savedOptions: UserOptions, defaults: UserOptions) => Promise<UserOptions>;
+export type Migration<UserOptions extends Options> = (savedOptions: UserOptions, defaults: UserOptions) => Promise<void> | void;
 
 class OptionsSync<UserOptions extends Options> {
 	public static migrations = {
@@ -87,6 +90,7 @@ class OptionsSync<UserOptions extends Options> {
 		},
 	};
 
+	storageName: string;
 	storageType: StorageType;
 
 	defaults: UserOptions;
@@ -102,10 +106,12 @@ class OptionsSync<UserOptions extends Options> {
 	constructor({
 		// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
 		defaults = {} as UserOptions,
+		storageName = 'options',
 		migrations = [],
 		logging = true,
 		storageType = 'sync',
 	}: Setup<UserOptions> = {}) {
+		this.storageName = storageName;
 		this.defaults = defaults;
 		this.storageType = storageType;
 
@@ -209,6 +215,10 @@ class OptionsSync<UserOptions extends Options> {
 		this._form.addEventListener('submit', this._handleFormSubmit);
 		messenger.storage.onChanged.addListener(this._handleStorageChangeOnForm);
 		this._updateForm(this._form, await this.getAll());
+
+		onContextInvalidated.addListener(() => {
+			location.reload();
+		});
 	}
 
 	/**
@@ -223,18 +233,13 @@ class OptionsSync<UserOptions extends Options> {
 		}
 	}
 
-	private _log(method: 'log' | 'info', ...args: any[]): void {
-		console[method](...args);
+	private _log(method: 'log' | 'info', ...arguments_: unknown[]): void {
+		console[method](...arguments_);
 	}
 
 	private async _getAll(): Promise<UserOptions> {
-		const _keys = Object.keys(this.defaults);
-		const storageResults = await this.storage.get(_keys);
-		for (const key of Object.keys(this.defaults)) {
-			if (!Object.hasOwn(storageResults, key)) {
-				storageResults[key] = this.defaults[key];
-			}
-		}
+		const result = await this.storage.get(this.storageName);
+		const storageResults = this._decode(result[this.storageName]);
 
 		return storageResults as UserOptions;
 	}
@@ -244,26 +249,43 @@ class OptionsSync<UserOptions extends Options> {
 			_keys = [_keys];
 		}
 
-		const storageResults = await this.storage.get(_keys);
-		for (const key of _keys) {
-			// eslint-disable-next-line no-prototype-builtins
-			if (!storageResults.hasOwnProperty(key) // eslint-disable-next-line no-prototype-builtins
-				&& this.defaults.hasOwnProperty(key)) {
-				storageResults[key] = this.defaults[key];
-			}
-		}
+		const storageResults = await this._getAll()
+		// @ts-ignore
+		const rv = Object.fromEntries(Object.entries(storageResults).filter(([key, value]) => _keys.includes(key)));
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
-		return storageResults;
+		return rv as UserOptions;
 	}
 
 	private async _setAll(newOptions: UserOptions): Promise<void> {
-		await this.storage.set(newOptions);
+		this._log('log', 'Saving options', newOptions);
+		await this.storage.set({
+			[this.storageName]: this._encode(newOptions),
+		});
+	}
+
+	private _encode(options: UserOptions): Partial<UserOptions> {
+		const thinnedOptions: Partial<UserOptions> = {...options};
+		for (const [key, value] of Object.entries(thinnedOptions)) {
+			if (this.defaults[key] === value) {
+				delete thinnedOptions[key];
+			}
+		}
+
+		this._log('log', 'Without the default values', thinnedOptions);
+
+		return thinnedOptions;
+	}
+
+	private _decode(options: Partial<UserOptions>): UserOptions {
+		return {...this.defaults, ...options as UserOptions};
 	}
 
 	private async _remove(_key: string): Promise<void> {
-		await this.storage.remove(_key);
+		const storageResults = await this.storage.get(this.storageName);
+		delete storageResults[_key]
+		await this.storage.set({
+			[this.storageName]: this._encode(storageResults as UserOptions),
+		});
 	}
 
 	private async _runMigrations(migrations: Array<Migration<UserOptions>>): Promise<void> {
@@ -272,14 +294,18 @@ class OptionsSync<UserOptions extends Options> {
 		}
 
 		const options = await this._getAll();
+		const initial = JSON.stringify(options);
 
+		this._log('log', 'Found these stored options', {...options});
 		this._log('info', 'Will run', migrations.length, migrations.length === 1 ? 'migration' : ' migrations');
-		let _migrateFunc: (Migration<UserOptions>);
-		for (_migrateFunc of migrations) {
-			const changes: UserOptions = await _migrateFunc(options, this.defaults);
-			if (changes !== null) {
-				await this._setAll(changes);
-			}
+		for (const migrate of migrations) {
+			// eslint-disable-next-line no-await-in-loop -- Must be done in order
+			await migrate(options, this.defaults);
+		}
+
+		// Only save to storage if there were any changes
+		if (initial !== JSON.stringify(options)) {
+			await this._setAll(options);
 		}
 	}
 
@@ -330,23 +356,13 @@ class OptionsSync<UserOptions extends Options> {
 		return serialize(form, {include});
 	}
 
-	private readonly _handleStorageChangeOnForm = (changes: Record<string, any>, areaName: string): void => {
+	private readonly _handleStorageChangeOnForm = (changes: Record<string, messenger.storage.StorageChange>, areaName: string): void => {
 		if (
 			areaName === this.storageType
-			&& changes
+			&& this.storageName in changes
 			&& (!document.hasFocus() || !this._form!.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
 		) {
-			const newValues: Record<string, any> = {};
-			for (const change in changes) {
-				if (changes[change].newValue !== undefined) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					newValues[change] = changes[change].newValue;
-				}
-			}
-
-			if (Object.keys(newValues).length > 0) {
-				this._updateForm(this._form!, newValues as UserOptions);
-			}
+			this._updateForm(this._form!, this._decode(changes[this.storageName]!.newValue as Partial<UserOptions>));
 		}
 	};
 }
