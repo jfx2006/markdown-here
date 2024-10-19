@@ -47,7 +47,7 @@ mdhr-build:
   - source venv/bin/activate
   - pip install -r requirements/requirements.txt
   script:
-  - make all
+  - make ci
   artifacts:
     paths:
       - web-ext-artifacts/markdown-here-revival.xpi

@@ -10,7 +10,7 @@
 /* global  Utils:false bootstrap:false */
 
 import HotkeyHandler from "./shortcuts.js"
-import DOMPurify from "../vendor/purify.es.js"
+import DOMPurify from "../vendor/purify.es.mjs"
 
 import { fetchExtFile, getHljsStyles, getLanguage, getMessage } from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_app_name__",
-  "version": "3.999.21",
+  "version": "4.0.0",
   "description": "__MSG_app_slogan__",
   "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
   "browser_specific_settings": {
@@ -9,7 +9,6 @@
       "id": "markdown-here-revival@xul.calypsoblue.org",
       "strict_min_version": "128.0",
       "strict_max_version": "128.*",
-      "update_url": "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
     }
   },
   "default_locale": "en",

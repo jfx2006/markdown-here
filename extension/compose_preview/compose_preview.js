@@ -4,7 +4,7 @@
  * https://gitlab.com/jfx2006
  */
 
-import DOMPurify from "../vendor/purify.es.js"
+import DOMPurify from "../vendor/purify.es.mjs"
 import { getMainCSS, getSyntaxCSS, debounce, toInt, fetchExtFile } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"

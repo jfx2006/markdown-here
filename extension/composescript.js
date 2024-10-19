@@ -36,7 +36,7 @@ function base64ToStr(base64) {
 }
 
 async function loadOldMarkdown() {
-  const DOMPurify = await import(messenger.runtime.getURL("../vendor/purify.es.js"))
+  const DOMPurify = await import(messenger.runtime.getURL("../vendor/purify.es.m  js"))
 
   function escapeHTML(strings, html) {
     return `${DOMPurify.default.sanitize(html)}`
