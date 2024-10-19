@@ -40,7 +40,7 @@ export function testCssSum(checksum) {
   return true
 }
 
-const EXT_STORAGE = window.messenger?.storage.sync || window.messenger?.storage.local || {}
+const EXT_STORAGE = window.messenger?.storage.sync || {}
 
 export async function migrate_oldHotKey(options, defaults) {
   let platformInfo = await messenger.runtime.getPlatformInfo()
