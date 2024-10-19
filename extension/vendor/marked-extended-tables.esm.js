@@ -1,4 +1,4 @@
-export default function() {
+export default function(endRegex = []) {
   return {
     extensions: [
       {
@@ -7,13 +7,21 @@ export default function() {
         start(src) { return src.match(/^\n *([^\n ].*\|.*)\n/)?.index; }, // Hint to Marked.js to stop and check for a match
         tokenizer(src, tokens) {
           // const regex = this.tokenizer.rules.block.table;
-          const regex = new RegExp('^ *([^\\n ].*\\|.*\\n(?: *[^\\s].*\\n)*?)' // Header
+          let regexString = '^ *([^\\n ].*\\|.*\\n(?: *[^\\s].*\\n)*?)' // Header
               + ' {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)(?:\\| *)?' // Align
               + '(?:\\n((?:(?! *\\n| {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})' // Cells
               + '(?:\\n+|$)| {0,3}#{1,6} | {0,3}>| {4}[^\\n]| {0,3}(?:`{3,}'
               + '(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n| {0,3}(?:[*+-]|1[.)]) |'
-              + '<\\/?(?:address|article|aside|base|basefont|blockquote|body|'
-              + 'caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?: +|\\n|\\/?>)|<(?:script|pre|style|textarea|!--)).*(?:\\n|$))*)\\n*|$)'); // Cells
+              + '<\\/?(?:address|article|aside|base|basefont|blockquote|body'
+              + '|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt'
+              + '|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]'
+              + '|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem'
+              + '|meta|nav|noframes|ol|optgroup|option|p|param|section|source'
+              + '|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)'
+              + '(?: +|\\n|\\/?>)|<(?:script|pre|style|textarea|!--)endRegex).*(?:\\n|$))*)\\n*|$)'; // Cells
+
+          regexString = regexString.replace('endRegex', endRegex.map(str => `|(?:${str})`).join(''));
+          const regex = new RegExp(regexString);
           const cap = regex.exec(src);
 
           if (cap) {

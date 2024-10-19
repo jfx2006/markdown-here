@@ -881,12 +881,12 @@ function markedLinkifyIt(schemas = {}, options = {}) {
             {
               type: 'text',
               raw: link.text,
-              text: link.text
-            }
-          ]
+              text: link.text,
+            },
+          ],
         };
-      }
-    }]
+      },
+    }],
   };
 }
 

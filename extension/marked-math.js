@@ -78,6 +78,7 @@ function mathBlock(options, renderer) {
   return {
     name: "mathBlock",
     level: "block", // Is this a block-level or inline-level tokenizer?
+    useNewRenderer: true,
     start(src) {
       return src.match(/\$\$/)?.index
     },
@@ -106,6 +107,7 @@ function mathInline(options, renderer) {
   return {
     name: "mathInline",
     level: "inline", // Is this a block-level or inline-level tokenizer?
+    useNewRenderer: true,
     start(src) {
       const match = src.match(inlineStartRule)
       if (!match) {
