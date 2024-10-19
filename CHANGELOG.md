@@ -9,7 +9,7 @@
 
 - Exclude signature from Markdown CSS. [#95](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/95)
 
-## [4.0 beta 20]
+### [4.0 beta 20]
 
 ## Fixed
 
@@ -20,7 +20,7 @@
 - Fixed issue with spaces in emoji picker
   [#93](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/93)
 
-## [4.0 beta 19]
+### [4.0 beta 19]
 
 ## Fixed
 
