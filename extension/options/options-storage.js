@@ -80,7 +80,7 @@ function MDHROptionsStore() {
   return new OptionsSync({
     defaults: DEFAULTS,
     migrations: MIGRATIONS,
-    logging: true,
+    logging: false,
   })
 }
 
