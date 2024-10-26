@@ -70,3 +70,7 @@ vendored:
     vendor_prefix: data
     cmds:
       - python ./tools/emoji-grab.py $< $@
+
+  marked-directive:
+    path: dist/index.js
+    method: rollup

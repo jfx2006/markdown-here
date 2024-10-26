@@ -30,6 +30,11 @@ marked: $(EXTENSION)/vendor/marked.esm.js
 $(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
 	cp -v $< $@
 
+marked-directive: $(EXTENSION)/vendor/marked-directive.esm.js
+
+$(EXTENSION)/vendor/marked-directive.esm.js: node_modules/marked-directive/dist/index.js
+	./tools/rollup.sh marked-directive $<
+
 marked-emoji: $(EXTENSION)/vendor/marked-emoji.esm.js
 
 $(EXTENSION)/vendor/marked-emoji.esm.js: node_modules/marked-emoji/src/index.js
@@ -68,6 +73,7 @@ clean:
 	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
 	rm -rf $(EXTENSION)/highlightjs/styles
 	rm -f $(EXTENSION)/vendor/marked.esm.js
+	rm -f $(EXTENSION)/vendor/marked-directive.esm.js
 	rm -f $(EXTENSION)/vendor/marked-emoji.esm.js
 	rm -f $(EXTENSION)/vendor/marked-extended-tables.esm.js
 	rm -f $(EXTENSION)/vendor/marked-highlight.esm.js
@@ -75,4 +81,4 @@ clean:
 	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity textcomplete emoji_codes
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown dentity textcomplete emoji_codes marked-directive
