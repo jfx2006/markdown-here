@@ -184,7 +184,8 @@ class LocaleMaker {
       (item) => item.value && (data[item.id].message = JSON.parse(`"${item.value}"`))
     )
     const filename = this.select.value ? this.select.value + "/messages.json" : "messages.json"
-    this.saveFile({ data, filename })
+    const saveData = JSON.stringify(data)
+    this.saveFile({ saveData, filename })
   }
 
   exportAll() {

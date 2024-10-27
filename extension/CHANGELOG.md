@@ -1,28 +1,32 @@
 # Changelog
 
-## [4.0.1]
+## [4.0.2]
 
-## New
+### New
 - Issue or Bug linking directive. :issue[34] or :bug[123445]. The URL and link
   text are configurable in Options.
 
-## Fixed
-- Disable excessive logging of options changes.
+### Fixed
+- Disable excessive logging of options changes
+- Fix locale-maker save data issue
+## [4.0.1]
+
+- Unreleased
 
 ## [4.0]
 
-## New
+### New
 
 - Restore ability to edit the markdown of a sent email via "Edit as New Message"
   [#73](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/73)
 
-## Fixed
+### Fixed
 
 - Exclude signature from Markdown CSS. [#95](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/95)
 
-### [4.0 beta 20]
+## [4.0 beta 20]
 
-## Fixed
+### Fixed
 
 - Update default CSS to handle GFM tasklists like Github does (no bullets) #87
 - Show error message when using GChart Image API for Math Rendering
