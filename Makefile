@@ -1,7 +1,7 @@
 EXTENSION = extension
 
 all: node_modules mailext-options-sync vendored changelog
-	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md
+	cp -f CHANGELOG.md $(EXTENSION)/CHANGELOG.md || true
 	pnpm run release
 	sh tools/gen-src.sh
 
