@@ -148,6 +148,22 @@
     "message": "Google Image Chart API is discontinued.",
     "description": "Information about the discontinued GChart Image API formerly used to render math formula."
   },
+  "options_page__buglink_description": {
+    "message": "Create links to bug or issue trackers like `:bug[12345]` or `:issue[32]. The fields below are used to template the URL and text of the links.",
+    "description": "Description of bug/issue link feature."
+  },
+  "options_page__buglink_enabled_label": {
+    "message": "Enable Bug/Issue links",
+    "description": "Enable Bug or Issue linking"
+  },
+  "options_page__buglink_url": {
+    "message": "Link URL",
+    "description": "Template field for creating bug/issue links"
+  },
+  "options_page__buglink_text": {
+    "message": "Link Text",
+    "description": "Template for bug/issue link text"
+  },
 
   "__WET_GROUP__usage": { "message": "Howto" },
   "options_page__howto": {

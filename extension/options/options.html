@@ -211,6 +211,29 @@
                   </div>
                 </div>
                 <div class="form-group">
+                  <div class="form-check">
+                    <input id="buglink-enabled" class="form-check-input" type="checkbox" name="buglink-enabled" />
+                    <label class="form-check-label" for="buglink-enabled" data-i18n="buglink_enabled_label">Enable Bug/Issue links</label>
+                    <div id="buglink-extras">
+                      <span class="text-muted" data-i18n="buglink_description">
+                          Create links to bug or issue trackers like `:bug[12345]` or `:issue[32]. The fields below are used to template the URL and text of the links.
+                        </span>
+                        <label class="form-check-label" for="buglink-url">Links URL</label>
+                        <div class="input-wrapper"><input id="buglink-url" class="form-text" type="text" name="buglink-url" pattern="https?://.*\{bug_number\}.*"/>
+                        <button id="buglink-url-reset-button" class="btn btn-sm btn-primary reset-button"
+                                data-field-id="buglink-url">
+                          <span data-i18n="reset_button">Reset</span>
+                        </button></div>
+                        <label class="form-check-label" for="buglink-text">Link text</label>
+                        <div class="input-wrapper"><input id="buglink-text" class="form-text" type="text" name="buglink-text" pattern=".*\{bug_number\}.*" />
+                        <button id="buglink-text-reset-button" class="btn btn-sm btn-primary reset-button"
+                                data-field-id="buglink-text">
+                          <span data-i18n="reset_button">Reset</span>
+                        </button></div>
+                      </div>
+                  </div>
+                </div>
+                <div class="form-group">
                   <div class="input-wrapper-block">
                     <div class="form-check">
                       <input id="math-renderer-enabled" class="form-check-input" type="checkbox"

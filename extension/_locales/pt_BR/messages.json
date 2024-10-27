@@ -37,7 +37,7 @@
     "hash": "fef3aae852e44ea637393db11e0da28a"
   },
   "cancel_button": {
-    "message": "Cancelar Cancelar Cancelar",
+    "message": "Cancelar",
     "hash": "17aa19f18a894459ab6ff21156e8a341"
   },
   "forgot_to_render_back_button": {
@@ -69,6 +69,16 @@
     "message": "Defina uma URL API para renderização em Configurações.",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
+  },
+  "reset_preview": {
+    "message": "Repor a visualização",
+    "description": "Context menu item displayed on the compose action that resets the live preview to a usable state.",
+    "hash": "6ca043613138c5e1b2e3b20df003c175"
+  },
+  "edit_as_new_markdown_message": {
+    "message": "Editar como nova mensagem de Markdown",
+    "description": "Context menu item displayed from message list",
+    "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
   },
   "__WET_GROUP__settings": {
     "message": "Páginas de configurações de extensão",
@@ -160,7 +170,7 @@
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
   "options_page__tex_math_texzilla_label": {
-    "message": "renderização TeXZilla e HTML Canvas",
+    "message": "Renderização TeXZilla e HTML Canvas",
     "description": "Label for tex math rendering option",
     "hash": "c210e3a6960c6d788491ac424f16c7a3"
   },
@@ -183,6 +193,26 @@
     "message": "A API do Google Image Chart está descontinuada.",
     "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  },
+  "options_page__buglink_description": {
+    "message": "Criar links para bug ou emitir rastreadores como `:bug[12345]` ou `:issue[32]. Os campos abaixo são usados para modelar a URL e o texto dos links.",
+    "description": "Description of bug/issue link feature.",
+    "hash": "2802e093c06e7d053e596261afe9fe27"
+  },
+  "options_page__buglink_enabled_label": {
+    "message": "Habilitar links de Bug/Issue",
+    "description": "Enable Bug or Issue linking",
+    "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
+  },
+  "options_page__buglink_url": {
+    "message": "Link URL",
+    "description": "Template field for creating bug/issue links",
+    "hash": "1df9e2c05db77316a3a97275017967b7"
+  },
+  "options_page__buglink_text": {
+    "message": "Texto de ligação",
+    "description": "Template for bug/issue link text",
+    "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
     "message": "Como",

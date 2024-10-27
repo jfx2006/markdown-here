@@ -19,7 +19,9 @@ import hljs from "./highlightjs/highlightjs.esm.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
+import { createDirectives, presetDirectiveConfigs } from "./vendor/marked-directive.esm.js"
 import { urlSchemify } from "./marked-link-scheme.esm.js"
+import { BugDirective } from "./buglink.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -79,6 +81,17 @@ export async function resetMarked(userprefs) {
     const { default: emojis } = await import("./data/shortcodes.mjs")
     marked.use(markedEmoji({ emojis, unicode: true }))
   }
+  const directiveExtensions = [...presetDirectiveConfigs]
+  if (userprefs["buglink-enabled"]) {
+    const bug_url = userprefs["buglink-url"]
+    const bug_text = userprefs["buglink-text"]
+    if (bug_url.includes("{bug_number}") && bug_text.includes("{bug_number}")) {
+      directiveExtensions.push(BugDirective(bug_url, bug_text))
+    } else {
+      console.log("Buglink disabled due to misconfiguration. Check it's settings!")
+    }
+  }
+  marked.use(createDirectives(directiveExtensions))
 }
 
 /**

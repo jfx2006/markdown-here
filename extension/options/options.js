@@ -129,6 +129,7 @@ import OptionsStore from "./options-storage.js"
     await handleUIMode()
     handleMathRenderer()
     await handleInput()
+    handleDirectives()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "renderer-reset" })
   }
@@ -339,6 +340,13 @@ import OptionsStore from "./options-storage.js"
       document.getElementById("math-value").disabled = true
       document.getElementById("math-reset-button").disabled = true
     }
+  }
+
+  function handleDirectives(e) {
+    let enabled = document.getElementById("buglink-enabled")
+    document.querySelectorAll("#buglink-extras > input.form-text").forEach((elem) => {
+      elem.disabled = !enabled.checked
+    })
   }
 
   const SUBS = { __APP_NAME: getMessage("app_name") }

@@ -70,6 +70,16 @@
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
+  "reset_preview": {
+    "message": "Reset Anteprima",
+    "description": "Context menu item displayed on the compose action that resets the live preview to a usable state.",
+    "hash": "6ca043613138c5e1b2e3b20df003c175"
+  },
+  "edit_as_new_markdown_message": {
+    "message": "Modifica come nuovo messaggio Markdown",
+    "description": "Context menu item displayed from message list",
+    "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
+  },
   "__WET_GROUP__settings": {
     "message": "Pagine delle impostazioni di estensione",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
@@ -183,6 +193,26 @@
     "message": "Google Image Chart API viene interrotto.",
     "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  },
+  "options_page__buglink_description": {
+    "message": "Creare link a bug o emettere tracker come `:bug[12345]` o `:issue[32]. I campi sottostanti sono utilizzati per modellare l'URL e il testo dei link.",
+    "description": "Description of bug/issue link feature.",
+    "hash": "2802e093c06e7d053e596261afe9fe27"
+  },
+  "options_page__buglink_enabled_label": {
+    "message": "Abilita collegamenti Bug/Issue",
+    "description": "Enable Bug or Issue linking",
+    "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
+  },
+  "options_page__buglink_url": {
+    "message": "URL del link",
+    "description": "Template field for creating bug/issue links",
+    "hash": "1df9e2c05db77316a3a97275017967b7"
+  },
+  "options_page__buglink_text": {
+    "message": "Testo del link",
+    "description": "Template for bug/issue link text",
+    "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
     "message": "Howto",

@@ -70,6 +70,16 @@
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
+  "reset_preview": {
+    "message": "재설정 미리보기",
+    "description": "Context menu item displayed on the compose action that resets the live preview to a usable state.",
+    "hash": "6ca043613138c5e1b2e3b20df003c175"
+  },
+  "edit_as_new_markdown_message": {
+    "message": "새로운 Markdown 메시지로 편집",
+    "description": "Context menu item displayed from message list",
+    "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
+  },
   "__WET_GROUP__settings": {
     "message": "확장 설정 페이지",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
@@ -183,6 +193,26 @@
     "message": "Google Image Chart API가 중단되었습니다.",
     "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  },
+  "options_page__buglink_description": {
+    "message": "`:bug[12345]` 또는 `:issue[32]와 같은 트래커에 대한 링크 생성. 아래 필드는 링크의 URL과 텍스트를 템플릿에 사용됩니다.",
+    "description": "Description of bug/issue link feature.",
+    "hash": "2802e093c06e7d053e596261afe9fe27"
+  },
+  "options_page__buglink_enabled_label": {
+    "message": "Enable Bug/Issue 링크",
+    "description": "Enable Bug or Issue linking",
+    "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
+  },
+  "options_page__buglink_url": {
+    "message": "링크 URL",
+    "description": "Template field for creating bug/issue links",
+    "hash": "1df9e2c05db77316a3a97275017967b7"
+  },
+  "options_page__buglink_text": {
+    "message": "링크 텍스트",
+    "description": "Template for bug/issue link text",
+    "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
     "message": "이용 방법",
