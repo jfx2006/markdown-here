@@ -1,3 +1,14 @@
+# Changelog
+
+## [4.0.1]
+
+## New
+- Issue or Bug linking directive. :issue[34] or :bug[123445]. The URL and link
+  text are configurable in Options.
+
+## Fixed
+- Disable excessive logging of options changes.
+
 ## [4.0]
 
 ## New
