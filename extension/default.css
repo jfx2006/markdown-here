@@ -109,7 +109,21 @@ blockquote, q {
   padding: 0 1em;
   color: #777;
   quotes: none;
+  border-inline-start: 2px solid rgb(114, 159, 207);
+    & & {
+    border-inline-start-color: rgb(173, 127, 168);
+        & & {
+          border-inline-start-color: rgb(138, 226, 52);
+          & & {
+            border-inline-start-color: rgb(252, 175, 62);
+            & & {
+              border-inline-start-color: rgb(233, 185, 110);
+            }
+          }
+        }
+  }
 }
+
 
 blockquote::before, blockquote::after, q::before, q::after {
   content: none;

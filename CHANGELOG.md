@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.3]
+
+### Fixed
+- Vertical lines left adjacent to block quotes not present. (default css fix)
+  [#104](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/104)
+
 ## [4.0.2]
 
 ### New
@@ -9,6 +15,7 @@
 ### Fixed
 - Disable excessive logging of options changes
 - Fix locale-maker save data issue
+
 ## [4.0.1]
 
 - Unreleased
