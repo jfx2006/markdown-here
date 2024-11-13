@@ -40,7 +40,13 @@ messenger.runtime.onInstalled.addListener(async (details) => {
     })
   }
 
-  const win = await messenger.windows.getCurrent()
+  const allWindows = await messenger.windows.getAll({ windowTypes: ["normal"] })
+  let win
+  if (allWindows.length >= 1) {
+    win = allWindows[0]
+  } else {
+    win = await messenger.windows.getCurrent()
+  }
   const winId = win.id
   let onboardUrl = new URL(messenger.runtime.getURL("/options/options.html"))
 
