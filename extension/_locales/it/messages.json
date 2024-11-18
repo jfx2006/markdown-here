@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "Creare link a bug o emettere tracker come `:bug[12345]` o `:issue[32]. I campi sottostanti sono utilizzati per modellare l'URL e il testo dei link.",
+    "message": "Creare link a bug o emettere tracker come `#12345`. I campi sottostanti sono utilizzati per modellare l'URL e il testo dei link.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

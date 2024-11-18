@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "`:bug[12345]` 또는 `:issue[32]와 같은 트래커에 대한 링크 생성. 아래 필드는 링크의 URL과 텍스트를 템플릿에 사용됩니다.",
+    "message": "`#12345` 와 같은 트래커에 대한 링크 생성. 아래 필드는 링크의 URL과 텍스트를 템플릿에 사용됩니다.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

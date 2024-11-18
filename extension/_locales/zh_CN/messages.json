@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "创建错误的链接或像‘:bug[12345]'或':issue[32]这样的发行跟踪器. 以下字段用于模板链接的URL和文本.",
+    "message": "创建错误的链接或像‘#12345'这样的发行跟踪器. 以下字段用于模板链接的URL和文本.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "Criar links para bug ou emitir rastreadores como `:bug[12345]` ou `:issue[32]. Os campos abaixo são usados para modelar a URL e o texto dos links.",
+    "message": "Criar links para bug ou emitir rastreadores como `#12345`. Os campos abaixo são usados para modelar a URL e o texto dos links.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

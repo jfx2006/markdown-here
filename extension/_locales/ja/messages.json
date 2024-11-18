@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "`:bug[12345]` や `:issue[32] のようなバグや問題トラッカーへのリンクを作成します。 下のフィールドは、リンクのURLとテキストをテンプレートに使用されます。",
+    "message": "`#12345` のようなバグや問題トラッカーへのリンクを作成します。 下のフィールドは、リンクのURLとテキストをテンプレートに使用されます。",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

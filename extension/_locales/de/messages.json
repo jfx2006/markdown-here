@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "Erstellen Sie Links zu Bug oder Ausgabe-Trackern wie `:bug[12345]` oder `:issue[32]. Die nachstehenden Felder werden verwendet, um die URL und den Text der Links einzuschablonen.",
+    "message": "Erstellen Sie Links zu Bug oder Ausgabe-Trackern wie `#12345`. Die nachstehenden Felder werden verwendet, um die URL und den Text der Links einzuschablonen.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },

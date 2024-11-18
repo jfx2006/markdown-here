@@ -149,7 +149,7 @@
     "description": "Information about the discontinued GChart Image API formerly used to render math formula."
   },
   "options_page__buglink_description": {
-    "message": "Create links to bug or issue trackers like `:bug[12345]` or `:issue[32]. The fields below are used to template the URL and text of the links.",
+    "message": "Create links to bug or issue trackers like `#12345`. The fields below are used to template the URL and text of the links.",
     "description": "Description of bug/issue link feature."
   },
   "options_page__buglink_enabled_label": {

@@ -195,7 +195,7 @@
     "hash": "11547235a52d1c5e18f5066ff170e3e1"
   },
   "options_page__buglink_description": {
-    "message": "Créer des liens vers des traqueurs de bugs ou de problèmes comme `:bug[12345]` ou `:issue[32]. Les champs ci-dessous sont utilisés pour modéliser l'URL et le texte des liens.",
+    "message": "Créer des liens vers des traqueurs de bugs ou de problèmes comme `#12345`. Les champs ci-dessous sont utilisés pour modéliser l'URL et le texte des liens.",
     "description": "Description of bug/issue link feature.",
     "hash": "2802e093c06e7d053e596261afe9fe27"
   },
