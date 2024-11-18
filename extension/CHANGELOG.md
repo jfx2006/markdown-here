@@ -2,9 +2,18 @@
 
 ## [4.0.3]
 
+### Changed
+- Syntax for Bug/Issue links changed to `#bugno` to align with what Github/Gitlab
+  use
+- Generic directive syntax `:span[text]{.classname attr="foo"}` enabled
+
 ### Fixed
-- Vertical lines left adjacent to block quotes not present. (default css fix)
+- Vertical lines left adjacent to block quotes not present (default css fix)
   [#104](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/104)
+- Update popup could open in compose window
+  [#101](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/101)
+- Emojis did not render due to conflicting Marked extension
+  [#107](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/107)
 
 ## [4.0.2]
 
