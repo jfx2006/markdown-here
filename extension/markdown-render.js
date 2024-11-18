@@ -75,12 +75,13 @@ export async function resetMarked(userprefs) {
     }
     marked.use(markedMath(mathOptions))
   }
+  marked.use(createDirectives([...presetDirectiveConfigs]))
   if (userprefs["emoji-shortcode-enabled"]) {
     const { markedEmoji } = await import("./vendor/marked-emoji.esm.js")
     const { default: emojis } = await import("./data/shortcodes.mjs")
     marked.use(markedEmoji({ emojis, unicode: true }))
   }
-  const directiveExtensions = [...presetDirectiveConfigs]
+
   if (userprefs["buglink-enabled"]) {
     const buglink = await import("./buglink.esm.js")
     const bug_url = userprefs["buglink-url"]
@@ -91,7 +92,6 @@ export async function resetMarked(userprefs) {
       console.log("Buglink disabled due to misconfiguration. Check it's settings!")
     }
   }
-  marked.use(createDirectives(directiveExtensions))
 }
 
 /**
