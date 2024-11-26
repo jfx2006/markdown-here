@@ -153,6 +153,7 @@ async function doRenderPreview() {
   }
   await sendToPreview(finalHTML)
 }
+const debouncedRenderPreview = debounce(doRenderPreview, 500)
 
 async function sendToPreview(finalHTML, attempts = 1) {
   // Called by doRenderPreview
@@ -179,11 +180,18 @@ function calculateScrollPercentage(elem) {
   return scrolledAmount / elem.scrollHeight
 }
 
-function debounce(cb, wait = 1000) {
-  let timeout
-  return (...args) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => cb(...args), wait)
+function debounce(cb, wait = 500) {
+  let debounceTimer
+  let debounceWhen = 0
+  return function () {
+    const context = this
+    const args = arguments
+    if (Date.now() - debounceWhen > wait) {
+      cb.apply(context, args)
+      clearTimeout(debounceTimer)
+    }
+    debounceTimer = setTimeout(() => cb.apply(context, args), wait)
+    debounceWhen = Date.now()
   }
 }
 
@@ -224,7 +232,7 @@ async function editorMutationCb(mutationList, observer) {
   if (mutationList.type === "attributes" && mutationList.target.nodeName !== "IMG") {
     return
   }
-  return await doRenderPreview()
+  return debounce(debouncedRenderPreview())
 }
 
 async function loadEmojiCompleter() {

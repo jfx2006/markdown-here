@@ -14,6 +14,8 @@
   [#101](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/101)
 - Emojis did not render due to conflicting Marked extension
   [#107](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/107)
+- Debounce live preview rendering and enable async rendering.
+  [#102](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/102)
 
 ## [4.0.2]
 

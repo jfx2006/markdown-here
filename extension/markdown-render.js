@@ -44,6 +44,7 @@ export async function resetMarked(userprefs) {
   }
 
   const markedOptions = {
+    async: true,
     gfm: true,
     pedantic: false,
     breaks: userprefs["gfm-line-breaks-enabled"],
