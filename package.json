@@ -13,22 +13,38 @@
   "private": true,
   "author": "JFX",
   "license": "MIT",
+  "mocha": {
+    "spec": [
+      "extension/test/.spec.js"
+    ],
+    "global": [
+      "jQuery",
+      "$"
+    ],
+    "extension": [
+      "js",
+      "mjs"
+    ]
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@textcomplete/contenteditable": "^0.1.13",
     "@textcomplete/core": "^0.1.13",
     "@textcomplete/utils": "^0.1.13",
-    "@types/mocha": "^10.0.9",
+    "@types/chai-dom": "1.11.3",
+    "@types/mocha": "^10.0.10",
     "@types/thunderbird-webext-browser": "^127.0.0",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.10.0",
+    "chai": "^5.1.2",
+    "chai-dom": "^1.12.0",
     "degausser": "^2.4.4",
     "dentity": "^1.2.1",
     "emojibase-data": "^15.3.2",
     "esbuild": "^0.24.0",
     "esbuild-plugin-replace-regex": "^0.0.2",
-    "eslint": "^8.57.1",
+    "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-html": "^8.1.2",
     "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
@@ -42,6 +58,7 @@
     "marked-extended-tables": "1.0.10",
     "marked-highlight": "^2.2.1",
     "marked-linkify-it": "^3.1.12",
+    "mocha": "^10.8.2",
     "prettier": "^3.3.3",
     "rollup": "^4.17.2",
     "turndown": "^7.2.0",

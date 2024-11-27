@@ -4,7 +4,15 @@
  * https://gitlab.com/jfx2006
  */
 
-$(function () {
+function ready(callback) {
+  if (document.readyState !== "loading") {
+    callback()
+  } else {
+    document.addEventListener("DOMContentLoaded", callback)
+  }
+}
+
+ready(() => {
   mocha
     // I'm not sure what introduces the global "schemaTypes", but it's not
     // Markdown Here and it causes an error on one of my Chrome instances.
