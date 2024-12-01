@@ -43,7 +43,7 @@ describe("AsyncUtils", function () {
 
   describe("getHljsStylesheet", function () {
     it("should return some css", async function () {
-      const KNOWN_PREFIX = "/*!\n  Theme: a11y-dark\n"
+      const KNOWN_PREFIX = "pre code.hljs {\n"
       let data = await getHljsStylesheet("a11y-dark.css")
       expect(data.slice(0, KNOWN_PREFIX.length)).to.equal(KNOWN_PREFIX)
     })

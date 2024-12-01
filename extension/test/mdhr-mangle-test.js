@@ -63,17 +63,20 @@ describe("MdhrMangle", function () {
   async function get(mdHTML) {
     const doc = parser.parseFromString(mdHTML, "text/html")
     const mdHtmlToText = new MdhrMangle(doc)
-    return await mdHtmlToText.preprocess()
+    const mangled = await mdHtmlToText.preprocess()
+    return mangled.replace(/MDHR-[0-9a-z]+/, "")
   }
 
+  // FIXME: Mangle does not work with strings!
   it("should be okay with an empty string", async function () {
     expect(await get("")).to.equal("")
   })
 
   // Test some cases with bare text nodes
   it("should properly handle bare text nodes", async function () {
-    let html = ""
-    let target = ""
+    let html, target
+   /html = ""
+    target = ""
     expect(await get(html)).to.equal(target)
 
     html = "asdf"

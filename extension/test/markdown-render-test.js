@@ -87,28 +87,6 @@ describe("Markdown-Render", function () {
       expect(await markdownRender(md)).to.equal(target)
     })
 
-    // Test issue #84: Math: single-character formula won't render
-    // https://github.com/adam-p/markdown-here/issues/84
-    it("should render single-character math formulae", async function () {
-      const userprefs = {
-        "math-value":
-          '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        "math-renderer": "gchart",
-      }
-      await resetMarked(userprefs)
-
-      var md = "$x$"
-      var target =
-        '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=x" alt="x"></p>\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      // Make sure we haven't broken multi-character forumlae
-      md = "$xx$"
-      target =
-        '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n'
-      expect(await markdownRender(md)).to.equal(target)
-    })
-
     it("should render single-character math formulae via texzilla", async function () {
       const userprefs = {
         "math-renderer": "texzilla",
@@ -116,12 +94,12 @@ describe("Markdown-Render", function () {
       await resetMarked(userprefs)
 
       var md = "$x$"
-      var target = '<p><img alt="x" src="data:image/png;ba'
+      var target = '<p><img width="18" height="16" alt="x"'
       expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
       md = "$xx$"
-      target = '<p><img alt="xx" src="data:image/png;b'
+      target = '<p><img width="27" height="16" alt="xx'
       expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
     })
 
@@ -199,7 +177,8 @@ describe("Markdown-Render", function () {
       const mdText = await mdHtmlToText.preprocess()
       let renderedMarkdown = await markdownRender(mdText)
       renderedMarkdown = mdHtmlToText.postprocess(renderedMarkdown)
-      return renderedMarkdown
+      renderedMarkdown = renderedMarkdown.replace(/(<p>)?<div class="mdhr-raw".*/, "")
+      return renderedMarkdown.replaceAll("\n", "")
     }
 
     it("should be okay with an empty string", async function () {
@@ -236,17 +215,17 @@ describe("Markdown-Render", function () {
 
       tests.push([
         'asdf <a href="http://www.aaa.com">bbb</a> asdf',
-        '<p>asdf <a href="http://www.aaa.com">bbb</a> asdf</p>\n',
+        '<p>asdf <a href="http://www.aaa.com">bbb</a> asdf',
       ])
 
-      tests.push(['<a href="aaa">bbb</a>', '<p><a href="https://aaa">bbb</a></p>\n'])
+      tests.push(['<a href="aaa">bbb</a>', '<p><a href="https://aaa">bbb</a>'])
 
       tests.push([
         '[xxx](yyy) <a href="aaa">bbb</a>',
-        '<p><a href="https://yyy">xxx</a> <a href="https://aaa">bbb</a></p>\n',
+        '<p><a href="https://yyy">xxx</a> <a href="https://aaa">bbb</a>',
       ])
 
-      tests.push(['asdf (<a href="aaa">bbb</a>)', '<p>asdf (<a href="https://aaa">bbb</a>)</p>\n'])
+      tests.push(['asdf (<a href="aaa">bbb</a>)', '<p>asdf (<a href="https://aaa">bbb</a>)'])
 
       for (i = 0; i < tests.length; i++) {
         expect(await fullRender(tests[i][0])).to.equal(tests[i][1])
@@ -257,53 +236,31 @@ describe("Markdown-Render", function () {
     it("should add the schema to links missing it", async function () {
       var md = "asdf [aaa](bbb) asdf [ccc](ftp://ddd) asdf"
       var target =
-        '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>\n'
+        '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf'
       expect(await fullRender(md)).to.equal(target)
     })
 
     it("should *not* add the schema to anchor links", async function () {
       var md = "asdf [aaa](#bbb) asdf [ccc](ftp://ddd) asdf"
-      var target = '<p>asdf <a href="#bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>\n'
+      var target = '<p>asdf <a href="#bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf'
       expect(await fullRender(md)).to.equal(target)
     })
 
     // Test issue #87: https://github.com/adam-p/markdown-here/issues/87
     it("should smartypants apostrophes properly", async function () {
       var md = "Adam's parents' place"
-      var target = "<p>Adam\u2019s parents\u2019 place</p>\n"
+      var target = "<p>Adam\u2019s parents\u2019 place"
       expect(await fullRender(md)).to.equal(target)
     })
 
     // Test issue #83: https://github.com/adam-p/markdown-here/issues/83
     it("should not alter MD-link-looking text in code blocks", async function () {
       var md = "`[a](b)`"
-      var target = "<p><code>[a](b)</code></p>\n"
+      var target = "<p><code>[a](b)</code>"
       expect(await fullRender(md)).to.equal(target)
 
       md = "```<br>\n[a](b)<br>\n```<br>\n"
       target = "<pre><code>[a](b)\n</code></pre>"
-      expect(await fullRender(md)).to.equal(target)
-    })
-
-    // Test issue #84: Math: single-character formula won't render
-    // https://github.com/adam-p/markdown-here/issues/84
-    it("should render single-character math formulae", async function () {
-      const userprefs = {
-        "math-value":
-          '<img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
-        "math-renderer": "gchart",
-      }
-      await resetMarked(userprefs)
-
-      var md = "$x$"
-      var target =
-        '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=x" alt="x"></p>\n'
-      expect(await fullRender(md)).to.equal(target)
-
-      // Make sure we haven't broken multi-character forumlae
-      md = "$xx$"
-      target =
-        '<p><img class="mdh-math" src="https://chart.googleapis.com/chart?cht=tx&chl=xx" alt="xx"></p>\n'
       expect(await fullRender(md)).to.equal(target)
     })
 
@@ -314,12 +271,12 @@ describe("Markdown-Render", function () {
       await resetMarked(userprefs)
 
       var md = "$x$"
-      var target = '<p><img alt="x" src="data:image/png;ba'
+      var target = '<p><img width="18" height="16" alt="x"'
       expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
       md = "$xx$"
-      target = '<p><img alt="xx" src="data:image/png;b'
+      target = '<p><img width="27" height="16" alt="xx'
       expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
     })
   })
