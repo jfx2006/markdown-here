@@ -27,8 +27,8 @@ importers:
         specifier: 1.11.3
         version: 1.11.3
       '@types/mocha':
-        specifier: ^10.0.9
-        version: 10.0.9
+        specifier: ^10.0.10
+        version: 10.0.10
       '@types/thunderbird-webext-browser':
         specifier: ^127.0.0
         version: 127.0.0
@@ -83,9 +83,6 @@ importers:
       highlight.js:
         specifier: ^11.10.0
         version: 11.10.0
-      jquery-slim:
-        specifier: ^3.0.0
-        version: 3.0.0
       marked:
         specifier: ^14.1.4
         version: 14.1.4
@@ -573,8 +570,8 @@ packages:
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
 
-  '@types/mocha@10.0.9':
-    resolution: {integrity: sha512-sicdRoWtYevwxjOHNMPTl3vSfJM6oyW8o1wXeI7uww6b6xHg8eBznQDNSGBCDJmsE8UMxP05JgZRtsKbTqt//Q==}
+  '@types/mocha@10.0.10':
+    resolution: {integrity: sha512-xPyYSz1cMPnJQhl0CLMH68j3gprKZaTjG3s5Vi+fDgx+uhG9NOXwbVt52eFS8ECyXhyKcjDLCBEqBExKuiZb7Q==}
 
   '@types/node@20.14.2':
     resolution: {integrity: sha512-xyu6WAMVwv6AKFLB+e/7ySZVr/0zLCzOa7rSpq6jNwpqOrUbcACDWC+53d4n2QHOnDou0fbIsg8wZu/sxrnI4Q==}
@@ -1713,9 +1710,6 @@ packages:
 
   jose@4.13.1:
     resolution: {integrity: sha512-MSJQC5vXco5Br38mzaQKiq9mwt7lwj2eXpgpRyQYNHYt2lq1PjkWa7DLXX0WVcQLE9HhMh3jPiufS7fhJf+CLQ==}
-
-  jquery-slim@3.0.0:
-    resolution: {integrity: sha512-+EvMa8hXQZYXFbe3e1amh/o3gU0D6l2Z3iv0muqE6w584xokWs8dfLplXfvm0d74Zu4kU4+2zYw0jIMHNp/vNw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3042,7 +3036,7 @@ snapshots:
 
   '@types/minimatch@3.0.5': {}
 
-  '@types/mocha@10.0.9': {}
+  '@types/mocha@10.0.10': {}
 
   '@types/node@20.14.2':
     dependencies:
@@ -4252,8 +4246,6 @@ snapshots:
   jed@1.1.1: {}
 
   jose@4.13.1: {}
-
-  jquery-slim@3.0.0: {}
 
   js-tokens@4.0.0: {}
 
