@@ -10,7 +10,12 @@ import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
 const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
-const REMOVE_ELEM_IDS = STYLE_ELEM_IDS.concat(["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style"])
+const REMOVE_ELEM_IDS = STYLE_ELEM_IDS.concat([
+  "MDHR_CSP",
+  "MDHR_tb_style",
+  "MDHR_preview_style",
+  "MDHR_textcomplete",
+])
 
 let cssInliner
 

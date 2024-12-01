@@ -16,6 +16,8 @@
   [#107](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/107)
 - Debounce live preview rendering and enable async rendering.
   [#102](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/102)
+- textcomplete.css was included in sent messages.
+  [#112](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/112)
 
 ## [4.0.2]
 
