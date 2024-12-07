@@ -5,7 +5,7 @@ all: node_modules mailext-options-sync vendored changelog
 	pnpm run release
 	sh tools/gen-src.sh
 
-ci: all
+ci: clean all
 	python tools/rel_notes.py
 	python tools/version_env.py
 	python tools/updates.py
