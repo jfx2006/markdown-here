@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.3.1]
+## [4.0.3.2]
 
 ### Changed
 - Syntax for Bug/Issue links changed to `#bugno` to align with what Github/Gitlab

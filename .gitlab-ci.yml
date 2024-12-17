@@ -51,9 +51,7 @@ mdhr-build:
   artifacts:
     paths:
       - web-ext-artifacts/markdown-here-revival.xpi
-      - web-ext-artifacts/mdhr-source.tar.gz
       - notes.md
-      - updates.json
     reports:
       dotenv: version.env
 
@@ -68,14 +66,10 @@ mdhr-release:
   variables:
       PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
-      SOURCE_FILENAME: "mdhr-source.tar.gz"
-      UPDATES: updates.json
   script:
     - echo "Running the release job."
     - >
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
-    - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${UPDATES}" "${PACKAGE_REGISTRY_URL}/${UPDATES}"
   release:
     tag_name: "v$PACKAGE_VERSION"
     ref: $CI_COMMIT_SHA
@@ -86,8 +80,4 @@ mdhr-release:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
           direct_asset_path: /${XPI_FILENAME}
-          link_type: other
-        - name: ${UPDATES}
-          url: ${PACKAGE_REGISTRY_URL}/${UPDATES}
-          direct_asset_path: /${UPDATES}
           link_type: other
