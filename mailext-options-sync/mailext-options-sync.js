@@ -22,7 +22,7 @@
  * @returns {Function} A new, throttled, function.
  */
 function throttle(delay, callback, options) {
-  var _ref = options || {},
+  var _ref = options,
     _ref$noTrailing = _ref.noTrailing,
     noTrailing = _ref$noTrailing === void 0 ? false : _ref$noTrailing,
     _ref$noLeading = _ref.noLeading,
@@ -179,7 +179,6 @@ function isCurrentPathname(path) {
 function getManifest(_version) {
   return globalThis.chrome?.runtime?.getManifest?.()
 }
-
 function once(function_) {
   let result
   return () => {
