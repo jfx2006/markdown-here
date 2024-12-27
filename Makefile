@@ -29,8 +29,8 @@ mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
 vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
 	python tools/mk-vendored.py
 
-vendored: node_modules vendored.mk
-	make -f vendored.mk all
+vendored: package.json node_modules vendored.mk
+	make -f vendored.mk clean all
 
 clean:
 	rm -f mailext-options-sync/mailext-options-sync.js

@@ -4,2601 +4,2609 @@ function getDefaultExportFromCjs (x) {
 
 /* eslint-disable no-multi-assign */
 
-function deepFreeze(obj) {
-  if (obj instanceof Map) {
-    obj.clear =
-      obj.delete =
-      obj.set =
-        function () {
-          throw new Error('map is read-only');
-        };
-  } else if (obj instanceof Set) {
-    obj.add =
-      obj.clear =
-      obj.delete =
-        function () {
-          throw new Error('set is read-only');
-        };
-  }
+var core;
+var hasRequiredCore;
 
-  // Freeze self
-  Object.freeze(obj);
+function requireCore () {
+	if (hasRequiredCore) return core;
+	hasRequiredCore = 1;
+	function deepFreeze(obj) {
+	  if (obj instanceof Map) {
+	    obj.clear =
+	      obj.delete =
+	      obj.set =
+	        function () {
+	          throw new Error('map is read-only');
+	        };
+	  } else if (obj instanceof Set) {
+	    obj.add =
+	      obj.clear =
+	      obj.delete =
+	        function () {
+	          throw new Error('set is read-only');
+	        };
+	  }
 
-  Object.getOwnPropertyNames(obj).forEach((name) => {
-    const prop = obj[name];
-    const type = typeof prop;
+	  // Freeze self
+	  Object.freeze(obj);
 
-    // Freeze prop if it is an object or function and also not already frozen
-    if ((type === 'object' || type === 'function') && !Object.isFrozen(prop)) {
-      deepFreeze(prop);
-    }
-  });
+	  Object.getOwnPropertyNames(obj).forEach((name) => {
+	    const prop = obj[name];
+	    const type = typeof prop;
 
-  return obj;
+	    // Freeze prop if it is an object or function and also not already frozen
+	    if ((type === 'object' || type === 'function') && !Object.isFrozen(prop)) {
+	      deepFreeze(prop);
+	    }
+	  });
+
+	  return obj;
+	}
+
+	/** @typedef {import('highlight.js').CallbackResponse} CallbackResponse */
+	/** @typedef {import('highlight.js').CompiledMode} CompiledMode */
+	/** @implements CallbackResponse */
+
+	class Response {
+	  /**
+	   * @param {CompiledMode} mode
+	   */
+	  constructor(mode) {
+	    // eslint-disable-next-line no-undefined
+	    if (mode.data === undefined) mode.data = {};
+
+	    this.data = mode.data;
+	    this.isMatchIgnored = false;
+	  }
+
+	  ignoreMatch() {
+	    this.isMatchIgnored = true;
+	  }
+	}
+
+	/**
+	 * @param {string} value
+	 * @returns {string}
+	 */
+	function escapeHTML(value) {
+	  return value
+	    .replace(/&/g, '&amp;')
+	    .replace(/</g, '&lt;')
+	    .replace(/>/g, '&gt;')
+	    .replace(/"/g, '&quot;')
+	    .replace(/'/g, '&#x27;');
+	}
+
+	/**
+	 * performs a shallow merge of multiple objects into one
+	 *
+	 * @template T
+	 * @param {T} original
+	 * @param {Record<string,any>[]} objects
+	 * @returns {T} a single new object
+	 */
+	function inherit$1(original, ...objects) {
+	  /** @type Record<string,any> */
+	  const result = Object.create(null);
+
+	  for (const key in original) {
+	    result[key] = original[key];
+	  }
+	  objects.forEach(function(obj) {
+	    for (const key in obj) {
+	      result[key] = obj[key];
+	    }
+	  });
+	  return /** @type {T} */ (result);
+	}
+
+	/**
+	 * @typedef {object} Renderer
+	 * @property {(text: string) => void} addText
+	 * @property {(node: Node) => void} openNode
+	 * @property {(node: Node) => void} closeNode
+	 * @property {() => string} value
+	 */
+
+	/** @typedef {{scope?: string, language?: string, sublanguage?: boolean}} Node */
+	/** @typedef {{walk: (r: Renderer) => void}} Tree */
+	/** */
+
+	const SPAN_CLOSE = '</span>';
+
+	/**
+	 * Determines if a node needs to be wrapped in <span>
+	 *
+	 * @param {Node} node */
+	const emitsWrappingTags = (node) => {
+	  // rarely we can have a sublanguage where language is undefined
+	  // TODO: track down why
+	  return !!node.scope;
+	};
+
+	/**
+	 *
+	 * @param {string} name
+	 * @param {{prefix:string}} options
+	 */
+	const scopeToCSSClass = (name, { prefix }) => {
+	  // sub-language
+	  if (name.startsWith("language:")) {
+	    return name.replace("language:", "language-");
+	  }
+	  // tiered scope: comment.line
+	  if (name.includes(".")) {
+	    const pieces = name.split(".");
+	    return [
+	      `${prefix}${pieces.shift()}`,
+	      ...(pieces.map((x, i) => `${x}${"_".repeat(i + 1)}`))
+	    ].join(" ");
+	  }
+	  // simple scope
+	  return `${prefix}${name}`;
+	};
+
+	/** @type {Renderer} */
+	class HTMLRenderer {
+	  /**
+	   * Creates a new HTMLRenderer
+	   *
+	   * @param {Tree} parseTree - the parse tree (must support `walk` API)
+	   * @param {{classPrefix: string}} options
+	   */
+	  constructor(parseTree, options) {
+	    this.buffer = "";
+	    this.classPrefix = options.classPrefix;
+	    parseTree.walk(this);
+	  }
+
+	  /**
+	   * Adds texts to the output stream
+	   *
+	   * @param {string} text */
+	  addText(text) {
+	    this.buffer += escapeHTML(text);
+	  }
+
+	  /**
+	   * Adds a node open to the output stream (if needed)
+	   *
+	   * @param {Node} node */
+	  openNode(node) {
+	    if (!emitsWrappingTags(node)) return;
+
+	    const className = scopeToCSSClass(node.scope,
+	      { prefix: this.classPrefix });
+	    this.span(className);
+	  }
+
+	  /**
+	   * Adds a node close to the output stream (if needed)
+	   *
+	   * @param {Node} node */
+	  closeNode(node) {
+	    if (!emitsWrappingTags(node)) return;
+
+	    this.buffer += SPAN_CLOSE;
+	  }
+
+	  /**
+	   * returns the accumulated buffer
+	  */
+	  value() {
+	    return this.buffer;
+	  }
+
+	  // helpers
+
+	  /**
+	   * Builds a span element
+	   *
+	   * @param {string} className */
+	  span(className) {
+	    this.buffer += `<span class="${className}">`;
+	  }
+	}
+
+	/** @typedef {{scope?: string, language?: string, children: Node[]} | string} Node */
+	/** @typedef {{scope?: string, language?: string, children: Node[]} } DataNode */
+	/** @typedef {import('highlight.js').Emitter} Emitter */
+	/**  */
+
+	/** @returns {DataNode} */
+	const newNode = (opts = {}) => {
+	  /** @type DataNode */
+	  const result = { children: [] };
+	  Object.assign(result, opts);
+	  return result;
+	};
+
+	class TokenTree {
+	  constructor() {
+	    /** @type DataNode */
+	    this.rootNode = newNode();
+	    this.stack = [this.rootNode];
+	  }
+
+	  get top() {
+	    return this.stack[this.stack.length - 1];
+	  }
+
+	  get root() { return this.rootNode; }
+
+	  /** @param {Node} node */
+	  add(node) {
+	    this.top.children.push(node);
+	  }
+
+	  /** @param {string} scope */
+	  openNode(scope) {
+	    /** @type Node */
+	    const node = newNode({ scope });
+	    this.add(node);
+	    this.stack.push(node);
+	  }
+
+	  closeNode() {
+	    if (this.stack.length > 1) {
+	      return this.stack.pop();
+	    }
+	    // eslint-disable-next-line no-undefined
+	    return undefined;
+	  }
+
+	  closeAllNodes() {
+	    while (this.closeNode());
+	  }
+
+	  toJSON() {
+	    return JSON.stringify(this.rootNode, null, 4);
+	  }
+
+	  /**
+	   * @typedef { import("./html_renderer").Renderer } Renderer
+	   * @param {Renderer} builder
+	   */
+	  walk(builder) {
+	    // this does not
+	    return this.constructor._walk(builder, this.rootNode);
+	    // this works
+	    // return TokenTree._walk(builder, this.rootNode);
+	  }
+
+	  /**
+	   * @param {Renderer} builder
+	   * @param {Node} node
+	   */
+	  static _walk(builder, node) {
+	    if (typeof node === "string") {
+	      builder.addText(node);
+	    } else if (node.children) {
+	      builder.openNode(node);
+	      node.children.forEach((child) => this._walk(builder, child));
+	      builder.closeNode(node);
+	    }
+	    return builder;
+	  }
+
+	  /**
+	   * @param {Node} node
+	   */
+	  static _collapse(node) {
+	    if (typeof node === "string") return;
+	    if (!node.children) return;
+
+	    if (node.children.every(el => typeof el === "string")) {
+	      // node.text = node.children.join("");
+	      // delete node.children;
+	      node.children = [node.children.join("")];
+	    } else {
+	      node.children.forEach((child) => {
+	        TokenTree._collapse(child);
+	      });
+	    }
+	  }
+	}
+
+	/**
+	  Currently this is all private API, but this is the minimal API necessary
+	  that an Emitter must implement to fully support the parser.
+
+	  Minimal interface:
+
+	  - addText(text)
+	  - __addSublanguage(emitter, subLanguageName)
+	  - startScope(scope)
+	  - endScope()
+	  - finalize()
+	  - toHTML()
+
+	*/
+
+	/**
+	 * @implements {Emitter}
+	 */
+	class TokenTreeEmitter extends TokenTree {
+	  /**
+	   * @param {*} options
+	   */
+	  constructor(options) {
+	    super();
+	    this.options = options;
+	  }
+
+	  /**
+	   * @param {string} text
+	   */
+	  addText(text) {
+	    if (text === "") { return; }
+
+	    this.add(text);
+	  }
+
+	  /** @param {string} scope */
+	  startScope(scope) {
+	    this.openNode(scope);
+	  }
+
+	  endScope() {
+	    this.closeNode();
+	  }
+
+	  /**
+	   * @param {Emitter & {root: DataNode}} emitter
+	   * @param {string} name
+	   */
+	  __addSublanguage(emitter, name) {
+	    /** @type DataNode */
+	    const node = emitter.root;
+	    if (name) node.scope = `language:${name}`;
+
+	    this.add(node);
+	  }
+
+	  toHTML() {
+	    const renderer = new HTMLRenderer(this, this.options);
+	    return renderer.value();
+	  }
+
+	  finalize() {
+	    this.closeAllNodes();
+	    return true;
+	  }
+	}
+
+	/**
+	 * @param {string} value
+	 * @returns {RegExp}
+	 * */
+
+	/**
+	 * @param {RegExp | string } re
+	 * @returns {string}
+	 */
+	function source(re) {
+	  if (!re) return null;
+	  if (typeof re === "string") return re;
+
+	  return re.source;
+	}
+
+	/**
+	 * @param {RegExp | string } re
+	 * @returns {string}
+	 */
+	function lookahead(re) {
+	  return concat('(?=', re, ')');
+	}
+
+	/**
+	 * @param {RegExp | string } re
+	 * @returns {string}
+	 */
+	function anyNumberOfTimes(re) {
+	  return concat('(?:', re, ')*');
+	}
+
+	/**
+	 * @param {RegExp | string } re
+	 * @returns {string}
+	 */
+	function optional(re) {
+	  return concat('(?:', re, ')?');
+	}
+
+	/**
+	 * @param {...(RegExp | string) } args
+	 * @returns {string}
+	 */
+	function concat(...args) {
+	  const joined = args.map((x) => source(x)).join("");
+	  return joined;
+	}
+
+	/**
+	 * @param { Array<string | RegExp | Object> } args
+	 * @returns {object}
+	 */
+	function stripOptionsFromArgs(args) {
+	  const opts = args[args.length - 1];
+
+	  if (typeof opts === 'object' && opts.constructor === Object) {
+	    args.splice(args.length - 1, 1);
+	    return opts;
+	  } else {
+	    return {};
+	  }
+	}
+
+	/** @typedef { {capture?: boolean} } RegexEitherOptions */
+
+	/**
+	 * Any of the passed expresssions may match
+	 *
+	 * Creates a huge this | this | that | that match
+	 * @param {(RegExp | string)[] | [...(RegExp | string)[], RegexEitherOptions]} args
+	 * @returns {string}
+	 */
+	function either(...args) {
+	  /** @type { object & {capture?: boolean} }  */
+	  const opts = stripOptionsFromArgs(args);
+	  const joined = '('
+	    + (opts.capture ? "" : "?:")
+	    + args.map((x) => source(x)).join("|") + ")";
+	  return joined;
+	}
+
+	/**
+	 * @param {RegExp | string} re
+	 * @returns {number}
+	 */
+	function countMatchGroups(re) {
+	  return (new RegExp(re.toString() + '|')).exec('').length - 1;
+	}
+
+	/**
+	 * Does lexeme start with a regular expression match at the beginning
+	 * @param {RegExp} re
+	 * @param {string} lexeme
+	 */
+	function startsWith(re, lexeme) {
+	  const match = re && re.exec(lexeme);
+	  return match && match.index === 0;
+	}
+
+	// BACKREF_RE matches an open parenthesis or backreference. To avoid
+	// an incorrect parse, it additionally matches the following:
+	// - [...] elements, where the meaning of parentheses and escapes change
+	// - other escape sequences, so we do not misparse escape sequences as
+	//   interesting elements
+	// - non-matching or lookahead parentheses, which do not capture. These
+	//   follow the '(' with a '?'.
+	const BACKREF_RE = /\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./;
+
+	// **INTERNAL** Not intended for outside usage
+	// join logically computes regexps.join(separator), but fixes the
+	// backreferences so they continue to match.
+	// it also places each individual regular expression into it's own
+	// match group, keeping track of the sequencing of those match groups
+	// is currently an exercise for the caller. :-)
+	/**
+	 * @param {(string | RegExp)[]} regexps
+	 * @param {{joinWith: string}} opts
+	 * @returns {string}
+	 */
+	function _rewriteBackreferences(regexps, { joinWith }) {
+	  let numCaptures = 0;
+
+	  return regexps.map((regex) => {
+	    numCaptures += 1;
+	    const offset = numCaptures;
+	    let re = source(regex);
+	    let out = '';
+
+	    while (re.length > 0) {
+	      const match = BACKREF_RE.exec(re);
+	      if (!match) {
+	        out += re;
+	        break;
+	      }
+	      out += re.substring(0, match.index);
+	      re = re.substring(match.index + match[0].length);
+	      if (match[0][0] === '\\' && match[1]) {
+	        // Adjust the backreference.
+	        out += '\\' + String(Number(match[1]) + offset);
+	      } else {
+	        out += match[0];
+	        if (match[0] === '(') {
+	          numCaptures++;
+	        }
+	      }
+	    }
+	    return out;
+	  }).map(re => `(${re})`).join(joinWith);
+	}
+
+	/** @typedef {import('highlight.js').Mode} Mode */
+	/** @typedef {import('highlight.js').ModeCallback} ModeCallback */
+
+	// Common regexps
+	const MATCH_NOTHING_RE = /\b\B/;
+	const IDENT_RE = '[a-zA-Z]\\w*';
+	const UNDERSCORE_IDENT_RE = '[a-zA-Z_]\\w*';
+	const NUMBER_RE = '\\b\\d+(\\.\\d+)?';
+	const C_NUMBER_RE = '(-?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)'; // 0x..., 0..., decimal, float
+	const BINARY_NUMBER_RE = '\\b(0b[01]+)'; // 0b...
+	const RE_STARTERS_RE = '!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~';
+
+	/**
+	* @param { Partial<Mode> & {binary?: string | RegExp} } opts
+	*/
+	const SHEBANG = (opts = {}) => {
+	  const beginShebang = /^#![ ]*\//;
+	  if (opts.binary) {
+	    opts.begin = concat(
+	      beginShebang,
+	      /.*\b/,
+	      opts.binary,
+	      /\b.*/);
+	  }
+	  return inherit$1({
+	    scope: 'meta',
+	    begin: beginShebang,
+	    end: /$/,
+	    relevance: 0,
+	    /** @type {ModeCallback} */
+	    "on:begin": (m, resp) => {
+	      if (m.index !== 0) resp.ignoreMatch();
+	    }
+	  }, opts);
+	};
+
+	// Common modes
+	const BACKSLASH_ESCAPE = {
+	  begin: '\\\\[\\s\\S]', relevance: 0
+	};
+	const APOS_STRING_MODE = {
+	  scope: 'string',
+	  begin: '\'',
+	  end: '\'',
+	  illegal: '\\n',
+	  contains: [BACKSLASH_ESCAPE]
+	};
+	const QUOTE_STRING_MODE = {
+	  scope: 'string',
+	  begin: '"',
+	  end: '"',
+	  illegal: '\\n',
+	  contains: [BACKSLASH_ESCAPE]
+	};
+	const PHRASAL_WORDS_MODE = {
+	  begin: /\b(a|an|the|are|I'm|isn't|don't|doesn't|won't|but|just|should|pretty|simply|enough|gonna|going|wtf|so|such|will|you|your|they|like|more)\b/
+	};
+	/**
+	 * Creates a comment mode
+	 *
+	 * @param {string | RegExp} begin
+	 * @param {string | RegExp} end
+	 * @param {Mode | {}} [modeOptions]
+	 * @returns {Partial<Mode>}
+	 */
+	const COMMENT = function(begin, end, modeOptions = {}) {
+	  const mode = inherit$1(
+	    {
+	      scope: 'comment',
+	      begin,
+	      end,
+	      contains: []
+	    },
+	    modeOptions
+	  );
+	  mode.contains.push({
+	    scope: 'doctag',
+	    // hack to avoid the space from being included. the space is necessary to
+	    // match here to prevent the plain text rule below from gobbling up doctags
+	    begin: '[ ]*(?=(TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):)',
+	    end: /(TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):/,
+	    excludeBegin: true,
+	    relevance: 0
+	  });
+	  const ENGLISH_WORD = either(
+	    // list of common 1 and 2 letter words in English
+	    "I",
+	    "a",
+	    "is",
+	    "so",
+	    "us",
+	    "to",
+	    "at",
+	    "if",
+	    "in",
+	    "it",
+	    "on",
+	    // note: this is not an exhaustive list of contractions, just popular ones
+	    /[A-Za-z]+['](d|ve|re|ll|t|s|n)/, // contractions - can't we'd they're let's, etc
+	    /[A-Za-z]+[-][a-z]+/, // `no-way`, etc.
+	    /[A-Za-z][a-z]{2,}/ // allow capitalized words at beginning of sentences
+	  );
+	  // looking like plain text, more likely to be a comment
+	  mode.contains.push(
+	    {
+	      // TODO: how to include ", (, ) without breaking grammars that use these for
+	      // comment delimiters?
+	      // begin: /[ ]+([()"]?([A-Za-z'-]{3,}|is|a|I|so|us|[tT][oO]|at|if|in|it|on)[.]?[()":]?([.][ ]|[ ]|\))){3}/
+	      // ---
+
+	      // this tries to find sequences of 3 english words in a row (without any
+	      // "programming" type syntax) this gives us a strong signal that we've
+	      // TRULY found a comment - vs perhaps scanning with the wrong language.
+	      // It's possible to find something that LOOKS like the start of the
+	      // comment - but then if there is no readable text - good chance it is a
+	      // false match and not a comment.
+	      //
+	      // for a visual example please see:
+	      // https://github.com/highlightjs/highlight.js/issues/2827
+
+	      begin: concat(
+	        /[ ]+/, // necessary to prevent us gobbling up doctags like /* @author Bob Mcgill */
+	        '(',
+	        ENGLISH_WORD,
+	        /[.]?[:]?([.][ ]|[ ])/,
+	        '){3}') // look for 3 words in a row
+	    }
+	  );
+	  return mode;
+	};
+	const C_LINE_COMMENT_MODE = COMMENT('//', '$');
+	const C_BLOCK_COMMENT_MODE = COMMENT('/\\*', '\\*/');
+	const HASH_COMMENT_MODE = COMMENT('#', '$');
+	const NUMBER_MODE = {
+	  scope: 'number',
+	  begin: NUMBER_RE,
+	  relevance: 0
+	};
+	const C_NUMBER_MODE = {
+	  scope: 'number',
+	  begin: C_NUMBER_RE,
+	  relevance: 0
+	};
+	const BINARY_NUMBER_MODE = {
+	  scope: 'number',
+	  begin: BINARY_NUMBER_RE,
+	  relevance: 0
+	};
+	const REGEXP_MODE = {
+	  scope: "regexp",
+	  begin: /\/(?=[^/\n]*\/)/,
+	  end: /\/[gimuy]*/,
+	  contains: [
+	    BACKSLASH_ESCAPE,
+	    {
+	      begin: /\[/,
+	      end: /\]/,
+	      relevance: 0,
+	      contains: [BACKSLASH_ESCAPE]
+	    }
+	  ]
+	};
+	const TITLE_MODE = {
+	  scope: 'title',
+	  begin: IDENT_RE,
+	  relevance: 0
+	};
+	const UNDERSCORE_TITLE_MODE = {
+	  scope: 'title',
+	  begin: UNDERSCORE_IDENT_RE,
+	  relevance: 0
+	};
+	const METHOD_GUARD = {
+	  // excludes method names from keyword processing
+	  begin: '\\.\\s*' + UNDERSCORE_IDENT_RE,
+	  relevance: 0
+	};
+
+	/**
+	 * Adds end same as begin mechanics to a mode
+	 *
+	 * Your mode must include at least a single () match group as that first match
+	 * group is what is used for comparison
+	 * @param {Partial<Mode>} mode
+	 */
+	const END_SAME_AS_BEGIN = function(mode) {
+	  return Object.assign(mode,
+	    {
+	      /** @type {ModeCallback} */
+	      'on:begin': (m, resp) => { resp.data._beginMatch = m[1]; },
+	      /** @type {ModeCallback} */
+	      'on:end': (m, resp) => { if (resp.data._beginMatch !== m[1]) resp.ignoreMatch(); }
+	    });
+	};
+
+	var MODES = /*#__PURE__*/Object.freeze({
+	  __proto__: null,
+	  APOS_STRING_MODE: APOS_STRING_MODE,
+	  BACKSLASH_ESCAPE: BACKSLASH_ESCAPE,
+	  BINARY_NUMBER_MODE: BINARY_NUMBER_MODE,
+	  BINARY_NUMBER_RE: BINARY_NUMBER_RE,
+	  COMMENT: COMMENT,
+	  C_BLOCK_COMMENT_MODE: C_BLOCK_COMMENT_MODE,
+	  C_LINE_COMMENT_MODE: C_LINE_COMMENT_MODE,
+	  C_NUMBER_MODE: C_NUMBER_MODE,
+	  C_NUMBER_RE: C_NUMBER_RE,
+	  END_SAME_AS_BEGIN: END_SAME_AS_BEGIN,
+	  HASH_COMMENT_MODE: HASH_COMMENT_MODE,
+	  IDENT_RE: IDENT_RE,
+	  MATCH_NOTHING_RE: MATCH_NOTHING_RE,
+	  METHOD_GUARD: METHOD_GUARD,
+	  NUMBER_MODE: NUMBER_MODE,
+	  NUMBER_RE: NUMBER_RE,
+	  PHRASAL_WORDS_MODE: PHRASAL_WORDS_MODE,
+	  QUOTE_STRING_MODE: QUOTE_STRING_MODE,
+	  REGEXP_MODE: REGEXP_MODE,
+	  RE_STARTERS_RE: RE_STARTERS_RE,
+	  SHEBANG: SHEBANG,
+	  TITLE_MODE: TITLE_MODE,
+	  UNDERSCORE_IDENT_RE: UNDERSCORE_IDENT_RE,
+	  UNDERSCORE_TITLE_MODE: UNDERSCORE_TITLE_MODE
+	});
+
+	/**
+	@typedef {import('highlight.js').CallbackResponse} CallbackResponse
+	@typedef {import('highlight.js').CompilerExt} CompilerExt
+	*/
+
+	// Grammar extensions / plugins
+	// See: https://github.com/highlightjs/highlight.js/issues/2833
+
+	// Grammar extensions allow "syntactic sugar" to be added to the grammar modes
+	// without requiring any underlying changes to the compiler internals.
+
+	// `compileMatch` being the perfect small example of now allowing a grammar
+	// author to write `match` when they desire to match a single expression rather
+	// than being forced to use `begin`.  The extension then just moves `match` into
+	// `begin` when it runs.  Ie, no features have been added, but we've just made
+	// the experience of writing (and reading grammars) a little bit nicer.
+
+	// ------
+
+	// TODO: We need negative look-behind support to do this properly
+	/**
+	 * Skip a match if it has a preceding dot
+	 *
+	 * This is used for `beginKeywords` to prevent matching expressions such as
+	 * `bob.keyword.do()`. The mode compiler automatically wires this up as a
+	 * special _internal_ 'on:begin' callback for modes with `beginKeywords`
+	 * @param {RegExpMatchArray} match
+	 * @param {CallbackResponse} response
+	 */
+	function skipIfHasPrecedingDot(match, response) {
+	  const before = match.input[match.index - 1];
+	  if (before === ".") {
+	    response.ignoreMatch();
+	  }
+	}
+
+	/**
+	 *
+	 * @type {CompilerExt}
+	 */
+	function scopeClassName(mode, _parent) {
+	  // eslint-disable-next-line no-undefined
+	  if (mode.className !== undefined) {
+	    mode.scope = mode.className;
+	    delete mode.className;
+	  }
+	}
+
+	/**
+	 * `beginKeywords` syntactic sugar
+	 * @type {CompilerExt}
+	 */
+	function beginKeywords(mode, parent) {
+	  if (!parent) return;
+	  if (!mode.beginKeywords) return;
+
+	  // for languages with keywords that include non-word characters checking for
+	  // a word boundary is not sufficient, so instead we check for a word boundary
+	  // or whitespace - this does no harm in any case since our keyword engine
+	  // doesn't allow spaces in keywords anyways and we still check for the boundary
+	  // first
+	  mode.begin = '\\b(' + mode.beginKeywords.split(' ').join('|') + ')(?!\\.)(?=\\b|\\s)';
+	  mode.__beforeBegin = skipIfHasPrecedingDot;
+	  mode.keywords = mode.keywords || mode.beginKeywords;
+	  delete mode.beginKeywords;
+
+	  // prevents double relevance, the keywords themselves provide
+	  // relevance, the mode doesn't need to double it
+	  // eslint-disable-next-line no-undefined
+	  if (mode.relevance === undefined) mode.relevance = 0;
+	}
+
+	/**
+	 * Allow `illegal` to contain an array of illegal values
+	 * @type {CompilerExt}
+	 */
+	function compileIllegal(mode, _parent) {
+	  if (!Array.isArray(mode.illegal)) return;
+
+	  mode.illegal = either(...mode.illegal);
+	}
+
+	/**
+	 * `match` to match a single expression for readability
+	 * @type {CompilerExt}
+	 */
+	function compileMatch(mode, _parent) {
+	  if (!mode.match) return;
+	  if (mode.begin || mode.end) throw new Error("begin & end are not supported with match");
+
+	  mode.begin = mode.match;
+	  delete mode.match;
+	}
+
+	/**
+	 * provides the default 1 relevance to all modes
+	 * @type {CompilerExt}
+	 */
+	function compileRelevance(mode, _parent) {
+	  // eslint-disable-next-line no-undefined
+	  if (mode.relevance === undefined) mode.relevance = 1;
+	}
+
+	// allow beforeMatch to act as a "qualifier" for the match
+	// the full match begin must be [beforeMatch][begin]
+	const beforeMatchExt = (mode, parent) => {
+	  if (!mode.beforeMatch) return;
+	  // starts conflicts with endsParent which we need to make sure the child
+	  // rule is not matched multiple times
+	  if (mode.starts) throw new Error("beforeMatch cannot be used with starts");
+
+	  const originalMode = Object.assign({}, mode);
+	  Object.keys(mode).forEach((key) => { delete mode[key]; });
+
+	  mode.keywords = originalMode.keywords;
+	  mode.begin = concat(originalMode.beforeMatch, lookahead(originalMode.begin));
+	  mode.starts = {
+	    relevance: 0,
+	    contains: [
+	      Object.assign(originalMode, { endsParent: true })
+	    ]
+	  };
+	  mode.relevance = 0;
+
+	  delete originalMode.beforeMatch;
+	};
+
+	// keywords that should have no default relevance value
+	const COMMON_KEYWORDS = [
+	  'of',
+	  'and',
+	  'for',
+	  'in',
+	  'not',
+	  'or',
+	  'if',
+	  'then',
+	  'parent', // common variable name
+	  'list', // common variable name
+	  'value' // common variable name
+	];
+
+	const DEFAULT_KEYWORD_SCOPE = "keyword";
+
+	/**
+	 * Given raw keywords from a language definition, compile them.
+	 *
+	 * @param {string | Record<string,string|string[]> | Array<string>} rawKeywords
+	 * @param {boolean} caseInsensitive
+	 */
+	function compileKeywords(rawKeywords, caseInsensitive, scopeName = DEFAULT_KEYWORD_SCOPE) {
+	  /** @type {import("highlight.js/private").KeywordDict} */
+	  const compiledKeywords = Object.create(null);
+
+	  // input can be a string of keywords, an array of keywords, or a object with
+	  // named keys representing scopeName (which can then point to a string or array)
+	  if (typeof rawKeywords === 'string') {
+	    compileList(scopeName, rawKeywords.split(" "));
+	  } else if (Array.isArray(rawKeywords)) {
+	    compileList(scopeName, rawKeywords);
+	  } else {
+	    Object.keys(rawKeywords).forEach(function(scopeName) {
+	      // collapse all our objects back into the parent object
+	      Object.assign(
+	        compiledKeywords,
+	        compileKeywords(rawKeywords[scopeName], caseInsensitive, scopeName)
+	      );
+	    });
+	  }
+	  return compiledKeywords;
+
+	  // ---
+
+	  /**
+	   * Compiles an individual list of keywords
+	   *
+	   * Ex: "for if when while|5"
+	   *
+	   * @param {string} scopeName
+	   * @param {Array<string>} keywordList
+	   */
+	  function compileList(scopeName, keywordList) {
+	    if (caseInsensitive) {
+	      keywordList = keywordList.map(x => x.toLowerCase());
+	    }
+	    keywordList.forEach(function(keyword) {
+	      const pair = keyword.split('|');
+	      compiledKeywords[pair[0]] = [scopeName, scoreForKeyword(pair[0], pair[1])];
+	    });
+	  }
+	}
+
+	/**
+	 * Returns the proper score for a given keyword
+	 *
+	 * Also takes into account comment keywords, which will be scored 0 UNLESS
+	 * another score has been manually assigned.
+	 * @param {string} keyword
+	 * @param {string} [providedScore]
+	 */
+	function scoreForKeyword(keyword, providedScore) {
+	  // manual scores always win over common keywords
+	  // so you can force a score of 1 if you really insist
+	  if (providedScore) {
+	    return Number(providedScore);
+	  }
+
+	  return commonKeyword(keyword) ? 0 : 1;
+	}
+
+	/**
+	 * Determines if a given keyword is common or not
+	 *
+	 * @param {string} keyword */
+	function commonKeyword(keyword) {
+	  return COMMON_KEYWORDS.includes(keyword.toLowerCase());
+	}
+
+	/*
+
+	For the reasoning behind this please see:
+	https://github.com/highlightjs/highlight.js/issues/2880#issuecomment-747275419
+
+	*/
+
+	/**
+	 * @type {Record<string, boolean>}
+	 */
+	const seenDeprecations = {};
+
+	/**
+	 * @param {string} message
+	 */
+	const error = (message) => {
+	  console.error(message);
+	};
+
+	/**
+	 * @param {string} message
+	 * @param {any} args
+	 */
+	const warn = (message, ...args) => {
+	  console.log(`WARN: ${message}`, ...args);
+	};
+
+	/**
+	 * @param {string} version
+	 * @param {string} message
+	 */
+	const deprecated = (version, message) => {
+	  if (seenDeprecations[`${version}/${message}`]) return;
+
+	  console.log(`Deprecated as of ${version}. ${message}`);
+	  seenDeprecations[`${version}/${message}`] = true;
+	};
+
+	/* eslint-disable no-throw-literal */
+
+	/**
+	@typedef {import('highlight.js').CompiledMode} CompiledMode
+	*/
+
+	const MultiClassError = new Error();
+
+	/**
+	 * Renumbers labeled scope names to account for additional inner match
+	 * groups that otherwise would break everything.
+	 *
+	 * Lets say we 3 match scopes:
+	 *
+	 *   { 1 => ..., 2 => ..., 3 => ... }
+	 *
+	 * So what we need is a clean match like this:
+	 *
+	 *   (a)(b)(c) => [ "a", "b", "c" ]
+	 *
+	 * But this falls apart with inner match groups:
+	 *
+	 * (a)(((b)))(c) => ["a", "b", "b", "b", "c" ]
+	 *
+	 * Our scopes are now "out of alignment" and we're repeating `b` 3 times.
+	 * What needs to happen is the numbers are remapped:
+	 *
+	 *   { 1 => ..., 2 => ..., 5 => ... }
+	 *
+	 * We also need to know that the ONLY groups that should be output
+	 * are 1, 2, and 5.  This function handles this behavior.
+	 *
+	 * @param {CompiledMode} mode
+	 * @param {Array<RegExp | string>} regexes
+	 * @param {{key: "beginScope"|"endScope"}} opts
+	 */
+	function remapScopeNames(mode, regexes, { key }) {
+	  let offset = 0;
+	  const scopeNames = mode[key];
+	  /** @type Record<number,boolean> */
+	  const emit = {};
+	  /** @type Record<number,string> */
+	  const positions = {};
+
+	  for (let i = 1; i <= regexes.length; i++) {
+	    positions[i + offset] = scopeNames[i];
+	    emit[i + offset] = true;
+	    offset += countMatchGroups(regexes[i - 1]);
+	  }
+	  // we use _emit to keep track of which match groups are "top-level" to avoid double
+	  // output from inside match groups
+	  mode[key] = positions;
+	  mode[key]._emit = emit;
+	  mode[key]._multi = true;
+	}
+
+	/**
+	 * @param {CompiledMode} mode
+	 */
+	function beginMultiClass(mode) {
+	  if (!Array.isArray(mode.begin)) return;
+
+	  if (mode.skip || mode.excludeBegin || mode.returnBegin) {
+	    error("skip, excludeBegin, returnBegin not compatible with beginScope: {}");
+	    throw MultiClassError;
+	  }
+
+	  if (typeof mode.beginScope !== "object" || mode.beginScope === null) {
+	    error("beginScope must be object");
+	    throw MultiClassError;
+	  }
+
+	  remapScopeNames(mode, mode.begin, { key: "beginScope" });
+	  mode.begin = _rewriteBackreferences(mode.begin, { joinWith: "" });
+	}
+
+	/**
+	 * @param {CompiledMode} mode
+	 */
+	function endMultiClass(mode) {
+	  if (!Array.isArray(mode.end)) return;
+
+	  if (mode.skip || mode.excludeEnd || mode.returnEnd) {
+	    error("skip, excludeEnd, returnEnd not compatible with endScope: {}");
+	    throw MultiClassError;
+	  }
+
+	  if (typeof mode.endScope !== "object" || mode.endScope === null) {
+	    error("endScope must be object");
+	    throw MultiClassError;
+	  }
+
+	  remapScopeNames(mode, mode.end, { key: "endScope" });
+	  mode.end = _rewriteBackreferences(mode.end, { joinWith: "" });
+	}
+
+	/**
+	 * this exists only to allow `scope: {}` to be used beside `match:`
+	 * Otherwise `beginScope` would necessary and that would look weird
+
+	  {
+	    match: [ /def/, /\w+/ ]
+	    scope: { 1: "keyword" , 2: "title" }
+	  }
+
+	 * @param {CompiledMode} mode
+	 */
+	function scopeSugar(mode) {
+	  if (mode.scope && typeof mode.scope === "object" && mode.scope !== null) {
+	    mode.beginScope = mode.scope;
+	    delete mode.scope;
+	  }
+	}
+
+	/**
+	 * @param {CompiledMode} mode
+	 */
+	function MultiClass(mode) {
+	  scopeSugar(mode);
+
+	  if (typeof mode.beginScope === "string") {
+	    mode.beginScope = { _wrap: mode.beginScope };
+	  }
+	  if (typeof mode.endScope === "string") {
+	    mode.endScope = { _wrap: mode.endScope };
+	  }
+
+	  beginMultiClass(mode);
+	  endMultiClass(mode);
+	}
+
+	/**
+	@typedef {import('highlight.js').Mode} Mode
+	@typedef {import('highlight.js').CompiledMode} CompiledMode
+	@typedef {import('highlight.js').Language} Language
+	@typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
+	@typedef {import('highlight.js').CompiledLanguage} CompiledLanguage
+	*/
+
+	// compilation
+
+	/**
+	 * Compiles a language definition result
+	 *
+	 * Given the raw result of a language definition (Language), compiles this so
+	 * that it is ready for highlighting code.
+	 * @param {Language} language
+	 * @returns {CompiledLanguage}
+	 */
+	function compileLanguage(language) {
+	  /**
+	   * Builds a regex with the case sensitivity of the current language
+	   *
+	   * @param {RegExp | string} value
+	   * @param {boolean} [global]
+	   */
+	  function langRe(value, global) {
+	    return new RegExp(
+	      source(value),
+	      'm'
+	      + (language.case_insensitive ? 'i' : '')
+	      + (language.unicodeRegex ? 'u' : '')
+	      + (global ? 'g' : '')
+	    );
+	  }
+
+	  /**
+	    Stores multiple regular expressions and allows you to quickly search for
+	    them all in a string simultaneously - returning the first match.  It does
+	    this by creating a huge (a|b|c) regex - each individual item wrapped with ()
+	    and joined by `|` - using match groups to track position.  When a match is
+	    found checking which position in the array has content allows us to figure
+	    out which of the original regexes / match groups triggered the match.
+
+	    The match object itself (the result of `Regex.exec`) is returned but also
+	    enhanced by merging in any meta-data that was registered with the regex.
+	    This is how we keep track of which mode matched, and what type of rule
+	    (`illegal`, `begin`, end, etc).
+	  */
+	  class MultiRegex {
+	    constructor() {
+	      this.matchIndexes = {};
+	      // @ts-ignore
+	      this.regexes = [];
+	      this.matchAt = 1;
+	      this.position = 0;
+	    }
+
+	    // @ts-ignore
+	    addRule(re, opts) {
+	      opts.position = this.position++;
+	      // @ts-ignore
+	      this.matchIndexes[this.matchAt] = opts;
+	      this.regexes.push([opts, re]);
+	      this.matchAt += countMatchGroups(re) + 1;
+	    }
+
+	    compile() {
+	      if (this.regexes.length === 0) {
+	        // avoids the need to check length every time exec is called
+	        // @ts-ignore
+	        this.exec = () => null;
+	      }
+	      const terminators = this.regexes.map(el => el[1]);
+	      this.matcherRe = langRe(_rewriteBackreferences(terminators, { joinWith: '|' }), true);
+	      this.lastIndex = 0;
+	    }
+
+	    /** @param {string} s */
+	    exec(s) {
+	      this.matcherRe.lastIndex = this.lastIndex;
+	      const match = this.matcherRe.exec(s);
+	      if (!match) { return null; }
+
+	      // eslint-disable-next-line no-undefined
+	      const i = match.findIndex((el, i) => i > 0 && el !== undefined);
+	      // @ts-ignore
+	      const matchData = this.matchIndexes[i];
+	      // trim off any earlier non-relevant match groups (ie, the other regex
+	      // match groups that make up the multi-matcher)
+	      match.splice(0, i);
+
+	      return Object.assign(match, matchData);
+	    }
+	  }
+
+	  /*
+	    Created to solve the key deficiently with MultiRegex - there is no way to
+	    test for multiple matches at a single location.  Why would we need to do
+	    that?  In the future a more dynamic engine will allow certain matches to be
+	    ignored.  An example: if we matched say the 3rd regex in a large group but
+	    decided to ignore it - we'd need to started testing again at the 4th
+	    regex... but MultiRegex itself gives us no real way to do that.
+
+	    So what this class creates MultiRegexs on the fly for whatever search
+	    position they are needed.
+
+	    NOTE: These additional MultiRegex objects are created dynamically.  For most
+	    grammars most of the time we will never actually need anything more than the
+	    first MultiRegex - so this shouldn't have too much overhead.
+
+	    Say this is our search group, and we match regex3, but wish to ignore it.
+
+	      regex1 | regex2 | regex3 | regex4 | regex5    ' ie, startAt = 0
+
+	    What we need is a new MultiRegex that only includes the remaining
+	    possibilities:
+
+	      regex4 | regex5                               ' ie, startAt = 3
+
+	    This class wraps all that complexity up in a simple API... `startAt` decides
+	    where in the array of expressions to start doing the matching. It
+	    auto-increments, so if a match is found at position 2, then startAt will be
+	    set to 3.  If the end is reached startAt will return to 0.
+
+	    MOST of the time the parser will be setting startAt manually to 0.
+	  */
+	  class ResumableMultiRegex {
+	    constructor() {
+	      // @ts-ignore
+	      this.rules = [];
+	      // @ts-ignore
+	      this.multiRegexes = [];
+	      this.count = 0;
+
+	      this.lastIndex = 0;
+	      this.regexIndex = 0;
+	    }
+
+	    // @ts-ignore
+	    getMatcher(index) {
+	      if (this.multiRegexes[index]) return this.multiRegexes[index];
+
+	      const matcher = new MultiRegex();
+	      this.rules.slice(index).forEach(([re, opts]) => matcher.addRule(re, opts));
+	      matcher.compile();
+	      this.multiRegexes[index] = matcher;
+	      return matcher;
+	    }
+
+	    resumingScanAtSamePosition() {
+	      return this.regexIndex !== 0;
+	    }
+
+	    considerAll() {
+	      this.regexIndex = 0;
+	    }
+
+	    // @ts-ignore
+	    addRule(re, opts) {
+	      this.rules.push([re, opts]);
+	      if (opts.type === "begin") this.count++;
+	    }
+
+	    /** @param {string} s */
+	    exec(s) {
+	      const m = this.getMatcher(this.regexIndex);
+	      m.lastIndex = this.lastIndex;
+	      let result = m.exec(s);
+
+	      // The following is because we have no easy way to say "resume scanning at the
+	      // existing position but also skip the current rule ONLY". What happens is
+	      // all prior rules are also skipped which can result in matching the wrong
+	      // thing. Example of matching "booger":
+
+	      // our matcher is [string, "booger", number]
+	      //
+	      // ....booger....
+
+	      // if "booger" is ignored then we'd really need a regex to scan from the
+	      // SAME position for only: [string, number] but ignoring "booger" (if it
+	      // was the first match), a simple resume would scan ahead who knows how
+	      // far looking only for "number", ignoring potential string matches (or
+	      // future "booger" matches that might be valid.)
+
+	      // So what we do: We execute two matchers, one resuming at the same
+	      // position, but the second full matcher starting at the position after:
+
+	      //     /--- resume first regex match here (for [number])
+	      //     |/---- full match here for [string, "booger", number]
+	      //     vv
+	      // ....booger....
+
+	      // Which ever results in a match first is then used. So this 3-4 step
+	      // process essentially allows us to say "match at this position, excluding
+	      // a prior rule that was ignored".
+	      //
+	      // 1. Match "booger" first, ignore. Also proves that [string] does non match.
+	      // 2. Resume matching for [number]
+	      // 3. Match at index + 1 for [string, "booger", number]
+	      // 4. If #2 and #3 result in matches, which came first?
+	      if (this.resumingScanAtSamePosition()) {
+	        if (result && result.index === this.lastIndex) ; else { // use the second matcher result
+	          const m2 = this.getMatcher(0);
+	          m2.lastIndex = this.lastIndex + 1;
+	          result = m2.exec(s);
+	        }
+	      }
+
+	      if (result) {
+	        this.regexIndex += result.position + 1;
+	        if (this.regexIndex === this.count) {
+	          // wrap-around to considering all matches again
+	          this.considerAll();
+	        }
+	      }
+
+	      return result;
+	    }
+	  }
+
+	  /**
+	   * Given a mode, builds a huge ResumableMultiRegex that can be used to walk
+	   * the content and find matches.
+	   *
+	   * @param {CompiledMode} mode
+	   * @returns {ResumableMultiRegex}
+	   */
+	  function buildModeRegex(mode) {
+	    const mm = new ResumableMultiRegex();
+
+	    mode.contains.forEach(term => mm.addRule(term.begin, { rule: term, type: "begin" }));
+
+	    if (mode.terminatorEnd) {
+	      mm.addRule(mode.terminatorEnd, { type: "end" });
+	    }
+	    if (mode.illegal) {
+	      mm.addRule(mode.illegal, { type: "illegal" });
+	    }
+
+	    return mm;
+	  }
+
+	  /** skip vs abort vs ignore
+	   *
+	   * @skip   - The mode is still entered and exited normally (and contains rules apply),
+	   *           but all content is held and added to the parent buffer rather than being
+	   *           output when the mode ends.  Mostly used with `sublanguage` to build up
+	   *           a single large buffer than can be parsed by sublanguage.
+	   *
+	   *             - The mode begin ands ends normally.
+	   *             - Content matched is added to the parent mode buffer.
+	   *             - The parser cursor is moved forward normally.
+	   *
+	   * @abort  - A hack placeholder until we have ignore.  Aborts the mode (as if it
+	   *           never matched) but DOES NOT continue to match subsequent `contains`
+	   *           modes.  Abort is bad/suboptimal because it can result in modes
+	   *           farther down not getting applied because an earlier rule eats the
+	   *           content but then aborts.
+	   *
+	   *             - The mode does not begin.
+	   *             - Content matched by `begin` is added to the mode buffer.
+	   *             - The parser cursor is moved forward accordingly.
+	   *
+	   * @ignore - Ignores the mode (as if it never matched) and continues to match any
+	   *           subsequent `contains` modes.  Ignore isn't technically possible with
+	   *           the current parser implementation.
+	   *
+	   *             - The mode does not begin.
+	   *             - Content matched by `begin` is ignored.
+	   *             - The parser cursor is not moved forward.
+	   */
+
+	  /**
+	   * Compiles an individual mode
+	   *
+	   * This can raise an error if the mode contains certain detectable known logic
+	   * issues.
+	   * @param {Mode} mode
+	   * @param {CompiledMode | null} [parent]
+	   * @returns {CompiledMode | never}
+	   */
+	  function compileMode(mode, parent) {
+	    const cmode = /** @type CompiledMode */ (mode);
+	    if (mode.isCompiled) return cmode;
+
+	    [
+	      scopeClassName,
+	      // do this early so compiler extensions generally don't have to worry about
+	      // the distinction between match/begin
+	      compileMatch,
+	      MultiClass,
+	      beforeMatchExt
+	    ].forEach(ext => ext(mode, parent));
+
+	    language.compilerExtensions.forEach(ext => ext(mode, parent));
+
+	    // __beforeBegin is considered private API, internal use only
+	    mode.__beforeBegin = null;
+
+	    [
+	      beginKeywords,
+	      // do this later so compiler extensions that come earlier have access to the
+	      // raw array if they wanted to perhaps manipulate it, etc.
+	      compileIllegal,
+	      // default to 1 relevance if not specified
+	      compileRelevance
+	    ].forEach(ext => ext(mode, parent));
+
+	    mode.isCompiled = true;
+
+	    let keywordPattern = null;
+	    if (typeof mode.keywords === "object" && mode.keywords.$pattern) {
+	      // we need a copy because keywords might be compiled multiple times
+	      // so we can't go deleting $pattern from the original on the first
+	      // pass
+	      mode.keywords = Object.assign({}, mode.keywords);
+	      keywordPattern = mode.keywords.$pattern;
+	      delete mode.keywords.$pattern;
+	    }
+	    keywordPattern = keywordPattern || /\w+/;
+
+	    if (mode.keywords) {
+	      mode.keywords = compileKeywords(mode.keywords, language.case_insensitive);
+	    }
+
+	    cmode.keywordPatternRe = langRe(keywordPattern, true);
+
+	    if (parent) {
+	      if (!mode.begin) mode.begin = /\B|\b/;
+	      cmode.beginRe = langRe(cmode.begin);
+	      if (!mode.end && !mode.endsWithParent) mode.end = /\B|\b/;
+	      if (mode.end) cmode.endRe = langRe(cmode.end);
+	      cmode.terminatorEnd = source(cmode.end) || '';
+	      if (mode.endsWithParent && parent.terminatorEnd) {
+	        cmode.terminatorEnd += (mode.end ? '|' : '') + parent.terminatorEnd;
+	      }
+	    }
+	    if (mode.illegal) cmode.illegalRe = langRe(/** @type {RegExp | string} */ (mode.illegal));
+	    if (!mode.contains) mode.contains = [];
+
+	    mode.contains = [].concat(...mode.contains.map(function(c) {
+	      return expandOrCloneMode(c === 'self' ? mode : c);
+	    }));
+	    mode.contains.forEach(function(c) { compileMode(/** @type Mode */ (c), cmode); });
+
+	    if (mode.starts) {
+	      compileMode(mode.starts, parent);
+	    }
+
+	    cmode.matcher = buildModeRegex(cmode);
+	    return cmode;
+	  }
+
+	  if (!language.compilerExtensions) language.compilerExtensions = [];
+
+	  // self is not valid at the top-level
+	  if (language.contains && language.contains.includes('self')) {
+	    throw new Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
+	  }
+
+	  // we need a null object, which inherit will guarantee
+	  language.classNameAliases = inherit$1(language.classNameAliases || {});
+
+	  return compileMode(/** @type Mode */ (language));
+	}
+
+	/**
+	 * Determines if a mode has a dependency on it's parent or not
+	 *
+	 * If a mode does have a parent dependency then often we need to clone it if
+	 * it's used in multiple places so that each copy points to the correct parent,
+	 * where-as modes without a parent can often safely be re-used at the bottom of
+	 * a mode chain.
+	 *
+	 * @param {Mode | null} mode
+	 * @returns {boolean} - is there a dependency on the parent?
+	 * */
+	function dependencyOnParent(mode) {
+	  if (!mode) return false;
+
+	  return mode.endsWithParent || dependencyOnParent(mode.starts);
+	}
+
+	/**
+	 * Expands a mode or clones it if necessary
+	 *
+	 * This is necessary for modes with parental dependenceis (see notes on
+	 * `dependencyOnParent`) and for nodes that have `variants` - which must then be
+	 * exploded into their own individual modes at compile time.
+	 *
+	 * @param {Mode} mode
+	 * @returns {Mode | Mode[]}
+	 * */
+	function expandOrCloneMode(mode) {
+	  if (mode.variants && !mode.cachedVariants) {
+	    mode.cachedVariants = mode.variants.map(function(variant) {
+	      return inherit$1(mode, { variants: null }, variant);
+	    });
+	  }
+
+	  // EXPAND
+	  // if we have variants then essentially "replace" the mode with the variants
+	  // this happens in compileMode, where this function is called from
+	  if (mode.cachedVariants) {
+	    return mode.cachedVariants;
+	  }
+
+	  // CLONE
+	  // if we have dependencies on parents then we need a unique
+	  // instance of ourselves, so we can be reused with many
+	  // different parents without issue
+	  if (dependencyOnParent(mode)) {
+	    return inherit$1(mode, { starts: mode.starts ? inherit$1(mode.starts) : null });
+	  }
+
+	  if (Object.isFrozen(mode)) {
+	    return inherit$1(mode);
+	  }
+
+	  // no special dependency issues, just return ourselves
+	  return mode;
+	}
+
+	var version = "11.10.0";
+
+	class HTMLInjectionError extends Error {
+	  constructor(reason, html) {
+	    super(reason);
+	    this.name = "HTMLInjectionError";
+	    this.html = html;
+	  }
+	}
+
+	/*
+	Syntax highlighting with language autodetection.
+	https://highlightjs.org/
+	*/
+
+
+
+	/**
+	@typedef {import('highlight.js').Mode} Mode
+	@typedef {import('highlight.js').CompiledMode} CompiledMode
+	@typedef {import('highlight.js').CompiledScope} CompiledScope
+	@typedef {import('highlight.js').Language} Language
+	@typedef {import('highlight.js').HLJSApi} HLJSApi
+	@typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
+	@typedef {import('highlight.js').PluginEvent} PluginEvent
+	@typedef {import('highlight.js').HLJSOptions} HLJSOptions
+	@typedef {import('highlight.js').LanguageFn} LanguageFn
+	@typedef {import('highlight.js').HighlightedHTMLElement} HighlightedHTMLElement
+	@typedef {import('highlight.js').BeforeHighlightContext} BeforeHighlightContext
+	@typedef {import('highlight.js/private').MatchType} MatchType
+	@typedef {import('highlight.js/private').KeywordData} KeywordData
+	@typedef {import('highlight.js/private').EnhancedMatch} EnhancedMatch
+	@typedef {import('highlight.js/private').AnnotatedError} AnnotatedError
+	@typedef {import('highlight.js').AutoHighlightResult} AutoHighlightResult
+	@typedef {import('highlight.js').HighlightOptions} HighlightOptions
+	@typedef {import('highlight.js').HighlightResult} HighlightResult
+	*/
+
+
+	const escape = escapeHTML;
+	const inherit = inherit$1;
+	const NO_MATCH = Symbol("nomatch");
+	const MAX_KEYWORD_HITS = 7;
+
+	/**
+	 * @param {any} hljs - object that is extended (legacy)
+	 * @returns {HLJSApi}
+	 */
+	const HLJS = function(hljs) {
+	  // Global internal variables used within the highlight.js library.
+	  /** @type {Record<string, Language>} */
+	  const languages = Object.create(null);
+	  /** @type {Record<string, string>} */
+	  const aliases = Object.create(null);
+	  /** @type {HLJSPlugin[]} */
+	  const plugins = [];
+
+	  // safe/production mode - swallows more errors, tries to keep running
+	  // even if a single syntax or parse hits a fatal error
+	  let SAFE_MODE = true;
+	  const LANGUAGE_NOT_FOUND = "Could not find the language '{}', did you forget to load/include a language module?";
+	  /** @type {Language} */
+	  const PLAINTEXT_LANGUAGE = { disableAutodetect: true, name: 'Plain text', contains: [] };
+
+	  // Global options used when within external APIs. This is modified when
+	  // calling the `hljs.configure` function.
+	  /** @type HLJSOptions */
+	  let options = {
+	    ignoreUnescapedHTML: false,
+	    throwUnescapedHTML: false,
+	    noHighlightRe: /^(no-?highlight)$/i,
+	    languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
+	    classPrefix: 'hljs-',
+	    cssSelector: 'pre code',
+	    languages: null,
+	    // beta configuration options, subject to change, welcome to discuss
+	    // https://github.com/highlightjs/highlight.js/issues/1086
+	    __emitter: TokenTreeEmitter
+	  };
+
+	  /* Utility functions */
+
+	  /**
+	   * Tests a language name to see if highlighting should be skipped
+	   * @param {string} languageName
+	   */
+	  function shouldNotHighlight(languageName) {
+	    return options.noHighlightRe.test(languageName);
+	  }
+
+	  /**
+	   * @param {HighlightedHTMLElement} block - the HTML element to determine language for
+	   */
+	  function blockLanguage(block) {
+	    let classes = block.className + ' ';
+
+	    classes += block.parentNode ? block.parentNode.className : '';
+
+	    // language-* takes precedence over non-prefixed class names.
+	    const match = options.languageDetectRe.exec(classes);
+	    if (match) {
+	      const language = getLanguage(match[1]);
+	      if (!language) {
+	        warn(LANGUAGE_NOT_FOUND.replace("{}", match[1]));
+	        warn("Falling back to no-highlight mode for this block.", block);
+	      }
+	      return language ? match[1] : 'no-highlight';
+	    }
+
+	    return classes
+	      .split(/\s+/)
+	      .find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
+	  }
+
+	  /**
+	   * Core highlighting function.
+	   *
+	   * OLD API
+	   * highlight(lang, code, ignoreIllegals, continuation)
+	   *
+	   * NEW API
+	   * highlight(code, {lang, ignoreIllegals})
+	   *
+	   * @param {string} codeOrLanguageName - the language to use for highlighting
+	   * @param {string | HighlightOptions} optionsOrCode - the code to highlight
+	   * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
+	   *
+	   * @returns {HighlightResult} Result - an object that represents the result
+	   * @property {string} language - the language name
+	   * @property {number} relevance - the relevance score
+	   * @property {string} value - the highlighted HTML code
+	   * @property {string} code - the original raw code
+	   * @property {CompiledMode} top - top of the current mode stack
+	   * @property {boolean} illegal - indicates whether any illegal matches were found
+	  */
+	  function highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals) {
+	    let code = "";
+	    let languageName = "";
+	    if (typeof optionsOrCode === "object") {
+	      code = codeOrLanguageName;
+	      ignoreIllegals = optionsOrCode.ignoreIllegals;
+	      languageName = optionsOrCode.language;
+	    } else {
+	      // old API
+	      deprecated("10.7.0", "highlight(lang, code, ...args) has been deprecated.");
+	      deprecated("10.7.0", "Please use highlight(code, options) instead.\nhttps://github.com/highlightjs/highlight.js/issues/2277");
+	      languageName = codeOrLanguageName;
+	      code = optionsOrCode;
+	    }
+
+	    // https://github.com/highlightjs/highlight.js/issues/3149
+	    // eslint-disable-next-line no-undefined
+	    if (ignoreIllegals === undefined) { ignoreIllegals = true; }
+
+	    /** @type {BeforeHighlightContext} */
+	    const context = {
+	      code,
+	      language: languageName
+	    };
+	    // the plugin can change the desired language or the code to be highlighted
+	    // just be changing the object it was passed
+	    fire("before:highlight", context);
+
+	    // a before plugin can usurp the result completely by providing it's own
+	    // in which case we don't even need to call highlight
+	    const result = context.result
+	      ? context.result
+	      : _highlight(context.language, context.code, ignoreIllegals);
+
+	    result.code = context.code;
+	    // the plugin can change anything in result to suite it
+	    fire("after:highlight", result);
+
+	    return result;
+	  }
+
+	  /**
+	   * private highlight that's used internally and does not fire callbacks
+	   *
+	   * @param {string} languageName - the language to use for highlighting
+	   * @param {string} codeToHighlight - the code to highlight
+	   * @param {boolean?} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
+	   * @param {CompiledMode?} [continuation] - current continuation mode, if any
+	   * @returns {HighlightResult} - result of the highlight operation
+	  */
+	  function _highlight(languageName, codeToHighlight, ignoreIllegals, continuation) {
+	    const keywordHits = Object.create(null);
+
+	    /**
+	     * Return keyword data if a match is a keyword
+	     * @param {CompiledMode} mode - current mode
+	     * @param {string} matchText - the textual match
+	     * @returns {KeywordData | false}
+	     */
+	    function keywordData(mode, matchText) {
+	      return mode.keywords[matchText];
+	    }
+
+	    function processKeywords() {
+	      if (!top.keywords) {
+	        emitter.addText(modeBuffer);
+	        return;
+	      }
+
+	      let lastIndex = 0;
+	      top.keywordPatternRe.lastIndex = 0;
+	      let match = top.keywordPatternRe.exec(modeBuffer);
+	      let buf = "";
+
+	      while (match) {
+	        buf += modeBuffer.substring(lastIndex, match.index);
+	        const word = language.case_insensitive ? match[0].toLowerCase() : match[0];
+	        const data = keywordData(top, word);
+	        if (data) {
+	          const [kind, keywordRelevance] = data;
+	          emitter.addText(buf);
+	          buf = "";
+
+	          keywordHits[word] = (keywordHits[word] || 0) + 1;
+	          if (keywordHits[word] <= MAX_KEYWORD_HITS) relevance += keywordRelevance;
+	          if (kind.startsWith("_")) {
+	            // _ implied for relevance only, do not highlight
+	            // by applying a class name
+	            buf += match[0];
+	          } else {
+	            const cssClass = language.classNameAliases[kind] || kind;
+	            emitKeyword(match[0], cssClass);
+	          }
+	        } else {
+	          buf += match[0];
+	        }
+	        lastIndex = top.keywordPatternRe.lastIndex;
+	        match = top.keywordPatternRe.exec(modeBuffer);
+	      }
+	      buf += modeBuffer.substring(lastIndex);
+	      emitter.addText(buf);
+	    }
+
+	    function processSubLanguage() {
+	      if (modeBuffer === "") return;
+	      /** @type HighlightResult */
+	      let result = null;
+
+	      if (typeof top.subLanguage === 'string') {
+	        if (!languages[top.subLanguage]) {
+	          emitter.addText(modeBuffer);
+	          return;
+	        }
+	        result = _highlight(top.subLanguage, modeBuffer, true, continuations[top.subLanguage]);
+	        continuations[top.subLanguage] = /** @type {CompiledMode} */ (result._top);
+	      } else {
+	        result = highlightAuto(modeBuffer, top.subLanguage.length ? top.subLanguage : null);
+	      }
+
+	      // Counting embedded language score towards the host language may be disabled
+	      // with zeroing the containing mode relevance. Use case in point is Markdown that
+	      // allows XML everywhere and makes every XML snippet to have a much larger Markdown
+	      // score.
+	      if (top.relevance > 0) {
+	        relevance += result.relevance;
+	      }
+	      emitter.__addSublanguage(result._emitter, result.language);
+	    }
+
+	    function processBuffer() {
+	      if (top.subLanguage != null) {
+	        processSubLanguage();
+	      } else {
+	        processKeywords();
+	      }
+	      modeBuffer = '';
+	    }
+
+	    /**
+	     * @param {string} text
+	     * @param {string} scope
+	     */
+	    function emitKeyword(keyword, scope) {
+	      if (keyword === "") return;
+
+	      emitter.startScope(scope);
+	      emitter.addText(keyword);
+	      emitter.endScope();
+	    }
+
+	    /**
+	     * @param {CompiledScope} scope
+	     * @param {RegExpMatchArray} match
+	     */
+	    function emitMultiClass(scope, match) {
+	      let i = 1;
+	      const max = match.length - 1;
+	      while (i <= max) {
+	        if (!scope._emit[i]) { i++; continue; }
+	        const klass = language.classNameAliases[scope[i]] || scope[i];
+	        const text = match[i];
+	        if (klass) {
+	          emitKeyword(text, klass);
+	        } else {
+	          modeBuffer = text;
+	          processKeywords();
+	          modeBuffer = "";
+	        }
+	        i++;
+	      }
+	    }
+
+	    /**
+	     * @param {CompiledMode} mode - new mode to start
+	     * @param {RegExpMatchArray} match
+	     */
+	    function startNewMode(mode, match) {
+	      if (mode.scope && typeof mode.scope === "string") {
+	        emitter.openNode(language.classNameAliases[mode.scope] || mode.scope);
+	      }
+	      if (mode.beginScope) {
+	        // beginScope just wraps the begin match itself in a scope
+	        if (mode.beginScope._wrap) {
+	          emitKeyword(modeBuffer, language.classNameAliases[mode.beginScope._wrap] || mode.beginScope._wrap);
+	          modeBuffer = "";
+	        } else if (mode.beginScope._multi) {
+	          // at this point modeBuffer should just be the match
+	          emitMultiClass(mode.beginScope, match);
+	          modeBuffer = "";
+	        }
+	      }
+
+	      top = Object.create(mode, { parent: { value: top } });
+	      return top;
+	    }
+
+	    /**
+	     * @param {CompiledMode } mode - the mode to potentially end
+	     * @param {RegExpMatchArray} match - the latest match
+	     * @param {string} matchPlusRemainder - match plus remainder of content
+	     * @returns {CompiledMode | void} - the next mode, or if void continue on in current mode
+	     */
+	    function endOfMode(mode, match, matchPlusRemainder) {
+	      let matched = startsWith(mode.endRe, matchPlusRemainder);
+
+	      if (matched) {
+	        if (mode["on:end"]) {
+	          const resp = new Response(mode);
+	          mode["on:end"](match, resp);
+	          if (resp.isMatchIgnored) matched = false;
+	        }
+
+	        if (matched) {
+	          while (mode.endsParent && mode.parent) {
+	            mode = mode.parent;
+	          }
+	          return mode;
+	        }
+	      }
+	      // even if on:end fires an `ignore` it's still possible
+	      // that we might trigger the end node because of a parent mode
+	      if (mode.endsWithParent) {
+	        return endOfMode(mode.parent, match, matchPlusRemainder);
+	      }
+	    }
+
+	    /**
+	     * Handle matching but then ignoring a sequence of text
+	     *
+	     * @param {string} lexeme - string containing full match text
+	     */
+	    function doIgnore(lexeme) {
+	      if (top.matcher.regexIndex === 0) {
+	        // no more regexes to potentially match here, so we move the cursor forward one
+	        // space
+	        modeBuffer += lexeme[0];
+	        return 1;
+	      } else {
+	        // no need to move the cursor, we still have additional regexes to try and
+	        // match at this very spot
+	        resumeScanAtSamePosition = true;
+	        return 0;
+	      }
+	    }
+
+	    /**
+	     * Handle the start of a new potential mode match
+	     *
+	     * @param {EnhancedMatch} match - the current match
+	     * @returns {number} how far to advance the parse cursor
+	     */
+	    function doBeginMatch(match) {
+	      const lexeme = match[0];
+	      const newMode = match.rule;
+
+	      const resp = new Response(newMode);
+	      // first internal before callbacks, then the public ones
+	      const beforeCallbacks = [newMode.__beforeBegin, newMode["on:begin"]];
+	      for (const cb of beforeCallbacks) {
+	        if (!cb) continue;
+	        cb(match, resp);
+	        if (resp.isMatchIgnored) return doIgnore(lexeme);
+	      }
+
+	      if (newMode.skip) {
+	        modeBuffer += lexeme;
+	      } else {
+	        if (newMode.excludeBegin) {
+	          modeBuffer += lexeme;
+	        }
+	        processBuffer();
+	        if (!newMode.returnBegin && !newMode.excludeBegin) {
+	          modeBuffer = lexeme;
+	        }
+	      }
+	      startNewMode(newMode, match);
+	      return newMode.returnBegin ? 0 : lexeme.length;
+	    }
+
+	    /**
+	     * Handle the potential end of mode
+	     *
+	     * @param {RegExpMatchArray} match - the current match
+	     */
+	    function doEndMatch(match) {
+	      const lexeme = match[0];
+	      const matchPlusRemainder = codeToHighlight.substring(match.index);
+
+	      const endMode = endOfMode(top, match, matchPlusRemainder);
+	      if (!endMode) { return NO_MATCH; }
+
+	      const origin = top;
+	      if (top.endScope && top.endScope._wrap) {
+	        processBuffer();
+	        emitKeyword(lexeme, top.endScope._wrap);
+	      } else if (top.endScope && top.endScope._multi) {
+	        processBuffer();
+	        emitMultiClass(top.endScope, match);
+	      } else if (origin.skip) {
+	        modeBuffer += lexeme;
+	      } else {
+	        if (!(origin.returnEnd || origin.excludeEnd)) {
+	          modeBuffer += lexeme;
+	        }
+	        processBuffer();
+	        if (origin.excludeEnd) {
+	          modeBuffer = lexeme;
+	        }
+	      }
+	      do {
+	        if (top.scope) {
+	          emitter.closeNode();
+	        }
+	        if (!top.skip && !top.subLanguage) {
+	          relevance += top.relevance;
+	        }
+	        top = top.parent;
+	      } while (top !== endMode.parent);
+	      if (endMode.starts) {
+	        startNewMode(endMode.starts, match);
+	      }
+	      return origin.returnEnd ? 0 : lexeme.length;
+	    }
+
+	    function processContinuations() {
+	      const list = [];
+	      for (let current = top; current !== language; current = current.parent) {
+	        if (current.scope) {
+	          list.unshift(current.scope);
+	        }
+	      }
+	      list.forEach(item => emitter.openNode(item));
+	    }
+
+	    /** @type {{type?: MatchType, index?: number, rule?: Mode}}} */
+	    let lastMatch = {};
+
+	    /**
+	     *  Process an individual match
+	     *
+	     * @param {string} textBeforeMatch - text preceding the match (since the last match)
+	     * @param {EnhancedMatch} [match] - the match itself
+	     */
+	    function processLexeme(textBeforeMatch, match) {
+	      const lexeme = match && match[0];
+
+	      // add non-matched text to the current mode buffer
+	      modeBuffer += textBeforeMatch;
+
+	      if (lexeme == null) {
+	        processBuffer();
+	        return 0;
+	      }
+
+	      // we've found a 0 width match and we're stuck, so we need to advance
+	      // this happens when we have badly behaved rules that have optional matchers to the degree that
+	      // sometimes they can end up matching nothing at all
+	      // Ref: https://github.com/highlightjs/highlight.js/issues/2140
+	      if (lastMatch.type === "begin" && match.type === "end" && lastMatch.index === match.index && lexeme === "") {
+	        // spit the "skipped" character that our regex choked on back into the output sequence
+	        modeBuffer += codeToHighlight.slice(match.index, match.index + 1);
+	        if (!SAFE_MODE) {
+	          /** @type {AnnotatedError} */
+	          const err = new Error(`0 width match regex (${languageName})`);
+	          err.languageName = languageName;
+	          err.badRule = lastMatch.rule;
+	          throw err;
+	        }
+	        return 1;
+	      }
+	      lastMatch = match;
+
+	      if (match.type === "begin") {
+	        return doBeginMatch(match);
+	      } else if (match.type === "illegal" && !ignoreIllegals) {
+	        // illegal match, we do not continue processing
+	        /** @type {AnnotatedError} */
+	        const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.scope || '<unnamed>') + '"');
+	        err.mode = top;
+	        throw err;
+	      } else if (match.type === "end") {
+	        const processed = doEndMatch(match);
+	        if (processed !== NO_MATCH) {
+	          return processed;
+	        }
+	      }
+
+	      // edge case for when illegal matches $ (end of line) which is technically
+	      // a 0 width match but not a begin/end match so it's not caught by the
+	      // first handler (when ignoreIllegals is true)
+	      if (match.type === "illegal" && lexeme === "") {
+	        // advance so we aren't stuck in an infinite loop
+	        return 1;
+	      }
+
+	      // infinite loops are BAD, this is a last ditch catch all. if we have a
+	      // decent number of iterations yet our index (cursor position in our
+	      // parsing) still 3x behind our index then something is very wrong
+	      // so we bail
+	      if (iterations > 100000 && iterations > match.index * 3) {
+	        const err = new Error('potential infinite loop, way more iterations than matches');
+	        throw err;
+	      }
+
+	      /*
+	      Why might be find ourselves here?  An potential end match that was
+	      triggered but could not be completed.  IE, `doEndMatch` returned NO_MATCH.
+	      (this could be because a callback requests the match be ignored, etc)
+
+	      This causes no real harm other than stopping a few times too many.
+	      */
+
+	      modeBuffer += lexeme;
+	      return lexeme.length;
+	    }
+
+	    const language = getLanguage(languageName);
+	    if (!language) {
+	      error(LANGUAGE_NOT_FOUND.replace("{}", languageName));
+	      throw new Error('Unknown language: "' + languageName + '"');
+	    }
+
+	    const md = compileLanguage(language);
+	    let result = '';
+	    /** @type {CompiledMode} */
+	    let top = continuation || md;
+	    /** @type Record<string,CompiledMode> */
+	    const continuations = {}; // keep continuations for sub-languages
+	    const emitter = new options.__emitter(options);
+	    processContinuations();
+	    let modeBuffer = '';
+	    let relevance = 0;
+	    let index = 0;
+	    let iterations = 0;
+	    let resumeScanAtSamePosition = false;
+
+	    try {
+	      if (!language.__emitTokens) {
+	        top.matcher.considerAll();
+
+	        for (;;) {
+	          iterations++;
+	          if (resumeScanAtSamePosition) {
+	            // only regexes not matched previously will now be
+	            // considered for a potential match
+	            resumeScanAtSamePosition = false;
+	          } else {
+	            top.matcher.considerAll();
+	          }
+	          top.matcher.lastIndex = index;
+
+	          const match = top.matcher.exec(codeToHighlight);
+	          // console.log("match", match[0], match.rule && match.rule.begin)
+
+	          if (!match) break;
+
+	          const beforeMatch = codeToHighlight.substring(index, match.index);
+	          const processedCount = processLexeme(beforeMatch, match);
+	          index = match.index + processedCount;
+	        }
+	        processLexeme(codeToHighlight.substring(index));
+	      } else {
+	        language.__emitTokens(codeToHighlight, emitter);
+	      }
+
+	      emitter.finalize();
+	      result = emitter.toHTML();
+
+	      return {
+	        language: languageName,
+	        value: result,
+	        relevance,
+	        illegal: false,
+	        _emitter: emitter,
+	        _top: top
+	      };
+	    } catch (err) {
+	      if (err.message && err.message.includes('Illegal')) {
+	        return {
+	          language: languageName,
+	          value: escape(codeToHighlight),
+	          illegal: true,
+	          relevance: 0,
+	          _illegalBy: {
+	            message: err.message,
+	            index,
+	            context: codeToHighlight.slice(index - 100, index + 100),
+	            mode: err.mode,
+	            resultSoFar: result
+	          },
+	          _emitter: emitter
+	        };
+	      } else if (SAFE_MODE) {
+	        return {
+	          language: languageName,
+	          value: escape(codeToHighlight),
+	          illegal: false,
+	          relevance: 0,
+	          errorRaised: err,
+	          _emitter: emitter,
+	          _top: top
+	        };
+	      } else {
+	        throw err;
+	      }
+	    }
+	  }
+
+	  /**
+	   * returns a valid highlight result, without actually doing any actual work,
+	   * auto highlight starts with this and it's possible for small snippets that
+	   * auto-detection may not find a better match
+	   * @param {string} code
+	   * @returns {HighlightResult}
+	   */
+	  function justTextHighlightResult(code) {
+	    const result = {
+	      value: escape(code),
+	      illegal: false,
+	      relevance: 0,
+	      _top: PLAINTEXT_LANGUAGE,
+	      _emitter: new options.__emitter(options)
+	    };
+	    result._emitter.addText(code);
+	    return result;
+	  }
+
+	  /**
+	  Highlighting with language detection. Accepts a string with the code to
+	  highlight. Returns an object with the following properties:
+
+	  - language (detected language)
+	  - relevance (int)
+	  - value (an HTML string with highlighting markup)
+	  - secondBest (object with the same structure for second-best heuristically
+	    detected language, may be absent)
+
+	    @param {string} code
+	    @param {Array<string>} [languageSubset]
+	    @returns {AutoHighlightResult}
+	  */
+	  function highlightAuto(code, languageSubset) {
+	    languageSubset = languageSubset || options.languages || Object.keys(languages);
+	    const plaintext = justTextHighlightResult(code);
+
+	    const results = languageSubset.filter(getLanguage).filter(autoDetection).map(name =>
+	      _highlight(name, code, false)
+	    );
+	    results.unshift(plaintext); // plaintext is always an option
+
+	    const sorted = results.sort((a, b) => {
+	      // sort base on relevance
+	      if (a.relevance !== b.relevance) return b.relevance - a.relevance;
+
+	      // always award the tie to the base language
+	      // ie if C++ and Arduino are tied, it's more likely to be C++
+	      if (a.language && b.language) {
+	        if (getLanguage(a.language).supersetOf === b.language) {
+	          return 1;
+	        } else if (getLanguage(b.language).supersetOf === a.language) {
+	          return -1;
+	        }
+	      }
+
+	      // otherwise say they are equal, which has the effect of sorting on
+	      // relevance while preserving the original ordering - which is how ties
+	      // have historically been settled, ie the language that comes first always
+	      // wins in the case of a tie
+	      return 0;
+	    });
+
+	    const [best, secondBest] = sorted;
+
+	    /** @type {AutoHighlightResult} */
+	    const result = best;
+	    result.secondBest = secondBest;
+
+	    return result;
+	  }
+
+	  /**
+	   * Builds new class name for block given the language name
+	   *
+	   * @param {HTMLElement} element
+	   * @param {string} [currentLang]
+	   * @param {string} [resultLang]
+	   */
+	  function updateClassName(element, currentLang, resultLang) {
+	    const language = (currentLang && aliases[currentLang]) || resultLang;
+
+	    element.classList.add("hljs");
+	    element.classList.add(`language-${language}`);
+	  }
+
+	  /**
+	   * Applies highlighting to a DOM node containing code.
+	   *
+	   * @param {HighlightedHTMLElement} element - the HTML element to highlight
+	  */
+	  function highlightElement(element) {
+	    /** @type HTMLElement */
+	    let node = null;
+	    const language = blockLanguage(element);
+
+	    if (shouldNotHighlight(language)) return;
+
+	    fire("before:highlightElement",
+	      { el: element, language });
+
+	    if (element.dataset.highlighted) {
+	      console.log("Element previously highlighted. To highlight again, first unset `dataset.highlighted`.", element);
+	      return;
+	    }
+
+	    // we should be all text, no child nodes (unescaped HTML) - this is possibly
+	    // an HTML injection attack - it's likely too late if this is already in
+	    // production (the code has likely already done its damage by the time
+	    // we're seeing it)... but we yell loudly about this so that hopefully it's
+	    // more likely to be caught in development before making it to production
+	    if (element.children.length > 0) {
+	      if (!options.ignoreUnescapedHTML) {
+	        console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
+	        console.warn("https://github.com/highlightjs/highlight.js/wiki/security");
+	        console.warn("The element with unescaped HTML:");
+	        console.warn(element);
+	      }
+	      if (options.throwUnescapedHTML) {
+	        const err = new HTMLInjectionError(
+	          "One of your code blocks includes unescaped HTML.",
+	          element.innerHTML
+	        );
+	        throw err;
+	      }
+	    }
+
+	    node = element;
+	    const text = node.textContent;
+	    const result = language ? highlight(text, { language, ignoreIllegals: true }) : highlightAuto(text);
+
+	    element.innerHTML = result.value;
+	    element.dataset.highlighted = "yes";
+	    updateClassName(element, language, result.language);
+	    element.result = {
+	      language: result.language,
+	      // TODO: remove with version 11.0
+	      re: result.relevance,
+	      relevance: result.relevance
+	    };
+	    if (result.secondBest) {
+	      element.secondBest = {
+	        language: result.secondBest.language,
+	        relevance: result.secondBest.relevance
+	      };
+	    }
+
+	    fire("after:highlightElement", { el: element, result, text });
+	  }
+
+	  /**
+	   * Updates highlight.js global options with the passed options
+	   *
+	   * @param {Partial<HLJSOptions>} userOptions
+	   */
+	  function configure(userOptions) {
+	    options = inherit(options, userOptions);
+	  }
+
+	  // TODO: remove v12, deprecated
+	  const initHighlighting = () => {
+	    highlightAll();
+	    deprecated("10.6.0", "initHighlighting() deprecated.  Use highlightAll() now.");
+	  };
+
+	  // TODO: remove v12, deprecated
+	  function initHighlightingOnLoad() {
+	    highlightAll();
+	    deprecated("10.6.0", "initHighlightingOnLoad() deprecated.  Use highlightAll() now.");
+	  }
+
+	  let wantsHighlight = false;
+
+	  /**
+	   * auto-highlights all pre>code elements on the page
+	   */
+	  function highlightAll() {
+	    // if we are called too early in the loading process
+	    if (document.readyState === "loading") {
+	      wantsHighlight = true;
+	      return;
+	    }
+
+	    const blocks = document.querySelectorAll(options.cssSelector);
+	    blocks.forEach(highlightElement);
+	  }
+
+	  function boot() {
+	    // if a highlight was requested before DOM was loaded, do now
+	    if (wantsHighlight) highlightAll();
+	  }
+
+	  // make sure we are in the browser environment
+	  if (typeof window !== 'undefined' && window.addEventListener) {
+	    window.addEventListener('DOMContentLoaded', boot, false);
+	  }
+
+	  /**
+	   * Register a language grammar module
+	   *
+	   * @param {string} languageName
+	   * @param {LanguageFn} languageDefinition
+	   */
+	  function registerLanguage(languageName, languageDefinition) {
+	    let lang = null;
+	    try {
+	      lang = languageDefinition(hljs);
+	    } catch (error$1) {
+	      error("Language definition for '{}' could not be registered.".replace("{}", languageName));
+	      // hard or soft error
+	      if (!SAFE_MODE) { throw error$1; } else { error(error$1); }
+	      // languages that have serious errors are replaced with essentially a
+	      // "plaintext" stand-in so that the code blocks will still get normal
+	      // css classes applied to them - and one bad language won't break the
+	      // entire highlighter
+	      lang = PLAINTEXT_LANGUAGE;
+	    }
+	    // give it a temporary name if it doesn't have one in the meta-data
+	    if (!lang.name) lang.name = languageName;
+	    languages[languageName] = lang;
+	    lang.rawDefinition = languageDefinition.bind(null, hljs);
+
+	    if (lang.aliases) {
+	      registerAliases(lang.aliases, { languageName });
+	    }
+	  }
+
+	  /**
+	   * Remove a language grammar module
+	   *
+	   * @param {string} languageName
+	   */
+	  function unregisterLanguage(languageName) {
+	    delete languages[languageName];
+	    for (const alias of Object.keys(aliases)) {
+	      if (aliases[alias] === languageName) {
+	        delete aliases[alias];
+	      }
+	    }
+	  }
+
+	  /**
+	   * @returns {string[]} List of language internal names
+	   */
+	  function listLanguages() {
+	    return Object.keys(languages);
+	  }
+
+	  /**
+	   * @param {string} name - name of the language to retrieve
+	   * @returns {Language | undefined}
+	   */
+	  function getLanguage(name) {
+	    name = (name || '').toLowerCase();
+	    return languages[name] || languages[aliases[name]];
+	  }
+
+	  /**
+	   *
+	   * @param {string|string[]} aliasList - single alias or list of aliases
+	   * @param {{languageName: string}} opts
+	   */
+	  function registerAliases(aliasList, { languageName }) {
+	    if (typeof aliasList === 'string') {
+	      aliasList = [aliasList];
+	    }
+	    aliasList.forEach(alias => { aliases[alias.toLowerCase()] = languageName; });
+	  }
+
+	  /**
+	   * Determines if a given language has auto-detection enabled
+	   * @param {string} name - name of the language
+	   */
+	  function autoDetection(name) {
+	    const lang = getLanguage(name);
+	    return lang && !lang.disableAutodetect;
+	  }
+
+	  /**
+	   * Upgrades the old highlightBlock plugins to the new
+	   * highlightElement API
+	   * @param {HLJSPlugin} plugin
+	   */
+	  function upgradePluginAPI(plugin) {
+	    // TODO: remove with v12
+	    if (plugin["before:highlightBlock"] && !plugin["before:highlightElement"]) {
+	      plugin["before:highlightElement"] = (data) => {
+	        plugin["before:highlightBlock"](
+	          Object.assign({ block: data.el }, data)
+	        );
+	      };
+	    }
+	    if (plugin["after:highlightBlock"] && !plugin["after:highlightElement"]) {
+	      plugin["after:highlightElement"] = (data) => {
+	        plugin["after:highlightBlock"](
+	          Object.assign({ block: data.el }, data)
+	        );
+	      };
+	    }
+	  }
+
+	  /**
+	   * @param {HLJSPlugin} plugin
+	   */
+	  function addPlugin(plugin) {
+	    upgradePluginAPI(plugin);
+	    plugins.push(plugin);
+	  }
+
+	  /**
+	   * @param {HLJSPlugin} plugin
+	   */
+	  function removePlugin(plugin) {
+	    const index = plugins.indexOf(plugin);
+	    if (index !== -1) {
+	      plugins.splice(index, 1);
+	    }
+	  }
+
+	  /**
+	   *
+	   * @param {PluginEvent} event
+	   * @param {any} args
+	   */
+	  function fire(event, args) {
+	    const cb = event;
+	    plugins.forEach(function(plugin) {
+	      if (plugin[cb]) {
+	        plugin[cb](args);
+	      }
+	    });
+	  }
+
+	  /**
+	   * DEPRECATED
+	   * @param {HighlightedHTMLElement} el
+	   */
+	  function deprecateHighlightBlock(el) {
+	    deprecated("10.7.0", "highlightBlock will be removed entirely in v12.0");
+	    deprecated("10.7.0", "Please use highlightElement now.");
+
+	    return highlightElement(el);
+	  }
+
+	  /* Interface definition */
+	  Object.assign(hljs, {
+	    highlight,
+	    highlightAuto,
+	    highlightAll,
+	    highlightElement,
+	    // TODO: Remove with v12 API
+	    highlightBlock: deprecateHighlightBlock,
+	    configure,
+	    initHighlighting,
+	    initHighlightingOnLoad,
+	    registerLanguage,
+	    unregisterLanguage,
+	    listLanguages,
+	    getLanguage,
+	    registerAliases,
+	    autoDetection,
+	    inherit,
+	    addPlugin,
+	    removePlugin
+	  });
+
+	  hljs.debugMode = function() { SAFE_MODE = false; };
+	  hljs.safeMode = function() { SAFE_MODE = true; };
+	  hljs.versionString = version;
+
+	  hljs.regex = {
+	    concat: concat,
+	    lookahead: lookahead,
+	    either: either,
+	    optional: optional,
+	    anyNumberOfTimes: anyNumberOfTimes
+	  };
+
+	  for (const key in MODES) {
+	    // @ts-ignore
+	    if (typeof MODES[key] === "object") {
+	      // @ts-ignore
+	      deepFreeze(MODES[key]);
+	    }
+	  }
+
+	  // merge all the modes/regexes into our main object
+	  Object.assign(hljs, MODES);
+
+	  return hljs;
+	};
+
+	// Other names for the variable may break build script
+	const highlight = HLJS({});
+
+	// returns a new instance of the highlighter to be used for extensions
+	// check https://github.com/wooorm/lowlight/issues/47
+	highlight.newInstance = () => HLJS({});
+
+	core = highlight;
+	highlight.HighlightJS = highlight;
+	highlight.default = highlight;
+	return core;
 }
-
-/** @typedef {import('highlight.js').CallbackResponse} CallbackResponse */
-/** @typedef {import('highlight.js').CompiledMode} CompiledMode */
-/** @implements CallbackResponse */
-
-class Response {
-  /**
-   * @param {CompiledMode} mode
-   */
-  constructor(mode) {
-    // eslint-disable-next-line no-undefined
-    if (mode.data === undefined) mode.data = {};
-
-    this.data = mode.data;
-    this.isMatchIgnored = false;
-  }
-
-  ignoreMatch() {
-    this.isMatchIgnored = true;
-  }
-}
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function escapeHTML(value) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;');
-}
-
-/**
- * performs a shallow merge of multiple objects into one
- *
- * @template T
- * @param {T} original
- * @param {Record<string,any>[]} objects
- * @returns {T} a single new object
- */
-function inherit$1(original, ...objects) {
-  /** @type Record<string,any> */
-  const result = Object.create(null);
-
-  for (const key in original) {
-    result[key] = original[key];
-  }
-  objects.forEach(function(obj) {
-    for (const key in obj) {
-      result[key] = obj[key];
-    }
-  });
-  return /** @type {T} */ (result);
-}
-
-/**
- * @typedef {object} Renderer
- * @property {(text: string) => void} addText
- * @property {(node: Node) => void} openNode
- * @property {(node: Node) => void} closeNode
- * @property {() => string} value
- */
-
-/** @typedef {{scope?: string, language?: string, sublanguage?: boolean}} Node */
-/** @typedef {{walk: (r: Renderer) => void}} Tree */
-/** */
-
-const SPAN_CLOSE = '</span>';
-
-/**
- * Determines if a node needs to be wrapped in <span>
- *
- * @param {Node} node */
-const emitsWrappingTags = (node) => {
-  // rarely we can have a sublanguage where language is undefined
-  // TODO: track down why
-  return !!node.scope;
-};
-
-/**
- *
- * @param {string} name
- * @param {{prefix:string}} options
- */
-const scopeToCSSClass = (name, { prefix }) => {
-  // sub-language
-  if (name.startsWith("language:")) {
-    return name.replace("language:", "language-");
-  }
-  // tiered scope: comment.line
-  if (name.includes(".")) {
-    const pieces = name.split(".");
-    return [
-      `${prefix}${pieces.shift()}`,
-      ...(pieces.map((x, i) => `${x}${"_".repeat(i + 1)}`))
-    ].join(" ");
-  }
-  // simple scope
-  return `${prefix}${name}`;
-};
-
-/** @type {Renderer} */
-class HTMLRenderer {
-  /**
-   * Creates a new HTMLRenderer
-   *
-   * @param {Tree} parseTree - the parse tree (must support `walk` API)
-   * @param {{classPrefix: string}} options
-   */
-  constructor(parseTree, options) {
-    this.buffer = "";
-    this.classPrefix = options.classPrefix;
-    parseTree.walk(this);
-  }
-
-  /**
-   * Adds texts to the output stream
-   *
-   * @param {string} text */
-  addText(text) {
-    this.buffer += escapeHTML(text);
-  }
-
-  /**
-   * Adds a node open to the output stream (if needed)
-   *
-   * @param {Node} node */
-  openNode(node) {
-    if (!emitsWrappingTags(node)) return;
-
-    const className = scopeToCSSClass(node.scope,
-      { prefix: this.classPrefix });
-    this.span(className);
-  }
-
-  /**
-   * Adds a node close to the output stream (if needed)
-   *
-   * @param {Node} node */
-  closeNode(node) {
-    if (!emitsWrappingTags(node)) return;
-
-    this.buffer += SPAN_CLOSE;
-  }
-
-  /**
-   * returns the accumulated buffer
-  */
-  value() {
-    return this.buffer;
-  }
-
-  // helpers
-
-  /**
-   * Builds a span element
-   *
-   * @param {string} className */
-  span(className) {
-    this.buffer += `<span class="${className}">`;
-  }
-}
-
-/** @typedef {{scope?: string, language?: string, children: Node[]} | string} Node */
-/** @typedef {{scope?: string, language?: string, children: Node[]} } DataNode */
-/** @typedef {import('highlight.js').Emitter} Emitter */
-/**  */
-
-/** @returns {DataNode} */
-const newNode = (opts = {}) => {
-  /** @type DataNode */
-  const result = { children: [] };
-  Object.assign(result, opts);
-  return result;
-};
-
-class TokenTree {
-  constructor() {
-    /** @type DataNode */
-    this.rootNode = newNode();
-    this.stack = [this.rootNode];
-  }
-
-  get top() {
-    return this.stack[this.stack.length - 1];
-  }
-
-  get root() { return this.rootNode; }
-
-  /** @param {Node} node */
-  add(node) {
-    this.top.children.push(node);
-  }
-
-  /** @param {string} scope */
-  openNode(scope) {
-    /** @type Node */
-    const node = newNode({ scope });
-    this.add(node);
-    this.stack.push(node);
-  }
-
-  closeNode() {
-    if (this.stack.length > 1) {
-      return this.stack.pop();
-    }
-    // eslint-disable-next-line no-undefined
-    return undefined;
-  }
-
-  closeAllNodes() {
-    while (this.closeNode());
-  }
-
-  toJSON() {
-    return JSON.stringify(this.rootNode, null, 4);
-  }
-
-  /**
-   * @typedef { import("./html_renderer").Renderer } Renderer
-   * @param {Renderer} builder
-   */
-  walk(builder) {
-    // this does not
-    return this.constructor._walk(builder, this.rootNode);
-    // this works
-    // return TokenTree._walk(builder, this.rootNode);
-  }
-
-  /**
-   * @param {Renderer} builder
-   * @param {Node} node
-   */
-  static _walk(builder, node) {
-    if (typeof node === "string") {
-      builder.addText(node);
-    } else if (node.children) {
-      builder.openNode(node);
-      node.children.forEach((child) => this._walk(builder, child));
-      builder.closeNode(node);
-    }
-    return builder;
-  }
-
-  /**
-   * @param {Node} node
-   */
-  static _collapse(node) {
-    if (typeof node === "string") return;
-    if (!node.children) return;
-
-    if (node.children.every(el => typeof el === "string")) {
-      // node.text = node.children.join("");
-      // delete node.children;
-      node.children = [node.children.join("")];
-    } else {
-      node.children.forEach((child) => {
-        TokenTree._collapse(child);
-      });
-    }
-  }
-}
-
-/**
-  Currently this is all private API, but this is the minimal API necessary
-  that an Emitter must implement to fully support the parser.
-
-  Minimal interface:
-
-  - addText(text)
-  - __addSublanguage(emitter, subLanguageName)
-  - startScope(scope)
-  - endScope()
-  - finalize()
-  - toHTML()
-
-*/
-
-/**
- * @implements {Emitter}
- */
-class TokenTreeEmitter extends TokenTree {
-  /**
-   * @param {*} options
-   */
-  constructor(options) {
-    super();
-    this.options = options;
-  }
-
-  /**
-   * @param {string} text
-   */
-  addText(text) {
-    if (text === "") { return; }
-
-    this.add(text);
-  }
-
-  /** @param {string} scope */
-  startScope(scope) {
-    this.openNode(scope);
-  }
-
-  endScope() {
-    this.closeNode();
-  }
-
-  /**
-   * @param {Emitter & {root: DataNode}} emitter
-   * @param {string} name
-   */
-  __addSublanguage(emitter, name) {
-    /** @type DataNode */
-    const node = emitter.root;
-    if (name) node.scope = `language:${name}`;
-
-    this.add(node);
-  }
-
-  toHTML() {
-    const renderer = new HTMLRenderer(this, this.options);
-    return renderer.value();
-  }
-
-  finalize() {
-    this.closeAllNodes();
-    return true;
-  }
-}
-
-/**
- * @param {string} value
- * @returns {RegExp}
- * */
-
-/**
- * @param {RegExp | string } re
- * @returns {string}
- */
-function source(re) {
-  if (!re) return null;
-  if (typeof re === "string") return re;
-
-  return re.source;
-}
-
-/**
- * @param {RegExp | string } re
- * @returns {string}
- */
-function lookahead(re) {
-  return concat('(?=', re, ')');
-}
-
-/**
- * @param {RegExp | string } re
- * @returns {string}
- */
-function anyNumberOfTimes(re) {
-  return concat('(?:', re, ')*');
-}
-
-/**
- * @param {RegExp | string } re
- * @returns {string}
- */
-function optional(re) {
-  return concat('(?:', re, ')?');
-}
-
-/**
- * @param {...(RegExp | string) } args
- * @returns {string}
- */
-function concat(...args) {
-  const joined = args.map((x) => source(x)).join("");
-  return joined;
-}
-
-/**
- * @param { Array<string | RegExp | Object> } args
- * @returns {object}
- */
-function stripOptionsFromArgs(args) {
-  const opts = args[args.length - 1];
-
-  if (typeof opts === 'object' && opts.constructor === Object) {
-    args.splice(args.length - 1, 1);
-    return opts;
-  } else {
-    return {};
-  }
-}
-
-/** @typedef { {capture?: boolean} } RegexEitherOptions */
-
-/**
- * Any of the passed expresssions may match
- *
- * Creates a huge this | this | that | that match
- * @param {(RegExp | string)[] | [...(RegExp | string)[], RegexEitherOptions]} args
- * @returns {string}
- */
-function either(...args) {
-  /** @type { object & {capture?: boolean} }  */
-  const opts = stripOptionsFromArgs(args);
-  const joined = '('
-    + (opts.capture ? "" : "?:")
-    + args.map((x) => source(x)).join("|") + ")";
-  return joined;
-}
-
-/**
- * @param {RegExp | string} re
- * @returns {number}
- */
-function countMatchGroups(re) {
-  return (new RegExp(re.toString() + '|')).exec('').length - 1;
-}
-
-/**
- * Does lexeme start with a regular expression match at the beginning
- * @param {RegExp} re
- * @param {string} lexeme
- */
-function startsWith(re, lexeme) {
-  const match = re && re.exec(lexeme);
-  return match && match.index === 0;
-}
-
-// BACKREF_RE matches an open parenthesis or backreference. To avoid
-// an incorrect parse, it additionally matches the following:
-// - [...] elements, where the meaning of parentheses and escapes change
-// - other escape sequences, so we do not misparse escape sequences as
-//   interesting elements
-// - non-matching or lookahead parentheses, which do not capture. These
-//   follow the '(' with a '?'.
-const BACKREF_RE = /\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./;
-
-// **INTERNAL** Not intended for outside usage
-// join logically computes regexps.join(separator), but fixes the
-// backreferences so they continue to match.
-// it also places each individual regular expression into it's own
-// match group, keeping track of the sequencing of those match groups
-// is currently an exercise for the caller. :-)
-/**
- * @param {(string | RegExp)[]} regexps
- * @param {{joinWith: string}} opts
- * @returns {string}
- */
-function _rewriteBackreferences(regexps, { joinWith }) {
-  let numCaptures = 0;
-
-  return regexps.map((regex) => {
-    numCaptures += 1;
-    const offset = numCaptures;
-    let re = source(regex);
-    let out = '';
-
-    while (re.length > 0) {
-      const match = BACKREF_RE.exec(re);
-      if (!match) {
-        out += re;
-        break;
-      }
-      out += re.substring(0, match.index);
-      re = re.substring(match.index + match[0].length);
-      if (match[0][0] === '\\' && match[1]) {
-        // Adjust the backreference.
-        out += '\\' + String(Number(match[1]) + offset);
-      } else {
-        out += match[0];
-        if (match[0] === '(') {
-          numCaptures++;
-        }
-      }
-    }
-    return out;
-  }).map(re => `(${re})`).join(joinWith);
-}
-
-/** @typedef {import('highlight.js').Mode} Mode */
-/** @typedef {import('highlight.js').ModeCallback} ModeCallback */
-
-// Common regexps
-const MATCH_NOTHING_RE = /\b\B/;
-const IDENT_RE = '[a-zA-Z]\\w*';
-const UNDERSCORE_IDENT_RE = '[a-zA-Z_]\\w*';
-const NUMBER_RE = '\\b\\d+(\\.\\d+)?';
-const C_NUMBER_RE = '(-?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)'; // 0x..., 0..., decimal, float
-const BINARY_NUMBER_RE = '\\b(0b[01]+)'; // 0b...
-const RE_STARTERS_RE = '!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~';
-
-/**
-* @param { Partial<Mode> & {binary?: string | RegExp} } opts
-*/
-const SHEBANG = (opts = {}) => {
-  const beginShebang = /^#![ ]*\//;
-  if (opts.binary) {
-    opts.begin = concat(
-      beginShebang,
-      /.*\b/,
-      opts.binary,
-      /\b.*/);
-  }
-  return inherit$1({
-    scope: 'meta',
-    begin: beginShebang,
-    end: /$/,
-    relevance: 0,
-    /** @type {ModeCallback} */
-    "on:begin": (m, resp) => {
-      if (m.index !== 0) resp.ignoreMatch();
-    }
-  }, opts);
-};
-
-// Common modes
-const BACKSLASH_ESCAPE = {
-  begin: '\\\\[\\s\\S]', relevance: 0
-};
-const APOS_STRING_MODE = {
-  scope: 'string',
-  begin: '\'',
-  end: '\'',
-  illegal: '\\n',
-  contains: [BACKSLASH_ESCAPE]
-};
-const QUOTE_STRING_MODE = {
-  scope: 'string',
-  begin: '"',
-  end: '"',
-  illegal: '\\n',
-  contains: [BACKSLASH_ESCAPE]
-};
-const PHRASAL_WORDS_MODE = {
-  begin: /\b(a|an|the|are|I'm|isn't|don't|doesn't|won't|but|just|should|pretty|simply|enough|gonna|going|wtf|so|such|will|you|your|they|like|more)\b/
-};
-/**
- * Creates a comment mode
- *
- * @param {string | RegExp} begin
- * @param {string | RegExp} end
- * @param {Mode | {}} [modeOptions]
- * @returns {Partial<Mode>}
- */
-const COMMENT = function(begin, end, modeOptions = {}) {
-  const mode = inherit$1(
-    {
-      scope: 'comment',
-      begin,
-      end,
-      contains: []
-    },
-    modeOptions
-  );
-  mode.contains.push({
-    scope: 'doctag',
-    // hack to avoid the space from being included. the space is necessary to
-    // match here to prevent the plain text rule below from gobbling up doctags
-    begin: '[ ]*(?=(TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):)',
-    end: /(TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):/,
-    excludeBegin: true,
-    relevance: 0
-  });
-  const ENGLISH_WORD = either(
-    // list of common 1 and 2 letter words in English
-    "I",
-    "a",
-    "is",
-    "so",
-    "us",
-    "to",
-    "at",
-    "if",
-    "in",
-    "it",
-    "on",
-    // note: this is not an exhaustive list of contractions, just popular ones
-    /[A-Za-z]+['](d|ve|re|ll|t|s|n)/, // contractions - can't we'd they're let's, etc
-    /[A-Za-z]+[-][a-z]+/, // `no-way`, etc.
-    /[A-Za-z][a-z]{2,}/ // allow capitalized words at beginning of sentences
-  );
-  // looking like plain text, more likely to be a comment
-  mode.contains.push(
-    {
-      // TODO: how to include ", (, ) without breaking grammars that use these for
-      // comment delimiters?
-      // begin: /[ ]+([()"]?([A-Za-z'-]{3,}|is|a|I|so|us|[tT][oO]|at|if|in|it|on)[.]?[()":]?([.][ ]|[ ]|\))){3}/
-      // ---
-
-      // this tries to find sequences of 3 english words in a row (without any
-      // "programming" type syntax) this gives us a strong signal that we've
-      // TRULY found a comment - vs perhaps scanning with the wrong language.
-      // It's possible to find something that LOOKS like the start of the
-      // comment - but then if there is no readable text - good chance it is a
-      // false match and not a comment.
-      //
-      // for a visual example please see:
-      // https://github.com/highlightjs/highlight.js/issues/2827
-
-      begin: concat(
-        /[ ]+/, // necessary to prevent us gobbling up doctags like /* @author Bob Mcgill */
-        '(',
-        ENGLISH_WORD,
-        /[.]?[:]?([.][ ]|[ ])/,
-        '){3}') // look for 3 words in a row
-    }
-  );
-  return mode;
-};
-const C_LINE_COMMENT_MODE = COMMENT('//', '$');
-const C_BLOCK_COMMENT_MODE = COMMENT('/\\*', '\\*/');
-const HASH_COMMENT_MODE = COMMENT('#', '$');
-const NUMBER_MODE = {
-  scope: 'number',
-  begin: NUMBER_RE,
-  relevance: 0
-};
-const C_NUMBER_MODE = {
-  scope: 'number',
-  begin: C_NUMBER_RE,
-  relevance: 0
-};
-const BINARY_NUMBER_MODE = {
-  scope: 'number',
-  begin: BINARY_NUMBER_RE,
-  relevance: 0
-};
-const REGEXP_MODE = {
-  scope: "regexp",
-  begin: /\/(?=[^/\n]*\/)/,
-  end: /\/[gimuy]*/,
-  contains: [
-    BACKSLASH_ESCAPE,
-    {
-      begin: /\[/,
-      end: /\]/,
-      relevance: 0,
-      contains: [BACKSLASH_ESCAPE]
-    }
-  ]
-};
-const TITLE_MODE = {
-  scope: 'title',
-  begin: IDENT_RE,
-  relevance: 0
-};
-const UNDERSCORE_TITLE_MODE = {
-  scope: 'title',
-  begin: UNDERSCORE_IDENT_RE,
-  relevance: 0
-};
-const METHOD_GUARD = {
-  // excludes method names from keyword processing
-  begin: '\\.\\s*' + UNDERSCORE_IDENT_RE,
-  relevance: 0
-};
-
-/**
- * Adds end same as begin mechanics to a mode
- *
- * Your mode must include at least a single () match group as that first match
- * group is what is used for comparison
- * @param {Partial<Mode>} mode
- */
-const END_SAME_AS_BEGIN = function(mode) {
-  return Object.assign(mode,
-    {
-      /** @type {ModeCallback} */
-      'on:begin': (m, resp) => { resp.data._beginMatch = m[1]; },
-      /** @type {ModeCallback} */
-      'on:end': (m, resp) => { if (resp.data._beginMatch !== m[1]) resp.ignoreMatch(); }
-    });
-};
-
-var MODES = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  APOS_STRING_MODE: APOS_STRING_MODE,
-  BACKSLASH_ESCAPE: BACKSLASH_ESCAPE,
-  BINARY_NUMBER_MODE: BINARY_NUMBER_MODE,
-  BINARY_NUMBER_RE: BINARY_NUMBER_RE,
-  COMMENT: COMMENT,
-  C_BLOCK_COMMENT_MODE: C_BLOCK_COMMENT_MODE,
-  C_LINE_COMMENT_MODE: C_LINE_COMMENT_MODE,
-  C_NUMBER_MODE: C_NUMBER_MODE,
-  C_NUMBER_RE: C_NUMBER_RE,
-  END_SAME_AS_BEGIN: END_SAME_AS_BEGIN,
-  HASH_COMMENT_MODE: HASH_COMMENT_MODE,
-  IDENT_RE: IDENT_RE,
-  MATCH_NOTHING_RE: MATCH_NOTHING_RE,
-  METHOD_GUARD: METHOD_GUARD,
-  NUMBER_MODE: NUMBER_MODE,
-  NUMBER_RE: NUMBER_RE,
-  PHRASAL_WORDS_MODE: PHRASAL_WORDS_MODE,
-  QUOTE_STRING_MODE: QUOTE_STRING_MODE,
-  REGEXP_MODE: REGEXP_MODE,
-  RE_STARTERS_RE: RE_STARTERS_RE,
-  SHEBANG: SHEBANG,
-  TITLE_MODE: TITLE_MODE,
-  UNDERSCORE_IDENT_RE: UNDERSCORE_IDENT_RE,
-  UNDERSCORE_TITLE_MODE: UNDERSCORE_TITLE_MODE
-});
-
-/**
-@typedef {import('highlight.js').CallbackResponse} CallbackResponse
-@typedef {import('highlight.js').CompilerExt} CompilerExt
-*/
-
-// Grammar extensions / plugins
-// See: https://github.com/highlightjs/highlight.js/issues/2833
-
-// Grammar extensions allow "syntactic sugar" to be added to the grammar modes
-// without requiring any underlying changes to the compiler internals.
-
-// `compileMatch` being the perfect small example of now allowing a grammar
-// author to write `match` when they desire to match a single expression rather
-// than being forced to use `begin`.  The extension then just moves `match` into
-// `begin` when it runs.  Ie, no features have been added, but we've just made
-// the experience of writing (and reading grammars) a little bit nicer.
-
-// ------
-
-// TODO: We need negative look-behind support to do this properly
-/**
- * Skip a match if it has a preceding dot
- *
- * This is used for `beginKeywords` to prevent matching expressions such as
- * `bob.keyword.do()`. The mode compiler automatically wires this up as a
- * special _internal_ 'on:begin' callback for modes with `beginKeywords`
- * @param {RegExpMatchArray} match
- * @param {CallbackResponse} response
- */
-function skipIfHasPrecedingDot(match, response) {
-  const before = match.input[match.index - 1];
-  if (before === ".") {
-    response.ignoreMatch();
-  }
-}
-
-/**
- *
- * @type {CompilerExt}
- */
-function scopeClassName(mode, _parent) {
-  // eslint-disable-next-line no-undefined
-  if (mode.className !== undefined) {
-    mode.scope = mode.className;
-    delete mode.className;
-  }
-}
-
-/**
- * `beginKeywords` syntactic sugar
- * @type {CompilerExt}
- */
-function beginKeywords(mode, parent) {
-  if (!parent) return;
-  if (!mode.beginKeywords) return;
-
-  // for languages with keywords that include non-word characters checking for
-  // a word boundary is not sufficient, so instead we check for a word boundary
-  // or whitespace - this does no harm in any case since our keyword engine
-  // doesn't allow spaces in keywords anyways and we still check for the boundary
-  // first
-  mode.begin = '\\b(' + mode.beginKeywords.split(' ').join('|') + ')(?!\\.)(?=\\b|\\s)';
-  mode.__beforeBegin = skipIfHasPrecedingDot;
-  mode.keywords = mode.keywords || mode.beginKeywords;
-  delete mode.beginKeywords;
-
-  // prevents double relevance, the keywords themselves provide
-  // relevance, the mode doesn't need to double it
-  // eslint-disable-next-line no-undefined
-  if (mode.relevance === undefined) mode.relevance = 0;
-}
-
-/**
- * Allow `illegal` to contain an array of illegal values
- * @type {CompilerExt}
- */
-function compileIllegal(mode, _parent) {
-  if (!Array.isArray(mode.illegal)) return;
-
-  mode.illegal = either(...mode.illegal);
-}
-
-/**
- * `match` to match a single expression for readability
- * @type {CompilerExt}
- */
-function compileMatch(mode, _parent) {
-  if (!mode.match) return;
-  if (mode.begin || mode.end) throw new Error("begin & end are not supported with match");
-
-  mode.begin = mode.match;
-  delete mode.match;
-}
-
-/**
- * provides the default 1 relevance to all modes
- * @type {CompilerExt}
- */
-function compileRelevance(mode, _parent) {
-  // eslint-disable-next-line no-undefined
-  if (mode.relevance === undefined) mode.relevance = 1;
-}
-
-// allow beforeMatch to act as a "qualifier" for the match
-// the full match begin must be [beforeMatch][begin]
-const beforeMatchExt = (mode, parent) => {
-  if (!mode.beforeMatch) return;
-  // starts conflicts with endsParent which we need to make sure the child
-  // rule is not matched multiple times
-  if (mode.starts) throw new Error("beforeMatch cannot be used with starts");
-
-  const originalMode = Object.assign({}, mode);
-  Object.keys(mode).forEach((key) => { delete mode[key]; });
-
-  mode.keywords = originalMode.keywords;
-  mode.begin = concat(originalMode.beforeMatch, lookahead(originalMode.begin));
-  mode.starts = {
-    relevance: 0,
-    contains: [
-      Object.assign(originalMode, { endsParent: true })
-    ]
-  };
-  mode.relevance = 0;
-
-  delete originalMode.beforeMatch;
-};
-
-// keywords that should have no default relevance value
-const COMMON_KEYWORDS = [
-  'of',
-  'and',
-  'for',
-  'in',
-  'not',
-  'or',
-  'if',
-  'then',
-  'parent', // common variable name
-  'list', // common variable name
-  'value' // common variable name
-];
-
-const DEFAULT_KEYWORD_SCOPE = "keyword";
-
-/**
- * Given raw keywords from a language definition, compile them.
- *
- * @param {string | Record<string,string|string[]> | Array<string>} rawKeywords
- * @param {boolean} caseInsensitive
- */
-function compileKeywords(rawKeywords, caseInsensitive, scopeName = DEFAULT_KEYWORD_SCOPE) {
-  /** @type {import("highlight.js/private").KeywordDict} */
-  const compiledKeywords = Object.create(null);
-
-  // input can be a string of keywords, an array of keywords, or a object with
-  // named keys representing scopeName (which can then point to a string or array)
-  if (typeof rawKeywords === 'string') {
-    compileList(scopeName, rawKeywords.split(" "));
-  } else if (Array.isArray(rawKeywords)) {
-    compileList(scopeName, rawKeywords);
-  } else {
-    Object.keys(rawKeywords).forEach(function(scopeName) {
-      // collapse all our objects back into the parent object
-      Object.assign(
-        compiledKeywords,
-        compileKeywords(rawKeywords[scopeName], caseInsensitive, scopeName)
-      );
-    });
-  }
-  return compiledKeywords;
-
-  // ---
-
-  /**
-   * Compiles an individual list of keywords
-   *
-   * Ex: "for if when while|5"
-   *
-   * @param {string} scopeName
-   * @param {Array<string>} keywordList
-   */
-  function compileList(scopeName, keywordList) {
-    if (caseInsensitive) {
-      keywordList = keywordList.map(x => x.toLowerCase());
-    }
-    keywordList.forEach(function(keyword) {
-      const pair = keyword.split('|');
-      compiledKeywords[pair[0]] = [scopeName, scoreForKeyword(pair[0], pair[1])];
-    });
-  }
-}
-
-/**
- * Returns the proper score for a given keyword
- *
- * Also takes into account comment keywords, which will be scored 0 UNLESS
- * another score has been manually assigned.
- * @param {string} keyword
- * @param {string} [providedScore]
- */
-function scoreForKeyword(keyword, providedScore) {
-  // manual scores always win over common keywords
-  // so you can force a score of 1 if you really insist
-  if (providedScore) {
-    return Number(providedScore);
-  }
-
-  return commonKeyword(keyword) ? 0 : 1;
-}
-
-/**
- * Determines if a given keyword is common or not
- *
- * @param {string} keyword */
-function commonKeyword(keyword) {
-  return COMMON_KEYWORDS.includes(keyword.toLowerCase());
-}
-
-/*
-
-For the reasoning behind this please see:
-https://github.com/highlightjs/highlight.js/issues/2880#issuecomment-747275419
-
-*/
-
-/**
- * @type {Record<string, boolean>}
- */
-const seenDeprecations = {};
-
-/**
- * @param {string} message
- */
-const error = (message) => {
-  console.error(message);
-};
-
-/**
- * @param {string} message
- * @param {any} args
- */
-const warn = (message, ...args) => {
-  console.log(`WARN: ${message}`, ...args);
-};
-
-/**
- * @param {string} version
- * @param {string} message
- */
-const deprecated = (version, message) => {
-  if (seenDeprecations[`${version}/${message}`]) return;
-
-  console.log(`Deprecated as of ${version}. ${message}`);
-  seenDeprecations[`${version}/${message}`] = true;
-};
-
-/* eslint-disable no-throw-literal */
-
-/**
-@typedef {import('highlight.js').CompiledMode} CompiledMode
-*/
-
-const MultiClassError = new Error();
-
-/**
- * Renumbers labeled scope names to account for additional inner match
- * groups that otherwise would break everything.
- *
- * Lets say we 3 match scopes:
- *
- *   { 1 => ..., 2 => ..., 3 => ... }
- *
- * So what we need is a clean match like this:
- *
- *   (a)(b)(c) => [ "a", "b", "c" ]
- *
- * But this falls apart with inner match groups:
- *
- * (a)(((b)))(c) => ["a", "b", "b", "b", "c" ]
- *
- * Our scopes are now "out of alignment" and we're repeating `b` 3 times.
- * What needs to happen is the numbers are remapped:
- *
- *   { 1 => ..., 2 => ..., 5 => ... }
- *
- * We also need to know that the ONLY groups that should be output
- * are 1, 2, and 5.  This function handles this behavior.
- *
- * @param {CompiledMode} mode
- * @param {Array<RegExp | string>} regexes
- * @param {{key: "beginScope"|"endScope"}} opts
- */
-function remapScopeNames(mode, regexes, { key }) {
-  let offset = 0;
-  const scopeNames = mode[key];
-  /** @type Record<number,boolean> */
-  const emit = {};
-  /** @type Record<number,string> */
-  const positions = {};
-
-  for (let i = 1; i <= regexes.length; i++) {
-    positions[i + offset] = scopeNames[i];
-    emit[i + offset] = true;
-    offset += countMatchGroups(regexes[i - 1]);
-  }
-  // we use _emit to keep track of which match groups are "top-level" to avoid double
-  // output from inside match groups
-  mode[key] = positions;
-  mode[key]._emit = emit;
-  mode[key]._multi = true;
-}
-
-/**
- * @param {CompiledMode} mode
- */
-function beginMultiClass(mode) {
-  if (!Array.isArray(mode.begin)) return;
-
-  if (mode.skip || mode.excludeBegin || mode.returnBegin) {
-    error("skip, excludeBegin, returnBegin not compatible with beginScope: {}");
-    throw MultiClassError;
-  }
-
-  if (typeof mode.beginScope !== "object" || mode.beginScope === null) {
-    error("beginScope must be object");
-    throw MultiClassError;
-  }
-
-  remapScopeNames(mode, mode.begin, { key: "beginScope" });
-  mode.begin = _rewriteBackreferences(mode.begin, { joinWith: "" });
-}
-
-/**
- * @param {CompiledMode} mode
- */
-function endMultiClass(mode) {
-  if (!Array.isArray(mode.end)) return;
-
-  if (mode.skip || mode.excludeEnd || mode.returnEnd) {
-    error("skip, excludeEnd, returnEnd not compatible with endScope: {}");
-    throw MultiClassError;
-  }
-
-  if (typeof mode.endScope !== "object" || mode.endScope === null) {
-    error("endScope must be object");
-    throw MultiClassError;
-  }
-
-  remapScopeNames(mode, mode.end, { key: "endScope" });
-  mode.end = _rewriteBackreferences(mode.end, { joinWith: "" });
-}
-
-/**
- * this exists only to allow `scope: {}` to be used beside `match:`
- * Otherwise `beginScope` would necessary and that would look weird
-
-  {
-    match: [ /def/, /\w+/ ]
-    scope: { 1: "keyword" , 2: "title" }
-  }
-
- * @param {CompiledMode} mode
- */
-function scopeSugar(mode) {
-  if (mode.scope && typeof mode.scope === "object" && mode.scope !== null) {
-    mode.beginScope = mode.scope;
-    delete mode.scope;
-  }
-}
-
-/**
- * @param {CompiledMode} mode
- */
-function MultiClass(mode) {
-  scopeSugar(mode);
-
-  if (typeof mode.beginScope === "string") {
-    mode.beginScope = { _wrap: mode.beginScope };
-  }
-  if (typeof mode.endScope === "string") {
-    mode.endScope = { _wrap: mode.endScope };
-  }
-
-  beginMultiClass(mode);
-  endMultiClass(mode);
-}
-
-/**
-@typedef {import('highlight.js').Mode} Mode
-@typedef {import('highlight.js').CompiledMode} CompiledMode
-@typedef {import('highlight.js').Language} Language
-@typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
-@typedef {import('highlight.js').CompiledLanguage} CompiledLanguage
-*/
-
-// compilation
-
-/**
- * Compiles a language definition result
- *
- * Given the raw result of a language definition (Language), compiles this so
- * that it is ready for highlighting code.
- * @param {Language} language
- * @returns {CompiledLanguage}
- */
-function compileLanguage(language) {
-  /**
-   * Builds a regex with the case sensitivity of the current language
-   *
-   * @param {RegExp | string} value
-   * @param {boolean} [global]
-   */
-  function langRe(value, global) {
-    return new RegExp(
-      source(value),
-      'm'
-      + (language.case_insensitive ? 'i' : '')
-      + (language.unicodeRegex ? 'u' : '')
-      + (global ? 'g' : '')
-    );
-  }
-
-  /**
-    Stores multiple regular expressions and allows you to quickly search for
-    them all in a string simultaneously - returning the first match.  It does
-    this by creating a huge (a|b|c) regex - each individual item wrapped with ()
-    and joined by `|` - using match groups to track position.  When a match is
-    found checking which position in the array has content allows us to figure
-    out which of the original regexes / match groups triggered the match.
-
-    The match object itself (the result of `Regex.exec`) is returned but also
-    enhanced by merging in any meta-data that was registered with the regex.
-    This is how we keep track of which mode matched, and what type of rule
-    (`illegal`, `begin`, end, etc).
-  */
-  class MultiRegex {
-    constructor() {
-      this.matchIndexes = {};
-      // @ts-ignore
-      this.regexes = [];
-      this.matchAt = 1;
-      this.position = 0;
-    }
-
-    // @ts-ignore
-    addRule(re, opts) {
-      opts.position = this.position++;
-      // @ts-ignore
-      this.matchIndexes[this.matchAt] = opts;
-      this.regexes.push([opts, re]);
-      this.matchAt += countMatchGroups(re) + 1;
-    }
-
-    compile() {
-      if (this.regexes.length === 0) {
-        // avoids the need to check length every time exec is called
-        // @ts-ignore
-        this.exec = () => null;
-      }
-      const terminators = this.regexes.map(el => el[1]);
-      this.matcherRe = langRe(_rewriteBackreferences(terminators, { joinWith: '|' }), true);
-      this.lastIndex = 0;
-    }
-
-    /** @param {string} s */
-    exec(s) {
-      this.matcherRe.lastIndex = this.lastIndex;
-      const match = this.matcherRe.exec(s);
-      if (!match) { return null; }
-
-      // eslint-disable-next-line no-undefined
-      const i = match.findIndex((el, i) => i > 0 && el !== undefined);
-      // @ts-ignore
-      const matchData = this.matchIndexes[i];
-      // trim off any earlier non-relevant match groups (ie, the other regex
-      // match groups that make up the multi-matcher)
-      match.splice(0, i);
-
-      return Object.assign(match, matchData);
-    }
-  }
-
-  /*
-    Created to solve the key deficiently with MultiRegex - there is no way to
-    test for multiple matches at a single location.  Why would we need to do
-    that?  In the future a more dynamic engine will allow certain matches to be
-    ignored.  An example: if we matched say the 3rd regex in a large group but
-    decided to ignore it - we'd need to started testing again at the 4th
-    regex... but MultiRegex itself gives us no real way to do that.
-
-    So what this class creates MultiRegexs on the fly for whatever search
-    position they are needed.
-
-    NOTE: These additional MultiRegex objects are created dynamically.  For most
-    grammars most of the time we will never actually need anything more than the
-    first MultiRegex - so this shouldn't have too much overhead.
-
-    Say this is our search group, and we match regex3, but wish to ignore it.
-
-      regex1 | regex2 | regex3 | regex4 | regex5    ' ie, startAt = 0
-
-    What we need is a new MultiRegex that only includes the remaining
-    possibilities:
-
-      regex4 | regex5                               ' ie, startAt = 3
-
-    This class wraps all that complexity up in a simple API... `startAt` decides
-    where in the array of expressions to start doing the matching. It
-    auto-increments, so if a match is found at position 2, then startAt will be
-    set to 3.  If the end is reached startAt will return to 0.
-
-    MOST of the time the parser will be setting startAt manually to 0.
-  */
-  class ResumableMultiRegex {
-    constructor() {
-      // @ts-ignore
-      this.rules = [];
-      // @ts-ignore
-      this.multiRegexes = [];
-      this.count = 0;
-
-      this.lastIndex = 0;
-      this.regexIndex = 0;
-    }
-
-    // @ts-ignore
-    getMatcher(index) {
-      if (this.multiRegexes[index]) return this.multiRegexes[index];
-
-      const matcher = new MultiRegex();
-      this.rules.slice(index).forEach(([re, opts]) => matcher.addRule(re, opts));
-      matcher.compile();
-      this.multiRegexes[index] = matcher;
-      return matcher;
-    }
-
-    resumingScanAtSamePosition() {
-      return this.regexIndex !== 0;
-    }
-
-    considerAll() {
-      this.regexIndex = 0;
-    }
-
-    // @ts-ignore
-    addRule(re, opts) {
-      this.rules.push([re, opts]);
-      if (opts.type === "begin") this.count++;
-    }
-
-    /** @param {string} s */
-    exec(s) {
-      const m = this.getMatcher(this.regexIndex);
-      m.lastIndex = this.lastIndex;
-      let result = m.exec(s);
-
-      // The following is because we have no easy way to say "resume scanning at the
-      // existing position but also skip the current rule ONLY". What happens is
-      // all prior rules are also skipped which can result in matching the wrong
-      // thing. Example of matching "booger":
-
-      // our matcher is [string, "booger", number]
-      //
-      // ....booger....
-
-      // if "booger" is ignored then we'd really need a regex to scan from the
-      // SAME position for only: [string, number] but ignoring "booger" (if it
-      // was the first match), a simple resume would scan ahead who knows how
-      // far looking only for "number", ignoring potential string matches (or
-      // future "booger" matches that might be valid.)
-
-      // So what we do: We execute two matchers, one resuming at the same
-      // position, but the second full matcher starting at the position after:
-
-      //     /--- resume first regex match here (for [number])
-      //     |/---- full match here for [string, "booger", number]
-      //     vv
-      // ....booger....
-
-      // Which ever results in a match first is then used. So this 3-4 step
-      // process essentially allows us to say "match at this position, excluding
-      // a prior rule that was ignored".
-      //
-      // 1. Match "booger" first, ignore. Also proves that [string] does non match.
-      // 2. Resume matching for [number]
-      // 3. Match at index + 1 for [string, "booger", number]
-      // 4. If #2 and #3 result in matches, which came first?
-      if (this.resumingScanAtSamePosition()) {
-        if (result && result.index === this.lastIndex) ; else { // use the second matcher result
-          const m2 = this.getMatcher(0);
-          m2.lastIndex = this.lastIndex + 1;
-          result = m2.exec(s);
-        }
-      }
-
-      if (result) {
-        this.regexIndex += result.position + 1;
-        if (this.regexIndex === this.count) {
-          // wrap-around to considering all matches again
-          this.considerAll();
-        }
-      }
-
-      return result;
-    }
-  }
-
-  /**
-   * Given a mode, builds a huge ResumableMultiRegex that can be used to walk
-   * the content and find matches.
-   *
-   * @param {CompiledMode} mode
-   * @returns {ResumableMultiRegex}
-   */
-  function buildModeRegex(mode) {
-    const mm = new ResumableMultiRegex();
-
-    mode.contains.forEach(term => mm.addRule(term.begin, { rule: term, type: "begin" }));
-
-    if (mode.terminatorEnd) {
-      mm.addRule(mode.terminatorEnd, { type: "end" });
-    }
-    if (mode.illegal) {
-      mm.addRule(mode.illegal, { type: "illegal" });
-    }
-
-    return mm;
-  }
-
-  /** skip vs abort vs ignore
-   *
-   * @skip   - The mode is still entered and exited normally (and contains rules apply),
-   *           but all content is held and added to the parent buffer rather than being
-   *           output when the mode ends.  Mostly used with `sublanguage` to build up
-   *           a single large buffer than can be parsed by sublanguage.
-   *
-   *             - The mode begin ands ends normally.
-   *             - Content matched is added to the parent mode buffer.
-   *             - The parser cursor is moved forward normally.
-   *
-   * @abort  - A hack placeholder until we have ignore.  Aborts the mode (as if it
-   *           never matched) but DOES NOT continue to match subsequent `contains`
-   *           modes.  Abort is bad/suboptimal because it can result in modes
-   *           farther down not getting applied because an earlier rule eats the
-   *           content but then aborts.
-   *
-   *             - The mode does not begin.
-   *             - Content matched by `begin` is added to the mode buffer.
-   *             - The parser cursor is moved forward accordingly.
-   *
-   * @ignore - Ignores the mode (as if it never matched) and continues to match any
-   *           subsequent `contains` modes.  Ignore isn't technically possible with
-   *           the current parser implementation.
-   *
-   *             - The mode does not begin.
-   *             - Content matched by `begin` is ignored.
-   *             - The parser cursor is not moved forward.
-   */
-
-  /**
-   * Compiles an individual mode
-   *
-   * This can raise an error if the mode contains certain detectable known logic
-   * issues.
-   * @param {Mode} mode
-   * @param {CompiledMode | null} [parent]
-   * @returns {CompiledMode | never}
-   */
-  function compileMode(mode, parent) {
-    const cmode = /** @type CompiledMode */ (mode);
-    if (mode.isCompiled) return cmode;
-
-    [
-      scopeClassName,
-      // do this early so compiler extensions generally don't have to worry about
-      // the distinction between match/begin
-      compileMatch,
-      MultiClass,
-      beforeMatchExt
-    ].forEach(ext => ext(mode, parent));
-
-    language.compilerExtensions.forEach(ext => ext(mode, parent));
-
-    // __beforeBegin is considered private API, internal use only
-    mode.__beforeBegin = null;
-
-    [
-      beginKeywords,
-      // do this later so compiler extensions that come earlier have access to the
-      // raw array if they wanted to perhaps manipulate it, etc.
-      compileIllegal,
-      // default to 1 relevance if not specified
-      compileRelevance
-    ].forEach(ext => ext(mode, parent));
-
-    mode.isCompiled = true;
-
-    let keywordPattern = null;
-    if (typeof mode.keywords === "object" && mode.keywords.$pattern) {
-      // we need a copy because keywords might be compiled multiple times
-      // so we can't go deleting $pattern from the original on the first
-      // pass
-      mode.keywords = Object.assign({}, mode.keywords);
-      keywordPattern = mode.keywords.$pattern;
-      delete mode.keywords.$pattern;
-    }
-    keywordPattern = keywordPattern || /\w+/;
-
-    if (mode.keywords) {
-      mode.keywords = compileKeywords(mode.keywords, language.case_insensitive);
-    }
-
-    cmode.keywordPatternRe = langRe(keywordPattern, true);
-
-    if (parent) {
-      if (!mode.begin) mode.begin = /\B|\b/;
-      cmode.beginRe = langRe(cmode.begin);
-      if (!mode.end && !mode.endsWithParent) mode.end = /\B|\b/;
-      if (mode.end) cmode.endRe = langRe(cmode.end);
-      cmode.terminatorEnd = source(cmode.end) || '';
-      if (mode.endsWithParent && parent.terminatorEnd) {
-        cmode.terminatorEnd += (mode.end ? '|' : '') + parent.terminatorEnd;
-      }
-    }
-    if (mode.illegal) cmode.illegalRe = langRe(/** @type {RegExp | string} */ (mode.illegal));
-    if (!mode.contains) mode.contains = [];
-
-    mode.contains = [].concat(...mode.contains.map(function(c) {
-      return expandOrCloneMode(c === 'self' ? mode : c);
-    }));
-    mode.contains.forEach(function(c) { compileMode(/** @type Mode */ (c), cmode); });
-
-    if (mode.starts) {
-      compileMode(mode.starts, parent);
-    }
-
-    cmode.matcher = buildModeRegex(cmode);
-    return cmode;
-  }
-
-  if (!language.compilerExtensions) language.compilerExtensions = [];
-
-  // self is not valid at the top-level
-  if (language.contains && language.contains.includes('self')) {
-    throw new Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
-  }
-
-  // we need a null object, which inherit will guarantee
-  language.classNameAliases = inherit$1(language.classNameAliases || {});
-
-  return compileMode(/** @type Mode */ (language));
-}
-
-/**
- * Determines if a mode has a dependency on it's parent or not
- *
- * If a mode does have a parent dependency then often we need to clone it if
- * it's used in multiple places so that each copy points to the correct parent,
- * where-as modes without a parent can often safely be re-used at the bottom of
- * a mode chain.
- *
- * @param {Mode | null} mode
- * @returns {boolean} - is there a dependency on the parent?
- * */
-function dependencyOnParent(mode) {
-  if (!mode) return false;
-
-  return mode.endsWithParent || dependencyOnParent(mode.starts);
-}
-
-/**
- * Expands a mode or clones it if necessary
- *
- * This is necessary for modes with parental dependenceis (see notes on
- * `dependencyOnParent`) and for nodes that have `variants` - which must then be
- * exploded into their own individual modes at compile time.
- *
- * @param {Mode} mode
- * @returns {Mode | Mode[]}
- * */
-function expandOrCloneMode(mode) {
-  if (mode.variants && !mode.cachedVariants) {
-    mode.cachedVariants = mode.variants.map(function(variant) {
-      return inherit$1(mode, { variants: null }, variant);
-    });
-  }
-
-  // EXPAND
-  // if we have variants then essentially "replace" the mode with the variants
-  // this happens in compileMode, where this function is called from
-  if (mode.cachedVariants) {
-    return mode.cachedVariants;
-  }
-
-  // CLONE
-  // if we have dependencies on parents then we need a unique
-  // instance of ourselves, so we can be reused with many
-  // different parents without issue
-  if (dependencyOnParent(mode)) {
-    return inherit$1(mode, { starts: mode.starts ? inherit$1(mode.starts) : null });
-  }
-
-  if (Object.isFrozen(mode)) {
-    return inherit$1(mode);
-  }
-
-  // no special dependency issues, just return ourselves
-  return mode;
-}
-
-var version = "11.9.0";
-
-class HTMLInjectionError extends Error {
-  constructor(reason, html) {
-    super(reason);
-    this.name = "HTMLInjectionError";
-    this.html = html;
-  }
-}
-
-/*
-Syntax highlighting with language autodetection.
-https://highlightjs.org/
-*/
-
-
-
-/**
-@typedef {import('highlight.js').Mode} Mode
-@typedef {import('highlight.js').CompiledMode} CompiledMode
-@typedef {import('highlight.js').CompiledScope} CompiledScope
-@typedef {import('highlight.js').Language} Language
-@typedef {import('highlight.js').HLJSApi} HLJSApi
-@typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
-@typedef {import('highlight.js').PluginEvent} PluginEvent
-@typedef {import('highlight.js').HLJSOptions} HLJSOptions
-@typedef {import('highlight.js').LanguageFn} LanguageFn
-@typedef {import('highlight.js').HighlightedHTMLElement} HighlightedHTMLElement
-@typedef {import('highlight.js').BeforeHighlightContext} BeforeHighlightContext
-@typedef {import('highlight.js/private').MatchType} MatchType
-@typedef {import('highlight.js/private').KeywordData} KeywordData
-@typedef {import('highlight.js/private').EnhancedMatch} EnhancedMatch
-@typedef {import('highlight.js/private').AnnotatedError} AnnotatedError
-@typedef {import('highlight.js').AutoHighlightResult} AutoHighlightResult
-@typedef {import('highlight.js').HighlightOptions} HighlightOptions
-@typedef {import('highlight.js').HighlightResult} HighlightResult
-*/
-
-
-const escape = escapeHTML;
-const inherit = inherit$1;
-const NO_MATCH = Symbol("nomatch");
-const MAX_KEYWORD_HITS = 7;
-
-/**
- * @param {any} hljs - object that is extended (legacy)
- * @returns {HLJSApi}
- */
-const HLJS = function(hljs) {
-  // Global internal variables used within the highlight.js library.
-  /** @type {Record<string, Language>} */
-  const languages = Object.create(null);
-  /** @type {Record<string, string>} */
-  const aliases = Object.create(null);
-  /** @type {HLJSPlugin[]} */
-  const plugins = [];
-
-  // safe/production mode - swallows more errors, tries to keep running
-  // even if a single syntax or parse hits a fatal error
-  let SAFE_MODE = true;
-  const LANGUAGE_NOT_FOUND = "Could not find the language '{}', did you forget to load/include a language module?";
-  /** @type {Language} */
-  const PLAINTEXT_LANGUAGE = { disableAutodetect: true, name: 'Plain text', contains: [] };
-
-  // Global options used when within external APIs. This is modified when
-  // calling the `hljs.configure` function.
-  /** @type HLJSOptions */
-  let options = {
-    ignoreUnescapedHTML: false,
-    throwUnescapedHTML: false,
-    noHighlightRe: /^(no-?highlight)$/i,
-    languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
-    classPrefix: 'hljs-',
-    cssSelector: 'pre code',
-    languages: null,
-    // beta configuration options, subject to change, welcome to discuss
-    // https://github.com/highlightjs/highlight.js/issues/1086
-    __emitter: TokenTreeEmitter
-  };
-
-  /* Utility functions */
-
-  /**
-   * Tests a language name to see if highlighting should be skipped
-   * @param {string} languageName
-   */
-  function shouldNotHighlight(languageName) {
-    return options.noHighlightRe.test(languageName);
-  }
-
-  /**
-   * @param {HighlightedHTMLElement} block - the HTML element to determine language for
-   */
-  function blockLanguage(block) {
-    let classes = block.className + ' ';
-
-    classes += block.parentNode ? block.parentNode.className : '';
-
-    // language-* takes precedence over non-prefixed class names.
-    const match = options.languageDetectRe.exec(classes);
-    if (match) {
-      const language = getLanguage(match[1]);
-      if (!language) {
-        warn(LANGUAGE_NOT_FOUND.replace("{}", match[1]));
-        warn("Falling back to no-highlight mode for this block.", block);
-      }
-      return language ? match[1] : 'no-highlight';
-    }
-
-    return classes
-      .split(/\s+/)
-      .find((_class) => shouldNotHighlight(_class) || getLanguage(_class));
-  }
-
-  /**
-   * Core highlighting function.
-   *
-   * OLD API
-   * highlight(lang, code, ignoreIllegals, continuation)
-   *
-   * NEW API
-   * highlight(code, {lang, ignoreIllegals})
-   *
-   * @param {string} codeOrLanguageName - the language to use for highlighting
-   * @param {string | HighlightOptions} optionsOrCode - the code to highlight
-   * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
-   *
-   * @returns {HighlightResult} Result - an object that represents the result
-   * @property {string} language - the language name
-   * @property {number} relevance - the relevance score
-   * @property {string} value - the highlighted HTML code
-   * @property {string} code - the original raw code
-   * @property {CompiledMode} top - top of the current mode stack
-   * @property {boolean} illegal - indicates whether any illegal matches were found
-  */
-  function highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals) {
-    let code = "";
-    let languageName = "";
-    if (typeof optionsOrCode === "object") {
-      code = codeOrLanguageName;
-      ignoreIllegals = optionsOrCode.ignoreIllegals;
-      languageName = optionsOrCode.language;
-    } else {
-      // old API
-      deprecated("10.7.0", "highlight(lang, code, ...args) has been deprecated.");
-      deprecated("10.7.0", "Please use highlight(code, options) instead.\nhttps://github.com/highlightjs/highlight.js/issues/2277");
-      languageName = codeOrLanguageName;
-      code = optionsOrCode;
-    }
-
-    // https://github.com/highlightjs/highlight.js/issues/3149
-    // eslint-disable-next-line no-undefined
-    if (ignoreIllegals === undefined) { ignoreIllegals = true; }
-
-    /** @type {BeforeHighlightContext} */
-    const context = {
-      code,
-      language: languageName
-    };
-    // the plugin can change the desired language or the code to be highlighted
-    // just be changing the object it was passed
-    fire("before:highlight", context);
-
-    // a before plugin can usurp the result completely by providing it's own
-    // in which case we don't even need to call highlight
-    const result = context.result
-      ? context.result
-      : _highlight(context.language, context.code, ignoreIllegals);
-
-    result.code = context.code;
-    // the plugin can change anything in result to suite it
-    fire("after:highlight", result);
-
-    return result;
-  }
-
-  /**
-   * private highlight that's used internally and does not fire callbacks
-   *
-   * @param {string} languageName - the language to use for highlighting
-   * @param {string} codeToHighlight - the code to highlight
-   * @param {boolean?} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
-   * @param {CompiledMode?} [continuation] - current continuation mode, if any
-   * @returns {HighlightResult} - result of the highlight operation
-  */
-  function _highlight(languageName, codeToHighlight, ignoreIllegals, continuation) {
-    const keywordHits = Object.create(null);
-
-    /**
-     * Return keyword data if a match is a keyword
-     * @param {CompiledMode} mode - current mode
-     * @param {string} matchText - the textual match
-     * @returns {KeywordData | false}
-     */
-    function keywordData(mode, matchText) {
-      return mode.keywords[matchText];
-    }
-
-    function processKeywords() {
-      if (!top.keywords) {
-        emitter.addText(modeBuffer);
-        return;
-      }
-
-      let lastIndex = 0;
-      top.keywordPatternRe.lastIndex = 0;
-      let match = top.keywordPatternRe.exec(modeBuffer);
-      let buf = "";
-
-      while (match) {
-        buf += modeBuffer.substring(lastIndex, match.index);
-        const word = language.case_insensitive ? match[0].toLowerCase() : match[0];
-        const data = keywordData(top, word);
-        if (data) {
-          const [kind, keywordRelevance] = data;
-          emitter.addText(buf);
-          buf = "";
-
-          keywordHits[word] = (keywordHits[word] || 0) + 1;
-          if (keywordHits[word] <= MAX_KEYWORD_HITS) relevance += keywordRelevance;
-          if (kind.startsWith("_")) {
-            // _ implied for relevance only, do not highlight
-            // by applying a class name
-            buf += match[0];
-          } else {
-            const cssClass = language.classNameAliases[kind] || kind;
-            emitKeyword(match[0], cssClass);
-          }
-        } else {
-          buf += match[0];
-        }
-        lastIndex = top.keywordPatternRe.lastIndex;
-        match = top.keywordPatternRe.exec(modeBuffer);
-      }
-      buf += modeBuffer.substring(lastIndex);
-      emitter.addText(buf);
-    }
-
-    function processSubLanguage() {
-      if (modeBuffer === "") return;
-      /** @type HighlightResult */
-      let result = null;
-
-      if (typeof top.subLanguage === 'string') {
-        if (!languages[top.subLanguage]) {
-          emitter.addText(modeBuffer);
-          return;
-        }
-        result = _highlight(top.subLanguage, modeBuffer, true, continuations[top.subLanguage]);
-        continuations[top.subLanguage] = /** @type {CompiledMode} */ (result._top);
-      } else {
-        result = highlightAuto(modeBuffer, top.subLanguage.length ? top.subLanguage : null);
-      }
-
-      // Counting embedded language score towards the host language may be disabled
-      // with zeroing the containing mode relevance. Use case in point is Markdown that
-      // allows XML everywhere and makes every XML snippet to have a much larger Markdown
-      // score.
-      if (top.relevance > 0) {
-        relevance += result.relevance;
-      }
-      emitter.__addSublanguage(result._emitter, result.language);
-    }
-
-    function processBuffer() {
-      if (top.subLanguage != null) {
-        processSubLanguage();
-      } else {
-        processKeywords();
-      }
-      modeBuffer = '';
-    }
-
-    /**
-     * @param {string} text
-     * @param {string} scope
-     */
-    function emitKeyword(keyword, scope) {
-      if (keyword === "") return;
-
-      emitter.startScope(scope);
-      emitter.addText(keyword);
-      emitter.endScope();
-    }
-
-    /**
-     * @param {CompiledScope} scope
-     * @param {RegExpMatchArray} match
-     */
-    function emitMultiClass(scope, match) {
-      let i = 1;
-      const max = match.length - 1;
-      while (i <= max) {
-        if (!scope._emit[i]) { i++; continue; }
-        const klass = language.classNameAliases[scope[i]] || scope[i];
-        const text = match[i];
-        if (klass) {
-          emitKeyword(text, klass);
-        } else {
-          modeBuffer = text;
-          processKeywords();
-          modeBuffer = "";
-        }
-        i++;
-      }
-    }
-
-    /**
-     * @param {CompiledMode} mode - new mode to start
-     * @param {RegExpMatchArray} match
-     */
-    function startNewMode(mode, match) {
-      if (mode.scope && typeof mode.scope === "string") {
-        emitter.openNode(language.classNameAliases[mode.scope] || mode.scope);
-      }
-      if (mode.beginScope) {
-        // beginScope just wraps the begin match itself in a scope
-        if (mode.beginScope._wrap) {
-          emitKeyword(modeBuffer, language.classNameAliases[mode.beginScope._wrap] || mode.beginScope._wrap);
-          modeBuffer = "";
-        } else if (mode.beginScope._multi) {
-          // at this point modeBuffer should just be the match
-          emitMultiClass(mode.beginScope, match);
-          modeBuffer = "";
-        }
-      }
-
-      top = Object.create(mode, { parent: { value: top } });
-      return top;
-    }
-
-    /**
-     * @param {CompiledMode } mode - the mode to potentially end
-     * @param {RegExpMatchArray} match - the latest match
-     * @param {string} matchPlusRemainder - match plus remainder of content
-     * @returns {CompiledMode | void} - the next mode, or if void continue on in current mode
-     */
-    function endOfMode(mode, match, matchPlusRemainder) {
-      let matched = startsWith(mode.endRe, matchPlusRemainder);
-
-      if (matched) {
-        if (mode["on:end"]) {
-          const resp = new Response(mode);
-          mode["on:end"](match, resp);
-          if (resp.isMatchIgnored) matched = false;
-        }
-
-        if (matched) {
-          while (mode.endsParent && mode.parent) {
-            mode = mode.parent;
-          }
-          return mode;
-        }
-      }
-      // even if on:end fires an `ignore` it's still possible
-      // that we might trigger the end node because of a parent mode
-      if (mode.endsWithParent) {
-        return endOfMode(mode.parent, match, matchPlusRemainder);
-      }
-    }
-
-    /**
-     * Handle matching but then ignoring a sequence of text
-     *
-     * @param {string} lexeme - string containing full match text
-     */
-    function doIgnore(lexeme) {
-      if (top.matcher.regexIndex === 0) {
-        // no more regexes to potentially match here, so we move the cursor forward one
-        // space
-        modeBuffer += lexeme[0];
-        return 1;
-      } else {
-        // no need to move the cursor, we still have additional regexes to try and
-        // match at this very spot
-        resumeScanAtSamePosition = true;
-        return 0;
-      }
-    }
-
-    /**
-     * Handle the start of a new potential mode match
-     *
-     * @param {EnhancedMatch} match - the current match
-     * @returns {number} how far to advance the parse cursor
-     */
-    function doBeginMatch(match) {
-      const lexeme = match[0];
-      const newMode = match.rule;
-
-      const resp = new Response(newMode);
-      // first internal before callbacks, then the public ones
-      const beforeCallbacks = [newMode.__beforeBegin, newMode["on:begin"]];
-      for (const cb of beforeCallbacks) {
-        if (!cb) continue;
-        cb(match, resp);
-        if (resp.isMatchIgnored) return doIgnore(lexeme);
-      }
-
-      if (newMode.skip) {
-        modeBuffer += lexeme;
-      } else {
-        if (newMode.excludeBegin) {
-          modeBuffer += lexeme;
-        }
-        processBuffer();
-        if (!newMode.returnBegin && !newMode.excludeBegin) {
-          modeBuffer = lexeme;
-        }
-      }
-      startNewMode(newMode, match);
-      return newMode.returnBegin ? 0 : lexeme.length;
-    }
-
-    /**
-     * Handle the potential end of mode
-     *
-     * @param {RegExpMatchArray} match - the current match
-     */
-    function doEndMatch(match) {
-      const lexeme = match[0];
-      const matchPlusRemainder = codeToHighlight.substring(match.index);
-
-      const endMode = endOfMode(top, match, matchPlusRemainder);
-      if (!endMode) { return NO_MATCH; }
-
-      const origin = top;
-      if (top.endScope && top.endScope._wrap) {
-        processBuffer();
-        emitKeyword(lexeme, top.endScope._wrap);
-      } else if (top.endScope && top.endScope._multi) {
-        processBuffer();
-        emitMultiClass(top.endScope, match);
-      } else if (origin.skip) {
-        modeBuffer += lexeme;
-      } else {
-        if (!(origin.returnEnd || origin.excludeEnd)) {
-          modeBuffer += lexeme;
-        }
-        processBuffer();
-        if (origin.excludeEnd) {
-          modeBuffer = lexeme;
-        }
-      }
-      do {
-        if (top.scope) {
-          emitter.closeNode();
-        }
-        if (!top.skip && !top.subLanguage) {
-          relevance += top.relevance;
-        }
-        top = top.parent;
-      } while (top !== endMode.parent);
-      if (endMode.starts) {
-        startNewMode(endMode.starts, match);
-      }
-      return origin.returnEnd ? 0 : lexeme.length;
-    }
-
-    function processContinuations() {
-      const list = [];
-      for (let current = top; current !== language; current = current.parent) {
-        if (current.scope) {
-          list.unshift(current.scope);
-        }
-      }
-      list.forEach(item => emitter.openNode(item));
-    }
-
-    /** @type {{type?: MatchType, index?: number, rule?: Mode}}} */
-    let lastMatch = {};
-
-    /**
-     *  Process an individual match
-     *
-     * @param {string} textBeforeMatch - text preceding the match (since the last match)
-     * @param {EnhancedMatch} [match] - the match itself
-     */
-    function processLexeme(textBeforeMatch, match) {
-      const lexeme = match && match[0];
-
-      // add non-matched text to the current mode buffer
-      modeBuffer += textBeforeMatch;
-
-      if (lexeme == null) {
-        processBuffer();
-        return 0;
-      }
-
-      // we've found a 0 width match and we're stuck, so we need to advance
-      // this happens when we have badly behaved rules that have optional matchers to the degree that
-      // sometimes they can end up matching nothing at all
-      // Ref: https://github.com/highlightjs/highlight.js/issues/2140
-      if (lastMatch.type === "begin" && match.type === "end" && lastMatch.index === match.index && lexeme === "") {
-        // spit the "skipped" character that our regex choked on back into the output sequence
-        modeBuffer += codeToHighlight.slice(match.index, match.index + 1);
-        if (!SAFE_MODE) {
-          /** @type {AnnotatedError} */
-          const err = new Error(`0 width match regex (${languageName})`);
-          err.languageName = languageName;
-          err.badRule = lastMatch.rule;
-          throw err;
-        }
-        return 1;
-      }
-      lastMatch = match;
-
-      if (match.type === "begin") {
-        return doBeginMatch(match);
-      } else if (match.type === "illegal" && !ignoreIllegals) {
-        // illegal match, we do not continue processing
-        /** @type {AnnotatedError} */
-        const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.scope || '<unnamed>') + '"');
-        err.mode = top;
-        throw err;
-      } else if (match.type === "end") {
-        const processed = doEndMatch(match);
-        if (processed !== NO_MATCH) {
-          return processed;
-        }
-      }
-
-      // edge case for when illegal matches $ (end of line) which is technically
-      // a 0 width match but not a begin/end match so it's not caught by the
-      // first handler (when ignoreIllegals is true)
-      if (match.type === "illegal" && lexeme === "") {
-        // advance so we aren't stuck in an infinite loop
-        return 1;
-      }
-
-      // infinite loops are BAD, this is a last ditch catch all. if we have a
-      // decent number of iterations yet our index (cursor position in our
-      // parsing) still 3x behind our index then something is very wrong
-      // so we bail
-      if (iterations > 100000 && iterations > match.index * 3) {
-        const err = new Error('potential infinite loop, way more iterations than matches');
-        throw err;
-      }
-
-      /*
-      Why might be find ourselves here?  An potential end match that was
-      triggered but could not be completed.  IE, `doEndMatch` returned NO_MATCH.
-      (this could be because a callback requests the match be ignored, etc)
-
-      This causes no real harm other than stopping a few times too many.
-      */
-
-      modeBuffer += lexeme;
-      return lexeme.length;
-    }
-
-    const language = getLanguage(languageName);
-    if (!language) {
-      error(LANGUAGE_NOT_FOUND.replace("{}", languageName));
-      throw new Error('Unknown language: "' + languageName + '"');
-    }
-
-    const md = compileLanguage(language);
-    let result = '';
-    /** @type {CompiledMode} */
-    let top = continuation || md;
-    /** @type Record<string,CompiledMode> */
-    const continuations = {}; // keep continuations for sub-languages
-    const emitter = new options.__emitter(options);
-    processContinuations();
-    let modeBuffer = '';
-    let relevance = 0;
-    let index = 0;
-    let iterations = 0;
-    let resumeScanAtSamePosition = false;
-
-    try {
-      if (!language.__emitTokens) {
-        top.matcher.considerAll();
-
-        for (;;) {
-          iterations++;
-          if (resumeScanAtSamePosition) {
-            // only regexes not matched previously will now be
-            // considered for a potential match
-            resumeScanAtSamePosition = false;
-          } else {
-            top.matcher.considerAll();
-          }
-          top.matcher.lastIndex = index;
-
-          const match = top.matcher.exec(codeToHighlight);
-          // console.log("match", match[0], match.rule && match.rule.begin)
-
-          if (!match) break;
-
-          const beforeMatch = codeToHighlight.substring(index, match.index);
-          const processedCount = processLexeme(beforeMatch, match);
-          index = match.index + processedCount;
-        }
-        processLexeme(codeToHighlight.substring(index));
-      } else {
-        language.__emitTokens(codeToHighlight, emitter);
-      }
-
-      emitter.finalize();
-      result = emitter.toHTML();
-
-      return {
-        language: languageName,
-        value: result,
-        relevance,
-        illegal: false,
-        _emitter: emitter,
-        _top: top
-      };
-    } catch (err) {
-      if (err.message && err.message.includes('Illegal')) {
-        return {
-          language: languageName,
-          value: escape(codeToHighlight),
-          illegal: true,
-          relevance: 0,
-          _illegalBy: {
-            message: err.message,
-            index,
-            context: codeToHighlight.slice(index - 100, index + 100),
-            mode: err.mode,
-            resultSoFar: result
-          },
-          _emitter: emitter
-        };
-      } else if (SAFE_MODE) {
-        return {
-          language: languageName,
-          value: escape(codeToHighlight),
-          illegal: false,
-          relevance: 0,
-          errorRaised: err,
-          _emitter: emitter,
-          _top: top
-        };
-      } else {
-        throw err;
-      }
-    }
-  }
-
-  /**
-   * returns a valid highlight result, without actually doing any actual work,
-   * auto highlight starts with this and it's possible for small snippets that
-   * auto-detection may not find a better match
-   * @param {string} code
-   * @returns {HighlightResult}
-   */
-  function justTextHighlightResult(code) {
-    const result = {
-      value: escape(code),
-      illegal: false,
-      relevance: 0,
-      _top: PLAINTEXT_LANGUAGE,
-      _emitter: new options.__emitter(options)
-    };
-    result._emitter.addText(code);
-    return result;
-  }
-
-  /**
-  Highlighting with language detection. Accepts a string with the code to
-  highlight. Returns an object with the following properties:
-
-  - language (detected language)
-  - relevance (int)
-  - value (an HTML string with highlighting markup)
-  - secondBest (object with the same structure for second-best heuristically
-    detected language, may be absent)
-
-    @param {string} code
-    @param {Array<string>} [languageSubset]
-    @returns {AutoHighlightResult}
-  */
-  function highlightAuto(code, languageSubset) {
-    languageSubset = languageSubset || options.languages || Object.keys(languages);
-    const plaintext = justTextHighlightResult(code);
-
-    const results = languageSubset.filter(getLanguage).filter(autoDetection).map(name =>
-      _highlight(name, code, false)
-    );
-    results.unshift(plaintext); // plaintext is always an option
-
-    const sorted = results.sort((a, b) => {
-      // sort base on relevance
-      if (a.relevance !== b.relevance) return b.relevance - a.relevance;
-
-      // always award the tie to the base language
-      // ie if C++ and Arduino are tied, it's more likely to be C++
-      if (a.language && b.language) {
-        if (getLanguage(a.language).supersetOf === b.language) {
-          return 1;
-        } else if (getLanguage(b.language).supersetOf === a.language) {
-          return -1;
-        }
-      }
-
-      // otherwise say they are equal, which has the effect of sorting on
-      // relevance while preserving the original ordering - which is how ties
-      // have historically been settled, ie the language that comes first always
-      // wins in the case of a tie
-      return 0;
-    });
-
-    const [best, secondBest] = sorted;
-
-    /** @type {AutoHighlightResult} */
-    const result = best;
-    result.secondBest = secondBest;
-
-    return result;
-  }
-
-  /**
-   * Builds new class name for block given the language name
-   *
-   * @param {HTMLElement} element
-   * @param {string} [currentLang]
-   * @param {string} [resultLang]
-   */
-  function updateClassName(element, currentLang, resultLang) {
-    const language = (currentLang && aliases[currentLang]) || resultLang;
-
-    element.classList.add("hljs");
-    element.classList.add(`language-${language}`);
-  }
-
-  /**
-   * Applies highlighting to a DOM node containing code.
-   *
-   * @param {HighlightedHTMLElement} element - the HTML element to highlight
-  */
-  function highlightElement(element) {
-    /** @type HTMLElement */
-    let node = null;
-    const language = blockLanguage(element);
-
-    if (shouldNotHighlight(language)) return;
-
-    fire("before:highlightElement",
-      { el: element, language });
-
-    if (element.dataset.highlighted) {
-      console.log("Element previously highlighted. To highlight again, first unset `dataset.highlighted`.", element);
-      return;
-    }
-
-    // we should be all text, no child nodes (unescaped HTML) - this is possibly
-    // an HTML injection attack - it's likely too late if this is already in
-    // production (the code has likely already done its damage by the time
-    // we're seeing it)... but we yell loudly about this so that hopefully it's
-    // more likely to be caught in development before making it to production
-    if (element.children.length > 0) {
-      if (!options.ignoreUnescapedHTML) {
-        console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
-        console.warn("https://github.com/highlightjs/highlight.js/wiki/security");
-        console.warn("The element with unescaped HTML:");
-        console.warn(element);
-      }
-      if (options.throwUnescapedHTML) {
-        const err = new HTMLInjectionError(
-          "One of your code blocks includes unescaped HTML.",
-          element.innerHTML
-        );
-        throw err;
-      }
-    }
-
-    node = element;
-    const text = node.textContent;
-    const result = language ? highlight(text, { language, ignoreIllegals: true }) : highlightAuto(text);
-
-    element.innerHTML = result.value;
-    element.dataset.highlighted = "yes";
-    updateClassName(element, language, result.language);
-    element.result = {
-      language: result.language,
-      // TODO: remove with version 11.0
-      re: result.relevance,
-      relevance: result.relevance
-    };
-    if (result.secondBest) {
-      element.secondBest = {
-        language: result.secondBest.language,
-        relevance: result.secondBest.relevance
-      };
-    }
-
-    fire("after:highlightElement", { el: element, result, text });
-  }
-
-  /**
-   * Updates highlight.js global options with the passed options
-   *
-   * @param {Partial<HLJSOptions>} userOptions
-   */
-  function configure(userOptions) {
-    options = inherit(options, userOptions);
-  }
-
-  // TODO: remove v12, deprecated
-  const initHighlighting = () => {
-    highlightAll();
-    deprecated("10.6.0", "initHighlighting() deprecated.  Use highlightAll() now.");
-  };
-
-  // TODO: remove v12, deprecated
-  function initHighlightingOnLoad() {
-    highlightAll();
-    deprecated("10.6.0", "initHighlightingOnLoad() deprecated.  Use highlightAll() now.");
-  }
-
-  let wantsHighlight = false;
-
-  /**
-   * auto-highlights all pre>code elements on the page
-   */
-  function highlightAll() {
-    // if we are called too early in the loading process
-    if (document.readyState === "loading") {
-      wantsHighlight = true;
-      return;
-    }
-
-    const blocks = document.querySelectorAll(options.cssSelector);
-    blocks.forEach(highlightElement);
-  }
-
-  function boot() {
-    // if a highlight was requested before DOM was loaded, do now
-    if (wantsHighlight) highlightAll();
-  }
-
-  // make sure we are in the browser environment
-  if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('DOMContentLoaded', boot, false);
-  }
-
-  /**
-   * Register a language grammar module
-   *
-   * @param {string} languageName
-   * @param {LanguageFn} languageDefinition
-   */
-  function registerLanguage(languageName, languageDefinition) {
-    let lang = null;
-    try {
-      lang = languageDefinition(hljs);
-    } catch (error$1) {
-      error("Language definition for '{}' could not be registered.".replace("{}", languageName));
-      // hard or soft error
-      if (!SAFE_MODE) { throw error$1; } else { error(error$1); }
-      // languages that have serious errors are replaced with essentially a
-      // "plaintext" stand-in so that the code blocks will still get normal
-      // css classes applied to them - and one bad language won't break the
-      // entire highlighter
-      lang = PLAINTEXT_LANGUAGE;
-    }
-    // give it a temporary name if it doesn't have one in the meta-data
-    if (!lang.name) lang.name = languageName;
-    languages[languageName] = lang;
-    lang.rawDefinition = languageDefinition.bind(null, hljs);
-
-    if (lang.aliases) {
-      registerAliases(lang.aliases, { languageName });
-    }
-  }
-
-  /**
-   * Remove a language grammar module
-   *
-   * @param {string} languageName
-   */
-  function unregisterLanguage(languageName) {
-    delete languages[languageName];
-    for (const alias of Object.keys(aliases)) {
-      if (aliases[alias] === languageName) {
-        delete aliases[alias];
-      }
-    }
-  }
-
-  /**
-   * @returns {string[]} List of language internal names
-   */
-  function listLanguages() {
-    return Object.keys(languages);
-  }
-
-  /**
-   * @param {string} name - name of the language to retrieve
-   * @returns {Language | undefined}
-   */
-  function getLanguage(name) {
-    name = (name || '').toLowerCase();
-    return languages[name] || languages[aliases[name]];
-  }
-
-  /**
-   *
-   * @param {string|string[]} aliasList - single alias or list of aliases
-   * @param {{languageName: string}} opts
-   */
-  function registerAliases(aliasList, { languageName }) {
-    if (typeof aliasList === 'string') {
-      aliasList = [aliasList];
-    }
-    aliasList.forEach(alias => { aliases[alias.toLowerCase()] = languageName; });
-  }
-
-  /**
-   * Determines if a given language has auto-detection enabled
-   * @param {string} name - name of the language
-   */
-  function autoDetection(name) {
-    const lang = getLanguage(name);
-    return lang && !lang.disableAutodetect;
-  }
-
-  /**
-   * Upgrades the old highlightBlock plugins to the new
-   * highlightElement API
-   * @param {HLJSPlugin} plugin
-   */
-  function upgradePluginAPI(plugin) {
-    // TODO: remove with v12
-    if (plugin["before:highlightBlock"] && !plugin["before:highlightElement"]) {
-      plugin["before:highlightElement"] = (data) => {
-        plugin["before:highlightBlock"](
-          Object.assign({ block: data.el }, data)
-        );
-      };
-    }
-    if (plugin["after:highlightBlock"] && !plugin["after:highlightElement"]) {
-      plugin["after:highlightElement"] = (data) => {
-        plugin["after:highlightBlock"](
-          Object.assign({ block: data.el }, data)
-        );
-      };
-    }
-  }
-
-  /**
-   * @param {HLJSPlugin} plugin
-   */
-  function addPlugin(plugin) {
-    upgradePluginAPI(plugin);
-    plugins.push(plugin);
-  }
-
-  /**
-   * @param {HLJSPlugin} plugin
-   */
-  function removePlugin(plugin) {
-    const index = plugins.indexOf(plugin);
-    if (index !== -1) {
-      plugins.splice(index, 1);
-    }
-  }
-
-  /**
-   *
-   * @param {PluginEvent} event
-   * @param {any} args
-   */
-  function fire(event, args) {
-    const cb = event;
-    plugins.forEach(function(plugin) {
-      if (plugin[cb]) {
-        plugin[cb](args);
-      }
-    });
-  }
-
-  /**
-   * DEPRECATED
-   * @param {HighlightedHTMLElement} el
-   */
-  function deprecateHighlightBlock(el) {
-    deprecated("10.7.0", "highlightBlock will be removed entirely in v12.0");
-    deprecated("10.7.0", "Please use highlightElement now.");
-
-    return highlightElement(el);
-  }
-
-  /* Interface definition */
-  Object.assign(hljs, {
-    highlight,
-    highlightAuto,
-    highlightAll,
-    highlightElement,
-    // TODO: Remove with v12 API
-    highlightBlock: deprecateHighlightBlock,
-    configure,
-    initHighlighting,
-    initHighlightingOnLoad,
-    registerLanguage,
-    unregisterLanguage,
-    listLanguages,
-    getLanguage,
-    registerAliases,
-    autoDetection,
-    inherit,
-    addPlugin,
-    removePlugin
-  });
-
-  hljs.debugMode = function() { SAFE_MODE = false; };
-  hljs.safeMode = function() { SAFE_MODE = true; };
-  hljs.versionString = version;
-
-  hljs.regex = {
-    concat: concat,
-    lookahead: lookahead,
-    either: either,
-    optional: optional,
-    anyNumberOfTimes: anyNumberOfTimes
-  };
-
-  for (const key in MODES) {
-    // @ts-ignore
-    if (typeof MODES[key] === "object") {
-      // @ts-ignore
-      deepFreeze(MODES[key]);
-    }
-  }
-
-  // merge all the modes/regexes into our main object
-  Object.assign(hljs, MODES);
-
-  return hljs;
-};
-
-// Other names for the variable may break build script
-const highlight = HLJS({});
-
-// returns a new instance of the highlighter to be used for extensions
-// check https://github.com/wooorm/lowlight/issues/47
-highlight.newInstance = () => HLJS({});
-
-var core = highlight;
-highlight.HighlightJS = highlight;
-highlight.default = highlight;
 
 /*
 Language: 1C:Enterprise
@@ -3051,6 +3059,12 @@ function require_1c () {
 	    ]
 	  };
 
+	  const PUNCTUATION = {
+	    match: /[;()+\-:=,]/,
+	    className: "punctuation",
+	    relevance: 0
+	  };
+
 	  // comment : комментарии
 	  const COMMENTS = hljs.inherit(hljs.C_LINE_COMMENT_MODE);
 
@@ -3137,7 +3151,8 @@ function require_1c () {
 	      SYMBOL,
 	      NUMBERS,
 	      STRINGS,
-	      DATE
+	      DATE,
+	      PUNCTUATION
 	    ]
 	  };
 	}
@@ -3150,6 +3165,7 @@ function require_1c () {
 Language: Augmented Backus-Naur Form
 Author: Alex McKibben <alex@nullscope.net>
 Website: https://tools.ietf.org/html/rfc5234
+Category: syntax
 Audit: 2020
 */
 
@@ -4245,34 +4261,44 @@ function requireArcade () {
 	hasRequiredArcade = 1;
 	/** @type LanguageFn */
 	function arcade(hljs) {
+	  const regex = hljs.regex;
 	  const IDENT_RE = '[A-Za-z_][0-9A-Za-z_]*';
 	  const KEYWORDS = {
 	    keyword: [
-	      "if",
-	      "for",
-	      "while",
-	      "var",
-	      "new",
-	      "function",
+	      "break",
+	      "case",
+	      "catch",
+	      "continue",
+	      "debugger",
 	      "do",
-	      "return",
-	      "void",
 	      "else",
-	      "break"
+	      "export",
+	      "for",
+	      "function",
+	      "if",
+	      "import",
+	      "in",
+	      "new",
+	      "return",
+	      "switch",
+	      "try",
+	      "var",
+	      "void",
+	      "while"
 	    ],
 	    literal: [
 	      "BackSlash",
 	      "DoubleQuote",
-	      "false",
 	      "ForwardSlash",
 	      "Infinity",
 	      "NaN",
 	      "NewLine",
-	      "null",
 	      "PI",
 	      "SingleQuote",
 	      "Tab",
 	      "TextFormatting",
+	      "false",
+	      "null",
 	      "true",
 	      "undefined"
 	    ],
@@ -4297,19 +4323,22 @@ function requireArcade () {
 	      "BufferGeodetic",
 	      "Ceil",
 	      "Centroid",
+	      "ChangeTimeZone",
 	      "Clip",
 	      "Concatenate",
 	      "Console",
 	      "Constrain",
 	      "Contains",
 	      "ConvertDirection",
+	      "ConvexHull",
 	      "Cos",
 	      "Count",
 	      "Crosses",
 	      "Cut",
-	      "Date",
+	      "Date|0",
 	      "DateAdd",
 	      "DateDiff",
+	      "DateOnly",
 	      "Day",
 	      "Decode",
 	      "DefaultValue",
@@ -4336,25 +4365,34 @@ function requireArcade () {
 	      "FeatureSetById",
 	      "FeatureSetByName",
 	      "FeatureSetByPortalItem",
+	      "FeatureSetByRelationshipClass",
 	      "FeatureSetByRelationshipName",
 	      "Filter",
 	      "Find",
-	      "First",
+	      "First|0",
 	      "Floor",
 	      "FromCharCode",
 	      "FromCodePoint",
 	      "FromJSON",
+	      "Front",
 	      "GdbVersion",
 	      "Generalize",
 	      "Geometry",
+	      "GetEnvironment",
 	      "GetFeatureSet",
+	      "GetFeatureSetInfo",
 	      "GetUser",
 	      "GroupBy",
 	      "Guid",
-	      "Hash",
 	      "HasKey",
+	      "HasValue",
+	      "Hash",
 	      "Hour",
 	      "IIf",
+	      "ISOMonth",
+	      "ISOWeek",
+	      "ISOWeekday",
+	      "ISOYear",
 	      "Includes",
 	      "IndexOf",
 	      "Insert",
@@ -4362,10 +4400,6 @@ function requireArcade () {
 	      "Intersects",
 	      "IsEmpty",
 	      "IsNan",
-	      "ISOMonth",
-	      "ISOWeek",
-	      "ISOWeekday",
-	      "ISOYear",
 	      "IsSelfIntersecting",
 	      "IsSimple",
 	      "Left|0",
@@ -4384,11 +4418,13 @@ function requireArcade () {
 	      "Month",
 	      "MultiPartToSinglePart",
 	      "Multipoint",
+	      "NearestCoordinate",
+	      "NearestVertex",
 	      "NextSequenceValue",
 	      "None",
 	      "Now",
 	      "Number",
-	      "Offset|0",
+	      "Offset",
 	      "OrderBy",
 	      "Overlaps",
 	      "Point",
@@ -4419,6 +4455,7 @@ function requireArcade () {
 	      "Splice",
 	      "Split",
 	      "Sqrt",
+	      "StandardizeGuid",
 	      "Stdev",
 	      "SubtypeCode",
 	      "SubtypeName",
@@ -4427,15 +4464,18 @@ function requireArcade () {
 	      "SymmetricDifference",
 	      "Tan",
 	      "Text",
+	      "Time",
+	      "TimeZone",
+	      "TimeZoneOffset",
 	      "Timestamp",
 	      "ToCharCode",
 	      "ToCodePoint",
-	      "Today",
 	      "ToHex",
 	      "ToLocal",
+	      "ToUTC",
+	      "Today",
 	      "Top|0",
 	      "Touches",
-	      "ToUTC",
 	      "TrackAccelerationAt",
 	      "TrackAccelerationWindow",
 	      "TrackCurrentAcceleration",
@@ -4460,14 +4500,46 @@ function requireArcade () {
 	      "Variance",
 	      "Week",
 	      "Weekday",
-	      "When",
+	      "When|0",
 	      "Within",
-	      "Year"
+	      "Year|0",
 	    ]
 	  };
+	  const PROFILE_VARS = [
+	    "aggregatedFeatures",
+	    "analytic",
+	    "config",
+	    "datapoint",
+	    "datastore",
+	    "editcontext",
+	    "feature",
+	    "featureSet",
+	    "feedfeature",
+	    "fencefeature",
+	    "fencenotificationtype",
+	    "join",
+	    "layer",
+	    "locationupdate",
+	    "map",
+	    "measure",
+	    "measure",
+	    "originalFeature",
+	    "record",
+	    "reference",
+	    "rowindex",
+	    "sourcedatastore",
+	    "sourcefeature",
+	    "sourcelayer",
+	    "target",
+	    "targetdatastore",
+	    "targetfeature",
+	    "targetlayer",
+	    "value",
+	    "view"
+	  ];
 	  const SYMBOL = {
 	    className: 'symbol',
-	    begin: '\\$[datastore|feature|layer|map|measure|sourcefeature|sourcelayer|targetfeature|targetlayer|value|view]+'
+	    begin: '\\$' + regex.either(...PROFILE_VARS)
 	  };
 	  const NUMBER = {
 	    className: 'number',
@@ -4659,9 +4731,44 @@ function requireArduino () {
 	  const NUMBERS = {
 	    className: 'number',
 	    variants: [
-	      { begin: '\\b(0b[01\']+)' },
-	      { begin: '(-?)\\b([\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)' },
-	      { begin: '(-?)(\\b0[xX][a-fA-F0-9\']+|(\\b[\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)([eE][-+]?[\\d\']+)?)' }
+	      // Floating-point literal.
+	      { begin:
+	        "[+-]?(?:" // Leading sign.
+	          // Decimal.
+	          + "(?:"
+	            +"[0-9](?:'?[0-9])*\\.(?:[0-9](?:'?[0-9])*)?"
+	            + "|\\.[0-9](?:'?[0-9])*"
+	          + ")(?:[Ee][+-]?[0-9](?:'?[0-9])*)?"
+	          + "|[0-9](?:'?[0-9])*[Ee][+-]?[0-9](?:'?[0-9])*"
+	          // Hexadecimal.
+	          + "|0[Xx](?:"
+	            +"[0-9A-Fa-f](?:'?[0-9A-Fa-f])*(?:\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)?)?"
+	            + "|\\.[0-9A-Fa-f](?:'?[0-9A-Fa-f])*"
+	          + ")[Pp][+-]?[0-9](?:'?[0-9])*"
+	        + ")(?:" // Literal suffixes.
+	          + "[Ff](?:16|32|64|128)?"
+	          + "|(BF|bf)16"
+	          + "|[Ll]"
+	          + "|" // Literal suffix is optional.
+	        + ")"
+	      },
+	      // Integer literal.
+	      { begin:
+	        "[+-]?\\b(?:" // Leading sign.
+	          + "0[Bb][01](?:'?[01])*" // Binary.
+	          + "|0[Xx][0-9A-Fa-f](?:'?[0-9A-Fa-f])*" // Hexadecimal.
+	          + "|0(?:'?[0-7])*" // Octal or just a lone zero.
+	          + "|[1-9](?:'?[0-9])*" // Decimal.
+	        + ")(?:" // Literal suffixes.
+	          + "[Uu](?:LL?|ll?)"
+	          + "|[Uu][Zz]?"
+	          + "|(?:LL?|ll?)[Uu]?"
+	          + "|[Zz][Uu]"
+	          + "|" // Literal suffix is optional.
+	        + ")"
+	        // Note: there are user-defined literal suffixes too, but perhaps having the custom suffix not part of the
+	        // literal highlight actually makes it stand out more.
+	      }
 	    ],
 	    relevance: 0
 	  };
@@ -5177,6 +5284,7 @@ function requireArduino () {
 	Author: Stefania Mellai <s.mellai@arduino.cc>
 	Description: The Arduino® Language is a superset of C++. This rules are designed to highlight the Arduino® source code. For info about language see http://www.arduino.cc.
 	Website: https://www.arduino.cc
+	Category: system
 	*/
 
 
@@ -6236,6 +6344,7 @@ Language: AspectJ
 Author: Hakan Ozler <ozler.hakan@gmail.com>
 Website: https://www.eclipse.org/aspectj/
 Description: Syntax Highlighting for the AspectJ Language which is a general-purpose aspect-oriented extension to the Java programming language.
+Category: system
 Audit: 2020
 */
 
@@ -6833,6 +6942,7 @@ Language: Awk
 Author: Matthew Daly <matthewbdaly@gmail.com>
 Website: https://www.gnu.org/software/gawk/manual/gawk.html
 Description: language definition for Awk scripts
+Category: scripting
 */
 
 var awk_1;
@@ -7106,7 +7216,7 @@ Language: Bash
 Author: vah <vahtenberg@gmail.com>
 Contributrors: Benjamin Pannell <contact@sierrasoftworks.com>
 Website: https://www.gnu.org/software/bash/
-Category: common
+Category: common, scripting
 */
 
 var bash_1;
@@ -7147,6 +7257,18 @@ function requireBash () {
 	    end: /\)/,
 	    contains: [ hljs.BACKSLASH_ESCAPE ]
 	  };
+	  const COMMENT = hljs.inherit(
+	    hljs.COMMENT(),
+	    {
+	      match: [
+	        /(^|\s)/,
+	        /#.*$/
+	      ],
+	      scope: {
+	        2: 'comment'
+	      }
+	    }
+	  );
 	  const HERE_DOC = {
 	    begin: /<<-?\s*(?=\w+)/,
 	    starts: { contains: [
@@ -7280,6 +7402,7 @@ function requireBash () {
 	    "read",
 	    "readarray",
 	    "source",
+	    "sudo",
 	    "type",
 	    "typeset",
 	    "ulimit",
@@ -7465,7 +7588,10 @@ function requireBash () {
 
 	  return {
 	    name: 'Bash',
-	    aliases: [ 'sh' ],
+	    aliases: [
+	      'sh',
+	      'zsh'
+	    ],
 	    keywords: {
 	      $pattern: /\b[a-z][a-z0-9._-]+\b/,
 	      keyword: KEYWORDS,
@@ -7485,7 +7611,7 @@ function requireBash () {
 	      hljs.SHEBANG(), // to catch unknown shells but still highlight the shebang
 	      FUNCTION,
 	      ARITHMETIC,
-	      hljs.HASH_COMMENT_MODE,
+	      COMMENT,
 	      HERE_DOC,
 	      PATH_MODE,
 	      QUOTE_STRING,
@@ -7506,6 +7632,7 @@ Language: BASIC
 Author: Raphaël Assénat <raph@raphnet.net>
 Description: Based on the BASIC reference from the Tandy 1000 guide
 Website: https://en.wikipedia.org/wiki/Tandy_1000
+Category: system
 */
 
 var basic_1;
@@ -7742,6 +7869,7 @@ function requireBasic () {
 /*
 Language: Backus–Naur Form
 Website: https://en.wikipedia.org/wiki/Backus–Naur_form
+Category: syntax
 Author: Oleg Efimov <efimovov@gmail.com>
 */
 
@@ -7927,7 +8055,7 @@ function requireC () {
 	    end: /$/,
 	    keywords: { keyword:
 	        'if else elif endif define undef warning error line '
-	        + 'pragma _Pragma ifdef ifndef include' },
+	        + 'pragma _Pragma ifdef ifndef elifdef elifndef include' },
 	    contains: [
 	      {
 	        begin: /\\\n/,
@@ -7971,6 +8099,8 @@ function requireC () {
 	    "restrict",
 	    "return",
 	    "sizeof",
+	    "typeof",
+	    "typeof_unqual",
 	    "struct",
 	    "switch",
 	    "typedef",
@@ -8005,14 +8135,26 @@ function requireC () {
 	    "char",
 	    "void",
 	    "_Bool",
+	    "_BitInt",
 	    "_Complex",
 	    "_Imaginary",
 	    "_Decimal32",
 	    "_Decimal64",
+	    "_Decimal96",
 	    "_Decimal128",
+	    "_Decimal64x",
+	    "_Decimal128x",
+	    "_Float16",
+	    "_Float32",
+	    "_Float64",
+	    "_Float128",
+	    "_Float32x",
+	    "_Float64x",
+	    "_Float128x",
 	    // modifiers
 	    "const",
 	    "static",
+	    "constexpr",
 	    // aliases
 	    "complex",
 	    "bool",
@@ -8181,6 +8323,7 @@ Language: C/AL
 Author: Kenneth Fuglsang Christensen <kfuglsang@gmail.com>
 Description: Provides highlighting of Microsoft Dynamics NAV C/AL code files
 Website: https://docs.microsoft.com/en-us/dynamics-nav/programming-in-c-al
+Category: enterprise
 */
 
 var cal_1;
@@ -8456,6 +8599,7 @@ function requireCapnproto () {
 Language: Ceylon
 Author: Lucas Werkmeister <mail@lucaswerkmeister.de>
 Website: https://ceylon-lang.org
+Category: system
 */
 
 var ceylon_1;
@@ -8910,6 +9054,7 @@ Language: CMake
 Description: CMake is an open-source cross-platform system for build automation.
 Author: Igor Kalnitsky <igor@kalnitsky.org>
 Website: https://cmake.org
+Category: build-system
 */
 
 var cmake_1;
@@ -10015,9 +10160,44 @@ function requireCpp () {
 	  const NUMBERS = {
 	    className: 'number',
 	    variants: [
-	      { begin: '\\b(0b[01\']+)' },
-	      { begin: '(-?)\\b([\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)' },
-	      { begin: '(-?)(\\b0[xX][a-fA-F0-9\']+|(\\b[\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)([eE][-+]?[\\d\']+)?)' }
+	      // Floating-point literal.
+	      { begin:
+	        "[+-]?(?:" // Leading sign.
+	          // Decimal.
+	          + "(?:"
+	            +"[0-9](?:'?[0-9])*\\.(?:[0-9](?:'?[0-9])*)?"
+	            + "|\\.[0-9](?:'?[0-9])*"
+	          + ")(?:[Ee][+-]?[0-9](?:'?[0-9])*)?"
+	          + "|[0-9](?:'?[0-9])*[Ee][+-]?[0-9](?:'?[0-9])*"
+	          // Hexadecimal.
+	          + "|0[Xx](?:"
+	            +"[0-9A-Fa-f](?:'?[0-9A-Fa-f])*(?:\\.(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f])*)?)?"
+	            + "|\\.[0-9A-Fa-f](?:'?[0-9A-Fa-f])*"
+	          + ")[Pp][+-]?[0-9](?:'?[0-9])*"
+	        + ")(?:" // Literal suffixes.
+	          + "[Ff](?:16|32|64|128)?"
+	          + "|(BF|bf)16"
+	          + "|[Ll]"
+	          + "|" // Literal suffix is optional.
+	        + ")"
+	      },
+	      // Integer literal.
+	      { begin:
+	        "[+-]?\\b(?:" // Leading sign.
+	          + "0[Bb][01](?:'?[01])*" // Binary.
+	          + "|0[Xx][0-9A-Fa-f](?:'?[0-9A-Fa-f])*" // Hexadecimal.
+	          + "|0(?:'?[0-7])*" // Octal or just a lone zero.
+	          + "|[1-9](?:'?[0-9])*" // Decimal.
+	        + ")(?:" // Literal suffixes.
+	          + "[Uu](?:LL?|ll?)"
+	          + "|[Uu][Zz]?"
+	          + "|(?:LL?|ll?)[Uu]?"
+	          + "|[Zz][Uu]"
+	          + "|" // Literal suffix is optional.
+	        + ")"
+	        // Note: there are user-defined literal suffixes too, but perhaps having the custom suffix not part of the
+	        // literal highlight actually makes it stand out more.
+	      }
 	    ],
 	    relevance: 0
 	  };
@@ -10645,6 +10825,7 @@ function requireCrmsh () {
 Language: Crystal
 Author: TSUYUSATO Kitsune <make.just.on@gmail.com>
 Website: https://crystal-lang.org
+Category: system
 */
 
 var crystal_1;
@@ -11133,6 +11314,11 @@ function requireCsharp () {
 	    ],
 	    relevance: 0
 	  };
+	  const RAW_STRING = {
+	    className: 'string',
+	    begin: /"""("*)(?!")(.|\n)*?"""\1/,
+	    relevance: 1
+	  };
 	  const VERBATIM_STRING = {
 	    className: 'string',
 	    begin: '@"',
@@ -11198,6 +11384,7 @@ function requireCsharp () {
 	    hljs.inherit(hljs.C_BLOCK_COMMENT_MODE, { illegal: /\n/ })
 	  ];
 	  const STRING = { variants: [
+	    RAW_STRING,
 	    INTERPOLATED_VERBATIM_STRING,
 	    INTERPOLATED_STRING,
 	    VERBATIM_STRING,
@@ -11375,6 +11562,7 @@ Language: CSP
 Description: Content Security Policy definition highlighting
 Author: Taras <oxdef@oxdef.info>
 Website: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+Category: web
 
 vim: ts=2 sw=2 st=2
 */
@@ -11487,7 +11675,7 @@ function requireCss () {
 	  };
 	};
 
-	const TAGS = [
+	const HTML_TAGS = [
 	  'a',
 	  'abbr',
 	  'address',
@@ -11539,11 +11727,16 @@ function requireCss () {
 	  'nav',
 	  'object',
 	  'ol',
+	  'optgroup',
+	  'option',
 	  'p',
+	  'picture',
 	  'q',
 	  'quote',
 	  'samp',
 	  'section',
+	  'select',
+	  'source',
 	  'span',
 	  'strong',
 	  'summary',
@@ -11561,6 +11754,58 @@ function requireCss () {
 	  'var',
 	  'video'
 	];
+
+	const SVG_TAGS = [
+	  'defs',
+	  'g',
+	  'marker',
+	  'mask',
+	  'pattern',
+	  'svg',
+	  'switch',
+	  'symbol',
+	  'feBlend',
+	  'feColorMatrix',
+	  'feComponentTransfer',
+	  'feComposite',
+	  'feConvolveMatrix',
+	  'feDiffuseLighting',
+	  'feDisplacementMap',
+	  'feFlood',
+	  'feGaussianBlur',
+	  'feImage',
+	  'feMerge',
+	  'feMorphology',
+	  'feOffset',
+	  'feSpecularLighting',
+	  'feTile',
+	  'feTurbulence',
+	  'linearGradient',
+	  'radialGradient',
+	  'stop',
+	  'circle',
+	  'ellipse',
+	  'image',
+	  'line',
+	  'path',
+	  'polygon',
+	  'polyline',
+	  'rect',
+	  'text',
+	  'use',
+	  'textPath',
+	  'tspan',
+	  'foreignObject',
+	  'clipPath'
+	];
+
+	const TAGS = [
+	  ...HTML_TAGS,
+	  ...SVG_TAGS,
+	];
+
+	// Sorting, then reversing makes sure longer attributes/elements like
+	// `font-weight` are matched fully instead of getting false positives on say `font`
 
 	const MEDIA_FEATURES = [
 	  'any-hover',
@@ -11597,7 +11842,7 @@ function requireCss () {
 	  'max-width',
 	  'min-height',
 	  'max-height'
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 	const PSEUDO_CLASSES = [
@@ -11660,7 +11905,7 @@ function requireCss () {
 	  'valid',
 	  'visited',
 	  'where' // where()
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 	const PSEUDO_ELEMENTS = [
@@ -11678,12 +11923,14 @@ function requireCss () {
 	  'selection',
 	  'slotted',
 	  'spelling-error'
-	];
+	].sort().reverse();
 
 	const ATTRIBUTES = [
+	  'accent-color',
 	  'align-content',
 	  'align-items',
 	  'align-self',
+	  'alignment-baseline',
 	  'all',
 	  'animation',
 	  'animation-delay',
@@ -11694,6 +11941,7 @@ function requireCss () {
 	  'animation-name',
 	  'animation-play-state',
 	  'animation-timing-function',
+	  'appearance',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -11705,6 +11953,7 @@ function requireCss () {
 	  'background-position',
 	  'background-repeat',
 	  'background-size',
+	  'baseline-shift',
 	  'block-size',
 	  'border',
 	  'border-block',
@@ -11751,10 +12000,14 @@ function requireCss () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
 	  'border-spacing',
+	  'border-start-end-radius',
+	  'border-start-start-radius',
 	  'border-style',
 	  'border-top',
 	  'border-top-color',
@@ -11770,6 +12023,8 @@ function requireCss () {
 	  'break-after',
 	  'break-before',
 	  'break-inside',
+	  'cx',
+	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -11777,6 +12032,11 @@ function requireCss () {
 	  'clip-path',
 	  'clip-rule',
 	  'color',
+	  'color-interpolation',
+	  'color-interpolation-filters',
+	  'color-profile',
+	  'color-rendering',
+	  'color-scheme',
 	  'column-count',
 	  'column-fill',
 	  'column-gap',
@@ -11798,7 +12058,12 @@ function requireCss () {
 	  'cursor',
 	  'direction',
 	  'display',
+	  'dominant-baseline',
 	  'empty-cells',
+	  'enable-background',
+	  'fill',
+	  'fill-opacity',
+	  'fill-rule',
 	  'filter',
 	  'flex',
 	  'flex-basis',
@@ -11809,6 +12074,8 @@ function requireCss () {
 	  'flex-wrap',
 	  'float',
 	  'flow',
+	  'flood-color',
+	  'flood-opacity',
 	  'font',
 	  'font-display',
 	  'font-family',
@@ -11830,6 +12097,7 @@ function requireCss () {
 	  'font-variation-settings',
 	  'font-weight',
 	  'gap',
+	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
 	  'grid',
 	  'grid-area',
@@ -11856,16 +12124,32 @@ function requireCss () {
 	  'image-resolution',
 	  'ime-mode',
 	  'inline-size',
+	  'inset',
+	  'inset-block',
+	  'inset-block-end',
+	  'inset-block-start',
+	  'inset-inline',
+	  'inset-inline-end',
+	  'inset-inline-start',
 	  'isolation',
+	  'kerning',
 	  'justify-content',
+	  'justify-items',
+	  'justify-self',
 	  'left',
 	  'letter-spacing',
+	  'lighting-color',
 	  'line-break',
 	  'line-height',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
+	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -11947,12 +12231,15 @@ function requireCss () {
 	  'pointer-events',
 	  'position',
 	  'quotes',
+	  'r',
 	  'resize',
 	  'rest',
 	  'rest-after',
 	  'rest-before',
 	  'right',
+	  'rotate',
 	  'row-gap',
+	  'scale',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -11984,11 +12271,23 @@ function requireCss () {
 	  'shape-image-threshold',
 	  'shape-margin',
 	  'shape-outside',
+	  'shape-rendering',
+	  'stop-color',
+	  'stop-opacity',
+	  'stroke',
+	  'stroke-dasharray',
+	  'stroke-dashoffset',
+	  'stroke-linecap',
+	  'stroke-linejoin',
+	  'stroke-miterlimit',
+	  'stroke-opacity',
+	  'stroke-width',
 	  'speak',
 	  'speak-as',
 	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
+	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
@@ -11996,7 +12295,9 @@ function requireCss () {
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip-ink',
 	  'text-decoration-style',
+	  'text-decoration-thickness',
 	  'text-emphasis',
 	  'text-emphasis-color',
 	  'text-emphasis-position',
@@ -12008,6 +12309,7 @@ function requireCss () {
 	  'text-rendering',
 	  'text-shadow',
 	  'text-transform',
+	  'text-underline-offset',
 	  'text-underline-position',
 	  'top',
 	  'transform',
@@ -12019,7 +12321,9 @@ function requireCss () {
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
+	  'translate',
 	  'unicode-bidi',
+	  'vector-effect',
 	  'vertical-align',
 	  'visibility',
 	  'voice-balance',
@@ -12038,10 +12342,10 @@ function requireCss () {
 	  'word-spacing',
 	  'word-wrap',
 	  'writing-mode',
+	  'x',
+	  'y',
 	  'z-index'
-	  // reverse makes sure longer attributes `font-weight` are matched fully
-	  // instead of getting false positives on say `font`
-	].reverse();
+	].sort().reverse();
 
 	/*
 	Language: CSS
@@ -12189,6 +12493,7 @@ Author: Aleksandar Ruzicic <aleksandar@ruzicic.info>
 Description: D is a language with C-like syntax and static typing. It pragmatically combines efficiency, control, and modeling power, with safety and programmer productivity.
 Version: 1.0a
 Website: https://dlang.org
+Category: system
 Date: 2012-04-08
 */
 
@@ -12687,6 +12992,12 @@ function requireMarkdown () {
 	    end: '$'
 	  };
 
+	  const ENTITY = {
+	    //https://spec.commonmark.org/0.31.2/#entity-references
+	    scope: 'literal',
+	    match: /&([a-zA-Z0-9]+|#[0-9]{1,7}|#[Xx][0-9a-fA-F]{1,6});/
+	  };
+
 	  return {
 	    name: 'Markdown',
 	    aliases: [
@@ -12704,7 +13015,8 @@ function requireMarkdown () {
 	      CODE,
 	      HORIZONTAL_RULE,
 	      LINK,
-	      LINK_REFERENCE
+	      LINK_REFERENCE,
+	      ENTITY
 	    ]
 	  };
 	}
@@ -12987,6 +13299,7 @@ function requireDart () {
 /*
 Language: Delphi
 Website: https://www.embarcadero.com/products/delphi
+Category: system
 */
 
 var delphi_1;
@@ -13156,19 +13469,35 @@ function requireDelphi () {
 	    // Source: https://www.freepascal.org/docs-html/ref/refse6.html
 	    variants: [
 	      {
+	        // Regular numbers, e.g., 123, 123.456.
+	        match: /\b\d[\d_]*(\.\d[\d_]*)?/ },
+	      {
 	        // Hexadecimal notation, e.g., $7F.
-	        begin: '\\$[0-9A-Fa-f]+' },
+	        match: /\$[\dA-Fa-f_]+/ },
+	      {
+	        // Hexadecimal literal with no digits
+	        match: /\$/,
+	        relevance: 0 },
 	      {
 	        // Octal notation, e.g., &42.
-	        begin: '&[0-7]+' },
+	        match: /&[0-7][0-7_]*/ },
 	      {
 	        // Binary notation, e.g., %1010.
-	        begin: '%[01]+' }
+	        match: /%[01_]+/ },
+	      {
+	        // Binary literal with no digits
+	        match: /%/,
+	        relevance: 0 }
 	    ]
 	  };
 	  const CHAR_STRING = {
 	    className: 'string',
-	    begin: /(#\d+)+/
+	    variants: [
+	      { match: /#\d[\d_]*/ },
+	      { match: /#\$[\dA-Fa-f][\dA-Fa-f_]*/ },
+	      { match: /#&[0-7][0-7_]*/ },
+	      { match: /#%[01][01_]*/ }
+	    ]
 	  };
 	  const CLASS = {
 	    begin: hljs.IDENT_RE + '\\s*=\\s*class\\s*\\(',
@@ -13210,7 +13539,6 @@ function requireDelphi () {
 	    contains: [
 	      STRING,
 	      CHAR_STRING,
-	      hljs.NUMBER_MODE,
 	      NUMBER,
 	      CLASS,
 	      FUNCTION,
@@ -13523,6 +13851,7 @@ Language: Batch file (DOS)
 Author: Alexander Makarov <sam@rmcreative.ru>
 Contributors: Anton Kochkov <anton.kochkov@gmail.com>
 Website: https://en.wikipedia.org/wiki/Batch_file
+Category: scripting
 */
 
 var dos_1;
@@ -13994,6 +14323,7 @@ function requireDust () {
 Language: Extended Backus-Naur Form
 Author: Alex McKibben <alex@nullscope.net>
 Website: https://en.wikipedia.org/wiki/Extended_Backus–Naur_form
+Category: syntax
 */
 
 var ebnf_1;
@@ -14498,7 +14828,7 @@ Description: Ruby is a dynamic, open source programming language with a focus on
 Website: https://www.ruby-lang.org/
 Author: Anton Kovalyov <anton@kovalyov.net>
 Contributors: Peter Leonov <gojpeg@yandex.ru>, Vasily Polovnyov <vast@whiteants.net>, Loren Segal <lsegal@soen.ca>, Pascal Hurni <phi@ruby-reactive.org>, Cedric Sohrauer <sohrauer@googlemail.com>
-Category: common
+Category: common, scripting
 */
 
 var ruby_1;
@@ -15134,6 +15464,10 @@ function requireErlang () {
 	      }
 	    ]
 	  };
+	  const CHAR_LITERAL = {
+	    scope: 'string',
+	    match: /\$(\\([^0-9]|[0-9]{1,3}|)|.)/,
+	  };
 
 	  const BLOCK_STATEMENTS = {
 	    beginKeywords: 'fun receive if try case',
@@ -15151,7 +15485,8 @@ function requireErlang () {
 	    TUPLE,
 	    VAR1,
 	    VAR2,
-	    RECORD_ACCESS
+	    RECORD_ACCESS,
+	    CHAR_LITERAL
 	  ];
 
 	  const BASIC_MODES = [
@@ -15164,7 +15499,8 @@ function requireErlang () {
 	    TUPLE,
 	    VAR1,
 	    VAR2,
-	    RECORD_ACCESS
+	    RECORD_ACCESS,
+	    CHAR_LITERAL
 	  ];
 	  FUNCTION_CALL.contains[1].contains = BASIC_MODES;
 	  TUPLE.contains = BASIC_MODES;
@@ -15200,6 +15536,7 @@ function requireErlang () {
 	    end: '\\)',
 	    contains: BASIC_MODES
 	  };
+
 	  return {
 	    name: 'Erlang',
 	    aliases: [ 'erl' ],
@@ -15241,6 +15578,7 @@ function requireErlang () {
 	      VAR1,
 	      VAR2,
 	      TUPLE,
+	      CHAR_LITERAL,
 	      { begin: /\.$/ } // relevance booster
 	    ]
 	  };
@@ -15255,6 +15593,7 @@ Language: Excel formulae
 Author: Victor Zhou <OiCMudkips@users.noreply.github.com>
 Description: Excel formulae
 Website: https://products.office.com/en-us/excel/
+Category: enterprise
 */
 
 var excel_1;
@@ -16497,6 +16836,7 @@ function requireFortran () {
 	      'f95'
 	    ],
 	    keywords: {
+	      $pattern: /\b[a-z][a-z0-9_]+\b|\.[a-z][a-z0-9_]+\./,
 	      keyword: KEYWORDS,
 	      literal: LITERALS,
 	      built_in: BUILT_INS
@@ -17669,6 +18009,7 @@ function requireGauss () {
  Contributors: Adam Joseph Cook <adam.joseph.cook@gmail.com>
  Description: G-code syntax highlighter for Fanuc and other common CNC machine tool controls.
  Website: https://www.sis.se/api/document/preview/911952/
+ Category: hardware
  */
 
 var gcode_1;
@@ -17950,9 +18291,8 @@ function requireGlsl () {
 
 /*
 Language: GML
-Author: Meseta <meseta@gmail.com>
-Description: Game Maker Language for GameMaker Studio 2
-Website: https://docs2.yoyogames.com
+Description: Game Maker Language for GameMaker (rev. 2023.1)
+Website: https://manual.yoyogames.com/
 Category: scripting
 */
 
@@ -17986,10 +18326,12 @@ function requireGml () {
 	    "globalvar",
 	    "if",
 	    "mod",
+	    "new",
 	    "not",
 	    "or",
 	    "repeat",
 	    "return",
+	    "static",
 	    "switch",
 	    "then",
 	    "until",
@@ -17998,49 +18340,21 @@ function requireGml () {
 	    "with",
 	    "xor"
 	  ];
+
 	  const BUILT_INS = [
 	    "abs",
-	    "achievement_available",
-	    "achievement_event",
-	    "achievement_get_challenges",
-	    "achievement_get_info",
-	    "achievement_get_pic",
-	    "achievement_increment",
-	    "achievement_load_friends",
-	    "achievement_load_leaderboard",
-	    "achievement_load_progress",
-	    "achievement_login",
-	    "achievement_login_status",
-	    "achievement_logout",
-	    "achievement_post",
-	    "achievement_post_score",
-	    "achievement_reset",
-	    "achievement_send_challenge",
-	    "achievement_show",
-	    "achievement_show_achievements",
-	    "achievement_show_challenge_notifications",
-	    "achievement_show_leaderboards",
-	    "action_inherited",
-	    "action_kill_object",
-	    "ads_disable",
-	    "ads_enable",
-	    "ads_engagement_active",
-	    "ads_engagement_available",
-	    "ads_engagement_launch",
-	    "ads_event",
-	    "ads_event_preload",
-	    "ads_get_display_height",
-	    "ads_get_display_width",
-	    "ads_interstitial_available",
-	    "ads_interstitial_display",
-	    "ads_move",
-	    "ads_set_reward_callback",
-	    "ads_setup",
 	    "alarm_get",
 	    "alarm_set",
-	    "analytics_event",
-	    "analytics_event_ext",
 	    "angle_difference",
+	    "animcurve_channel_evaluate",
+	    "animcurve_channel_new",
+	    "animcurve_create",
+	    "animcurve_destroy",
+	    "animcurve_exists",
+	    "animcurve_get",
+	    "animcurve_get_channel",
+	    "animcurve_get_channel_index",
+	    "animcurve_point_new",
 	    "ansi_char",
 	    "application_get_position",
 	    "application_surface_draw_enable",
@@ -18050,21 +18364,55 @@ function requireGml () {
 	    "arcsin",
 	    "arctan",
 	    "arctan2",
+	    "array_all",
+	    "array_any",
+	    "array_concat",
+	    "array_contains",
+	    "array_contains_ext",
 	    "array_copy",
+	    "array_copy_while",
 	    "array_create",
+	    "array_create_ext",
 	    "array_delete",
 	    "array_equals",
-	    "array_height_2d",
+	    "array_filter",
+	    "array_filter_ext",
+	    "array_find_index",
+	    "array_first",
+	    "array_foreach",
+	    "array_get",
+	    "array_get_index",
 	    "array_insert",
+	    "array_intersection",
+	    "array_last",
 	    "array_length",
-	    "array_length_1d",
-	    "array_length_2d",
+	    "array_map",
+	    "array_map_ext",
 	    "array_pop",
 	    "array_push",
+	    "array_reduce",
 	    "array_resize",
+	    "array_reverse",
+	    "array_reverse_ext",
+	    "array_set",
+	    "array_shuffle",
+	    "array_shuffle_ext",
 	    "array_sort",
+	    "array_union",
+	    "array_unique",
+	    "array_unique_ext",
+	    "asset_add_tags",
+	    "asset_clear_tags",
+	    "asset_get_ids",
 	    "asset_get_index",
+	    "asset_get_tags",
 	    "asset_get_type",
+	    "asset_has_any_tag",
+	    "asset_has_tags",
+	    "asset_remove_tags",
+	    "audio_bus_clear_emitters",
+	    "audio_bus_create",
+	    "audio_bus_get_emitters",
 	    "audio_channel_num",
 	    "audio_create_buffer_sound",
 	    "audio_create_play_queue",
@@ -18073,11 +18421,14 @@ function requireGml () {
 	    "audio_debug",
 	    "audio_destroy_stream",
 	    "audio_destroy_sync_group",
+	    "audio_effect_create",
+	    "audio_emitter_bus",
 	    "audio_emitter_create",
 	    "audio_emitter_exists",
 	    "audio_emitter_falloff",
 	    "audio_emitter_free",
 	    "audio_emitter_gain",
+	    "audio_emitter_get_bus",
 	    "audio_emitter_get_gain",
 	    "audio_emitter_get_listener_mask",
 	    "audio_emitter_get_pitch",
@@ -18103,6 +18454,8 @@ function requireGml () {
 	    "audio_get_recorder_count",
 	    "audio_get_recorder_info",
 	    "audio_get_type",
+	    "audio_group_get_assets",
+	    "audio_group_get_gain",
 	    "audio_group_is_loaded",
 	    "audio_group_load",
 	    "audio_group_load_progress",
@@ -18120,48 +18473,52 @@ function requireGml () {
 	    "audio_listener_set_velocity",
 	    "audio_listener_velocity",
 	    "audio_master_gain",
-	    "audio_music_gain",
-	    "audio_music_is_playing",
 	    "audio_pause_all",
-	    "audio_pause_music",
 	    "audio_pause_sound",
 	    "audio_pause_sync_group",
 	    "audio_play_in_sync_group",
-	    "audio_play_music",
 	    "audio_play_sound",
 	    "audio_play_sound_at",
+	    "audio_play_sound_ext",
 	    "audio_play_sound_on",
 	    "audio_queue_sound",
 	    "audio_resume_all",
-	    "audio_resume_music",
 	    "audio_resume_sound",
 	    "audio_resume_sync_group",
 	    "audio_set_listener_mask",
 	    "audio_set_master_gain",
 	    "audio_sound_gain",
+	    "audio_sound_get_audio_group",
 	    "audio_sound_get_gain",
 	    "audio_sound_get_listener_mask",
+	    "audio_sound_get_loop",
+	    "audio_sound_get_loop_end",
+	    "audio_sound_get_loop_start",
 	    "audio_sound_get_pitch",
 	    "audio_sound_get_track_position",
+	    "audio_sound_is_playable",
 	    "audio_sound_length",
+	    "audio_sound_loop",
+	    "audio_sound_loop_end",
+	    "audio_sound_loop_start",
 	    "audio_sound_pitch",
 	    "audio_sound_set_listener_mask",
 	    "audio_sound_set_track_position",
 	    "audio_start_recording",
 	    "audio_start_sync_group",
 	    "audio_stop_all",
-	    "audio_stop_music",
 	    "audio_stop_recording",
 	    "audio_stop_sound",
 	    "audio_stop_sync_group",
 	    "audio_sync_group_debug",
 	    "audio_sync_group_get_track_pos",
+	    "audio_sync_group_is_paused",
 	    "audio_sync_group_is_playing",
-	    "audio_system",
-	    "background_get_height",
-	    "background_get_width",
+	    "audio_system_is_available",
+	    "audio_system_is_initialised",
 	    "base64_decode",
 	    "base64_encode",
+	    "bool",
 	    "browser_input_capture",
 	    "buffer_async_group_begin",
 	    "buffer_async_group_end",
@@ -18169,11 +18526,15 @@ function requireGml () {
 	    "buffer_base64_decode",
 	    "buffer_base64_decode_ext",
 	    "buffer_base64_encode",
+	    "buffer_compress",
 	    "buffer_copy",
 	    "buffer_copy_from_vertex_buffer",
+	    "buffer_copy_stride",
+	    "buffer_crc32",
 	    "buffer_create",
 	    "buffer_create_from_vertex_buffer",
 	    "buffer_create_from_vertex_buffer_ext",
+	    "buffer_decompress",
 	    "buffer_delete",
 	    "buffer_exists",
 	    "buffer_fill",
@@ -18196,11 +18557,15 @@ function requireGml () {
 	    "buffer_save_ext",
 	    "buffer_seek",
 	    "buffer_set_surface",
+	    "buffer_set_used_size",
 	    "buffer_sha1",
 	    "buffer_sizeof",
 	    "buffer_tell",
 	    "buffer_write",
+	    "call_cancel",
+	    "call_later",
 	    "camera_apply",
+	    "camera_copy_transforms",
 	    "camera_create",
 	    "camera_create_view",
 	    "camera_destroy",
@@ -18321,6 +18686,26 @@ function requireGml () {
 	    "date_valid_datetime",
 	    "date_week_span",
 	    "date_year_span",
+	    "db_to_lin",
+	    "dbg_add_font_glyphs",
+	    "dbg_button",
+	    "dbg_checkbox",
+	    "dbg_color",
+	    "dbg_colour",
+	    "dbg_drop_down",
+	    "dbg_same_line",
+	    "dbg_section",
+	    "dbg_section_delete",
+	    "dbg_section_exists",
+	    "dbg_slider",
+	    "dbg_slider_int",
+	    "dbg_sprite",
+	    "dbg_text",
+	    "dbg_text_input",
+	    "dbg_view",
+	    "dbg_view_delete",
+	    "dbg_view_exists",
+	    "dbg_watch",
 	    "dcos",
 	    "debug_event",
 	    "debug_get_callstack",
@@ -18344,6 +18729,7 @@ function requireGml () {
 	    "directory_exists",
 	    "display_get_dpi_x",
 	    "display_get_dpi_y",
+	    "display_get_frequency",
 	    "display_get_gui_height",
 	    "display_get_gui_width",
 	    "display_get_height",
@@ -18370,10 +18756,6 @@ function requireGml () {
 	    "dot_product_normalised",
 	    "dot_product_normalized",
 	    "draw_arrow",
-	    "draw_background",
-	    "draw_background_ext",
-	    "draw_background_part_ext",
-	    "draw_background_tiled",
 	    "draw_button",
 	    "draw_circle",
 	    "draw_circle_color",
@@ -18383,15 +18765,19 @@ function requireGml () {
 	    "draw_ellipse",
 	    "draw_ellipse_color",
 	    "draw_ellipse_colour",
-	    "draw_enable_alphablend",
 	    "draw_enable_drawevent",
+	    "draw_enable_skeleton_blendmodes",
 	    "draw_enable_swf_aa",
 	    "draw_flush",
 	    "draw_get_alpha",
 	    "draw_get_color",
 	    "draw_get_colour",
+	    "draw_get_enable_skeleton_blendmodes",
+	    "draw_get_font",
+	    "draw_get_halign",
 	    "draw_get_lighting",
 	    "draw_get_swf_aa_level",
+	    "draw_get_valign",
 	    "draw_getpixel",
 	    "draw_getpixel_ext",
 	    "draw_healthbar",
@@ -18426,13 +18812,8 @@ function requireGml () {
 	    "draw_roundrect_ext",
 	    "draw_self",
 	    "draw_set_alpha",
-	    "draw_set_alpha_test",
-	    "draw_set_alpha_test_ref_value",
-	    "draw_set_blend_mode",
-	    "draw_set_blend_mode_ext",
 	    "draw_set_circle_precision",
 	    "draw_set_color",
-	    "draw_set_color_write_enable",
 	    "draw_set_colour",
 	    "draw_set_font",
 	    "draw_set_halign",
@@ -18517,6 +18898,7 @@ function requireGml () {
 	    "ds_grid_set_region",
 	    "ds_grid_shuffle",
 	    "ds_grid_sort",
+	    "ds_grid_to_mp_grid",
 	    "ds_grid_value_disk_exists",
 	    "ds_grid_value_disk_x",
 	    "ds_grid_value_disk_y",
@@ -18535,6 +18917,8 @@ function requireGml () {
 	    "ds_list_find_index",
 	    "ds_list_find_value",
 	    "ds_list_insert",
+	    "ds_list_is_list",
+	    "ds_list_is_map",
 	    "ds_list_mark_as_list",
 	    "ds_list_mark_as_map",
 	    "ds_list_read",
@@ -18559,6 +18943,9 @@ function requireGml () {
 	    "ds_map_find_next",
 	    "ds_map_find_previous",
 	    "ds_map_find_value",
+	    "ds_map_is_list",
+	    "ds_map_is_map",
+	    "ds_map_keys_to_array",
 	    "ds_map_read",
 	    "ds_map_replace",
 	    "ds_map_replace_list",
@@ -18569,6 +18956,7 @@ function requireGml () {
 	    "ds_map_secure_save_buffer",
 	    "ds_map_set",
 	    "ds_map_size",
+	    "ds_map_values_to_array",
 	    "ds_map_write",
 	    "ds_priority_add",
 	    "ds_priority_change_priority",
@@ -18615,29 +19003,25 @@ function requireGml () {
 	    "effect_clear",
 	    "effect_create_above",
 	    "effect_create_below",
+	    "effect_create_depth",
+	    "effect_create_layer",
 	    "environment_get_variable",
 	    "event_inherited",
 	    "event_perform",
+	    "event_perform_async",
 	    "event_perform_object",
 	    "event_user",
+	    "exception_unhandled_handler",
 	    "exp",
+	    "extension_exists",
+	    "extension_get_option_count",
+	    "extension_get_option_names",
+	    "extension_get_option_value",
+	    "extension_get_options",
+	    "extension_get_version",
 	    "external_call",
 	    "external_define",
 	    "external_free",
-	    "facebook_accesstoken",
-	    "facebook_check_permission",
-	    "facebook_dialog",
-	    "facebook_graph_request",
-	    "facebook_init",
-	    "facebook_launch_offerwall",
-	    "facebook_login",
-	    "facebook_logout",
-	    "facebook_post_message",
-	    "facebook_request_publish_permissions",
-	    "facebook_request_read_permissions",
-	    "facebook_send_invite",
-	    "facebook_status",
-	    "facebook_user_id",
 	    "file_attributes",
 	    "file_bin_close",
 	    "file_bin_open",
@@ -18679,23 +19063,38 @@ function requireGml () {
 	    "font_add_get_enable_aa",
 	    "font_add_sprite",
 	    "font_add_sprite_ext",
+	    "font_cache_glyph",
 	    "font_delete",
+	    "font_enable_effects",
+	    "font_enable_sdf",
 	    "font_exists",
 	    "font_get_bold",
 	    "font_get_first",
 	    "font_get_fontname",
+	    "font_get_info",
 	    "font_get_italic",
 	    "font_get_last",
 	    "font_get_name",
+	    "font_get_sdf_enabled",
+	    "font_get_sdf_spread",
 	    "font_get_size",
 	    "font_get_texture",
 	    "font_get_uvs",
-	    "font_replace",
 	    "font_replace_sprite",
 	    "font_replace_sprite_ext",
+	    "font_sdf_spread",
 	    "font_set_cache_size",
-	    "font_texture_page_size",
 	    "frac",
+	    "fx_create",
+	    "fx_get_name",
+	    "fx_get_parameter",
+	    "fx_get_parameter_names",
+	    "fx_get_parameters",
+	    "fx_get_single_layer",
+	    "fx_set_parameter",
+	    "fx_set_parameters",
+	    "fx_set_single_layer",
+	    "game_change",
 	    "game_end",
 	    "game_get_speed",
 	    "game_load",
@@ -18715,13 +19114,27 @@ function requireGml () {
 	    "gamepad_get_button_threshold",
 	    "gamepad_get_description",
 	    "gamepad_get_device_count",
+	    "gamepad_get_guid",
+	    "gamepad_get_mapping",
+	    "gamepad_get_option",
+	    "gamepad_hat_count",
+	    "gamepad_hat_value",
 	    "gamepad_is_connected",
 	    "gamepad_is_supported",
+	    "gamepad_remove_mapping",
 	    "gamepad_set_axis_deadzone",
 	    "gamepad_set_button_threshold",
 	    "gamepad_set_color",
 	    "gamepad_set_colour",
+	    "gamepad_set_option",
 	    "gamepad_set_vibration",
+	    "gamepad_test_mapping",
+	    "gc_collect",
+	    "gc_enable",
+	    "gc_get_stats",
+	    "gc_get_target_frame_time",
+	    "gc_is_enabled",
+	    "gc_target_frame_time",
 	    "gesture_double_tap_distance",
 	    "gesture_double_tap_time",
 	    "gesture_drag_distance",
@@ -18754,10 +19167,13 @@ function requireGml () {
 	    "get_string",
 	    "get_string_async",
 	    "get_timer",
+	    "gif_add_surface",
+	    "gif_open",
+	    "gif_save",
+	    "gif_save_buffer",
 	    "gml_pragma",
 	    "gml_release_mode",
 	    "gpu_get_alphatestenable",
-	    "gpu_get_alphatestfunc",
 	    "gpu_get_alphatestref",
 	    "gpu_get_blendenable",
 	    "gpu_get_blendmode",
@@ -18770,8 +19186,8 @@ function requireGml () {
 	    "gpu_get_colorwriteenable",
 	    "gpu_get_colourwriteenable",
 	    "gpu_get_cullmode",
+	    "gpu_get_depth",
 	    "gpu_get_fog",
-	    "gpu_get_lightingenable",
 	    "gpu_get_state",
 	    "gpu_get_tex_filter",
 	    "gpu_get_tex_filter_ext",
@@ -18799,7 +19215,6 @@ function requireGml () {
 	    "gpu_pop_state",
 	    "gpu_push_state",
 	    "gpu_set_alphatestenable",
-	    "gpu_set_alphatestfunc",
 	    "gpu_set_alphatestref",
 	    "gpu_set_blendenable",
 	    "gpu_set_blendmode",
@@ -18808,8 +19223,8 @@ function requireGml () {
 	    "gpu_set_colorwriteenable",
 	    "gpu_set_colourwriteenable",
 	    "gpu_set_cullmode",
+	    "gpu_set_depth",
 	    "gpu_set_fog",
-	    "gpu_set_lightingenable",
 	    "gpu_set_state",
 	    "gpu_set_tex_filter",
 	    "gpu_set_tex_filter_ext",
@@ -18834,14 +19249,17 @@ function requireGml () {
 	    "gpu_set_zfunc",
 	    "gpu_set_ztestenable",
 	    "gpu_set_zwriteenable",
+	    "handle_parse",
 	    "highscore_add",
 	    "highscore_clear",
 	    "highscore_name",
 	    "highscore_value",
 	    "http_get",
 	    "http_get_file",
+	    "http_get_request_crossorigin",
 	    "http_post_string",
 	    "http_request",
+	    "http_set_request_crossorigin",
 	    "iap_acquire",
 	    "iap_activate",
 	    "iap_consume",
@@ -18867,7 +19285,6 @@ function requireGml () {
 	    "instance_activate_region",
 	    "instance_change",
 	    "instance_copy",
-	    "instance_create",
 	    "instance_create_depth",
 	    "instance_create_layer",
 	    "instance_deactivate_all",
@@ -18885,17 +19302,23 @@ function requireGml () {
 	    "instance_place_list",
 	    "instance_position",
 	    "instance_position_list",
+	    "instanceof",
 	    "int64",
 	    "io_clear",
 	    "irandom",
 	    "irandom_range",
 	    "is_array",
 	    "is_bool",
+	    "is_callable",
+	    "is_debug_overlay_open",
+	    "is_handle",
 	    "is_infinity",
+	    "is_instanceof",
 	    "is_int32",
 	    "is_int64",
-	    "is_matrix",
+	    "is_keyboard_used_debug_overlay",
 	    "is_method",
+	    "is_mouse_over_debug_overlay",
 	    "is_nan",
 	    "is_numeric",
 	    "is_ptr",
@@ -18903,10 +19326,10 @@ function requireGml () {
 	    "is_string",
 	    "is_struct",
 	    "is_undefined",
-	    "is_vec3",
-	    "is_vec4",
 	    "json_decode",
 	    "json_encode",
+	    "json_parse",
+	    "json_stringify",
 	    "keyboard_check",
 	    "keyboard_check_direct",
 	    "keyboard_check_pressed",
@@ -18951,19 +19374,23 @@ function requireGml () {
 	    "layer_background_vtiled",
 	    "layer_background_xscale",
 	    "layer_background_yscale",
+	    "layer_clear_fx",
 	    "layer_create",
 	    "layer_depth",
 	    "layer_destroy",
 	    "layer_destroy_instances",
 	    "layer_element_move",
+	    "layer_enable_fx",
 	    "layer_exists",
 	    "layer_force_draw_depth",
+	    "layer_fx_is_enabled",
 	    "layer_get_all",
 	    "layer_get_all_elements",
 	    "layer_get_depth",
 	    "layer_get_element_layer",
 	    "layer_get_element_type",
 	    "layer_get_forced_depth",
+	    "layer_get_fx",
 	    "layer_get_hspeed",
 	    "layer_get_id",
 	    "layer_get_id_at_depth",
@@ -18983,6 +19410,33 @@ function requireGml () {
 	    "layer_reset_target_room",
 	    "layer_script_begin",
 	    "layer_script_end",
+	    "layer_sequence_angle",
+	    "layer_sequence_create",
+	    "layer_sequence_destroy",
+	    "layer_sequence_exists",
+	    "layer_sequence_get_angle",
+	    "layer_sequence_get_headdir",
+	    "layer_sequence_get_headpos",
+	    "layer_sequence_get_instance",
+	    "layer_sequence_get_length",
+	    "layer_sequence_get_sequence",
+	    "layer_sequence_get_speedscale",
+	    "layer_sequence_get_x",
+	    "layer_sequence_get_xscale",
+	    "layer_sequence_get_y",
+	    "layer_sequence_get_yscale",
+	    "layer_sequence_headdir",
+	    "layer_sequence_headpos",
+	    "layer_sequence_is_finished",
+	    "layer_sequence_is_paused",
+	    "layer_sequence_pause",
+	    "layer_sequence_play",
+	    "layer_sequence_speedscale",
+	    "layer_sequence_x",
+	    "layer_sequence_xscale",
+	    "layer_sequence_y",
+	    "layer_sequence_yscale",
+	    "layer_set_fx",
 	    "layer_set_target_room",
 	    "layer_set_visible",
 	    "layer_shader",
@@ -19041,6 +19495,7 @@ function requireGml () {
 	    "lengthdir_x",
 	    "lengthdir_y",
 	    "lerp",
+	    "lin_to_db",
 	    "ln",
 	    "load_csv",
 	    "log10",
@@ -19063,7 +19518,6 @@ function requireGml () {
 	    "matrix_set",
 	    "matrix_stack_clear",
 	    "matrix_stack_is_empty",
-	    "matrix_stack_multiply",
 	    "matrix_stack_pop",
 	    "matrix_stack_push",
 	    "matrix_stack_set",
@@ -19077,6 +19531,10 @@ function requireGml () {
 	    "median",
 	    "merge_color",
 	    "merge_colour",
+	    "method",
+	    "method_call",
+	    "method_get_index",
+	    "method_get_self",
 	    "min",
 	    "motion_add",
 	    "motion_set",
@@ -19086,6 +19544,7 @@ function requireGml () {
 	    "mouse_clear",
 	    "mouse_wheel_down",
 	    "mouse_wheel_up",
+	    "move_and_collide",
 	    "move_bounce_all",
 	    "move_bounce_solid",
 	    "move_contact_all",
@@ -19117,8 +19576,11 @@ function requireGml () {
 	    "mp_potential_settings",
 	    "mp_potential_step",
 	    "mp_potential_step_object",
+	    "nameof",
 	    "network_connect",
+	    "network_connect_async",
 	    "network_connect_raw",
+	    "network_connect_raw_async",
 	    "network_create_server",
 	    "network_create_server_raw",
 	    "network_create_socket",
@@ -19133,7 +19595,6 @@ function requireGml () {
 	    "network_set_config",
 	    "network_set_timeout",
 	    "object_exists",
-	    "object_get_depth",
 	    "object_get_mask",
 	    "object_get_name",
 	    "object_get_parent",
@@ -19149,6 +19610,7 @@ function requireGml () {
 	    "object_set_sprite",
 	    "object_set_visible",
 	    "ord",
+	    "os_check_permission",
 	    "os_get_config",
 	    "os_get_info",
 	    "os_get_language",
@@ -19157,24 +19619,34 @@ function requireGml () {
 	    "os_is_paused",
 	    "os_lock_orientation",
 	    "os_powersave_enable",
+	    "os_request_permission",
+	    "os_set_orientation_lock",
 	    "parameter_count",
 	    "parameter_string",
 	    "part_emitter_burst",
 	    "part_emitter_clear",
 	    "part_emitter_create",
+	    "part_emitter_delay",
 	    "part_emitter_destroy",
 	    "part_emitter_destroy_all",
+	    "part_emitter_enable",
 	    "part_emitter_exists",
+	    "part_emitter_interval",
 	    "part_emitter_region",
+	    "part_emitter_relative",
 	    "part_emitter_stream",
+	    "part_particles_burst",
 	    "part_particles_clear",
 	    "part_particles_count",
 	    "part_particles_create",
 	    "part_particles_create_color",
 	    "part_particles_create_colour",
+	    "part_system_angle",
 	    "part_system_automatic_draw",
 	    "part_system_automatic_update",
 	    "part_system_clear",
+	    "part_system_color",
+	    "part_system_colour",
 	    "part_system_create",
 	    "part_system_create_layer",
 	    "part_system_depth",
@@ -19182,7 +19654,9 @@ function requireGml () {
 	    "part_system_draw_order",
 	    "part_system_drawit",
 	    "part_system_exists",
+	    "part_system_get_info",
 	    "part_system_get_layer",
+	    "part_system_global_space",
 	    "part_system_layer",
 	    "part_system_position",
 	    "part_system_update",
@@ -19214,9 +19688,14 @@ function requireGml () {
 	    "part_type_scale",
 	    "part_type_shape",
 	    "part_type_size",
+	    "part_type_size_x",
+	    "part_type_size_y",
 	    "part_type_speed",
 	    "part_type_sprite",
 	    "part_type_step",
+	    "part_type_subimage",
+	    "particle_exists",
+	    "particle_get_info",
 	    "path_add",
 	    "path_add_point",
 	    "path_append",
@@ -19239,7 +19718,6 @@ function requireGml () {
 	    "path_get_point_y",
 	    "path_get_precision",
 	    "path_get_speed",
-	    "path_get_time",
 	    "path_get_x",
 	    "path_get_y",
 	    "path_insert_point",
@@ -19366,10 +19844,6 @@ function requireGml () {
 	    "position_meeting",
 	    "power",
 	    "ptr",
-	    "push_cancel_local_notification",
-	    "push_get_first_local_notification",
-	    "push_get_next_local_notification",
-	    "push_local_notification",
 	    "radtodeg",
 	    "random",
 	    "random_get_seed",
@@ -19381,11 +19855,33 @@ function requireGml () {
 	    "rectangle_in_circle",
 	    "rectangle_in_rectangle",
 	    "rectangle_in_triangle",
+	    "ref_create",
+	    "rollback_chat",
+	    "rollback_create_game",
+	    "rollback_define_extra_network_latency",
+	    "rollback_define_input",
+	    "rollback_define_input_frame_delay",
+	    "rollback_define_mock_input",
+	    "rollback_define_player",
+	    "rollback_display_events",
+	    "rollback_get_info",
+	    "rollback_get_input",
+	    "rollback_get_player_prefs",
+	    "rollback_join_game",
+	    "rollback_leave_game",
+	    "rollback_set_player_prefs",
+	    "rollback_start_game",
+	    "rollback_sync_on_frame",
+	    "rollback_use_late_join",
+	    "rollback_use_manual_start",
+	    "rollback_use_player_prefs",
+	    "rollback_use_random_input",
 	    "room_add",
 	    "room_assign",
 	    "room_duplicate",
 	    "room_exists",
 	    "room_get_camera",
+	    "room_get_info",
 	    "room_get_name",
 	    "room_get_viewport",
 	    "room_goto",
@@ -19396,21 +19892,30 @@ function requireGml () {
 	    "room_next",
 	    "room_previous",
 	    "room_restart",
-	    "room_set_background_color",
-	    "room_set_background_colour",
 	    "room_set_camera",
 	    "room_set_height",
 	    "room_set_persistent",
-	    "room_set_view",
 	    "room_set_view_enabled",
 	    "room_set_viewport",
 	    "room_set_width",
 	    "round",
+	    "scheduler_resolution_get",
+	    "scheduler_resolution_set",
 	    "screen_save",
 	    "screen_save_part",
 	    "script_execute",
+	    "script_execute_ext",
 	    "script_exists",
 	    "script_get_name",
+	    "sequence_create",
+	    "sequence_destroy",
+	    "sequence_exists",
+	    "sequence_get",
+	    "sequence_get_objects",
+	    "sequence_instance_override_object",
+	    "sequence_keyframe_new",
+	    "sequence_keyframedata_new",
+	    "sequence_track_new",
 	    "sha1_file",
 	    "sha1_string_unicode",
 	    "sha1_string_utf8",
@@ -19424,6 +19929,7 @@ function requireGml () {
 	    "shader_set",
 	    "shader_set_uniform_f",
 	    "shader_set_uniform_f_array",
+	    "shader_set_uniform_f_buffer",
 	    "shader_set_uniform_i",
 	    "shader_set_uniform_i_array",
 	    "shader_set_uniform_matrix",
@@ -19431,6 +19937,7 @@ function requireGml () {
 	    "shaders_are_supported",
 	    "shop_leave_rating",
 	    "show_debug_message",
+	    "show_debug_message_ext",
 	    "show_debug_overlay",
 	    "show_error",
 	    "show_message",
@@ -19442,30 +19949,53 @@ function requireGml () {
 	    "skeleton_animation_clear",
 	    "skeleton_animation_get",
 	    "skeleton_animation_get_duration",
+	    "skeleton_animation_get_event_frames",
 	    "skeleton_animation_get_ext",
 	    "skeleton_animation_get_frame",
 	    "skeleton_animation_get_frames",
+	    "skeleton_animation_get_position",
+	    "skeleton_animation_is_finished",
+	    "skeleton_animation_is_looping",
 	    "skeleton_animation_list",
 	    "skeleton_animation_mix",
 	    "skeleton_animation_set",
 	    "skeleton_animation_set_ext",
 	    "skeleton_animation_set_frame",
+	    "skeleton_animation_set_position",
 	    "skeleton_attachment_create",
+	    "skeleton_attachment_create_color",
+	    "skeleton_attachment_create_colour",
+	    "skeleton_attachment_destroy",
+	    "skeleton_attachment_exists",
 	    "skeleton_attachment_get",
+	    "skeleton_attachment_replace",
+	    "skeleton_attachment_replace_color",
+	    "skeleton_attachment_replace_colour",
 	    "skeleton_attachment_set",
 	    "skeleton_bone_data_get",
 	    "skeleton_bone_data_set",
+	    "skeleton_bone_list",
 	    "skeleton_bone_state_get",
 	    "skeleton_bone_state_set",
 	    "skeleton_collision_draw_set",
+	    "skeleton_find_slot",
 	    "skeleton_get_bounds",
 	    "skeleton_get_minmax",
 	    "skeleton_get_num_bounds",
+	    "skeleton_skin_create",
 	    "skeleton_skin_get",
 	    "skeleton_skin_list",
 	    "skeleton_skin_set",
+	    "skeleton_slot_alpha_get",
+	    "skeleton_slot_color_get",
+	    "skeleton_slot_color_set",
+	    "skeleton_slot_colour_get",
+	    "skeleton_slot_colour_set",
 	    "skeleton_slot_data",
+	    "skeleton_slot_data_instance",
+	    "skeleton_slot_list",
 	    "sprite_add",
+	    "sprite_add_ext",
 	    "sprite_add_from_surface",
 	    "sprite_assign",
 	    "sprite_collision_mask",
@@ -19477,10 +20007,13 @@ function requireGml () {
 	    "sprite_flush_multi",
 	    "sprite_get_bbox_bottom",
 	    "sprite_get_bbox_left",
+	    "sprite_get_bbox_mode",
 	    "sprite_get_bbox_right",
 	    "sprite_get_bbox_top",
 	    "sprite_get_height",
+	    "sprite_get_info",
 	    "sprite_get_name",
+	    "sprite_get_nineslice",
 	    "sprite_get_number",
 	    "sprite_get_speed",
 	    "sprite_get_speed_type",
@@ -19491,136 +20024,88 @@ function requireGml () {
 	    "sprite_get_xoffset",
 	    "sprite_get_yoffset",
 	    "sprite_merge",
+	    "sprite_nineslice_create",
 	    "sprite_prefetch",
 	    "sprite_prefetch_multi",
 	    "sprite_replace",
 	    "sprite_save",
 	    "sprite_save_strip",
 	    "sprite_set_alpha_from_sprite",
+	    "sprite_set_bbox",
+	    "sprite_set_bbox_mode",
 	    "sprite_set_cache_size",
 	    "sprite_set_cache_size_ext",
+	    "sprite_set_nineslice",
 	    "sprite_set_offset",
 	    "sprite_set_speed",
 	    "sqr",
 	    "sqrt",
-	    "steam_activate_overlay",
-	    "steam_activate_overlay_browser",
-	    "steam_activate_overlay_store",
-	    "steam_activate_overlay_user",
-	    "steam_available_languages",
-	    "steam_clear_achievement",
-	    "steam_create_leaderboard",
-	    "steam_current_game_language",
-	    "steam_download_friends_scores",
-	    "steam_download_scores",
-	    "steam_download_scores_around_user",
-	    "steam_file_delete",
-	    "steam_file_exists",
-	    "steam_file_persisted",
-	    "steam_file_read",
-	    "steam_file_share",
-	    "steam_file_size",
-	    "steam_file_write",
-	    "steam_file_write_file",
-	    "steam_get_achievement",
-	    "steam_get_app_id",
-	    "steam_get_persona_name",
-	    "steam_get_quota_free",
-	    "steam_get_quota_total",
-	    "steam_get_stat_avg_rate",
-	    "steam_get_stat_float",
-	    "steam_get_stat_int",
-	    "steam_get_user_account_id",
-	    "steam_get_user_persona_name",
-	    "steam_get_user_steam_id",
-	    "steam_initialised",
-	    "steam_is_cloud_enabled_for_account",
-	    "steam_is_cloud_enabled_for_app",
-	    "steam_is_overlay_activated",
-	    "steam_is_overlay_enabled",
-	    "steam_is_screenshot_requested",
-	    "steam_is_user_logged_on",
-	    "steam_reset_all_stats",
-	    "steam_reset_all_stats_achievements",
-	    "steam_send_screenshot",
-	    "steam_set_achievement",
-	    "steam_set_stat_avg_rate",
-	    "steam_set_stat_float",
-	    "steam_set_stat_int",
-	    "steam_stats_ready",
-	    "steam_ugc_create_item",
-	    "steam_ugc_create_query_all",
-	    "steam_ugc_create_query_all_ex",
-	    "steam_ugc_create_query_user",
-	    "steam_ugc_create_query_user_ex",
-	    "steam_ugc_download",
-	    "steam_ugc_get_item_install_info",
-	    "steam_ugc_get_item_update_info",
-	    "steam_ugc_get_item_update_progress",
-	    "steam_ugc_get_subscribed_items",
-	    "steam_ugc_num_subscribed_items",
-	    "steam_ugc_query_add_excluded_tag",
-	    "steam_ugc_query_add_required_tag",
-	    "steam_ugc_query_set_allow_cached_response",
-	    "steam_ugc_query_set_cloud_filename_filter",
-	    "steam_ugc_query_set_match_any_tag",
-	    "steam_ugc_query_set_ranked_by_trend_days",
-	    "steam_ugc_query_set_return_long_description",
-	    "steam_ugc_query_set_return_total_only",
-	    "steam_ugc_query_set_search_text",
-	    "steam_ugc_request_item_details",
-	    "steam_ugc_send_query",
-	    "steam_ugc_set_item_content",
-	    "steam_ugc_set_item_description",
-	    "steam_ugc_set_item_preview",
-	    "steam_ugc_set_item_tags",
-	    "steam_ugc_set_item_title",
-	    "steam_ugc_set_item_visibility",
-	    "steam_ugc_start_item_update",
-	    "steam_ugc_submit_item_update",
-	    "steam_ugc_subscribe_item",
-	    "steam_ugc_unsubscribe_item",
-	    "steam_upload_score",
-	    "steam_upload_score_buffer",
-	    "steam_upload_score_buffer_ext",
-	    "steam_upload_score_ext",
-	    "steam_user_installed_dlc",
-	    "steam_user_owns_dlc",
+	    "static_get",
+	    "static_set",
 	    "string",
 	    "string_byte_at",
 	    "string_byte_length",
 	    "string_char_at",
+	    "string_concat",
+	    "string_concat_ext",
 	    "string_copy",
 	    "string_count",
 	    "string_delete",
 	    "string_digits",
+	    "string_ends_with",
+	    "string_ext",
+	    "string_foreach",
 	    "string_format",
 	    "string_hash_to_newline",
 	    "string_height",
 	    "string_height_ext",
 	    "string_insert",
+	    "string_join",
+	    "string_join_ext",
+	    "string_last_pos",
+	    "string_last_pos_ext",
 	    "string_length",
 	    "string_letters",
 	    "string_lettersdigits",
 	    "string_lower",
 	    "string_ord_at",
 	    "string_pos",
+	    "string_pos_ext",
 	    "string_repeat",
 	    "string_replace",
 	    "string_replace_all",
 	    "string_set_byte_at",
+	    "string_split",
+	    "string_split_ext",
+	    "string_starts_with",
+	    "string_trim",
+	    "string_trim_end",
+	    "string_trim_start",
 	    "string_upper",
 	    "string_width",
 	    "string_width_ext",
+	    "struct_exists",
+	    "struct_foreach",
+	    "struct_get",
+	    "struct_get_from_hash",
+	    "struct_get_names",
+	    "struct_names_count",
+	    "struct_remove",
+	    "struct_set",
+	    "struct_set_from_hash",
 	    "surface_copy",
 	    "surface_copy_part",
 	    "surface_create",
 	    "surface_create_ext",
 	    "surface_depth_disable",
 	    "surface_exists",
+	    "surface_format_is_supported",
 	    "surface_free",
 	    "surface_get_depth_disable",
+	    "surface_get_format",
 	    "surface_get_height",
+	    "surface_get_target",
+	    "surface_get_target_ext",
 	    "surface_get_texture",
 	    "surface_get_width",
 	    "surface_getpixel",
@@ -19631,14 +20116,29 @@ function requireGml () {
 	    "surface_save_part",
 	    "surface_set_target",
 	    "surface_set_target_ext",
+	    "tag_get_asset_ids",
+	    "tag_get_assets",
 	    "tan",
+	    "texture_debug_messages",
+	    "texture_flush",
 	    "texture_get_height",
 	    "texture_get_texel_height",
 	    "texture_get_texel_width",
 	    "texture_get_uvs",
 	    "texture_get_width",
 	    "texture_global_scale",
+	    "texture_is_ready",
+	    "texture_prefetch",
 	    "texture_set_stage",
+	    "texturegroup_get_fonts",
+	    "texturegroup_get_names",
+	    "texturegroup_get_sprites",
+	    "texturegroup_get_status",
+	    "texturegroup_get_textures",
+	    "texturegroup_get_tilesets",
+	    "texturegroup_load",
+	    "texturegroup_set_mode",
+	    "texturegroup_unload",
 	    "tile_get_empty",
 	    "tile_get_flip",
 	    "tile_get_index",
@@ -19667,10 +20167,35 @@ function requireGml () {
 	    "tilemap_set",
 	    "tilemap_set_at_pixel",
 	    "tilemap_set_global_mask",
+	    "tilemap_set_height",
 	    "tilemap_set_mask",
+	    "tilemap_set_width",
 	    "tilemap_tileset",
 	    "tilemap_x",
 	    "tilemap_y",
+	    "tileset_get_info",
+	    "tileset_get_name",
+	    "tileset_get_texture",
+	    "tileset_get_uvs",
+	    "time_bpm_to_seconds",
+	    "time_seconds_to_bpm",
+	    "time_source_create",
+	    "time_source_destroy",
+	    "time_source_exists",
+	    "time_source_get_children",
+	    "time_source_get_parent",
+	    "time_source_get_period",
+	    "time_source_get_reps_completed",
+	    "time_source_get_reps_remaining",
+	    "time_source_get_state",
+	    "time_source_get_time_remaining",
+	    "time_source_get_units",
+	    "time_source_pause",
+	    "time_source_reconfigure",
+	    "time_source_reset",
+	    "time_source_resume",
+	    "time_source_start",
+	    "time_source_stop",
 	    "timeline_add",
 	    "timeline_clear",
 	    "timeline_delete",
@@ -19685,12 +20210,33 @@ function requireGml () {
 	    "url_open",
 	    "url_open_ext",
 	    "url_open_full",
+	    "uwp_device_touchscreen_available",
+	    "uwp_livetile_badge_clear",
+	    "uwp_livetile_badge_notification",
+	    "uwp_livetile_notification_begin",
+	    "uwp_livetile_notification_end",
+	    "uwp_livetile_notification_expiry",
+	    "uwp_livetile_notification_image_add",
+	    "uwp_livetile_notification_secondary_begin",
+	    "uwp_livetile_notification_tag",
+	    "uwp_livetile_notification_template_add",
+	    "uwp_livetile_notification_text_add",
+	    "uwp_livetile_queue_enable",
+	    "uwp_livetile_tile_clear",
+	    "uwp_secondarytile_badge_clear",
+	    "uwp_secondarytile_badge_notification",
+	    "uwp_secondarytile_delete",
+	    "uwp_secondarytile_pin",
+	    "uwp_secondarytile_tile_clear",
+	    "variable_clone",
+	    "variable_get_hash",
 	    "variable_global_exists",
 	    "variable_global_get",
 	    "variable_global_set",
 	    "variable_instance_exists",
 	    "variable_instance_get",
 	    "variable_instance_get_names",
+	    "variable_instance_names_count",
 	    "variable_instance_set",
 	    "variable_struct_exists",
 	    "variable_struct_get",
@@ -19719,10 +20265,10 @@ function requireGml () {
 	    "vertex_format_add_position",
 	    "vertex_format_add_position_3d",
 	    "vertex_format_add_texcoord",
-	    "vertex_format_add_textcoord",
 	    "vertex_format_begin",
 	    "vertex_format_delete",
 	    "vertex_format_end",
+	    "vertex_format_get_info",
 	    "vertex_freeze",
 	    "vertex_get_buffer_size",
 	    "vertex_get_number",
@@ -19730,8 +20276,25 @@ function requireGml () {
 	    "vertex_position",
 	    "vertex_position_3d",
 	    "vertex_submit",
+	    "vertex_submit_ext",
 	    "vertex_texcoord",
 	    "vertex_ubyte4",
+	    "vertex_update_buffer_from_buffer",
+	    "vertex_update_buffer_from_vertex",
+	    "video_close",
+	    "video_draw",
+	    "video_enable_loop",
+	    "video_get_duration",
+	    "video_get_format",
+	    "video_get_position",
+	    "video_get_status",
+	    "video_get_volume",
+	    "video_is_looping",
+	    "video_open",
+	    "video_pause",
+	    "video_resume",
+	    "video_seek_to",
+	    "video_set_volume",
 	    "view_get_camera",
 	    "view_get_hport",
 	    "view_get_surface_id",
@@ -19750,58 +20313,35 @@ function requireGml () {
 	    "virtual_key_delete",
 	    "virtual_key_hide",
 	    "virtual_key_show",
-	    "win8_appbar_add_element",
-	    "win8_appbar_enable",
-	    "win8_appbar_remove_element",
-	    "win8_device_touchscreen_available",
-	    "win8_license_initialize_sandbox",
-	    "win8_license_trial_version",
-	    "win8_livetile_badge_clear",
-	    "win8_livetile_badge_notification",
-	    "win8_livetile_notification_begin",
-	    "win8_livetile_notification_end",
-	    "win8_livetile_notification_expiry",
-	    "win8_livetile_notification_image_add",
-	    "win8_livetile_notification_secondary_begin",
-	    "win8_livetile_notification_tag",
-	    "win8_livetile_notification_text_add",
-	    "win8_livetile_queue_enable",
-	    "win8_livetile_tile_clear",
-	    "win8_livetile_tile_notification",
-	    "win8_search_add_suggestions",
-	    "win8_search_disable",
-	    "win8_search_enable",
-	    "win8_secondarytile_badge_notification",
-	    "win8_secondarytile_delete",
-	    "win8_secondarytile_pin",
-	    "win8_settingscharm_add_entry",
-	    "win8_settingscharm_add_html_entry",
-	    "win8_settingscharm_add_xaml_entry",
-	    "win8_settingscharm_get_xaml_property",
-	    "win8_settingscharm_remove_entry",
-	    "win8_settingscharm_set_xaml_property",
-	    "win8_share_file",
-	    "win8_share_image",
-	    "win8_share_screenshot",
-	    "win8_share_text",
-	    "win8_share_url",
+	    "wallpaper_set_config",
+	    "wallpaper_set_subscriptions",
+	    "weak_ref_alive",
+	    "weak_ref_any_alive",
+	    "weak_ref_create",
 	    "window_center",
 	    "window_device",
+	    "window_enable_borderless_fullscreen",
+	    "window_get_borderless_fullscreen",
 	    "window_get_caption",
 	    "window_get_color",
 	    "window_get_colour",
 	    "window_get_cursor",
 	    "window_get_fullscreen",
 	    "window_get_height",
+	    "window_get_showborder",
 	    "window_get_visible_rects",
 	    "window_get_width",
 	    "window_get_x",
 	    "window_get_y",
 	    "window_handle",
 	    "window_has_focus",
+	    "window_mouse_get_delta_x",
+	    "window_mouse_get_delta_y",
+	    "window_mouse_get_locked",
 	    "window_mouse_get_x",
 	    "window_mouse_get_y",
 	    "window_mouse_set",
+	    "window_mouse_set_locked",
 	    "window_set_caption",
 	    "window_set_color",
 	    "window_set_colour",
@@ -19813,106 +20353,74 @@ function requireGml () {
 	    "window_set_min_width",
 	    "window_set_position",
 	    "window_set_rectangle",
+	    "window_set_showborder",
 	    "window_set_size",
 	    "window_view_mouse_get_x",
 	    "window_view_mouse_get_y",
 	    "window_views_mouse_get_x",
 	    "window_views_mouse_get_y",
-	    "winphone_license_trial_version",
-	    "winphone_tile_back_content",
-	    "winphone_tile_back_content_wide",
-	    "winphone_tile_back_image",
-	    "winphone_tile_back_image_wide",
-	    "winphone_tile_back_title",
 	    "winphone_tile_background_color",
 	    "winphone_tile_background_colour",
-	    "winphone_tile_count",
-	    "winphone_tile_cycle_images",
-	    "winphone_tile_front_image",
-	    "winphone_tile_front_image_small",
-	    "winphone_tile_front_image_wide",
-	    "winphone_tile_icon_image",
-	    "winphone_tile_small_background_image",
-	    "winphone_tile_small_icon_image",
-	    "winphone_tile_title",
-	    "winphone_tile_wide_content",
-	    "zip_unzip"
+	    "zip_add_file",
+	    "zip_create",
+	    "zip_save",
+	    "zip_unzip",
+	    "zip_unzip_async"
 	  ];
-	  const LITERALS = [
-	    "all",
-	    "false",
-	    "noone",
-	    "pointer_invalid",
-	    "pointer_null",
-	    "true",
-	    "undefined"
-	  ];
-	  // many of these look like enumerables to me (see comments below)
 	  const SYMBOLS = [
-	    "ANSI_CHARSET",
-	    "ARABIC_CHARSET",
-	    "BALTIC_CHARSET",
-	    "CHINESEBIG5_CHARSET",
-	    "DEFAULT_CHARSET",
-	    "EASTEUROPE_CHARSET",
-	    "GB2312_CHARSET",
+	    "AudioEffect",
+	    "AudioEffectType",
+	    "AudioLFOType",
 	    "GM_build_date",
+	    "GM_build_type",
+	    "GM_is_sandboxed",
+	    "GM_project_filename",
 	    "GM_runtime_version",
 	    "GM_version",
-	    "GREEK_CHARSET",
-	    "HANGEUL_CHARSET",
-	    "HEBREW_CHARSET",
-	    "JOHAB_CHARSET",
-	    "MAC_CHARSET",
-	    "OEM_CHARSET",
-	    "RUSSIAN_CHARSET",
-	    "SHIFTJIS_CHARSET",
-	    "SYMBOL_CHARSET",
-	    "THAI_CHARSET",
-	    "TURKISH_CHARSET",
-	    "VIETNAMESE_CHARSET",
-	    "achievement_achievement_info",
-	    "achievement_filter_all_players",
-	    "achievement_filter_favorites_only",
-	    "achievement_filter_friends_only",
-	    "achievement_friends_info",
-	    "achievement_leaderboard_info",
-	    "achievement_our_info",
-	    "achievement_pic_loaded",
-	    "achievement_show_achievement",
-	    "achievement_show_bank",
-	    "achievement_show_friend_picker",
-	    "achievement_show_leaderboard",
-	    "achievement_show_profile",
-	    "achievement_show_purchase_prompt",
-	    "achievement_show_ui",
-	    "achievement_type_achievement_challenge",
-	    "achievement_type_score_challenge",
+	    "NaN",
+	    "_GMFILE_",
+	    "_GMFUNCTION_",
+	    "_GMLINE_",
+	    "alignmentH",
+	    "alignmentV",
+	    "all",
+	    "animcurvetype_bezier",
+	    "animcurvetype_catmullrom",
+	    "animcurvetype_linear",
+	    "asset_animationcurve",
 	    "asset_font",
 	    "asset_object",
 	    "asset_path",
 	    "asset_room",
 	    "asset_script",
+	    "asset_sequence",
 	    "asset_shader",
 	    "asset_sound",
 	    "asset_sprite",
 	    "asset_tiles",
 	    "asset_timeline",
 	    "asset_unknown",
-	    "audio_3d",
+	    "audio_3D",
+	    "audio_bus_main",
 	    "audio_falloff_exponent_distance",
 	    "audio_falloff_exponent_distance_clamped",
+	    "audio_falloff_exponent_distance_scaled",
 	    "audio_falloff_inverse_distance",
 	    "audio_falloff_inverse_distance_clamped",
+	    "audio_falloff_inverse_distance_scaled",
 	    "audio_falloff_linear_distance",
 	    "audio_falloff_linear_distance_clamped",
 	    "audio_falloff_none",
 	    "audio_mono",
-	    "audio_new_system",
-	    "audio_old_system",
 	    "audio_stereo",
+	    "bboxkind_diamond",
+	    "bboxkind_ellipse",
+	    "bboxkind_precise",
+	    "bboxkind_rectangular",
+	    "bboxmode_automatic",
+	    "bboxmode_fullimage",
+	    "bboxmode_manual",
 	    "bm_add",
-	    "bm_complex",
 	    "bm_dest_alpha",
 	    "bm_dest_color",
 	    "bm_dest_colour",
@@ -19949,12 +20457,7 @@ function requireGml () {
 	    "buffer_f64",
 	    "buffer_fast",
 	    "buffer_fixed",
-	    "buffer_generalerror",
 	    "buffer_grow",
-	    "buffer_invalidtype",
-	    "buffer_network",
-	    "buffer_outofbounds",
-	    "buffer_outofspace",
 	    "buffer_s16",
 	    "buffer_s32",
 	    "buffer_s8",
@@ -19962,7 +20465,6 @@ function requireGml () {
 	    "buffer_seek_relative",
 	    "buffer_seek_start",
 	    "buffer_string",
-	    "buffer_surface_copy",
 	    "buffer_text",
 	    "buffer_u16",
 	    "buffer_u32",
@@ -19970,16 +20472,18 @@ function requireGml () {
 	    "buffer_u8",
 	    "buffer_vbuffer",
 	    "buffer_wrap",
-	    "button_type",
 	    "c_aqua",
 	    "c_black",
 	    "c_blue",
 	    "c_dkgray",
+	    "c_dkgrey",
 	    "c_fuchsia",
 	    "c_gray",
 	    "c_green",
+	    "c_grey",
 	    "c_lime",
 	    "c_ltgray",
+	    "c_ltgrey",
 	    "c_maroon",
 	    "c_navy",
 	    "c_olive",
@@ -19990,6 +20494,8 @@ function requireGml () {
 	    "c_teal",
 	    "c_white",
 	    "c_yellow",
+	    "cache_directory",
+	    "characterSpacing",
 	    "cmpfunc_always",
 	    "cmpfunc_equal",
 	    "cmpfunc_greater",
@@ -19998,6 +20504,8 @@ function requireGml () {
 	    "cmpfunc_lessequal",
 	    "cmpfunc_never",
 	    "cmpfunc_notequal",
+	    "coreColor",
+	    "coreColour",
 	    "cr_appstart",
 	    "cr_arrow",
 	    "cr_beam",
@@ -20032,6 +20540,8 @@ function requireGml () {
 	    "display_portrait_flipped",
 	    "dll_cdecl",
 	    "dll_stdcall",
+	    "dropShadowEnabled",
+	    "dropShadowEnabled",
 	    "ds_type_grid",
 	    "ds_type_list",
 	    "ds_type_map",
@@ -20050,18 +20560,49 @@ function requireGml () {
 	    "ef_snow",
 	    "ef_spark",
 	    "ef_star",
-	    // for example ev_ are types of events
+	    "effectsEnabled",
+	    "effectsEnabled",
 	    "ev_alarm",
 	    "ev_animation_end",
+	    "ev_animation_event",
+	    "ev_animation_update",
+	    "ev_async_audio_playback",
+	    "ev_async_audio_playback_ended",
+	    "ev_async_audio_recording",
+	    "ev_async_dialog",
+	    "ev_async_push_notification",
+	    "ev_async_save_load",
+	    "ev_async_save_load",
+	    "ev_async_social",
+	    "ev_async_system_event",
+	    "ev_async_web",
+	    "ev_async_web_cloud",
+	    "ev_async_web_iap",
+	    "ev_async_web_image_load",
+	    "ev_async_web_networking",
+	    "ev_async_web_steam",
+	    "ev_audio_playback",
+	    "ev_audio_playback_ended",
+	    "ev_audio_recording",
 	    "ev_boundary",
+	    "ev_boundary_view0",
+	    "ev_boundary_view1",
+	    "ev_boundary_view2",
+	    "ev_boundary_view3",
+	    "ev_boundary_view4",
+	    "ev_boundary_view5",
+	    "ev_boundary_view6",
+	    "ev_boundary_view7",
+	    "ev_broadcast_message",
 	    "ev_cleanup",
-	    "ev_close_button",
 	    "ev_collision",
 	    "ev_create",
 	    "ev_destroy",
+	    "ev_dialog_async",
 	    "ev_draw",
 	    "ev_draw_begin",
 	    "ev_draw_end",
+	    "ev_draw_normal",
 	    "ev_draw_post",
 	    "ev_draw_pre",
 	    "ev_end_of_path",
@@ -20149,18 +20690,36 @@ function requireGml () {
 	    "ev_no_more_lives",
 	    "ev_other",
 	    "ev_outside",
+	    "ev_outside_view0",
+	    "ev_outside_view1",
+	    "ev_outside_view2",
+	    "ev_outside_view3",
+	    "ev_outside_view4",
+	    "ev_outside_view5",
+	    "ev_outside_view6",
+	    "ev_outside_view7",
+	    "ev_pre_create",
+	    "ev_push_notification",
 	    "ev_right_button",
 	    "ev_right_press",
 	    "ev_right_release",
 	    "ev_room_end",
 	    "ev_room_start",
+	    "ev_social",
 	    "ev_step",
 	    "ev_step_begin",
 	    "ev_step_end",
 	    "ev_step_normal",
+	    "ev_system_event",
 	    "ev_trigger",
 	    "ev_user0",
 	    "ev_user1",
+	    "ev_user10",
+	    "ev_user11",
+	    "ev_user12",
+	    "ev_user13",
+	    "ev_user14",
+	    "ev_user15",
 	    "ev_user2",
 	    "ev_user3",
 	    "ev_user4",
@@ -20169,12 +20728,13 @@ function requireGml () {
 	    "ev_user7",
 	    "ev_user8",
 	    "ev_user9",
-	    "ev_user10",
-	    "ev_user11",
-	    "ev_user12",
-	    "ev_user13",
-	    "ev_user14",
-	    "ev_user15",
+	    "ev_web_async",
+	    "ev_web_cloud",
+	    "ev_web_iap",
+	    "ev_web_image_load",
+	    "ev_web_networking",
+	    "ev_web_sound_load",
+	    "ev_web_steam",
 	    "fa_archive",
 	    "fa_bottom",
 	    "fa_center",
@@ -20182,21 +20742,34 @@ function requireGml () {
 	    "fa_hidden",
 	    "fa_left",
 	    "fa_middle",
+	    "fa_none",
 	    "fa_readonly",
 	    "fa_right",
 	    "fa_sysfile",
 	    "fa_top",
 	    "fa_volumeid",
-	    "fb_login_default",
-	    "fb_login_fallback_to_webview",
-	    "fb_login_forcing_safari",
-	    "fb_login_forcing_webview",
-	    "fb_login_no_fallback_to_webview",
-	    "fb_login_use_system_account",
+	    "false",
+	    "frameSizeX",
+	    "frameSizeY",
 	    "gamespeed_fps",
 	    "gamespeed_microseconds",
-	    "ge_lose",
 	    "global",
+	    "glowColor",
+	    "glowColour",
+	    "glowEnabled",
+	    "glowEnabled",
+	    "glowEnd",
+	    "glowStart",
+	    "gp_axis_acceleration_x",
+	    "gp_axis_acceleration_y",
+	    "gp_axis_acceleration_z",
+	    "gp_axis_angular_velocity_x",
+	    "gp_axis_angular_velocity_y",
+	    "gp_axis_angular_velocity_z",
+	    "gp_axis_orientation_w",
+	    "gp_axis_orientation_x",
+	    "gp_axis_orientation_y",
+	    "gp_axis_orientation_z",
 	    "gp_axislh",
 	    "gp_axislv",
 	    "gp_axisrh",
@@ -20236,7 +20809,7 @@ function requireGml () {
 	    "iap_storeload_failed",
 	    "iap_storeload_ok",
 	    "iap_unavailable",
-	    "input_type",
+	    "infinity",
 	    "kbv_autocapitalize_characters",
 	    "kbv_autocapitalize_none",
 	    "kbv_autocapitalize_sentences",
@@ -20264,22 +20837,22 @@ function requireGml () {
 	    "layerelementtype_instance",
 	    "layerelementtype_oldtilemap",
 	    "layerelementtype_particlesystem",
+	    "layerelementtype_sequence",
 	    "layerelementtype_sprite",
 	    "layerelementtype_tile",
 	    "layerelementtype_tilemap",
 	    "layerelementtype_undefined",
-	    "lb_disp_none",
-	    "lb_disp_numeric",
-	    "lb_disp_time_ms",
-	    "lb_disp_time_sec",
-	    "lb_sort_ascending",
-	    "lb_sort_descending",
-	    "lb_sort_none",
 	    "leaderboard_type_number",
 	    "leaderboard_type_time_mins_secs",
 	    "lighttype_dir",
 	    "lighttype_point",
-	    "local",
+	    "lineSpacing",
+	    "m_axisx",
+	    "m_axisx_gui",
+	    "m_axisy",
+	    "m_axisy_gui",
+	    "m_scroll_down",
+	    "m_scroll_up",
 	    "matrix_projection",
 	    "matrix_view",
 	    "matrix_world",
@@ -20288,52 +20861,83 @@ function requireGml () {
 	    "mb_middle",
 	    "mb_none",
 	    "mb_right",
+	    "mb_side1",
+	    "mb_side2",
 	    "mip_markedonly",
 	    "mip_off",
 	    "mip_on",
+	    "network_config_avoid_time_wait",
 	    "network_config_connect_timeout",
+	    "network_config_disable_multicast",
 	    "network_config_disable_reliable_udp",
+	    "network_config_enable_multicast",
 	    "network_config_enable_reliable_udp",
 	    "network_config_use_non_blocking_socket",
+	    "network_config_websocket_protocol",
+	    "network_connect_active",
+	    "network_connect_blocking",
+	    "network_connect_nonblocking",
+	    "network_connect_none",
+	    "network_connect_passive",
+	    "network_send_binary",
+	    "network_send_text",
 	    "network_socket_bluetooth",
 	    "network_socket_tcp",
 	    "network_socket_udp",
+	    "network_socket_ws",
+	    "network_socket_wss",
 	    "network_type_connect",
 	    "network_type_data",
 	    "network_type_disconnect",
+	    "network_type_down",
 	    "network_type_non_blocking_connect",
-	    "of_challen",
+	    "network_type_up",
+	    "network_type_up_failed",
+	    "nineslice_blank",
+	    "nineslice_bottom",
+	    "nineslice_center",
+	    "nineslice_centre",
+	    "nineslice_hide",
+	    "nineslice_left",
+	    "nineslice_mirror",
+	    "nineslice_repeat",
+	    "nineslice_right",
+	    "nineslice_stretch",
+	    "nineslice_top",
+	    "noone",
+	    "of_challenge_lose",
 	    "of_challenge_tie",
 	    "of_challenge_win",
-	    "os_3ds",
 	    "os_android",
-	    "os_bb10",
+	    "os_gdk",
+	    "os_gxgames",
 	    "os_ios",
 	    "os_linux",
 	    "os_macosx",
+	    "os_operagx",
+	    "os_permission_denied",
+	    "os_permission_denied_dont_request",
+	    "os_permission_granted",
 	    "os_ps3",
 	    "os_ps4",
+	    "os_ps5",
 	    "os_psvita",
 	    "os_switch",
-	    "os_symbian",
-	    "os_tizen",
 	    "os_tvos",
 	    "os_unknown",
 	    "os_uwp",
-	    "os_wiiu",
-	    "os_win32",
 	    "os_win8native",
 	    "os_windows",
 	    "os_winphone",
-	    "os_xbox360",
 	    "os_xboxone",
+	    "os_xboxseriesxs",
 	    "other",
-	    "ov_achievements",
-	    "ov_community",
-	    "ov_friends",
-	    "ov_gamegroup",
-	    "ov_players",
-	    "ov_settings",
+	    "outlineColor",
+	    "outlineColour",
+	    "outlineDist",
+	    "outlineEnabled",
+	    "outlineEnabled",
+	    "paragraphSpacing",
 	    "path_action_continue",
 	    "path_action_restart",
 	    "path_action_reverse",
@@ -20389,6 +20993,8 @@ function requireGml () {
 	    "phy_particle_group_flag_rigid",
 	    "phy_particle_group_flag_solid",
 	    "pi",
+	    "pointer_invalid",
+	    "pointer_null",
 	    "pr_linelist",
 	    "pr_linestrip",
 	    "pr_pointlist",
@@ -20398,6 +21004,8 @@ function requireGml () {
 	    "ps_distr_gaussian",
 	    "ps_distr_invgaussian",
 	    "ps_distr_linear",
+	    "ps_mode_burst",
+	    "ps_mode_stream",
 	    "ps_shape_diamond",
 	    "ps_shape_ellipse",
 	    "ps_shape_line",
@@ -20416,68 +21024,110 @@ function requireGml () {
 	    "pt_shape_sphere",
 	    "pt_shape_square",
 	    "pt_shape_star",
+	    "rollback_chat_message",
+	    "rollback_connect_error",
+	    "rollback_connect_info",
+	    "rollback_connected_to_peer",
+	    "rollback_connection_rejected",
+	    "rollback_disconnected_from_peer",
+	    "rollback_end_game",
+	    "rollback_game_full",
+	    "rollback_game_info",
+	    "rollback_game_interrupted",
+	    "rollback_game_resumed",
+	    "rollback_high_latency",
+	    "rollback_player_prefs",
+	    "rollback_protocol_rejected",
+	    "rollback_synchronized_with_peer",
+	    "rollback_synchronizing_with_peer",
+	    "self",
+	    "seqaudiokey_loop",
+	    "seqaudiokey_oneshot",
+	    "seqdir_left",
+	    "seqdir_right",
+	    "seqinterpolation_assign",
+	    "seqinterpolation_lerp",
+	    "seqplay_loop",
+	    "seqplay_oneshot",
+	    "seqplay_pingpong",
+	    "seqtextkey_bottom",
+	    "seqtextkey_center",
+	    "seqtextkey_justify",
+	    "seqtextkey_left",
+	    "seqtextkey_middle",
+	    "seqtextkey_right",
+	    "seqtextkey_top",
+	    "seqtracktype_audio",
+	    "seqtracktype_bool",
+	    "seqtracktype_clipmask",
+	    "seqtracktype_clipmask_mask",
+	    "seqtracktype_clipmask_subject",
+	    "seqtracktype_color",
+	    "seqtracktype_colour",
+	    "seqtracktype_empty",
+	    "seqtracktype_graphic",
+	    "seqtracktype_group",
+	    "seqtracktype_instance",
+	    "seqtracktype_message",
+	    "seqtracktype_moment",
+	    "seqtracktype_particlesystem",
+	    "seqtracktype_real",
+	    "seqtracktype_sequence",
+	    "seqtracktype_spriteframes",
+	    "seqtracktype_string",
+	    "seqtracktype_text",
+	    "shadowColor",
+	    "shadowColour",
+	    "shadowOffsetX",
+	    "shadowOffsetY",
+	    "shadowSoftness",
+	    "sprite_add_ext_error_cancelled",
+	    "sprite_add_ext_error_decompressfailed",
+	    "sprite_add_ext_error_loadfailed",
+	    "sprite_add_ext_error_setupfailed",
+	    "sprite_add_ext_error_spritenotfound",
+	    "sprite_add_ext_error_unknown",
 	    "spritespeed_framespergameframe",
 	    "spritespeed_framespersecond",
-	    "text_type",
+	    "surface_r16float",
+	    "surface_r32float",
+	    "surface_r8unorm",
+	    "surface_rg8unorm",
+	    "surface_rgba16float",
+	    "surface_rgba32float",
+	    "surface_rgba4unorm",
+	    "surface_rgba8unorm",
+	    "texturegroup_status_fetched",
+	    "texturegroup_status_loaded",
+	    "texturegroup_status_loading",
+	    "texturegroup_status_unloaded",
 	    "tf_anisotropic",
 	    "tf_linear",
 	    "tf_point",
+	    "thickness",
 	    "tile_flip",
 	    "tile_index_mask",
 	    "tile_mirror",
 	    "tile_rotate",
+	    "time_source_expire_after",
+	    "time_source_expire_nearest",
+	    "time_source_game",
+	    "time_source_global",
+	    "time_source_state_active",
+	    "time_source_state_initial",
+	    "time_source_state_paused",
+	    "time_source_state_stopped",
+	    "time_source_units_frames",
+	    "time_source_units_seconds",
 	    "timezone_local",
 	    "timezone_utc",
 	    "tm_countvsyncs",
 	    "tm_sleep",
+	    "tm_systemtiming",
+	    "true",
 	    "ty_real",
 	    "ty_string",
-	    "ugc_filetype_community",
-	    "ugc_filetype_microtrans",
-	    "ugc_list_Favorited",
-	    "ugc_list_Followed",
-	    "ugc_list_Published",
-	    "ugc_list_Subscribed",
-	    "ugc_list_UsedOrPlayed",
-	    "ugc_list_VotedDown",
-	    "ugc_list_VotedOn",
-	    "ugc_list_VotedUp",
-	    "ugc_list_WillVoteLater",
-	    "ugc_match_AllGuides",
-	    "ugc_match_Artwork",
-	    "ugc_match_Collections",
-	    "ugc_match_ControllerBindings",
-	    "ugc_match_IntegratedGuides",
-	    "ugc_match_Items",
-	    "ugc_match_Items_Mtx",
-	    "ugc_match_Items_ReadyToUse",
-	    "ugc_match_Screenshots",
-	    "ugc_match_UsableInGame",
-	    "ugc_match_Videos",
-	    "ugc_match_WebGuides",
-	    "ugc_query_AcceptedForGameRankedByAcceptanceDate",
-	    "ugc_query_CreatedByFollowedUsersRankedByPublicationDate",
-	    "ugc_query_CreatedByFriendsRankedByPublicationDate",
-	    "ugc_query_FavoritedByFriendsRankedByPublicationDate",
-	    "ugc_query_NotYetRated",
-	    "ugc_query_RankedByNumTimesReported",
-	    "ugc_query_RankedByPublicationDate",
-	    "ugc_query_RankedByTextSearch",
-	    "ugc_query_RankedByTotalVotesAsc",
-	    "ugc_query_RankedByTrend",
-	    "ugc_query_RankedByVote",
-	    "ugc_query_RankedByVotesUp",
-	    "ugc_result_success",
-	    "ugc_sortorder_CreationOrderAsc",
-	    "ugc_sortorder_CreationOrderDesc",
-	    "ugc_sortorder_ForModeration",
-	    "ugc_sortorder_LastUpdatedDesc",
-	    "ugc_sortorder_SubscriptionDateDesc",
-	    "ugc_sortorder_TitleAsc",
-	    "ugc_sortorder_VoteScoreDesc",
-	    "ugc_visibility_friends_only",
-	    "ugc_visibility_private",
-	    "ugc_visibility_public",
+	    "undefined",
 	    "vertex_type_color",
 	    "vertex_type_colour",
 	    "vertex_type_float1",
@@ -20498,7 +21148,12 @@ function requireGml () {
 	    "vertex_usage_sample",
 	    "vertex_usage_tangent",
 	    "vertex_usage_texcoord",
-	    "vertex_usage_textcoord",
+	    "video_format_rgba",
+	    "video_format_yuv",
+	    "video_status_closed",
+	    "video_status_paused",
+	    "video_status_playing",
+	    "video_status_preparing",
 	    "vk_add",
 	    "vk_alt",
 	    "vk_anykey",
@@ -20512,6 +21167,9 @@ function requireGml () {
 	    "vk_enter",
 	    "vk_escape",
 	    "vk_f1",
+	    "vk_f10",
+	    "vk_f11",
+	    "vk_f12",
 	    "vk_f2",
 	    "vk_f3",
 	    "vk_f4",
@@ -20520,9 +21178,6 @@ function requireGml () {
 	    "vk_f7",
 	    "vk_f8",
 	    "vk_f9",
-	    "vk_f10",
-	    "vk_f11",
-	    "vk_f12",
 	    "vk_home",
 	    "vk_insert",
 	    "vk_lalt",
@@ -20554,7 +21209,10 @@ function requireGml () {
 	    "vk_space",
 	    "vk_subtract",
 	    "vk_tab",
-	    "vk_up"
+	    "vk_up",
+	    "wallpaper_config",
+	    "wallpaper_subscription_data",
+	    "wrap"
 	  ];
 	  const LANGUAGE_VARIABLES = [
 	    "alarm",
@@ -20577,7 +21235,6 @@ function requireGml () {
 	    "argument14",
 	    "argument15",
 	    "argument_count",
-	    "argument_relative",
 	    "async_load",
 	    "background_color",
 	    "background_colour",
@@ -20589,9 +21246,7 @@ function requireGml () {
 	    "bbox_top",
 	    "browser_height",
 	    "browser_width",
-	    "caption_health",
-	    "caption_lives",
-	    "caption_score",
+	    "colour?ColourTrack",
 	    "current_day",
 	    "current_hour",
 	    "current_minute",
@@ -20606,13 +21261,13 @@ function requireGml () {
 	    "depth",
 	    "direction",
 	    "display_aa",
-	    "error_last",
-	    "error_occurred",
+	    "drawn_by_sequence",
 	    "event_action",
 	    "event_data",
 	    "event_number",
 	    "event_object",
 	    "event_type",
+	    "font_texture_page_size",
 	    "fps",
 	    "fps_real",
 	    "friction",
@@ -20620,15 +21275,12 @@ function requireGml () {
 	    "game_id",
 	    "game_project_name",
 	    "game_save_id",
-	    "gamemaker_pro",
-	    "gamemaker_registered",
-	    "gamemaker_version",
 	    "gravity",
 	    "gravity_direction",
 	    "health",
 	    "hspeed",
 	    "iap_data",
-	    "id|0",
+	    "id",
 	    "image_alpha",
 	    "image_angle",
 	    "image_blend",
@@ -20637,6 +21289,8 @@ function requireGml () {
 	    "image_speed",
 	    "image_xscale",
 	    "image_yscale",
+	    "in_collision_tree",
+	    "in_sequence",
 	    "instance_count",
 	    "instance_id",
 	    "keyboard_key",
@@ -20645,7 +21299,10 @@ function requireGml () {
 	    "keyboard_string",
 	    "layer",
 	    "lives",
+	    "longMessage",
+	    "managed",
 	    "mask_index",
+	    "message",
 	    "mouse_button",
 	    "mouse_lastbutton",
 	    "mouse_x",
@@ -20691,9 +21348,20 @@ function requireGml () {
 	    "phy_speed",
 	    "phy_speed_x",
 	    "phy_speed_y",
+	    "player_avatar_sprite",
+	    "player_avatar_url",
+	    "player_id",
+	    "player_local",
+	    "player_type",
+	    "player_user_id",
 	    "program_directory",
+	    "rollback_api_server",
+	    "rollback_confirmed_frame",
+	    "rollback_current_frame",
+	    "rollback_event_id",
+	    "rollback_event_param",
+	    "rollback_game_running",
 	    "room",
-	    "room_caption",
 	    "room_first",
 	    "room_height",
 	    "room_last",
@@ -20701,10 +21369,8 @@ function requireGml () {
 	    "room_speed",
 	    "room_width",
 	    "score",
-	    "self",
-	    "show_health",
-	    "show_lives",
-	    "show_score",
+	    "script",
+	    "sequence_instance",
 	    "solid",
 	    "speed",
 	    "sprite_height",
@@ -20712,50 +21378,39 @@ function requireGml () {
 	    "sprite_width",
 	    "sprite_xoffset",
 	    "sprite_yoffset",
+	    "stacktrace",
 	    "temp_directory",
 	    "timeline_index",
 	    "timeline_loop",
 	    "timeline_position",
 	    "timeline_running",
 	    "timeline_speed",
-	    "view_angle",
 	    "view_camera",
 	    "view_current",
 	    "view_enabled",
-	    "view_hborder",
 	    "view_hport",
-	    "view_hspeed",
-	    "view_hview",
-	    "view_object",
 	    "view_surface_id",
-	    "view_vborder",
 	    "view_visible",
-	    "view_vspeed",
 	    "view_wport",
-	    "view_wview",
 	    "view_xport",
-	    "view_xview",
 	    "view_yport",
-	    "view_yview",
 	    "visible",
 	    "vspeed",
 	    "webgl_enabled",
 	    "working_directory",
+	    "x",
 	    "xprevious",
 	    "xstart",
-	    "x|0",
+	    "y",
 	    "yprevious",
-	    "ystart",
-	    "y|0"
+	    "ystart"
 	  ];
-
 	  return {
 	    name: 'GML',
 	    case_insensitive: false, // language is case-insensitive
 	    keywords: {
 	      keyword: KEYWORDS,
 	      built_in: BUILT_INS,
-	      literal: LITERALS,
 	      symbol: SYMBOLS,
 	      "variable.language": LANGUAGE_VARIABLES
 	    },
@@ -20890,10 +21545,25 @@ function requireGo () {
 	        className: 'number',
 	        variants: [
 	          {
-	            begin: hljs.C_NUMBER_RE + '[i]',
-	            relevance: 1
+	            match: /-?\b0[xX]\.[a-fA-F0-9](_?[a-fA-F0-9])*[pP][+-]?\d(_?\d)*i?/, // hex without a present digit before . (making a digit afterwards required)
+	            relevance: 0
 	          },
-	          hljs.C_NUMBER_MODE
+	          {
+	            match: /-?\b0[xX](_?[a-fA-F0-9])+((\.([a-fA-F0-9](_?[a-fA-F0-9])*)?)?[pP][+-]?\d(_?\d)*)?i?/, // hex with a present digit before . (making a digit afterwards optional)
+	            relevance: 0
+	          },
+	          {
+	            match: /-?\b0[oO](_?[0-7])*i?/, // leading 0o octal
+	            relevance: 0
+	          },
+	          {
+	            match: /-?\.\d(_?\d)*([eE][+-]?\d(_?\d)*)?i?/, // decimal without a present digit before . (making a digit afterwards required)
+	            relevance: 0
+	          },
+	          {
+	            match: /-?\b\d(_?\d)*(\.(\d(_?\d)*)?)?([eE][+-]?\d(_?\d)*)?i?/, // decimal with a present digit before . (making a digit afterwards optional)
+	            relevance: 0
+	          }
 	        ]
 	      },
 	      { begin: /:=/ // relevance booster
@@ -20928,6 +21598,7 @@ Language: Golo
 Author: Philippe Charriere <ph.charriere@gmail.com>
 Description: a lightweight dynamic language for the JVM
 Website: http://golo-lang.org/
+Category: system
 */
 
 var golo_1;
@@ -21017,6 +21688,7 @@ Language: Gradle
 Description: Gradle is an open-source build automation tool focused on flexibility and performance.
 Website: https://gradle.org
 Author: Damian Mee <mee.damian@gmail.com>
+Category: build-system
 */
 
 var gradle_1;
@@ -21302,6 +21974,7 @@ function requireGraphql () {
  Author: Guillaume Laforge <glaforge@gmail.com>
  Description: Groovy programming language implementation inspired from Vsevolod's Java mode
  Website: https://groovy-lang.org
+ Category: system
  */
 
 var groovy_1;
@@ -22116,6 +22789,7 @@ Description: Haxe is an open source toolkit based on a modern, high level, stric
 Author: Christopher Kaster <ikasoki@gmail.com> (Based on the actionscript.js language file by Alexander Myadzel)
 Contributors: Kenton Hamaluik <kentonh@gmail.com>
 Website: https://haxe.org
+Category: system
 */
 
 var haxe_1;
@@ -22205,7 +22879,7 @@ function requireHaxe () {
 	      },
 	      {
 	        className: 'type', // instantiation
-	        begin: /new */,
+	        beginKeywords: 'new',
 	        end: /\W/,
 	        excludeBegin: true,
 	        excludeEnd: true
@@ -22610,6 +23284,7 @@ Language: Inform 7
 Author: Bruno Dias <bruno.r.dias@gmail.com>
 Description: Language definition for Inform 7, a DSL for writing parser interactive fiction.
 Website: http://inform7.com
+Category: gaming
 */
 
 var inform7_1;
@@ -26259,7 +26934,8 @@ function requireJava () {
 	    'do',
 	    'sealed',
 	    'yield',
-	    'permits'
+	    'permits',
+	    'goto'
 	  ];
 
 	  const BUILT_INS = [
@@ -26739,7 +27415,7 @@ function requireJavascript () {
 	    contains: [] // defined later
 	  };
 	  const HTML_TEMPLATE = {
-	    begin: 'html`',
+	    begin: '\.?html`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -26752,7 +27428,7 @@ function requireJavascript () {
 	    }
 	  };
 	  const CSS_TEMPLATE = {
-	    begin: 'css`',
+	    begin: '\.?css`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -26765,7 +27441,7 @@ function requireJavascript () {
 	    }
 	  };
 	  const GRAPHQL_TEMPLATE = {
-	    begin: 'gql`',
+	    begin: '\.?gql`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -26862,7 +27538,7 @@ function requireJavascript () {
 	  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
 	    // eat recursive parens in sub expressions
 	    {
-	      begin: /\(/,
+	      begin: /(\s*)\(/,
 	      end: /\)/,
 	      keywords: KEYWORDS$1,
 	      contains: ["self"].concat(SUBST_AND_COMMENTS)
@@ -26870,7 +27546,8 @@ function requireJavascript () {
 	  ]);
 	  const PARAMS = {
 	    className: 'params',
-	    begin: /\(/,
+	    // convert this to negative lookbehind in v12
+	    begin: /(\s*)\(/, // to match the parms with 
 	    end: /\)/,
 	    excludeBegin: true,
 	    excludeEnd: true,
@@ -26993,8 +27670,8 @@ function requireJavascript () {
 	        ...BUILT_IN_GLOBALS,
 	        "super",
 	        "import"
-	      ]),
-	      IDENT_RE$1, regex.lookahead(/\(/)),
+	      ].map(x => `${x}\\s*\\(`)),
+	      IDENT_RE$1, regex.lookahead(/\s*\(/)),
 	    className: "title.function",
 	    relevance: 0
 	  };
@@ -27115,7 +27792,7 @@ function requireJavascript () {
 	                    skip: true
 	                  },
 	                  {
-	                    begin: /\(/,
+	                    begin: /(\s*)\(/,
 	                    end: /\)/,
 	                    excludeBegin: true,
 	                    excludeEnd: true,
@@ -27330,6 +28007,7 @@ function requireJson () {
 
 	  return {
 	    name: 'JSON',
+	    aliases: ['jsonc'],
 	    keywords:{
 	      literal: LITERALS,
 	    },
@@ -27356,6 +28034,7 @@ Description: Julia is a high-level, high-performance, dynamic programming langua
 Author: Kenta Sato <bicycle1885@gmail.com>
 Contributors: Alex Arslan <ararslan@comcast.net>, Fredrik Ekre <ekrefredrik@gmail.com>
 Website: https://julialang.org
+Category: scientific
 */
 
 var julia_1;
@@ -27806,6 +28485,7 @@ Description: Julia REPL sessions
 Author: Morten Piibeleht <morten.piibeleht@gmail.com>
 Website: https://julialang.org
 Requires: julia.js
+Category: scientific
 
 The Julia REPL code blocks look something like the following:
 
@@ -28159,6 +28839,7 @@ Language: Lasso
 Author: Eric Knibbe <eric@lassosoft.com>
 Description: Lasso is a language and server platform for database-driven web applications. This definition handles Lasso 9 syntax and LassoScript for Lasso 8.6 and earlier.
 Website: http://www.lassosoft.com/What-Is-Lasso
+Category: database, web
 */
 
 var lasso_1;
@@ -28817,7 +29498,7 @@ function requireLess () {
 	  };
 	};
 
-	const TAGS = [
+	const HTML_TAGS = [
 	  'a',
 	  'abbr',
 	  'address',
@@ -28869,11 +29550,16 @@ function requireLess () {
 	  'nav',
 	  'object',
 	  'ol',
+	  'optgroup',
+	  'option',
 	  'p',
+	  'picture',
 	  'q',
 	  'quote',
 	  'samp',
 	  'section',
+	  'select',
+	  'source',
 	  'span',
 	  'strong',
 	  'summary',
@@ -28891,6 +29577,58 @@ function requireLess () {
 	  'var',
 	  'video'
 	];
+
+	const SVG_TAGS = [
+	  'defs',
+	  'g',
+	  'marker',
+	  'mask',
+	  'pattern',
+	  'svg',
+	  'switch',
+	  'symbol',
+	  'feBlend',
+	  'feColorMatrix',
+	  'feComponentTransfer',
+	  'feComposite',
+	  'feConvolveMatrix',
+	  'feDiffuseLighting',
+	  'feDisplacementMap',
+	  'feFlood',
+	  'feGaussianBlur',
+	  'feImage',
+	  'feMerge',
+	  'feMorphology',
+	  'feOffset',
+	  'feSpecularLighting',
+	  'feTile',
+	  'feTurbulence',
+	  'linearGradient',
+	  'radialGradient',
+	  'stop',
+	  'circle',
+	  'ellipse',
+	  'image',
+	  'line',
+	  'path',
+	  'polygon',
+	  'polyline',
+	  'rect',
+	  'text',
+	  'use',
+	  'textPath',
+	  'tspan',
+	  'foreignObject',
+	  'clipPath'
+	];
+
+	const TAGS = [
+	  ...HTML_TAGS,
+	  ...SVG_TAGS,
+	];
+
+	// Sorting, then reversing makes sure longer attributes/elements like
+	// `font-weight` are matched fully instead of getting false positives on say `font`
 
 	const MEDIA_FEATURES = [
 	  'any-hover',
@@ -28927,7 +29665,7 @@ function requireLess () {
 	  'max-width',
 	  'min-height',
 	  'max-height'
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 	const PSEUDO_CLASSES = [
@@ -28990,7 +29728,7 @@ function requireLess () {
 	  'valid',
 	  'visited',
 	  'where' // where()
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 	const PSEUDO_ELEMENTS = [
@@ -29008,12 +29746,14 @@ function requireLess () {
 	  'selection',
 	  'slotted',
 	  'spelling-error'
-	];
+	].sort().reverse();
 
 	const ATTRIBUTES = [
+	  'accent-color',
 	  'align-content',
 	  'align-items',
 	  'align-self',
+	  'alignment-baseline',
 	  'all',
 	  'animation',
 	  'animation-delay',
@@ -29024,6 +29764,7 @@ function requireLess () {
 	  'animation-name',
 	  'animation-play-state',
 	  'animation-timing-function',
+	  'appearance',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -29035,6 +29776,7 @@ function requireLess () {
 	  'background-position',
 	  'background-repeat',
 	  'background-size',
+	  'baseline-shift',
 	  'block-size',
 	  'border',
 	  'border-block',
@@ -29081,10 +29823,14 @@ function requireLess () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
 	  'border-spacing',
+	  'border-start-end-radius',
+	  'border-start-start-radius',
 	  'border-style',
 	  'border-top',
 	  'border-top-color',
@@ -29100,6 +29846,8 @@ function requireLess () {
 	  'break-after',
 	  'break-before',
 	  'break-inside',
+	  'cx',
+	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -29107,6 +29855,11 @@ function requireLess () {
 	  'clip-path',
 	  'clip-rule',
 	  'color',
+	  'color-interpolation',
+	  'color-interpolation-filters',
+	  'color-profile',
+	  'color-rendering',
+	  'color-scheme',
 	  'column-count',
 	  'column-fill',
 	  'column-gap',
@@ -29128,7 +29881,12 @@ function requireLess () {
 	  'cursor',
 	  'direction',
 	  'display',
+	  'dominant-baseline',
 	  'empty-cells',
+	  'enable-background',
+	  'fill',
+	  'fill-opacity',
+	  'fill-rule',
 	  'filter',
 	  'flex',
 	  'flex-basis',
@@ -29139,6 +29897,8 @@ function requireLess () {
 	  'flex-wrap',
 	  'float',
 	  'flow',
+	  'flood-color',
+	  'flood-opacity',
 	  'font',
 	  'font-display',
 	  'font-family',
@@ -29160,6 +29920,7 @@ function requireLess () {
 	  'font-variation-settings',
 	  'font-weight',
 	  'gap',
+	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
 	  'grid',
 	  'grid-area',
@@ -29186,16 +29947,32 @@ function requireLess () {
 	  'image-resolution',
 	  'ime-mode',
 	  'inline-size',
+	  'inset',
+	  'inset-block',
+	  'inset-block-end',
+	  'inset-block-start',
+	  'inset-inline',
+	  'inset-inline-end',
+	  'inset-inline-start',
 	  'isolation',
+	  'kerning',
 	  'justify-content',
+	  'justify-items',
+	  'justify-self',
 	  'left',
 	  'letter-spacing',
+	  'lighting-color',
 	  'line-break',
 	  'line-height',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
+	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -29277,12 +30054,15 @@ function requireLess () {
 	  'pointer-events',
 	  'position',
 	  'quotes',
+	  'r',
 	  'resize',
 	  'rest',
 	  'rest-after',
 	  'rest-before',
 	  'right',
+	  'rotate',
 	  'row-gap',
+	  'scale',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -29314,11 +30094,23 @@ function requireLess () {
 	  'shape-image-threshold',
 	  'shape-margin',
 	  'shape-outside',
+	  'shape-rendering',
+	  'stop-color',
+	  'stop-opacity',
+	  'stroke',
+	  'stroke-dasharray',
+	  'stroke-dashoffset',
+	  'stroke-linecap',
+	  'stroke-linejoin',
+	  'stroke-miterlimit',
+	  'stroke-opacity',
+	  'stroke-width',
 	  'speak',
 	  'speak-as',
 	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
+	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
@@ -29326,7 +30118,9 @@ function requireLess () {
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip-ink',
 	  'text-decoration-style',
+	  'text-decoration-thickness',
 	  'text-emphasis',
 	  'text-emphasis-color',
 	  'text-emphasis-position',
@@ -29338,6 +30132,7 @@ function requireLess () {
 	  'text-rendering',
 	  'text-shadow',
 	  'text-transform',
+	  'text-underline-offset',
 	  'text-underline-position',
 	  'top',
 	  'transform',
@@ -29349,7 +30144,9 @@ function requireLess () {
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
+	  'translate',
 	  'unicode-bidi',
+	  'vector-effect',
 	  'vertical-align',
 	  'visibility',
 	  'voice-balance',
@@ -29368,13 +30165,13 @@ function requireLess () {
 	  'word-spacing',
 	  'word-wrap',
 	  'writing-mode',
+	  'x',
+	  'y',
 	  'z-index'
-	  // reverse makes sure longer attributes `font-weight` are matched fully
-	  // instead of getting false positives on say `font`
-	].reverse();
+	].sort().reverse();
 
 	// some grammars use them all as a single group
-	const PSEUDO_SELECTORS = PSEUDO_CLASSES.concat(PSEUDO_ELEMENTS);
+	const PSEUDO_SELECTORS = PSEUDO_CLASSES.concat(PSEUDO_ELEMENTS).sort().reverse();
 
 	/*
 	Language: Less
@@ -30402,44 +31199,47 @@ function requireLlvm () {
 	  return {
 	    name: 'LLVM IR',
 	    // TODO: split into different categories of keywords
-	    keywords:
-	      'begin end true false declare define global '
-	      + 'constant private linker_private internal '
-	      + 'available_externally linkonce linkonce_odr weak '
-	      + 'weak_odr appending dllimport dllexport common '
-	      + 'default hidden protected extern_weak external '
-	      + 'thread_local zeroinitializer undef null to tail '
-	      + 'target triple datalayout volatile nuw nsw nnan '
-	      + 'ninf nsz arcp fast exact inbounds align '
-	      + 'addrspace section alias module asm sideeffect '
-	      + 'gc dbg linker_private_weak attributes blockaddress '
-	      + 'initialexec localdynamic localexec prefix unnamed_addr '
-	      + 'ccc fastcc coldcc x86_stdcallcc x86_fastcallcc '
-	      + 'arm_apcscc arm_aapcscc arm_aapcs_vfpcc ptx_device '
-	      + 'ptx_kernel intel_ocl_bicc msp430_intrcc spir_func '
-	      + 'spir_kernel x86_64_sysvcc x86_64_win64cc x86_thiscallcc '
-	      + 'cc c signext zeroext inreg sret nounwind '
-	      + 'noreturn noalias nocapture byval nest readnone '
-	      + 'readonly inlinehint noinline alwaysinline optsize ssp '
-	      + 'sspreq noredzone noimplicitfloat naked builtin cold '
-	      + 'nobuiltin noduplicate nonlazybind optnone returns_twice '
-	      + 'sanitize_address sanitize_memory sanitize_thread sspstrong '
-	      + 'uwtable returned type opaque eq ne slt sgt '
-	      + 'sle sge ult ugt ule uge oeq one olt ogt '
-	      + 'ole oge ord uno ueq une x acq_rel acquire '
-	      + 'alignstack atomic catch cleanup filter inteldialect '
-	      + 'max min monotonic nand personality release seq_cst '
-	      + 'singlethread umax umin unordered xchg add fadd '
-	      + 'sub fsub mul fmul udiv sdiv fdiv urem srem '
-	      + 'frem shl lshr ashr and or xor icmp fcmp '
-	      + 'phi call trunc zext sext fptrunc fpext uitofp '
-	      + 'sitofp fptoui fptosi inttoptr ptrtoint bitcast '
-	      + 'addrspacecast select va_arg ret br switch invoke '
-	      + 'unwind unreachable indirectbr landingpad resume '
-	      + 'malloc alloca free load store getelementptr '
-	      + 'extractelement insertelement shufflevector getresult '
-	      + 'extractvalue insertvalue atomicrmw cmpxchg fence '
-	      + 'argmemonly double',
+	    keywords: {
+	      keyword: 'begin end true false declare define global '
+	        + 'constant private linker_private internal '
+	        + 'available_externally linkonce linkonce_odr weak '
+	        + 'weak_odr appending dllimport dllexport common '
+	        + 'default hidden protected extern_weak external '
+	        + 'thread_local zeroinitializer undef null to tail '
+	        + 'target triple datalayout volatile nuw nsw nnan '
+	        + 'ninf nsz arcp fast exact inbounds align '
+	        + 'addrspace section alias module asm sideeffect '
+	        + 'gc dbg linker_private_weak attributes blockaddress '
+	        + 'initialexec localdynamic localexec prefix unnamed_addr '
+	        + 'ccc fastcc coldcc x86_stdcallcc x86_fastcallcc '
+	        + 'arm_apcscc arm_aapcscc arm_aapcs_vfpcc ptx_device '
+	        + 'ptx_kernel intel_ocl_bicc msp430_intrcc spir_func '
+	        + 'spir_kernel x86_64_sysvcc x86_64_win64cc x86_thiscallcc '
+	        + 'cc c signext zeroext inreg sret nounwind '
+	        + 'noreturn noalias nocapture byval nest readnone '
+	        + 'readonly inlinehint noinline alwaysinline optsize ssp '
+	        + 'sspreq noredzone noimplicitfloat naked builtin cold '
+	        + 'nobuiltin noduplicate nonlazybind optnone returns_twice '
+	        + 'sanitize_address sanitize_memory sanitize_thread sspstrong '
+	        + 'uwtable returned type opaque eq ne slt sgt '
+	        + 'sle sge ult ugt ule uge oeq one olt ogt '
+	        + 'ole oge ord uno ueq une x acq_rel acquire '
+	        + 'alignstack atomic catch cleanup filter inteldialect '
+	        + 'max min monotonic nand personality release seq_cst '
+	        + 'singlethread umax umin unordered xchg add fadd '
+	        + 'sub fsub mul fmul udiv sdiv fdiv urem srem '
+	        + 'frem shl lshr ashr and or xor icmp fcmp '
+	        + 'phi call trunc zext sext fptrunc fpext uitofp '
+	        + 'sitofp fptoui fptosi inttoptr ptrtoint bitcast '
+	        + 'addrspacecast select va_arg ret br switch invoke '
+	        + 'unwind unreachable indirectbr landingpad resume '
+	        + 'malloc alloca free load store getelementptr '
+	        + 'extractelement insertelement shufflevector getresult '
+	        + 'extractvalue insertvalue atomicrmw cmpxchg fence '
+	        + 'argmemonly',
+	      type: 'void half bfloat float double fp128 x86_fp80 ppc_fp128 '
+	        + 'x86_amx x86_mmx ptr label token metadata opaque'
+	    },
 	    contains: [
 	      TYPE,
 	      // this matches "empty comments"...
@@ -30561,7 +31361,7 @@ function requireLsl () {
 Language: Lua
 Description: Lua is a powerful, efficient, lightweight, embeddable scripting language.
 Author: Andrew Fedorov <dmmdrs@mail.ru>
-Category: common, scripting
+Category: common, gaming, scripting
 Website: https://www.lua.org
 */
 
@@ -30651,7 +31451,7 @@ Language: Makefile
 Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
 Contributors: Joël Porquet <joel@porquet.org>
 Website: https://www.gnu.org/software/make/manual/html_node/Introduction.html
-Category: common
+Category: common, build-system
 */
 
 var makefile_1;
@@ -38897,6 +39697,7 @@ Language: Mercury
 Author: mucaho <mkucko@gmail.com>
 Description: Mercury is a logic/functional programming language which combines the clarity and expressiveness of declarative programming with advanced static analysis and error detection features.
 Website: https://www.mercurylang.org
+Category: functional
 */
 
 var mercury_1;
@@ -39191,6 +39992,7 @@ function requirePerl () {
 	    'chown',
 	    'chr',
 	    'chroot',
+	    'class',
 	    'close',
 	    'closedir',
 	    'connect',
@@ -39220,6 +40022,7 @@ function requirePerl () {
 	    'exit',
 	    'exp',
 	    'fcntl',
+	    'field',
 	    'fileno',
 	    'flock',
 	    'for',
@@ -39279,6 +40082,7 @@ function requirePerl () {
 	    'lt',
 	    'ma',
 	    'map',
+	    'method',
 	    'mkdir',
 	    'msgctl',
 	    'msgget',
@@ -39423,19 +40227,45 @@ function requirePerl () {
 	    end: /\}/
 	    // contains defined later
 	  };
-	  const VAR = { variants: [
-	    { begin: /\$\d/ },
-	    { begin: regex.concat(
-	      /[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
-	      // negative look-ahead tries to avoid matching patterns that are not
-	      // Perl at all like $ident$, @ident@, etc.
-	      `(?![A-Za-z])(?![@$%])`
-	    ) },
-	    {
-	      begin: /[$%@][^\s\w{]/,
-	      relevance: 0
-	    }
-	  ] };
+	  const ATTR = {
+	    scope: 'attr',
+	    match: /\s+:\s*\w+(\s*\(.*?\))?/,
+	  };
+	  const VAR = {
+	    scope: 'variable',
+	    variants: [
+	      { begin: /\$\d/ },
+	      { begin: regex.concat(
+	        /[$%@](?!")(\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
+	        // negative look-ahead tries to avoid matching patterns that are not
+	        // Perl at all like $ident$, @ident@, etc.
+	        `(?![A-Za-z])(?![@$%])`
+	        )
+	      },
+	      {
+	        // Only $= is a special Perl variable and one can't declare @= or %=.
+	        begin: /[$%@](?!")[^\s\w{=]|\$=/,
+	        relevance: 0
+	      }
+	    ],
+	    contains: [ ATTR ],
+	  };
+	  const NUMBER = {
+	    className: 'number',
+	    variants: [
+	      // decimal numbers:
+	      // include the case where a number starts with a dot (eg. .9), and
+	      // the leading 0? avoids mixing the first and second match on 0.x cases
+	      { match: /0?\.[0-9][0-9_]+\b/ },
+	      // include the special versioned number (eg. v5.38)
+	      { match: /\bv?(0|[1-9][0-9_]*(\.[0-9_]+)?|[1-9][0-9_]*)\b/ },
+	      // non-decimal numbers:
+	      { match: /\b0[0-7][0-7_]*\b/ },
+	      { match: /\b0x[0-9a-fA-F][0-9a-fA-F_]*\b/ },
+	      { match: /\b0b[0-1][0-1_]*\b/ },
+	    ],
+	    relevance: 0
+	  };
 	  const STRING_CONTAINS = [
 	    hljs.BACKSLASH_ESCAPE,
 	    SUBST,
@@ -39550,11 +40380,7 @@ function requirePerl () {
 	        }
 	      ]
 	    },
-	    {
-	      className: 'number',
-	      begin: '(\\b0[0-7_]+)|(\\b0x[0-9a-fA-F_]+)|(\\b[1-9][0-9_]*(\\.[0-9_]+)?)|[0_]\\b',
-	      relevance: 0
-	    },
+	    NUMBER,
 	    { // regexp container
 	      begin: '(\\/\\/|' + hljs.RE_STARTERS_RE + '|\\b(split|return|print|reverse|grep)\\b)\\s*',
 	      keywords: 'split return print reverse grep',
@@ -39596,11 +40422,19 @@ function requirePerl () {
 	    },
 	    {
 	      className: 'function',
-	      beginKeywords: 'sub',
+	      beginKeywords: 'sub method',
 	      end: '(\\s*\\(.*?\\))?[;{]',
 	      excludeEnd: true,
 	      relevance: 5,
-	      contains: [ hljs.TITLE_MODE ]
+	      contains: [ hljs.TITLE_MODE, ATTR ]
+	    },
+	    {
+	      className: 'class',
+	      beginKeywords: 'class',
+	      end: '[;{]',
+	      excludeEnd: true,
+	      relevance: 5,
+	      contains: [ hljs.TITLE_MODE, ATTR, NUMBER ]
 	    },
 	    {
 	      begin: '-\\w\\b',
@@ -39688,6 +40522,7 @@ Language: Monkey
 Description: Monkey2 is an easy to use, cross platform, games oriented programming language from Blitz Research.
 Author: Arthur Bikmullin <devolonter@gmail.com>
 Website: https://blitzresearch.itch.io/monkey2
+Category: gaming
 */
 
 var monkey_1;
@@ -40031,6 +40866,7 @@ function requireMoonscript () {
  Contributors: Rene Saarsoo <nene@triin.net>
  Description: Couchbase query language
  Website: https://www.couchbase.com/products/n1ql
+ Category: database
  */
 
 var n1ql_1;
@@ -40851,6 +41687,7 @@ Language: Nix
 Author: Domen Kožar <domen@dev.si>
 Description: Nix functional language
 Website: http://nixos.org/nix
+Category: system
 */
 
 var nix_1;
@@ -40996,6 +41833,7 @@ Language: NSIS
 Description: Nullsoft Scriptable Install System
 Author: Jan T. Sott <jan.sott@gmail.com>
 Website: https://nsis.sourceforge.io/Main_Page
+Category: scripting
 */
 
 var nsis_1;
@@ -42000,6 +42838,7 @@ Language: Oxygene
 Author: Carlo Kok <ck@remobjects.com>
 Description: Oxygene is built on the foundation of Object Pascal, revamped and extended to be a modern language for the twenty-first century.
 Website: https://www.elementscompiler.com/elements/default.aspx
+Category: build-system
 */
 
 var oxygene_1;
@@ -42239,6 +43078,7 @@ Description:
     - Function names deliberately are not highlighted. There is no way to tell function
       call from other constructs, hence we can't highlight _all_ function names. And
       some names highlighted while others not looks ugly.
+Category: database
 */
 
 var pgsql_1;
@@ -43475,6 +44315,7 @@ Author: Joe Eli McIlvain <joe.eli.mac@gmail.com>
 Description: Pony is an open-source, object-oriented, actor-model,
              capabilities-secure, high performance programming language.
 Website: https://www.ponylang.io
+Category: system
 */
 
 var pony_1;
@@ -43573,6 +44414,7 @@ Description: PowerShell is a task-based command-line shell and scripting languag
 Author: David Mohundro <david@mohundro.com>
 Contributors: Nicholas Blumhardt <nblumhardt@nblumhardt.com>, Victor Zhou <OiCMudkips@users.noreply.github.com>, Nicolas Le Gall <contact@nlegall.fr>
 Website: https://docs.microsoft.com/en-us/powershell/
+Category: scripting
 */
 
 var powershell_1;
@@ -44392,6 +45234,7 @@ Language: Prolog
 Description: Prolog is a general purpose logic programming language associated with artificial intelligence and computational linguistics.
 Author: Raivo Laanemets <raivo@infdot.com>
 Website: https://en.wikipedia.org/wiki/Prolog
+Category: functional
 */
 
 var prolog_1;
@@ -44818,6 +45661,7 @@ Author: Tristano Ajmone <tajmone@gmail.com>
 Description: Syntax highlighting for PureBASIC (v.5.00-5.60). No inline ASM highlighting. (v.1.2, May 2017)
 Credits: I've taken inspiration from the PureBasic language file for GeSHi, created by Gustavo Julio Fiorenza (GuShH).
 Website: https://www.purebasic.com
+Category: system
 */
 
 var purebasic_1;
@@ -45301,7 +46145,8 @@ function requirePython () {
 	      NUMBER,
 	      {
 	        // very common convention
-	        begin: /\bself\b/
+	        scope: 'variable.language',
+	        match: /\bself\b/
 	      },
 	      {
 	        // eat "if" prior to string so that it won't accidentally be
@@ -45309,6 +46154,7 @@ function requirePython () {
 	        beginKeywords: "if",
 	        relevance: 0
 	      },
+	      { match: /\bor\b/, scope: "keyword" },
 	      STRING,
 	      COMMENT_TYPE,
 	      hljs.HASH_COMMENT_MODE,
@@ -45410,6 +46256,7 @@ Description: Q is a vector-based functional paradigm programming language built 
              (K/Q/Kdb+ from Kx Systems)
 Author: Sergey Vidyuk <svidyuk@gmail.com>
 Website: https://kx.com/connect-with-us/developers/
+Category: enterprise, functional, database
 */
 
 var q_1;
@@ -46208,6 +47055,7 @@ Language: MikroTik RouterOS script
 Author: Ivan Dementev <ivan_div@mail.ru>
 Description: Scripting host provides a way to automate some router maintenance tasks by means of executing user-defined scripts bounded to some event occurrence
 Website: https://wiki.mikrotik.com/wiki/Manual:Scripting
+Category: scripting
 */
 
 var routeros_1;
@@ -46633,15 +47481,22 @@ function requireRust () {
 	if (hasRequiredRust) return rust_1;
 	hasRequiredRust = 1;
 	/** @type LanguageFn */
+
 	function rust(hljs) {
 	  const regex = hljs.regex;
+	  // ============================================
+	  // Added to support the r# keyword, which is a raw identifier in Rust.
+	  const RAW_IDENTIFIER = /(r#)?/;
+	  const UNDERSCORE_IDENT_RE = regex.concat(RAW_IDENTIFIER, hljs.UNDERSCORE_IDENT_RE);
+	  const IDENT_RE = regex.concat(RAW_IDENTIFIER, hljs.IDENT_RE);
+	  // ============================================
 	  const FUNCTION_INVOKE = {
 	    className: "title.function.invoke",
 	    relevance: 0,
 	    begin: regex.concat(
 	      /\b/,
 	      /(?!let|for|while|if|else|match\b)/,
-	      hljs.IDENT_RE,
+	      IDENT_RE,
 	      regex.lookahead(/\s*\(/))
 	  };
 	  const NUMBER_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
@@ -46690,6 +47545,7 @@ function requireRust () {
 	    "try",
 	    "type",
 	    "typeof",
+	    "union",
 	    "unsafe",
 	    "unsized",
 	    "use",
@@ -46842,7 +47698,7 @@ function requireRust () {
 	        begin: [
 	          /fn/,
 	          /\s+/,
-	          hljs.UNDERSCORE_IDENT_RE
+	          UNDERSCORE_IDENT_RE
 	        ],
 	        className: {
 	          1: "keyword",
@@ -46857,7 +47713,10 @@ function requireRust () {
 	          {
 	            className: 'string',
 	            begin: /"/,
-	            end: /"/
+	            end: /"/,
+	            contains: [
+	              hljs.BACKSLASH_ESCAPE
+	            ]
 	          }
 	        ]
 	      },
@@ -46866,7 +47725,7 @@ function requireRust () {
 	          /let/,
 	          /\s+/,
 	          /(?:mut\s+)?/,
-	          hljs.UNDERSCORE_IDENT_RE
+	          UNDERSCORE_IDENT_RE
 	        ],
 	        className: {
 	          1: "keyword",
@@ -46879,7 +47738,7 @@ function requireRust () {
 	        begin: [
 	          /for/,
 	          /\s+/,
-	          hljs.UNDERSCORE_IDENT_RE,
+	          UNDERSCORE_IDENT_RE,
 	          /\s+/,
 	          /in/
 	        ],
@@ -46893,7 +47752,7 @@ function requireRust () {
 	        begin: [
 	          /type/,
 	          /\s+/,
-	          hljs.UNDERSCORE_IDENT_RE
+	          UNDERSCORE_IDENT_RE
 	        ],
 	        className: {
 	          1: "keyword",
@@ -46904,7 +47763,7 @@ function requireRust () {
 	        begin: [
 	          /(?:trait|enum|struct|union|impl|for)/,
 	          /\s+/,
-	          hljs.UNDERSCORE_IDENT_RE
+	          UNDERSCORE_IDENT_RE
 	        ],
 	        className: {
 	          1: "keyword",
@@ -46936,6 +47795,7 @@ function requireRust () {
 Language: SAS
 Author: Mauricio Caceres <mauricio.caceres.bravo@gmail.com>
 Description: Syntax Highlighting for SAS
+Category: scientific
 */
 
 var sas_1;
@@ -48058,7 +48918,7 @@ function requireScss () {
 	  };
 	};
 
-	const TAGS = [
+	const HTML_TAGS = [
 	  'a',
 	  'abbr',
 	  'address',
@@ -48110,11 +48970,16 @@ function requireScss () {
 	  'nav',
 	  'object',
 	  'ol',
+	  'optgroup',
+	  'option',
 	  'p',
+	  'picture',
 	  'q',
 	  'quote',
 	  'samp',
 	  'section',
+	  'select',
+	  'source',
 	  'span',
 	  'strong',
 	  'summary',
@@ -48132,6 +48997,58 @@ function requireScss () {
 	  'var',
 	  'video'
 	];
+
+	const SVG_TAGS = [
+	  'defs',
+	  'g',
+	  'marker',
+	  'mask',
+	  'pattern',
+	  'svg',
+	  'switch',
+	  'symbol',
+	  'feBlend',
+	  'feColorMatrix',
+	  'feComponentTransfer',
+	  'feComposite',
+	  'feConvolveMatrix',
+	  'feDiffuseLighting',
+	  'feDisplacementMap',
+	  'feFlood',
+	  'feGaussianBlur',
+	  'feImage',
+	  'feMerge',
+	  'feMorphology',
+	  'feOffset',
+	  'feSpecularLighting',
+	  'feTile',
+	  'feTurbulence',
+	  'linearGradient',
+	  'radialGradient',
+	  'stop',
+	  'circle',
+	  'ellipse',
+	  'image',
+	  'line',
+	  'path',
+	  'polygon',
+	  'polyline',
+	  'rect',
+	  'text',
+	  'use',
+	  'textPath',
+	  'tspan',
+	  'foreignObject',
+	  'clipPath'
+	];
+
+	const TAGS = [
+	  ...HTML_TAGS,
+	  ...SVG_TAGS,
+	];
+
+	// Sorting, then reversing makes sure longer attributes/elements like
+	// `font-weight` are matched fully instead of getting false positives on say `font`
 
 	const MEDIA_FEATURES = [
 	  'any-hover',
@@ -48168,7 +49085,7 @@ function requireScss () {
 	  'max-width',
 	  'min-height',
 	  'max-height'
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 	const PSEUDO_CLASSES = [
@@ -48231,7 +49148,7 @@ function requireScss () {
 	  'valid',
 	  'visited',
 	  'where' // where()
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 	const PSEUDO_ELEMENTS = [
@@ -48249,12 +49166,14 @@ function requireScss () {
 	  'selection',
 	  'slotted',
 	  'spelling-error'
-	];
+	].sort().reverse();
 
 	const ATTRIBUTES = [
+	  'accent-color',
 	  'align-content',
 	  'align-items',
 	  'align-self',
+	  'alignment-baseline',
 	  'all',
 	  'animation',
 	  'animation-delay',
@@ -48265,6 +49184,7 @@ function requireScss () {
 	  'animation-name',
 	  'animation-play-state',
 	  'animation-timing-function',
+	  'appearance',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -48276,6 +49196,7 @@ function requireScss () {
 	  'background-position',
 	  'background-repeat',
 	  'background-size',
+	  'baseline-shift',
 	  'block-size',
 	  'border',
 	  'border-block',
@@ -48322,10 +49243,14 @@ function requireScss () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
 	  'border-spacing',
+	  'border-start-end-radius',
+	  'border-start-start-radius',
 	  'border-style',
 	  'border-top',
 	  'border-top-color',
@@ -48341,6 +49266,8 @@ function requireScss () {
 	  'break-after',
 	  'break-before',
 	  'break-inside',
+	  'cx',
+	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -48348,6 +49275,11 @@ function requireScss () {
 	  'clip-path',
 	  'clip-rule',
 	  'color',
+	  'color-interpolation',
+	  'color-interpolation-filters',
+	  'color-profile',
+	  'color-rendering',
+	  'color-scheme',
 	  'column-count',
 	  'column-fill',
 	  'column-gap',
@@ -48369,7 +49301,12 @@ function requireScss () {
 	  'cursor',
 	  'direction',
 	  'display',
+	  'dominant-baseline',
 	  'empty-cells',
+	  'enable-background',
+	  'fill',
+	  'fill-opacity',
+	  'fill-rule',
 	  'filter',
 	  'flex',
 	  'flex-basis',
@@ -48380,6 +49317,8 @@ function requireScss () {
 	  'flex-wrap',
 	  'float',
 	  'flow',
+	  'flood-color',
+	  'flood-opacity',
 	  'font',
 	  'font-display',
 	  'font-family',
@@ -48401,6 +49340,7 @@ function requireScss () {
 	  'font-variation-settings',
 	  'font-weight',
 	  'gap',
+	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
 	  'grid',
 	  'grid-area',
@@ -48427,16 +49367,32 @@ function requireScss () {
 	  'image-resolution',
 	  'ime-mode',
 	  'inline-size',
+	  'inset',
+	  'inset-block',
+	  'inset-block-end',
+	  'inset-block-start',
+	  'inset-inline',
+	  'inset-inline-end',
+	  'inset-inline-start',
 	  'isolation',
+	  'kerning',
 	  'justify-content',
+	  'justify-items',
+	  'justify-self',
 	  'left',
 	  'letter-spacing',
+	  'lighting-color',
 	  'line-break',
 	  'line-height',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
+	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -48518,12 +49474,15 @@ function requireScss () {
 	  'pointer-events',
 	  'position',
 	  'quotes',
+	  'r',
 	  'resize',
 	  'rest',
 	  'rest-after',
 	  'rest-before',
 	  'right',
+	  'rotate',
 	  'row-gap',
+	  'scale',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -48555,11 +49514,23 @@ function requireScss () {
 	  'shape-image-threshold',
 	  'shape-margin',
 	  'shape-outside',
+	  'shape-rendering',
+	  'stop-color',
+	  'stop-opacity',
+	  'stroke',
+	  'stroke-dasharray',
+	  'stroke-dashoffset',
+	  'stroke-linecap',
+	  'stroke-linejoin',
+	  'stroke-miterlimit',
+	  'stroke-opacity',
+	  'stroke-width',
 	  'speak',
 	  'speak-as',
 	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
+	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
@@ -48567,7 +49538,9 @@ function requireScss () {
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip-ink',
 	  'text-decoration-style',
+	  'text-decoration-thickness',
 	  'text-emphasis',
 	  'text-emphasis-color',
 	  'text-emphasis-position',
@@ -48579,6 +49552,7 @@ function requireScss () {
 	  'text-rendering',
 	  'text-shadow',
 	  'text-transform',
+	  'text-underline-offset',
 	  'text-underline-position',
 	  'top',
 	  'transform',
@@ -48590,7 +49564,9 @@ function requireScss () {
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
+	  'translate',
 	  'unicode-bidi',
+	  'vector-effect',
 	  'vertical-align',
 	  'visibility',
 	  'voice-balance',
@@ -48609,10 +49585,10 @@ function requireScss () {
 	  'word-spacing',
 	  'word-wrap',
 	  'writing-mode',
+	  'x',
+	  'y',
 	  'z-index'
-	  // reverse makes sure longer attributes `font-weight` are matched fully
-	  // instead of getting false positives on say `font`
-	].reverse();
+	].sort().reverse();
 
 	/*
 	Language: SCSS
@@ -48791,6 +49767,7 @@ Language: Smali
 Author: Dennis Titze <dennis.titze@gmail.com>
 Description: Basic Smali highlighting
 Website: https://github.com/JesusFreke/smali
+Category: assembler
 */
 
 var smali_1;
@@ -48925,6 +49902,7 @@ Language: Smalltalk
 Description: Smalltalk is an object-oriented, dynamically typed reflective programming language.
 Author: Vladimir Gubarkov <xonixx@gmail.com>
 Website: https://en.wikipedia.org/wiki/Smalltalk
+Category: system
 */
 
 var smalltalk_1;
@@ -53041,6 +54019,7 @@ Language: STEP Part 21
 Contributors: Adam Joseph Cook <adam.joseph.cook@gmail.com>
 Description: Syntax highlighter for STEP Part 21 files (ISO 10303-21).
 Website: https://en.wikipedia.org/wiki/ISO_10303-21
+Category: syntax
 */
 
 var step21_1;
@@ -53162,7 +54141,7 @@ function requireStylus () {
 	  };
 	};
 
-	const TAGS = [
+	const HTML_TAGS = [
 	  'a',
 	  'abbr',
 	  'address',
@@ -53214,11 +54193,16 @@ function requireStylus () {
 	  'nav',
 	  'object',
 	  'ol',
+	  'optgroup',
+	  'option',
 	  'p',
+	  'picture',
 	  'q',
 	  'quote',
 	  'samp',
 	  'section',
+	  'select',
+	  'source',
 	  'span',
 	  'strong',
 	  'summary',
@@ -53236,6 +54220,58 @@ function requireStylus () {
 	  'var',
 	  'video'
 	];
+
+	const SVG_TAGS = [
+	  'defs',
+	  'g',
+	  'marker',
+	  'mask',
+	  'pattern',
+	  'svg',
+	  'switch',
+	  'symbol',
+	  'feBlend',
+	  'feColorMatrix',
+	  'feComponentTransfer',
+	  'feComposite',
+	  'feConvolveMatrix',
+	  'feDiffuseLighting',
+	  'feDisplacementMap',
+	  'feFlood',
+	  'feGaussianBlur',
+	  'feImage',
+	  'feMerge',
+	  'feMorphology',
+	  'feOffset',
+	  'feSpecularLighting',
+	  'feTile',
+	  'feTurbulence',
+	  'linearGradient',
+	  'radialGradient',
+	  'stop',
+	  'circle',
+	  'ellipse',
+	  'image',
+	  'line',
+	  'path',
+	  'polygon',
+	  'polyline',
+	  'rect',
+	  'text',
+	  'use',
+	  'textPath',
+	  'tspan',
+	  'foreignObject',
+	  'clipPath'
+	];
+
+	const TAGS = [
+	  ...HTML_TAGS,
+	  ...SVG_TAGS,
+	];
+
+	// Sorting, then reversing makes sure longer attributes/elements like
+	// `font-weight` are matched fully instead of getting false positives on say `font`
 
 	const MEDIA_FEATURES = [
 	  'any-hover',
@@ -53272,7 +54308,7 @@ function requireStylus () {
 	  'max-width',
 	  'min-height',
 	  'max-height'
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 	const PSEUDO_CLASSES = [
@@ -53335,7 +54371,7 @@ function requireStylus () {
 	  'valid',
 	  'visited',
 	  'where' // where()
-	];
+	].sort().reverse();
 
 	// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 	const PSEUDO_ELEMENTS = [
@@ -53353,12 +54389,14 @@ function requireStylus () {
 	  'selection',
 	  'slotted',
 	  'spelling-error'
-	];
+	].sort().reverse();
 
 	const ATTRIBUTES = [
+	  'accent-color',
 	  'align-content',
 	  'align-items',
 	  'align-self',
+	  'alignment-baseline',
 	  'all',
 	  'animation',
 	  'animation-delay',
@@ -53369,6 +54407,7 @@ function requireStylus () {
 	  'animation-name',
 	  'animation-play-state',
 	  'animation-timing-function',
+	  'appearance',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -53380,6 +54419,7 @@ function requireStylus () {
 	  'background-position',
 	  'background-repeat',
 	  'background-size',
+	  'baseline-shift',
 	  'block-size',
 	  'border',
 	  'border-block',
@@ -53426,10 +54466,14 @@ function requireStylus () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
 	  'border-spacing',
+	  'border-start-end-radius',
+	  'border-start-start-radius',
 	  'border-style',
 	  'border-top',
 	  'border-top-color',
@@ -53445,6 +54489,8 @@ function requireStylus () {
 	  'break-after',
 	  'break-before',
 	  'break-inside',
+	  'cx',
+	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -53452,6 +54498,11 @@ function requireStylus () {
 	  'clip-path',
 	  'clip-rule',
 	  'color',
+	  'color-interpolation',
+	  'color-interpolation-filters',
+	  'color-profile',
+	  'color-rendering',
+	  'color-scheme',
 	  'column-count',
 	  'column-fill',
 	  'column-gap',
@@ -53473,7 +54524,12 @@ function requireStylus () {
 	  'cursor',
 	  'direction',
 	  'display',
+	  'dominant-baseline',
 	  'empty-cells',
+	  'enable-background',
+	  'fill',
+	  'fill-opacity',
+	  'fill-rule',
 	  'filter',
 	  'flex',
 	  'flex-basis',
@@ -53484,6 +54540,8 @@ function requireStylus () {
 	  'flex-wrap',
 	  'float',
 	  'flow',
+	  'flood-color',
+	  'flood-opacity',
 	  'font',
 	  'font-display',
 	  'font-family',
@@ -53505,6 +54563,7 @@ function requireStylus () {
 	  'font-variation-settings',
 	  'font-weight',
 	  'gap',
+	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
 	  'grid',
 	  'grid-area',
@@ -53531,16 +54590,32 @@ function requireStylus () {
 	  'image-resolution',
 	  'ime-mode',
 	  'inline-size',
+	  'inset',
+	  'inset-block',
+	  'inset-block-end',
+	  'inset-block-start',
+	  'inset-inline',
+	  'inset-inline-end',
+	  'inset-inline-start',
 	  'isolation',
+	  'kerning',
 	  'justify-content',
+	  'justify-items',
+	  'justify-self',
 	  'left',
 	  'letter-spacing',
+	  'lighting-color',
 	  'line-break',
 	  'line-height',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
+	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -53622,12 +54697,15 @@ function requireStylus () {
 	  'pointer-events',
 	  'position',
 	  'quotes',
+	  'r',
 	  'resize',
 	  'rest',
 	  'rest-after',
 	  'rest-before',
 	  'right',
+	  'rotate',
 	  'row-gap',
+	  'scale',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -53659,11 +54737,23 @@ function requireStylus () {
 	  'shape-image-threshold',
 	  'shape-margin',
 	  'shape-outside',
+	  'shape-rendering',
+	  'stop-color',
+	  'stop-opacity',
+	  'stroke',
+	  'stroke-dasharray',
+	  'stroke-dashoffset',
+	  'stroke-linecap',
+	  'stroke-linejoin',
+	  'stroke-miterlimit',
+	  'stroke-opacity',
+	  'stroke-width',
 	  'speak',
 	  'speak-as',
 	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
+	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
@@ -53671,7 +54761,9 @@ function requireStylus () {
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip-ink',
 	  'text-decoration-style',
+	  'text-decoration-thickness',
 	  'text-emphasis',
 	  'text-emphasis-color',
 	  'text-emphasis-position',
@@ -53683,6 +54775,7 @@ function requireStylus () {
 	  'text-rendering',
 	  'text-shadow',
 	  'text-transform',
+	  'text-underline-offset',
 	  'text-underline-position',
 	  'top',
 	  'transform',
@@ -53694,7 +54787,9 @@ function requireStylus () {
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
+	  'translate',
 	  'unicode-bidi',
+	  'vector-effect',
 	  'vertical-align',
 	  'visibility',
 	  'voice-balance',
@@ -53713,10 +54808,10 @@ function requireStylus () {
 	  'word-spacing',
 	  'word-wrap',
 	  'writing-mode',
+	  'x',
+	  'y',
 	  'z-index'
-	  // reverse makes sure longer attributes `font-weight` are matched fully
-	  // instead of getting false positives on say `font`
-	].reverse();
+	].sort().reverse();
 
 	/*
 	Language: Stylus
@@ -53912,6 +55007,7 @@ function requireStylus () {
 Language: SubUnit
 Author: Sergey Bronnikov <sergeyb@bronevichok.ru>
 Website: https://pypi.org/project/python-subunit/
+Category: protocols
 */
 
 var subunit_1;
@@ -54121,6 +55217,7 @@ function requireSwift () {
 	  'operator',
 	  'optional', // contextual
 	  'override', // contextual
+	  'package',
 	  'postfix', // contextual
 	  'precedencegroup',
 	  'prefix', // contextual
@@ -54617,14 +55714,17 @@ function requireSwift () {
 	      }
 	    ] }
 	  };
+
 	  const KEYWORD_ATTRIBUTE = {
 	    scope: 'keyword',
-	    match: concat(/@/, either(...keywordAttributes))
+	    match: concat(/@/, either(...keywordAttributes), lookahead(either(/\(/, /\s+/))),
 	  };
+
 	  const USER_DEFINED_ATTRIBUTE = {
 	    scope: 'meta',
 	    match: concat(/@/, identifier)
 	  };
+
 	  const ATTRIBUTES = [
 	    AVAILABLE_ATTRIBUTE,
 	    KEYWORD_ATTRIBUTE,
@@ -54817,6 +55917,37 @@ function requireSwift () {
 	    end: /}/
 	  };
 
+	  const TYPE_DECLARATION = {
+	    begin: [
+	      /(struct|protocol|class|extension|enum|actor)/,
+	      /\s+/,
+	      identifier,
+	      /\s*/,
+	    ],
+	    beginScope: {
+	      1: "keyword",
+	      3: "title.class"
+	    },
+	    keywords: KEYWORDS,
+	    contains: [
+	      GENERIC_PARAMETERS,
+	      ...KEYWORD_MODES,
+	      {
+	        begin: /:/,
+	        end: /\{/,
+	        keywords: KEYWORDS,
+	        contains: [
+	          {
+	            scope: "title.class.inherited",
+	            match: typeIdentifier,
+	          },
+	          ...KEYWORD_MODES,
+	        ],
+	        relevance: 0,
+	      },
+	    ]
+	  };
+
 	  // Add supported submodes to string interpolation.
 	  for (const variant of STRING.variants) {
 	    const interpolation = variant.contains.find(mode => mode.label === "interpol");
@@ -54850,19 +55981,7 @@ function requireSwift () {
 	      ...COMMENTS,
 	      FUNCTION_OR_MACRO,
 	      INIT_SUBSCRIPT,
-	      {
-	        beginKeywords: 'struct protocol class extension enum actor',
-	        end: '\\{',
-	        excludeEnd: true,
-	        keywords: KEYWORDS,
-	        contains: [
-	          hljs.inherit(hljs.TITLE_MODE, {
-	            className: "title.class",
-	            begin: /[A-Za-z$_][\u00C0-\u02B80-9A-Za-z$_]*/
-	          }),
-	          ...KEYWORD_MODES
-	        ]
-	      },
+	      TYPE_DECLARATION,
 	      OPERATOR_DECLARATION,
 	      PRECEDENCEGROUP,
 	      {
@@ -54894,6 +56013,7 @@ Language: Tagger Script
 Author: Philipp Wolfer <ph.wolfer@gmail.com>
 Description: Syntax Highlighting for the Tagger Script as used by MusicBrainz Picard.
 Website: https://picard.musicbrainz.org
+Category: scripting
  */
 
 var taggerscript_1;
@@ -54986,11 +56106,12 @@ function requireYaml () {
 	  const KEY = {
 	    className: 'attr',
 	    variants: [
-	      { begin: '\\w[\\w :\\/.-]*:(?=[ \t]|$)' },
-	      { // double quoted keys
-	        begin: '"\\w[\\w :\\/.-]*":(?=[ \t]|$)' },
-	      { // single quoted keys
-	        begin: '\'\\w[\\w :\\/.-]*\':(?=[ \t]|$)' }
+	      // added brackets support 
+	      { begin: /\w[\w :()\./-]*:(?=[ \t]|$)/ },
+	      { // double quoted keys - with brackets
+	        begin: /"\w[\w :()\./-]*":(?=[ \t]|$)/ },
+	      { // single quoted keys - with brackets
+	        begin: /'\w[\w :()\./-]*':(?=[ \t]|$)/ },
 	    ]
 	  };
 
@@ -55222,6 +56343,7 @@ Language: Tcl
 Description: Tcl is a very simple programming language.
 Author: Radek Liska <radekliska@gmail.com>
 Website: https://www.tcl.tk/about/language.html
+Category: scripting
 */
 
 var tcl_1;
@@ -55506,6 +56628,7 @@ function requireThrift () {
 Language: TP
 Author: Jay Strybis <jay.strybis@gmail.com>
 Description: FANUC TP programming language (TPP).
+Category: hardware
 */
 
 var tp_1;
@@ -56249,7 +57372,7 @@ function requireTypescript () {
 	    contains: [] // defined later
 	  };
 	  const HTML_TEMPLATE = {
-	    begin: 'html`',
+	    begin: '\.?html`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -56262,7 +57385,7 @@ function requireTypescript () {
 	    }
 	  };
 	  const CSS_TEMPLATE = {
-	    begin: 'css`',
+	    begin: '\.?css`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -56275,7 +57398,7 @@ function requireTypescript () {
 	    }
 	  };
 	  const GRAPHQL_TEMPLATE = {
-	    begin: 'gql`',
+	    begin: '\.?gql`',
 	    end: '',
 	    starts: {
 	      end: '`',
@@ -56372,7 +57495,7 @@ function requireTypescript () {
 	  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
 	    // eat recursive parens in sub expressions
 	    {
-	      begin: /\(/,
+	      begin: /(\s*)\(/,
 	      end: /\)/,
 	      keywords: KEYWORDS$1,
 	      contains: ["self"].concat(SUBST_AND_COMMENTS)
@@ -56380,7 +57503,8 @@ function requireTypescript () {
 	  ]);
 	  const PARAMS = {
 	    className: 'params',
-	    begin: /\(/,
+	    // convert this to negative lookbehind in v12
+	    begin: /(\s*)\(/, // to match the parms with 
 	    end: /\)/,
 	    excludeBegin: true,
 	    excludeEnd: true,
@@ -56503,8 +57627,8 @@ function requireTypescript () {
 	        ...BUILT_IN_GLOBALS,
 	        "super",
 	        "import"
-	      ]),
-	      IDENT_RE$1, regex.lookahead(/\(/)),
+	      ].map(x => `${x}\\s*\\(`)),
+	      IDENT_RE$1, regex.lookahead(/\s*\(/)),
 	    className: "title.function",
 	    relevance: 0
 	  };
@@ -56625,7 +57749,7 @@ function requireTypescript () {
 	                    skip: true
 	                  },
 	                  {
-	                    begin: /\(/,
+	                    begin: /(\s*)\(/,
 	                    end: /\)/,
 	                    excludeBegin: true,
 	                    excludeEnd: true,
@@ -56750,10 +57874,15 @@ function requireTypescript () {
 	    "unknown"
 	  ];
 	  const NAMESPACE = {
-	    beginKeywords: 'namespace',
-	    end: /\{/,
-	    excludeEnd: true,
-	    contains: [ tsLanguage.exports.CLASS_REFERENCE ]
+	    begin: [
+	      /namespace/,
+	      /\s+/,
+	      hljs.IDENT_RE
+	    ],
+	    beginScope: {
+	      1: "keyword",
+	      3: "title.class"
+	    }
 	  };
 	  const INTERFACE = {
 	    beginKeywords: 'interface',
@@ -56772,7 +57901,7 @@ function requireTypescript () {
 	  };
 	  const TS_SPECIFIC_KEYWORDS = [
 	    "type",
-	    "namespace",
+	    // "namespace",
 	    "interface",
 	    "public",
 	    "private",
@@ -56782,8 +57911,16 @@ function requireTypescript () {
 	    "abstract",
 	    "readonly",
 	    "enum",
-	    "override"
+	    "override",
+	    "satisfies"
 	  ];
+
+	  /*
+	    namespace is a TS keyword but it's fine to use it as a variable name too.
+	    const message = 'foo';
+	    const namespace = 'bar';
+	  */
+
 	  const KEYWORDS$1 = {
 	    $pattern: IDENT_RE,
 	    keyword: KEYWORDS.concat(TS_SPECIFIC_KEYWORDS),
@@ -56809,6 +57946,13 @@ function requireTypescript () {
 	  Object.assign(tsLanguage.keywords, KEYWORDS$1);
 
 	  tsLanguage.exports.PARAMS_CONTAINS.push(DECORATOR);
+
+	  // highlight the function params
+	  const ATTRIBUTE_HIGHLIGHT = tsLanguage.contains.find(c => c.className === "attr");
+	  tsLanguage.exports.PARAMS_CONTAINS.push([
+	    tsLanguage.exports.CLASS_REFERENCE, // class reference for highlighting the params types
+	    ATTRIBUTE_HIGHLIGHT, // highlight the params key
+	  ]);
 	  tsLanguage.contains = tsLanguage.contains.concat([
 	    DECORATOR,
 	    NAMESPACE,
@@ -56845,6 +57989,7 @@ Language: Vala
 Author: Antono Vasiljev <antono.vasiljev@gmail.com>
 Description: Vala is a new programming language that aims to bring modern programming language features to GNOME developers without imposing any additional runtime requirements and without using a different ABI compared to applications and libraries written in C.
 Website: https://wiki.gnome.org/Projects/Vala
+Category: system
 */
 
 var vala_1;
@@ -57343,6 +58488,7 @@ Author: Jon Evans <jon@craftyjon.com>
 Contributors: Boone Severson <boone.severson@gmail.com>
 Description: Verilog is a hardware description language used in electronic design automation to describe digital and mixed-signal systems. This highlighter supports Verilog and SystemVerilog through IEEE 1800-2012.
 Website: http://www.verilog.com
+Category: hardware
 */
 
 var verilog_1;
@@ -57901,6 +59047,7 @@ Author: Igor Kalnitsky <igor@kalnitsky.org>
 Contributors: Daniel C.K. Kho <daniel.kho@tauhop.com>, Guillaume Savaton <guillaume.savaton@eseo.fr>
 Description: VHDL is a hardware description language used in electronic design automation to describe digital and mixed-signal systems.
 Website: https://en.wikipedia.org/wiki/VHDL
+Category: hardware
 */
 
 var vhdl_1;
@@ -59466,6 +60613,7 @@ function requireXquery () {
  Description: Zephir, an open source, high-level language designed to ease the creation and maintainability of extensions for PHP with a focus on type and memory safety.
  Author: Oleg Efimov <efimovov@gmail.com>
  Website: https://zephir-lang.com/en
+ Category: web
  Audit: 2020
  */
 
@@ -59598,206 +60746,215 @@ function requireZephir () {
 	return zephir_1;
 }
 
-var hljs = core;
+var lib;
+var hasRequiredLib;
 
-hljs.registerLanguage('1c', require_1c());
-hljs.registerLanguage('abnf', requireAbnf());
-hljs.registerLanguage('accesslog', requireAccesslog());
-hljs.registerLanguage('actionscript', requireActionscript());
-hljs.registerLanguage('ada', requireAda());
-hljs.registerLanguage('angelscript', requireAngelscript());
-hljs.registerLanguage('apache', requireApache());
-hljs.registerLanguage('applescript', requireApplescript());
-hljs.registerLanguage('arcade', requireArcade());
-hljs.registerLanguage('arduino', requireArduino());
-hljs.registerLanguage('armasm', requireArmasm());
-hljs.registerLanguage('xml', requireXml());
-hljs.registerLanguage('asciidoc', requireAsciidoc());
-hljs.registerLanguage('aspectj', requireAspectj());
-hljs.registerLanguage('autohotkey', requireAutohotkey());
-hljs.registerLanguage('autoit', requireAutoit());
-hljs.registerLanguage('avrasm', requireAvrasm());
-hljs.registerLanguage('awk', requireAwk());
-hljs.registerLanguage('axapta', requireAxapta());
-hljs.registerLanguage('bash', requireBash());
-hljs.registerLanguage('basic', requireBasic());
-hljs.registerLanguage('bnf', requireBnf());
-hljs.registerLanguage('brainfuck', requireBrainfuck());
-hljs.registerLanguage('c', requireC());
-hljs.registerLanguage('cal', requireCal());
-hljs.registerLanguage('capnproto', requireCapnproto());
-hljs.registerLanguage('ceylon', requireCeylon());
-hljs.registerLanguage('clean', requireClean());
-hljs.registerLanguage('clojure', requireClojure());
-hljs.registerLanguage('clojure-repl', requireClojureRepl());
-hljs.registerLanguage('cmake', requireCmake());
-hljs.registerLanguage('coffeescript', requireCoffeescript());
-hljs.registerLanguage('coq', requireCoq());
-hljs.registerLanguage('cos', requireCos());
-hljs.registerLanguage('cpp', requireCpp());
-hljs.registerLanguage('crmsh', requireCrmsh());
-hljs.registerLanguage('crystal', requireCrystal());
-hljs.registerLanguage('csharp', requireCsharp());
-hljs.registerLanguage('csp', requireCsp());
-hljs.registerLanguage('css', requireCss());
-hljs.registerLanguage('d', requireD());
-hljs.registerLanguage('markdown', requireMarkdown());
-hljs.registerLanguage('dart', requireDart());
-hljs.registerLanguage('delphi', requireDelphi());
-hljs.registerLanguage('diff', requireDiff());
-hljs.registerLanguage('django', requireDjango());
-hljs.registerLanguage('dns', requireDns());
-hljs.registerLanguage('dockerfile', requireDockerfile());
-hljs.registerLanguage('dos', requireDos());
-hljs.registerLanguage('dsconfig', requireDsconfig());
-hljs.registerLanguage('dts', requireDts());
-hljs.registerLanguage('dust', requireDust());
-hljs.registerLanguage('ebnf', requireEbnf());
-hljs.registerLanguage('elixir', requireElixir());
-hljs.registerLanguage('elm', requireElm());
-hljs.registerLanguage('ruby', requireRuby());
-hljs.registerLanguage('erb', requireErb());
-hljs.registerLanguage('erlang-repl', requireErlangRepl());
-hljs.registerLanguage('erlang', requireErlang());
-hljs.registerLanguage('excel', requireExcel());
-hljs.registerLanguage('fix', requireFix());
-hljs.registerLanguage('flix', requireFlix());
-hljs.registerLanguage('fortran', requireFortran());
-hljs.registerLanguage('fsharp', requireFsharp());
-hljs.registerLanguage('gams', requireGams());
-hljs.registerLanguage('gauss', requireGauss());
-hljs.registerLanguage('gcode', requireGcode());
-hljs.registerLanguage('gherkin', requireGherkin());
-hljs.registerLanguage('glsl', requireGlsl());
-hljs.registerLanguage('gml', requireGml());
-hljs.registerLanguage('go', requireGo());
-hljs.registerLanguage('golo', requireGolo());
-hljs.registerLanguage('gradle', requireGradle());
-hljs.registerLanguage('graphql', requireGraphql());
-hljs.registerLanguage('groovy', requireGroovy());
-hljs.registerLanguage('haml', requireHaml());
-hljs.registerLanguage('handlebars', requireHandlebars());
-hljs.registerLanguage('haskell', requireHaskell());
-hljs.registerLanguage('haxe', requireHaxe());
-hljs.registerLanguage('hsp', requireHsp());
-hljs.registerLanguage('http', requireHttp());
-hljs.registerLanguage('hy', requireHy());
-hljs.registerLanguage('inform7', requireInform7());
-hljs.registerLanguage('ini', requireIni());
-hljs.registerLanguage('irpf90', requireIrpf90());
-hljs.registerLanguage('isbl', requireIsbl());
-hljs.registerLanguage('java', requireJava());
-hljs.registerLanguage('javascript', requireJavascript());
-hljs.registerLanguage('jboss-cli', requireJbossCli());
-hljs.registerLanguage('json', requireJson());
-hljs.registerLanguage('julia', requireJulia());
-hljs.registerLanguage('julia-repl', requireJuliaRepl());
-hljs.registerLanguage('kotlin', requireKotlin());
-hljs.registerLanguage('lasso', requireLasso());
-hljs.registerLanguage('latex', requireLatex());
-hljs.registerLanguage('ldif', requireLdif());
-hljs.registerLanguage('leaf', requireLeaf());
-hljs.registerLanguage('less', requireLess());
-hljs.registerLanguage('lisp', requireLisp());
-hljs.registerLanguage('livecodeserver', requireLivecodeserver());
-hljs.registerLanguage('livescript', requireLivescript());
-hljs.registerLanguage('llvm', requireLlvm());
-hljs.registerLanguage('lsl', requireLsl());
-hljs.registerLanguage('lua', requireLua());
-hljs.registerLanguage('makefile', requireMakefile());
-hljs.registerLanguage('mathematica', requireMathematica());
-hljs.registerLanguage('matlab', requireMatlab());
-hljs.registerLanguage('maxima', requireMaxima());
-hljs.registerLanguage('mel', requireMel());
-hljs.registerLanguage('mercury', requireMercury());
-hljs.registerLanguage('mipsasm', requireMipsasm());
-hljs.registerLanguage('mizar', requireMizar());
-hljs.registerLanguage('perl', requirePerl());
-hljs.registerLanguage('mojolicious', requireMojolicious());
-hljs.registerLanguage('monkey', requireMonkey());
-hljs.registerLanguage('moonscript', requireMoonscript());
-hljs.registerLanguage('n1ql', requireN1ql());
-hljs.registerLanguage('nestedtext', requireNestedtext());
-hljs.registerLanguage('nginx', requireNginx());
-hljs.registerLanguage('nim', requireNim());
-hljs.registerLanguage('nix', requireNix());
-hljs.registerLanguage('node-repl', requireNodeRepl());
-hljs.registerLanguage('nsis', requireNsis());
-hljs.registerLanguage('objectivec', requireObjectivec());
-hljs.registerLanguage('ocaml', requireOcaml());
-hljs.registerLanguage('openscad', requireOpenscad());
-hljs.registerLanguage('oxygene', requireOxygene());
-hljs.registerLanguage('parser3', requireParser3());
-hljs.registerLanguage('pf', requirePf());
-hljs.registerLanguage('pgsql', requirePgsql());
-hljs.registerLanguage('php', requirePhp());
-hljs.registerLanguage('php-template', requirePhpTemplate());
-hljs.registerLanguage('plaintext', requirePlaintext());
-hljs.registerLanguage('pony', requirePony());
-hljs.registerLanguage('powershell', requirePowershell());
-hljs.registerLanguage('processing', requireProcessing());
-hljs.registerLanguage('profile', requireProfile());
-hljs.registerLanguage('prolog', requireProlog());
-hljs.registerLanguage('properties', requireProperties());
-hljs.registerLanguage('protobuf', requireProtobuf());
-hljs.registerLanguage('puppet', requirePuppet());
-hljs.registerLanguage('purebasic', requirePurebasic());
-hljs.registerLanguage('python', requirePython());
-hljs.registerLanguage('python-repl', requirePythonRepl());
-hljs.registerLanguage('q', requireQ());
-hljs.registerLanguage('qml', requireQml());
-hljs.registerLanguage('r', requireR());
-hljs.registerLanguage('reasonml', requireReasonml());
-hljs.registerLanguage('rib', requireRib());
-hljs.registerLanguage('roboconf', requireRoboconf());
-hljs.registerLanguage('routeros', requireRouteros());
-hljs.registerLanguage('rsl', requireRsl());
-hljs.registerLanguage('ruleslanguage', requireRuleslanguage());
-hljs.registerLanguage('rust', requireRust());
-hljs.registerLanguage('sas', requireSas());
-hljs.registerLanguage('scala', requireScala());
-hljs.registerLanguage('scheme', requireScheme());
-hljs.registerLanguage('scilab', requireScilab());
-hljs.registerLanguage('scss', requireScss());
-hljs.registerLanguage('shell', requireShell());
-hljs.registerLanguage('smali', requireSmali());
-hljs.registerLanguage('smalltalk', requireSmalltalk());
-hljs.registerLanguage('sml', requireSml());
-hljs.registerLanguage('sqf', requireSqf());
-hljs.registerLanguage('sql', requireSql());
-hljs.registerLanguage('stan', requireStan());
-hljs.registerLanguage('stata', requireStata());
-hljs.registerLanguage('step21', requireStep21());
-hljs.registerLanguage('stylus', requireStylus());
-hljs.registerLanguage('subunit', requireSubunit());
-hljs.registerLanguage('swift', requireSwift());
-hljs.registerLanguage('taggerscript', requireTaggerscript());
-hljs.registerLanguage('yaml', requireYaml());
-hljs.registerLanguage('tap', requireTap());
-hljs.registerLanguage('tcl', requireTcl());
-hljs.registerLanguage('thrift', requireThrift());
-hljs.registerLanguage('tp', requireTp());
-hljs.registerLanguage('twig', requireTwig());
-hljs.registerLanguage('typescript', requireTypescript());
-hljs.registerLanguage('vala', requireVala());
-hljs.registerLanguage('vbnet', requireVbnet());
-hljs.registerLanguage('vbscript', requireVbscript());
-hljs.registerLanguage('vbscript-html', requireVbscriptHtml());
-hljs.registerLanguage('verilog', requireVerilog());
-hljs.registerLanguage('vhdl', requireVhdl());
-hljs.registerLanguage('vim', requireVim());
-hljs.registerLanguage('wasm', requireWasm());
-hljs.registerLanguage('wren', requireWren());
-hljs.registerLanguage('x86asm', requireX86asm());
-hljs.registerLanguage('xl', requireXl());
-hljs.registerLanguage('xquery', requireXquery());
-hljs.registerLanguage('zephir', requireZephir());
+function requireLib () {
+	if (hasRequiredLib) return lib;
+	hasRequiredLib = 1;
+	var hljs = /*@__PURE__*/ requireCore();
 
-hljs.HighlightJS = hljs;
-hljs.default = hljs;
-var lib = hljs;
+	hljs.registerLanguage('1c', /*@__PURE__*/ require_1c());
+	hljs.registerLanguage('abnf', /*@__PURE__*/ requireAbnf());
+	hljs.registerLanguage('accesslog', /*@__PURE__*/ requireAccesslog());
+	hljs.registerLanguage('actionscript', /*@__PURE__*/ requireActionscript());
+	hljs.registerLanguage('ada', /*@__PURE__*/ requireAda());
+	hljs.registerLanguage('angelscript', /*@__PURE__*/ requireAngelscript());
+	hljs.registerLanguage('apache', /*@__PURE__*/ requireApache());
+	hljs.registerLanguage('applescript', /*@__PURE__*/ requireApplescript());
+	hljs.registerLanguage('arcade', /*@__PURE__*/ requireArcade());
+	hljs.registerLanguage('arduino', /*@__PURE__*/ requireArduino());
+	hljs.registerLanguage('armasm', /*@__PURE__*/ requireArmasm());
+	hljs.registerLanguage('xml', /*@__PURE__*/ requireXml());
+	hljs.registerLanguage('asciidoc', /*@__PURE__*/ requireAsciidoc());
+	hljs.registerLanguage('aspectj', /*@__PURE__*/ requireAspectj());
+	hljs.registerLanguage('autohotkey', /*@__PURE__*/ requireAutohotkey());
+	hljs.registerLanguage('autoit', /*@__PURE__*/ requireAutoit());
+	hljs.registerLanguage('avrasm', /*@__PURE__*/ requireAvrasm());
+	hljs.registerLanguage('awk', /*@__PURE__*/ requireAwk());
+	hljs.registerLanguage('axapta', /*@__PURE__*/ requireAxapta());
+	hljs.registerLanguage('bash', /*@__PURE__*/ requireBash());
+	hljs.registerLanguage('basic', /*@__PURE__*/ requireBasic());
+	hljs.registerLanguage('bnf', /*@__PURE__*/ requireBnf());
+	hljs.registerLanguage('brainfuck', /*@__PURE__*/ requireBrainfuck());
+	hljs.registerLanguage('c', /*@__PURE__*/ requireC());
+	hljs.registerLanguage('cal', /*@__PURE__*/ requireCal());
+	hljs.registerLanguage('capnproto', /*@__PURE__*/ requireCapnproto());
+	hljs.registerLanguage('ceylon', /*@__PURE__*/ requireCeylon());
+	hljs.registerLanguage('clean', /*@__PURE__*/ requireClean());
+	hljs.registerLanguage('clojure', /*@__PURE__*/ requireClojure());
+	hljs.registerLanguage('clojure-repl', /*@__PURE__*/ requireClojureRepl());
+	hljs.registerLanguage('cmake', /*@__PURE__*/ requireCmake());
+	hljs.registerLanguage('coffeescript', /*@__PURE__*/ requireCoffeescript());
+	hljs.registerLanguage('coq', /*@__PURE__*/ requireCoq());
+	hljs.registerLanguage('cos', /*@__PURE__*/ requireCos());
+	hljs.registerLanguage('cpp', /*@__PURE__*/ requireCpp());
+	hljs.registerLanguage('crmsh', /*@__PURE__*/ requireCrmsh());
+	hljs.registerLanguage('crystal', /*@__PURE__*/ requireCrystal());
+	hljs.registerLanguage('csharp', /*@__PURE__*/ requireCsharp());
+	hljs.registerLanguage('csp', /*@__PURE__*/ requireCsp());
+	hljs.registerLanguage('css', /*@__PURE__*/ requireCss());
+	hljs.registerLanguage('d', /*@__PURE__*/ requireD());
+	hljs.registerLanguage('markdown', /*@__PURE__*/ requireMarkdown());
+	hljs.registerLanguage('dart', /*@__PURE__*/ requireDart());
+	hljs.registerLanguage('delphi', /*@__PURE__*/ requireDelphi());
+	hljs.registerLanguage('diff', /*@__PURE__*/ requireDiff());
+	hljs.registerLanguage('django', /*@__PURE__*/ requireDjango());
+	hljs.registerLanguage('dns', /*@__PURE__*/ requireDns());
+	hljs.registerLanguage('dockerfile', /*@__PURE__*/ requireDockerfile());
+	hljs.registerLanguage('dos', /*@__PURE__*/ requireDos());
+	hljs.registerLanguage('dsconfig', /*@__PURE__*/ requireDsconfig());
+	hljs.registerLanguage('dts', /*@__PURE__*/ requireDts());
+	hljs.registerLanguage('dust', /*@__PURE__*/ requireDust());
+	hljs.registerLanguage('ebnf', /*@__PURE__*/ requireEbnf());
+	hljs.registerLanguage('elixir', /*@__PURE__*/ requireElixir());
+	hljs.registerLanguage('elm', /*@__PURE__*/ requireElm());
+	hljs.registerLanguage('ruby', /*@__PURE__*/ requireRuby());
+	hljs.registerLanguage('erb', /*@__PURE__*/ requireErb());
+	hljs.registerLanguage('erlang-repl', /*@__PURE__*/ requireErlangRepl());
+	hljs.registerLanguage('erlang', /*@__PURE__*/ requireErlang());
+	hljs.registerLanguage('excel', /*@__PURE__*/ requireExcel());
+	hljs.registerLanguage('fix', /*@__PURE__*/ requireFix());
+	hljs.registerLanguage('flix', /*@__PURE__*/ requireFlix());
+	hljs.registerLanguage('fortran', /*@__PURE__*/ requireFortran());
+	hljs.registerLanguage('fsharp', /*@__PURE__*/ requireFsharp());
+	hljs.registerLanguage('gams', /*@__PURE__*/ requireGams());
+	hljs.registerLanguage('gauss', /*@__PURE__*/ requireGauss());
+	hljs.registerLanguage('gcode', /*@__PURE__*/ requireGcode());
+	hljs.registerLanguage('gherkin', /*@__PURE__*/ requireGherkin());
+	hljs.registerLanguage('glsl', /*@__PURE__*/ requireGlsl());
+	hljs.registerLanguage('gml', /*@__PURE__*/ requireGml());
+	hljs.registerLanguage('go', /*@__PURE__*/ requireGo());
+	hljs.registerLanguage('golo', /*@__PURE__*/ requireGolo());
+	hljs.registerLanguage('gradle', /*@__PURE__*/ requireGradle());
+	hljs.registerLanguage('graphql', /*@__PURE__*/ requireGraphql());
+	hljs.registerLanguage('groovy', /*@__PURE__*/ requireGroovy());
+	hljs.registerLanguage('haml', /*@__PURE__*/ requireHaml());
+	hljs.registerLanguage('handlebars', /*@__PURE__*/ requireHandlebars());
+	hljs.registerLanguage('haskell', /*@__PURE__*/ requireHaskell());
+	hljs.registerLanguage('haxe', /*@__PURE__*/ requireHaxe());
+	hljs.registerLanguage('hsp', /*@__PURE__*/ requireHsp());
+	hljs.registerLanguage('http', /*@__PURE__*/ requireHttp());
+	hljs.registerLanguage('hy', /*@__PURE__*/ requireHy());
+	hljs.registerLanguage('inform7', /*@__PURE__*/ requireInform7());
+	hljs.registerLanguage('ini', /*@__PURE__*/ requireIni());
+	hljs.registerLanguage('irpf90', /*@__PURE__*/ requireIrpf90());
+	hljs.registerLanguage('isbl', /*@__PURE__*/ requireIsbl());
+	hljs.registerLanguage('java', /*@__PURE__*/ requireJava());
+	hljs.registerLanguage('javascript', /*@__PURE__*/ requireJavascript());
+	hljs.registerLanguage('jboss-cli', /*@__PURE__*/ requireJbossCli());
+	hljs.registerLanguage('json', /*@__PURE__*/ requireJson());
+	hljs.registerLanguage('julia', /*@__PURE__*/ requireJulia());
+	hljs.registerLanguage('julia-repl', /*@__PURE__*/ requireJuliaRepl());
+	hljs.registerLanguage('kotlin', /*@__PURE__*/ requireKotlin());
+	hljs.registerLanguage('lasso', /*@__PURE__*/ requireLasso());
+	hljs.registerLanguage('latex', /*@__PURE__*/ requireLatex());
+	hljs.registerLanguage('ldif', /*@__PURE__*/ requireLdif());
+	hljs.registerLanguage('leaf', /*@__PURE__*/ requireLeaf());
+	hljs.registerLanguage('less', /*@__PURE__*/ requireLess());
+	hljs.registerLanguage('lisp', /*@__PURE__*/ requireLisp());
+	hljs.registerLanguage('livecodeserver', /*@__PURE__*/ requireLivecodeserver());
+	hljs.registerLanguage('livescript', /*@__PURE__*/ requireLivescript());
+	hljs.registerLanguage('llvm', /*@__PURE__*/ requireLlvm());
+	hljs.registerLanguage('lsl', /*@__PURE__*/ requireLsl());
+	hljs.registerLanguage('lua', /*@__PURE__*/ requireLua());
+	hljs.registerLanguage('makefile', /*@__PURE__*/ requireMakefile());
+	hljs.registerLanguage('mathematica', /*@__PURE__*/ requireMathematica());
+	hljs.registerLanguage('matlab', /*@__PURE__*/ requireMatlab());
+	hljs.registerLanguage('maxima', /*@__PURE__*/ requireMaxima());
+	hljs.registerLanguage('mel', /*@__PURE__*/ requireMel());
+	hljs.registerLanguage('mercury', /*@__PURE__*/ requireMercury());
+	hljs.registerLanguage('mipsasm', /*@__PURE__*/ requireMipsasm());
+	hljs.registerLanguage('mizar', /*@__PURE__*/ requireMizar());
+	hljs.registerLanguage('perl', /*@__PURE__*/ requirePerl());
+	hljs.registerLanguage('mojolicious', /*@__PURE__*/ requireMojolicious());
+	hljs.registerLanguage('monkey', /*@__PURE__*/ requireMonkey());
+	hljs.registerLanguage('moonscript', /*@__PURE__*/ requireMoonscript());
+	hljs.registerLanguage('n1ql', /*@__PURE__*/ requireN1ql());
+	hljs.registerLanguage('nestedtext', /*@__PURE__*/ requireNestedtext());
+	hljs.registerLanguage('nginx', /*@__PURE__*/ requireNginx());
+	hljs.registerLanguage('nim', /*@__PURE__*/ requireNim());
+	hljs.registerLanguage('nix', /*@__PURE__*/ requireNix());
+	hljs.registerLanguage('node-repl', /*@__PURE__*/ requireNodeRepl());
+	hljs.registerLanguage('nsis', /*@__PURE__*/ requireNsis());
+	hljs.registerLanguage('objectivec', /*@__PURE__*/ requireObjectivec());
+	hljs.registerLanguage('ocaml', /*@__PURE__*/ requireOcaml());
+	hljs.registerLanguage('openscad', /*@__PURE__*/ requireOpenscad());
+	hljs.registerLanguage('oxygene', /*@__PURE__*/ requireOxygene());
+	hljs.registerLanguage('parser3', /*@__PURE__*/ requireParser3());
+	hljs.registerLanguage('pf', /*@__PURE__*/ requirePf());
+	hljs.registerLanguage('pgsql', /*@__PURE__*/ requirePgsql());
+	hljs.registerLanguage('php', /*@__PURE__*/ requirePhp());
+	hljs.registerLanguage('php-template', /*@__PURE__*/ requirePhpTemplate());
+	hljs.registerLanguage('plaintext', /*@__PURE__*/ requirePlaintext());
+	hljs.registerLanguage('pony', /*@__PURE__*/ requirePony());
+	hljs.registerLanguage('powershell', /*@__PURE__*/ requirePowershell());
+	hljs.registerLanguage('processing', /*@__PURE__*/ requireProcessing());
+	hljs.registerLanguage('profile', /*@__PURE__*/ requireProfile());
+	hljs.registerLanguage('prolog', /*@__PURE__*/ requireProlog());
+	hljs.registerLanguage('properties', /*@__PURE__*/ requireProperties());
+	hljs.registerLanguage('protobuf', /*@__PURE__*/ requireProtobuf());
+	hljs.registerLanguage('puppet', /*@__PURE__*/ requirePuppet());
+	hljs.registerLanguage('purebasic', /*@__PURE__*/ requirePurebasic());
+	hljs.registerLanguage('python', /*@__PURE__*/ requirePython());
+	hljs.registerLanguage('python-repl', /*@__PURE__*/ requirePythonRepl());
+	hljs.registerLanguage('q', /*@__PURE__*/ requireQ());
+	hljs.registerLanguage('qml', /*@__PURE__*/ requireQml());
+	hljs.registerLanguage('r', /*@__PURE__*/ requireR());
+	hljs.registerLanguage('reasonml', /*@__PURE__*/ requireReasonml());
+	hljs.registerLanguage('rib', /*@__PURE__*/ requireRib());
+	hljs.registerLanguage('roboconf', /*@__PURE__*/ requireRoboconf());
+	hljs.registerLanguage('routeros', /*@__PURE__*/ requireRouteros());
+	hljs.registerLanguage('rsl', /*@__PURE__*/ requireRsl());
+	hljs.registerLanguage('ruleslanguage', /*@__PURE__*/ requireRuleslanguage());
+	hljs.registerLanguage('rust', /*@__PURE__*/ requireRust());
+	hljs.registerLanguage('sas', /*@__PURE__*/ requireSas());
+	hljs.registerLanguage('scala', /*@__PURE__*/ requireScala());
+	hljs.registerLanguage('scheme', /*@__PURE__*/ requireScheme());
+	hljs.registerLanguage('scilab', /*@__PURE__*/ requireScilab());
+	hljs.registerLanguage('scss', /*@__PURE__*/ requireScss());
+	hljs.registerLanguage('shell', /*@__PURE__*/ requireShell());
+	hljs.registerLanguage('smali', /*@__PURE__*/ requireSmali());
+	hljs.registerLanguage('smalltalk', /*@__PURE__*/ requireSmalltalk());
+	hljs.registerLanguage('sml', /*@__PURE__*/ requireSml());
+	hljs.registerLanguage('sqf', /*@__PURE__*/ requireSqf());
+	hljs.registerLanguage('sql', /*@__PURE__*/ requireSql());
+	hljs.registerLanguage('stan', /*@__PURE__*/ requireStan());
+	hljs.registerLanguage('stata', /*@__PURE__*/ requireStata());
+	hljs.registerLanguage('step21', /*@__PURE__*/ requireStep21());
+	hljs.registerLanguage('stylus', /*@__PURE__*/ requireStylus());
+	hljs.registerLanguage('subunit', /*@__PURE__*/ requireSubunit());
+	hljs.registerLanguage('swift', /*@__PURE__*/ requireSwift());
+	hljs.registerLanguage('taggerscript', /*@__PURE__*/ requireTaggerscript());
+	hljs.registerLanguage('yaml', /*@__PURE__*/ requireYaml());
+	hljs.registerLanguage('tap', /*@__PURE__*/ requireTap());
+	hljs.registerLanguage('tcl', /*@__PURE__*/ requireTcl());
+	hljs.registerLanguage('thrift', /*@__PURE__*/ requireThrift());
+	hljs.registerLanguage('tp', /*@__PURE__*/ requireTp());
+	hljs.registerLanguage('twig', /*@__PURE__*/ requireTwig());
+	hljs.registerLanguage('typescript', /*@__PURE__*/ requireTypescript());
+	hljs.registerLanguage('vala', /*@__PURE__*/ requireVala());
+	hljs.registerLanguage('vbnet', /*@__PURE__*/ requireVbnet());
+	hljs.registerLanguage('vbscript', /*@__PURE__*/ requireVbscript());
+	hljs.registerLanguage('vbscript-html', /*@__PURE__*/ requireVbscriptHtml());
+	hljs.registerLanguage('verilog', /*@__PURE__*/ requireVerilog());
+	hljs.registerLanguage('vhdl', /*@__PURE__*/ requireVhdl());
+	hljs.registerLanguage('vim', /*@__PURE__*/ requireVim());
+	hljs.registerLanguage('wasm', /*@__PURE__*/ requireWasm());
+	hljs.registerLanguage('wren', /*@__PURE__*/ requireWren());
+	hljs.registerLanguage('x86asm', /*@__PURE__*/ requireX86asm());
+	hljs.registerLanguage('xl', /*@__PURE__*/ requireXl());
+	hljs.registerLanguage('xquery', /*@__PURE__*/ requireXquery());
+	hljs.registerLanguage('zephir', /*@__PURE__*/ requireZephir());
 
-var HighlightJS = /*@__PURE__*/getDefaultExportFromCjs(lib);
+	hljs.HighlightJS = hljs;
+	hljs.default = hljs;
+	lib = hljs;
+	return lib;
+}
+
+var libExports = /*@__PURE__*/ requireLib();
+var HighlightJS = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
 // https://nodejs.org/api/packages.html#packages_writing_dual_packages_while_avoiding_or_minimizing_hazards
 

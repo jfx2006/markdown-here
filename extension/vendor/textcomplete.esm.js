@@ -694,6 +694,7 @@ var Editor = class extends import_index.default {
   getCode(e) {
     switch (e.keyCode) {
       case 9:
+      // tab
       case 13:
         return "ENTER";
       case 27:
