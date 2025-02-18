@@ -1,5 +1,9 @@
 # Changelog
 
+## [4.0.4]
+
+- Emoji autocomplete background in dark mode was white
+
 ## [4.0.3.3]
 
 ### Changed

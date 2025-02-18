@@ -72,6 +72,7 @@ export function init() {
 
   textcomplete.dropdown.el.contentEditable = false
   textcomplete.dropdown.el.setAttribute("_moz_resizing", false)
+  textcomplete.dropdown.el.popover = "auto"
 
   const destroy = function () {
     linkElem.remove()
