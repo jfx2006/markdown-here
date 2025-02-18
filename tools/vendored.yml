@@ -50,10 +50,6 @@ vendored:
     path: lib/turndown.browser.es.js
     method: copy
 
-  dentity:
-    path: src/dentity.js
-    method: rollup
-
   textcomplete:
     path: contenteditable/src/index.ts
     method: bash

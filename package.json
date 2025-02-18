@@ -40,7 +40,6 @@
     "chai": "^5.1.2",
     "chai-dom": "^1.12.0",
     "degausser": "^2.4.4",
-    "dentity": "^1.2.1",
     "emojibase-data": "^15.3.2",
     "esbuild": "^0.24.0",
     "esbuild-plugin-replace-regex": "^0.0.2",

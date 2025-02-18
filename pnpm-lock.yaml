@@ -47,9 +47,6 @@ importers:
       degausser:
         specifier: ^2.4.4
         version: 2.4.4
-      dentity:
-        specifier: ^1.2.1
-        version: 1.2.1
       emojibase-data:
         specifier: ^15.3.2
         version: 15.3.2(emojibase@15.3.0)
@@ -1071,9 +1068,6 @@ packages:
   delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-
-  dentity@1.2.1:
-    resolution: {integrity: sha512-hWU2DCG0e+dBHAuguO6yVwxwbdfoAsbh3xnZ5SY0Wpzw9jSeldS1P8fMdwc0wecu4JJe0EzKLGmHBEN4hti3iw==}
 
   diff@5.2.0:
     resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
@@ -3574,8 +3568,6 @@ snapshots:
   degausser@2.4.4: {}
 
   delayed-stream@1.0.0: {}
-
-  dentity@1.2.1: {}
 
   diff@5.2.0: {}
 

@@ -5,7 +5,6 @@
  */
 
 import TurndownService from "./vendor/turndown.esm.js"
-import Dentity from "./vendor/dentity.esm.js"
 import { degausser } from "./vendor/degausser.esm.js"
 
 const MDHR_RAW_PREFIX = "MDH:"
@@ -33,7 +32,6 @@ export class MdhrMangle {
     await this.saveContent()
     await this.excludeContent()
     this.insertLinebreaks()
-    //this.escapeTags()
     this.convertHTML()
     const text = degausser(this.doc.body)
     return text.replaceAll(" ", " ")
@@ -93,16 +91,6 @@ export class MdhrMangle {
       ) {
         br_elem.insertAdjacentText("afterend", "\n")
       }
-    }
-  }
-
-  escapeTags() {
-    const escapeElems = this.doc.querySelectorAll("img")
-    for (const e of escapeElems) {
-      const span = this.doc.createElement("span")
-      const text = Dentity.encode(e.outerHTML)
-      span.innerText = text
-      e.replaceWith(span)
     }
   }
 
