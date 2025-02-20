@@ -75,7 +75,7 @@ describe("MdhrMangle", function () {
   // Test some cases with bare text nodes
   it("should properly handle bare text nodes", async function () {
     let html, target
-   /html = ""
+    html = ""
     target = ""
     expect(await get(html)).to.equal(target)
 
