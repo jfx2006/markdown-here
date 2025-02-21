@@ -27,6 +27,7 @@
     ]
   },
   "devDependencies": {
+    "@jfx2006/mailext-options-sync": "file:mailext-options-sync",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@textcomplete/contenteditable": "^0.1.13",
