@@ -12,17 +12,21 @@ Main features:
 - Add autoload and autosave to your options `<form>`
 - Run migrations on update
 
+This also lets you very easily have [separate options for each domain](https://github.com/fregante/webext-options-sync-per-domain) with the help of `webext-options-sync-per-domain`.
+
 ## Install
 
-Use `npm`:
+Use `pnpm:
 
 ```sh
-yarn run build
+pnpm run build
 ```
 
 ```js
 import OptionsSync from 'mailext-options-sync';
 ```
+
+The [browser-extension-template](https://github.com/notlmn/browser-extension-template) repo includes a complete setup with ES Modules, based on the advanced usage below.
 
 ## Usage
 
@@ -290,7 +294,3 @@ It's the `<form>` that needs to be synchronized or a CSS selector (one element).
 #### optionsStorage.stopSyncForm()
 
 Removes any listeners added by `syncForm`.
-
-## License
-
-MIT © [Federico Brigante](https://fregante.com)

@@ -203,10 +203,11 @@ class OptionsSync<UserOptions extends Options> {
 	/**
 	Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved to storage
 
-	@param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
 	The form fields' `name` attributes will have to match the option names.
-	*/
+	 * @param form
+	 */
 	async syncForm(form: string | HTMLFormElement): Promise<void> {
+		this.stopSyncForm();
 		this._form = form instanceof HTMLFormElement
 			? form
 			: document.querySelector<HTMLFormElement>(form)!;
@@ -224,7 +225,7 @@ class OptionsSync<UserOptions extends Options> {
 	/**
 	Removes any listeners added by `syncForm`
 	*/
-	async stopSyncForm(): Promise<void> {
+	stopSyncForm(): void {
 		if (this._form) {
 			this._form.removeEventListener('input', this._handleFormInput);
 			this._form.removeEventListener('submit', this._handleFormSubmit);
@@ -239,9 +240,7 @@ class OptionsSync<UserOptions extends Options> {
 
 	private async _getAll(): Promise<UserOptions> {
 		const result = await this.storage.get(this.storageName);
-		const storageResults = this._decode(result[this.storageName]);
-
-		return storageResults as UserOptions;
+		return this._decode(result[this.storageName] as UserOptions);
 	}
 
 	private async _get(_keys: string | string[]): Promise<UserOptions> {
@@ -249,9 +248,8 @@ class OptionsSync<UserOptions extends Options> {
 			_keys = [_keys];
 		}
 
-		const storageResults = await this._getAll()
-		// @ts-ignore
-		const rv = Object.fromEntries(Object.entries(storageResults).filter(([key, value]) => _keys.includes(key)));
+		const storageResults = await this._getAll();
+		const rv = Object.fromEntries(Object.entries(storageResults).filter(entry => _keys.includes(entry[0])));
 
 		return rv as UserOptions;
 	}
@@ -263,7 +261,7 @@ class OptionsSync<UserOptions extends Options> {
 		});
 	}
 
-	private _encode(options: UserOptions): Partial<UserOptions> {
+	private _encode(options: UserOptions): string {
 		const thinnedOptions: Partial<UserOptions> = {...options};
 		for (const [key, value] of Object.entries(thinnedOptions)) {
 			if (this.defaults[key] === value) {
@@ -273,16 +271,21 @@ class OptionsSync<UserOptions extends Options> {
 
 		this._log('log', 'Without the default values', thinnedOptions);
 
-		return thinnedOptions;
+		return JSON.stringify(thinnedOptions);
 	}
 
-	private _decode(options: Partial<UserOptions>): UserOptions {
-		return {...this.defaults, ...options as UserOptions};
+	private _decode(options: string | UserOptions): UserOptions {
+		let decompressed = options;
+		if (typeof options === 'string') {
+			decompressed = JSON.parse(options) as UserOptions;
+		}
+
+		return {...this.defaults, ...decompressed as UserOptions};
 	}
 
 	private async _remove(_key: string): Promise<void> {
 		const storageResults = await this.storage.get(this.storageName);
-		delete storageResults[_key]
+		delete storageResults[_key];
 		await this.storage.set({
 			[this.storageName]: this._encode(storageResults as UserOptions),
 		});
@@ -316,7 +319,21 @@ class OptionsSync<UserOptions extends Options> {
 			return;
 		}
 
-		await this.set(this._parseForm(field.form!));
+		try {
+			await this.set(this._parseForm(field.form!));
+		} catch (error) {
+			field.dispatchEvent(new CustomEvent('options-sync:save-error', {
+				bubbles: true,
+				detail: error,
+			}));
+			throw error;
+		}
+
+		field.dispatchEvent(new CustomEvent('options-sync:save-success', {
+			bubbles: true,
+		}));
+
+		// TODO: Deprecated; drop in next major
 		field.form!.dispatchEvent(new CustomEvent('options-sync:form-synced', {
 			bubbles: true,
 		}));
@@ -362,7 +379,7 @@ class OptionsSync<UserOptions extends Options> {
 			&& this.storageName in changes
 			&& (!document.hasFocus() || !this._form!.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
 		) {
-			this._updateForm(this._form!, this._decode(changes[this.storageName]!.newValue as Partial<UserOptions>));
+			this._updateForm(this._form!, this._decode(changes[this.storageName]!.newValue as string));
 		}
 	};
 }

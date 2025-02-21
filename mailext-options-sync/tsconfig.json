@@ -1,14 +1,8 @@
 {
 	"extends": "@sindresorhus/tsconfig",
 	"compilerOptions": {
-		"lib": [
-			"DOM",
-			"DOM.Iterable",
-			"ES2022"
-		],
 		"target": "es2022",
-		"outDir": ".",
-		"module":"NodeNext"
+		"outDir": "."
 	},
-	"files": ["mail-ext-types.d.ts", "globals.d.ts", "index.ts"]
+	"files": ["globals.d.ts", "index.ts"]
 }
