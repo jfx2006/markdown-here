@@ -66,6 +66,9 @@ mdhr-release:
   script:
     - echo "Running the release job."
     - mv -f web-ext-artifacts/markdown-here-revival.xpi web-ext-artifacts/${XPI_FILENAME}
+    - >
+      glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_HOST 
+        --api-protocol $CI_SERVER_PROTOCOL
     - > 
       glab release create ${RELEASE_NAME}
         --name ${RELEASE_NAME}
