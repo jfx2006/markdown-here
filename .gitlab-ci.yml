@@ -62,20 +62,12 @@ mdhr-release:
     - job: docker-build
       optional: true
   variables:
-      PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/mdhr-4/${PACKAGE_VERSION}"
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
   script:
     - echo "Running the release job."
     - >
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file web-ext-artifacts/markdown-here-revival.xpi "${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}"
-  release:
-    tag_name: "v$PACKAGE_VERSION"
-    ref: $CI_COMMIT_SHA
-    name: $RELEASE_NAME
-    description: "./notes.md"
-    assets:
-      links:
-        - name: ${XPI_FILENAME}
-          url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
-          direct_asset_path: ${XPI_FILENAME}
-          link_type: other
+      mv -f web-ext-artifacts/markdown-here-revival.xpi web-ext-artifacts/${XPI_FILENAME}
+      glab release create ${RELEASE_NAME} \
+        --name ${RELEASE_NAME} \
+        -F ./notes.md \
+        web-ext-artifacts/markdown-here-revival.xpi
