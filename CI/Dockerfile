@@ -7,7 +7,7 @@ RUN groupadd --gid 1000 node \
 # ensure local node/python is preferred over distribution
 ENV PATH /usr/local/bin:$PATH
 
-ENV NODE_VERSION 20.16.0
+ENV NODE_VERSION 20.18.3
 ENV ARCH x64
 
 RUN export GNUPGHOME="$(mktemp -d)" \
@@ -47,8 +47,8 @@ RUN export GNUPGHOME="$(mktemp -d)" \
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
 
-ENV PYTHON_VER 3.12.4
-ENV STANDALONE_TAG 20240726
+ENV PYTHON_VER 3.12.9
+ENV STANDALONE_TAG 20250212
 ENV PYTHON_URL https://github.com/indygreg/python-build-standalone/releases/download/$STANDALONE_TAG/cpython-$PYTHON_VER+$STANDALONE_TAG-x86_64-unknown-linux-gnu-install_only.tar.gz
 
 RUN curl -fsSLO --compressed $PYTHON_URL \
@@ -60,7 +60,7 @@ RUN curl -fsSLO --compressed $PYTHON_URL \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV RELEASE_CLI_VER 0.18.0
+ENV RELEASE_CLI_VER 0.22.0
 
 RUN curl --location --output /usr/local/bin/release-cli "https://gitlab.com/api/v4/projects/gitlab-org%2Frelease-cli/packages/generic/release-cli/v${RELEASE_CLI_VER}/release-cli-linux-amd64" \
     && chmod +x /usr/local/bin/release-cli
