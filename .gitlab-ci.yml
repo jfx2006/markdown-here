@@ -65,7 +65,7 @@ mdhr-release:
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
   script:
     - echo "Running the release job."
-    - >
+    - |
       mv -f web-ext-artifacts/markdown-here-revival.xpi web-ext-artifacts/${XPI_FILENAME}
       glab release create ${RELEASE_NAME} \
         --name ${RELEASE_NAME} \
