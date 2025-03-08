@@ -77,5 +77,5 @@ mdhr-release:
       links:
         - name: ${XPI_FILENAME}
           url: ${PACKAGE_REGISTRY_URL}/${XPI_FILENAME}
-          direct_asset_path: /${XPI_FILENAME}
+          filepath: /${XPI_FILENAME}
           link_type: other
