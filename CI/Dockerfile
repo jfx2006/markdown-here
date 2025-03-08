@@ -63,9 +63,9 @@ RUN curl -fsSLO --compressed $PYTHON_URL \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV RELEASE_CLI_VER 0.22.0
+ENV GLAB_CLI_VER 1.53.0
 
-RUN curl --location --output /usr/local/bin/release-cli "https://gitlab.com/api/v4/projects/gitlab-org%2Frelease-cli/packages/generic/release-cli/v${RELEASE_CLI_VER}/release-cli-linux-amd64" \
-    && chmod +x /usr/local/bin/release-cli
+RUN curl --location --output /tmp/glab.deb "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
+    && dpkg --install /tmp/glab.deb
 
 SHELL ["/bin/bash", "-l"]
