@@ -40,6 +40,9 @@ RUN export GNUPGHOME="$(mktemp -d)" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
   # smoke tests
   && node --version \
+  && echo "Before: corepack => $(corepack --version || echo 'not installed')" \
+  && npm install -g corepack@latest \
+  && echo "After : corepack => $(corepack --version)" \
   && corepack enable \
   && corepack prepare pnpm@latest --activate
 
