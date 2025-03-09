@@ -8,6 +8,8 @@ Thumbs.db
 *.log
 logs
 *.map
+index.js
+index.d.ts
 !*/index.js
 
 .idea/

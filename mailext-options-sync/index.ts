@@ -9,9 +9,8 @@
  */
 
 import {debounce} from 'throttle-debounce';
-import {isBackground} from 'webext-detect';
+import {isBackground} from 'webext-detect-page';
 import {serialize, deserialize} from 'dom-form-serializer/dist/dom-form-serializer.mjs';
-import {onContextInvalidated} from 'webext-events';
 
 async function shouldRunMigrations(): Promise<boolean> {
 	const self = await messenger.management?.getSelf();
@@ -51,9 +50,7 @@ export type StorageType = 'sync' | 'local';
 	],
 }
 */
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- Maybe later
-export interface Setup<UserOptions extends Options> {
-	storageName?: string;
+export type Setup<UserOptions extends Options> = {
 	logging?: boolean;
 	defaults?: UserOptions;
 	/**
@@ -61,20 +58,20 @@ export interface Setup<UserOptions extends Options> {
 	 */
 	migrations?: Array<Migration<UserOptions>>;
 	storageType?: StorageType;
-}
+};
 
 /**
 A map of options as strings or booleans. The keys will have to match the form fields' `name` attributes.
 */
-// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style, @typescript-eslint/consistent-type-definitions -- Interfaces are extendable
-export interface Options {
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style -- Interfaces are extendable
+export type Options = {
 	[key: string]: string | number | boolean;
-}
+};
 
 /*
 Handler signature for when an extension updates.
 */
-export type Migration<UserOptions extends Options> = (savedOptions: UserOptions, defaults: UserOptions) => Promise<void> | void;
+export type Migration<UserOptions extends Options> = (savedOptions: UserOptions, defaults: UserOptions) => Promise<UserOptions>;
 
 class OptionsSync<UserOptions extends Options> {
 	public static migrations = {
@@ -90,7 +87,6 @@ class OptionsSync<UserOptions extends Options> {
 		},
 	};
 
-	storageName: string;
 	storageType: StorageType;
 
 	defaults: UserOptions;
@@ -106,12 +102,10 @@ class OptionsSync<UserOptions extends Options> {
 	constructor({
 		// `as` reason: https://github.com/fregante/webext-options-sync/pull/21#issuecomment-500314074
 		defaults = {} as UserOptions,
-		storageName = 'options',
 		migrations = [],
 		logging = true,
 		storageType = 'sync',
 	}: Setup<UserOptions> = {}) {
-		this.storageName = storageName;
 		this.defaults = defaults;
 		this.storageType = storageType;
 
@@ -203,11 +197,10 @@ class OptionsSync<UserOptions extends Options> {
 	/**
 	Any defaults or saved options will be loaded into the `<form>` and any change will automatically be saved to storage
 
+	@param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
 	The form fields' `name` attributes will have to match the option names.
-	 * @param form
-	 */
+	*/
 	async syncForm(form: string | HTMLFormElement): Promise<void> {
-		this.stopSyncForm();
 		this._form = form instanceof HTMLFormElement
 			? form
 			: document.querySelector<HTMLFormElement>(form)!;
@@ -216,16 +209,12 @@ class OptionsSync<UserOptions extends Options> {
 		this._form.addEventListener('submit', this._handleFormSubmit);
 		messenger.storage.onChanged.addListener(this._handleStorageChangeOnForm);
 		this._updateForm(this._form, await this.getAll());
-
-		onContextInvalidated.addListener(() => {
-			location.reload();
-		});
 	}
 
 	/**
 	Removes any listeners added by `syncForm`
 	*/
-	stopSyncForm(): void {
+	async stopSyncForm(): Promise<void> {
 		if (this._form) {
 			this._form.removeEventListener('input', this._handleFormInput);
 			this._form.removeEventListener('submit', this._handleFormSubmit);
@@ -234,13 +223,20 @@ class OptionsSync<UserOptions extends Options> {
 		}
 	}
 
-	private _log(method: 'log' | 'info', ...arguments_: unknown[]): void {
-		console[method](...arguments_);
+	private _log(method: 'log' | 'info', ...args: any[]): void {
+		console[method](...args);
 	}
 
 	private async _getAll(): Promise<UserOptions> {
-		const result = await this.storage.get(this.storageName);
-		return this._decode(result[this.storageName] as UserOptions);
+		const _keys = Object.keys(this.defaults);
+		const storageResults = await this.storage.get(_keys);
+		for (const key of Object.keys(this.defaults)) {
+			if (!Object.hasOwn(storageResults, key)) {
+				storageResults[key] = this.defaults[key];
+			}
+		}
+
+		return storageResults as UserOptions;
 	}
 
 	private async _get(_keys: string | string[]): Promise<UserOptions> {
@@ -248,47 +244,26 @@ class OptionsSync<UserOptions extends Options> {
 			_keys = [_keys];
 		}
 
-		const storageResults = await this._getAll();
-		const rv = Object.fromEntries(Object.entries(storageResults).filter(entry => _keys.includes(entry[0])));
-
-		return rv as UserOptions;
-	}
-
-	private async _setAll(newOptions: UserOptions): Promise<void> {
-		this._log('log', 'Saving options', newOptions);
-		await this.storage.set({
-			[this.storageName]: this._encode(newOptions),
-		});
-	}
-
-	private _encode(options: UserOptions): string {
-		const thinnedOptions: Partial<UserOptions> = {...options};
-		for (const [key, value] of Object.entries(thinnedOptions)) {
-			if (this.defaults[key] === value) {
-				delete thinnedOptions[key];
+		const storageResults = await this.storage.get(_keys);
+		for (const key of _keys) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (!storageResults.hasOwnProperty(key) // eslint-disable-next-line no-prototype-builtins
+				&& this.defaults.hasOwnProperty(key)) {
+				storageResults[key] = this.defaults[key];
 			}
 		}
 
-		this._log('log', 'Without the default values', thinnedOptions);
-
-		return JSON.stringify(thinnedOptions);
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		return storageResults;
 	}
 
-	private _decode(options: string | UserOptions): UserOptions {
-		let decompressed = options;
-		if (typeof options === 'string') {
-			decompressed = JSON.parse(options) as UserOptions;
-		}
-
-		return {...this.defaults, ...decompressed as UserOptions};
+	private async _setAll(newOptions: UserOptions): Promise<void> {
+		await this.storage.set(newOptions);
 	}
 
 	private async _remove(_key: string): Promise<void> {
-		const storageResults = await this.storage.get(this.storageName);
-		delete storageResults[_key];
-		await this.storage.set({
-			[this.storageName]: this._encode(storageResults as UserOptions),
-		});
+		await this.storage.remove(_key);
 	}
 
 	private async _runMigrations(migrations: Array<Migration<UserOptions>>): Promise<void> {
@@ -297,18 +272,14 @@ class OptionsSync<UserOptions extends Options> {
 		}
 
 		const options = await this._getAll();
-		const initial = JSON.stringify(options);
 
-		this._log('log', 'Found these stored options', {...options});
 		this._log('info', 'Will run', migrations.length, migrations.length === 1 ? 'migration' : ' migrations');
-		for (const migrate of migrations) {
-			// eslint-disable-next-line no-await-in-loop -- Must be done in order
-			await migrate(options, this.defaults);
-		}
-
-		// Only save to storage if there were any changes
-		if (initial !== JSON.stringify(options)) {
-			await this._setAll(options);
+		let _migrateFunc: (Migration<UserOptions>);
+		for (_migrateFunc of migrations) {
+			const changes: UserOptions = await _migrateFunc(options, this.defaults);
+			if (changes !== null) {
+				await this._setAll(changes);
+			}
 		}
 	}
 
@@ -319,21 +290,7 @@ class OptionsSync<UserOptions extends Options> {
 			return;
 		}
 
-		try {
-			await this.set(this._parseForm(field.form!));
-		} catch (error) {
-			field.dispatchEvent(new CustomEvent('options-sync:save-error', {
-				bubbles: true,
-				detail: error,
-			}));
-			throw error;
-		}
-
-		field.dispatchEvent(new CustomEvent('options-sync:save-success', {
-			bubbles: true,
-		}));
-
-		// TODO: Deprecated; drop in next major
+		await this.set(this._parseForm(field.form!));
 		field.form!.dispatchEvent(new CustomEvent('options-sync:form-synced', {
 			bubbles: true,
 		}));
@@ -373,13 +330,23 @@ class OptionsSync<UserOptions extends Options> {
 		return serialize(form, {include});
 	}
 
-	private readonly _handleStorageChangeOnForm = (changes: Record<string, messenger.storage.StorageChange>, areaName: string): void => {
+	private readonly _handleStorageChangeOnForm = (changes: Record<string, any>, areaName: string): void => {
 		if (
 			areaName === this.storageType
-			&& this.storageName in changes
+			&& changes
 			&& (!document.hasFocus() || !this._form!.contains(document.activeElement)) // Avoid applying changes while the user is editing a field
 		) {
-			this._updateForm(this._form!, this._decode(changes[this.storageName]!.newValue as string));
+			const newValues: Record<string, any> = {};
+			for (const change in changes) {
+				if (changes[change].newValue !== undefined) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					newValues[change] = changes[change].newValue;
+				}
+			}
+
+			if (Object.keys(newValues).length > 0) {
+				this._updateForm(this._form!, newValues as UserOptions);
+			}
 		}
 	};
 }
