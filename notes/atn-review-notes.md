@@ -23,6 +23,8 @@ Other new features are listed in the changelog.
 - Bash
 - Python 3.12 (earlier versions may work)
 
+or build in Docker using CI/Dockerfile
+
 The extension code is not minified or bundled, however vendored libraries
 are mostly from NPM packages. Part of the build process described below
 is to copy and possibly esmify them. Libraries included in this manner
@@ -44,7 +46,6 @@ Running `make all` will do the following:
 - Copy the vendored NPM packages to extension/vendor (mostly)
 - Copy CHANGELOG.md from the repository root to the extension/ directory
 - Build the XPI file using web-ext
-- Build a source tarball as well
 
 ## Other vendored code 
 #### not handled by vendored.mk
