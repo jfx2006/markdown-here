@@ -80,6 +80,21 @@ describe("options_migrations tests", function () {
     })
   })
 
+  describe("migrate_setLastVersion", function () {
+    const thisVersion = messenger.runtime.getManifest().version
+    it("should update the last run version", async function () {
+      let options = { "last-version": "0.0.0" }
+      let changed = await migrate_setLastVersion(options)
+      expect(changed["last-version"]).to.equal(thisVersion)
+    })
+
+    it("should set the last run version", async function () {
+      let options = {}
+      let changed = await migrate_setLastVersion(options)
+      expect(changed["last-version"]).to.equal(thisVersion)
+    })
+  })
+
   describe("migrate_smartReplacements", function () {
     it("should migrate 'smart-quotes' option", async function() {
       let options = { "smart-quotes-enabled": false }

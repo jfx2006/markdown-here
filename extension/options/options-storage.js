@@ -18,11 +18,12 @@ import {
   migrate_oldOptions,
   migrate_syntaxCSS,
   migrate_smartReplacements,
+  migrate_removeUnused,
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
+  migrate_toStructured,
 } from "./options_migration.js"
-import { toInt } from "../async_utils.mjs"
 
 function hotKeyDefault() {
   if (navigator.platform === "MacIntel") {
@@ -63,58 +64,21 @@ let MIGRATIONS = [
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
-  OptionsSync.migrations.removeUnused,
+  migrate_toStructured,
+  migrate_removeUnused,
 ]
 
-export async function MDHROptionsMigrate() {
-  const EXT_STORAGE = window.messenger?.storage.sync || {}
-
-  async function get_options_version() {
-    // Version 0 is default
-    // Version 1 is unstructured (each option is a separate storage key) (unused)
-    // Version 2 is structured (one "options" key in storage that's a
-    // JSON struct with actual options)
-    let rv = 0
-    const storage_rv = await EXT_STORAGE.get("options_version")
-    if (Object.hasOwn(storage_rv, "options_version")) {
-      try {
-        rv = toInt(rv["options_version"])
-      } catch (e) {
-        console.log(e)
-        rv = 0
-      }
-    }
-    return rv
-  }
-
-  async function set_options_version(version) {
-    await EXT_STORAGE.set({ options_version: version })
-  }
-
-  const OPTIONS_VERSION = await get_options_version()
-
-  if (OPTIONS_VERSION > 2) {
-    return null
-  }
-  const old_options = await EXT_STORAGE.get()
-  console.log(old_options)
-  if (Object.hasOwn(old_options, "options")) {
-    delete old_options["options"]
-  }
-  await set_options_version(2)
-  EXT_STORAGE.set({ options: JSON.stringify(old_options) })
-  console.log(await EXT_STORAGE.get())
+export function MDHROptionsMigrate() {
+  return MDHROptionsStore()
 }
 
-async function MDHROptionsStore() {
+function MDHROptionsStore() {
   let main_css_default_p = fetchExtFile("/default.css")
   let DEFAULTS = Object.assign({}, kOptDefaults)
 
   main_css_default_p.then(async function (value) {
     DEFAULTS["main-css"] = value
   })
-
-  await MDHROptionsMigrate()
 
   return new OptionsSync({
     defaults: DEFAULTS,
@@ -123,5 +87,5 @@ async function MDHROptionsStore() {
   })
 }
 
-export const OptionsStore = await MDHROptionsStore()
+export const OptionsStore = MDHROptionsStore()
 export default OptionsStore
