@@ -1,12 +1,15 @@
 var ex_customui = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
     const Cc = Components.classes;
-    const { ExtensionParent } = ChromeUtils.import(
-        "resource://gre/modules/ExtensionParent.jsm");
-    const { setTimeout } = ChromeUtils.import(
-        "resource://gre/modules/Timer.jsm");
-    const { E10SUtils } = ChromeUtils.import(
-        "resource://gre/modules/E10SUtils.jsm");
+    const { ExtensionParent } = ChromeUtils.importESModule(
+      "resource://gre/modules/ExtensionParent.sys.mjs"
+    );
+    const { setTimeout } = ChromeUtils.importESModule(
+        "resource://gre/modules/Timer.sys.mjs"
+    );
+    const { E10SUtils } = ChromeUtils.importESModule(
+        "resource://gre/modules/E10SUtils.sys.mjs"
+    );
 
     const XULNS =
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
