@@ -33,8 +33,8 @@ describe("AsyncUtils", function () {
 
   describe("getHljsStyles", function () {
     it("should return styles", async function () {
-      const KNOWN_KEY = "A11y Dark"
-      const KNOWN_VALUE = "a11y-dark.css"
+      const KNOWN_KEY = "1c Light"
+      const KNOWN_VALUE = "1c-light.css"
       let styles_json = await getHljsStyles()
       expect(Object.keys(styles_json)[0]).to.equal(KNOWN_KEY)
       expect(Object.values(styles_json)[0]).to.equal(KNOWN_VALUE)
