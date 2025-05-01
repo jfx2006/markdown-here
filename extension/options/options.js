@@ -121,8 +121,10 @@ import OptionsStore from "./options-storage.js"
     previewInput.addEventListener("scroll", setPreviewScroll, false)
 
     await checkPreviewChanged()
-    handleMathRenderer()
     await handleUIMode(null, true)
+    handleMathRenderer()
+    handleDirectives()
+    handleEmojiAutocomplete()
   }
 
   async function onOptionsSaved(e) {
@@ -130,6 +132,7 @@ import OptionsStore from "./options-storage.js"
     handleMathRenderer()
     await handleInput()
     handleDirectives()
+    handleEmojiAutocomplete()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "renderer-reset" })
   }
@@ -344,9 +347,15 @@ import OptionsStore from "./options-storage.js"
 
   function handleDirectives(e) {
     let enabled = document.getElementById("buglink-enabled")
-    document.querySelectorAll("#buglink-extras > input.form-text").forEach((elem) => {
+    document.querySelectorAll("#buglink-extras input.form-text").forEach((elem) => {
       elem.disabled = !enabled.checked
     })
+  }
+
+  function handleEmojiAutocomplete(e) {
+    const enabled = document.getElementById("emoji-shortcode")
+    const autocomplete_checkbox = document.getElementById("emoji-autocomplete")
+    autocomplete_checkbox.disabled = !enabled.checked
   }
 
   const SUBS = { __APP_NAME: getMessage("app_name") }

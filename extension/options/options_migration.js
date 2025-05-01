@@ -179,9 +179,10 @@ export async function migrate_mathRenderer(options, defaults) {
 export async function migrate_mathRenderer2(options, defaults) {
   if (options["math-renderer"] === "disabled") {
     return { "math-renderer-enabled": false, "math-renderer": defaults["math-renderer"] }
-  } else {
+  } else if (options["math-renderer"] === "enabled") {
     return { "math-renderer-enabled": true, "math-renderer": options["math-renderer"] }
   }
+  return null
 }
 
 export async function migrate_macHotkeys(options, defaults) {
