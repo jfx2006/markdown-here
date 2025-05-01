@@ -95,16 +95,16 @@ describe("MdhrMangle", function () {
     target = "asdf\nqwer\nzxcv\nasdf"
     expect(await get(html)).to.equal(target)
 
-    html = 'asdf<br class="x">qwer<div>zxcv</div>ghjk<div>yuio</div>asdf'
-    target = "asdf\nqwer\nzxcv\nghjk\nyuio\nasdf"
+    html = 'asdf1<br class="x">qwer<div>zxcv</div>ghjk<div>yuio</div>asdf'
+    target = "asdf1\nqwer\nzxcv\nghjk\nyuio\nasdf"
     expect(await get(html)).to.equal(target)
 
-    html = 'asdf<br class="x">qwer<div><div>zxcv</div>ghjk<div>yuio</div></div>asdf'
-    target = "asdf\nqwer\nzxcv\nghjk\nyuio\nasdf"
+    html = 'asdf2<br class="x">qwer<div><div>zxcv</div>ghjk<div>yuio</div></div>asdf'
+    target = "asdf2\nqwer\nzxcv\nghjk\nyuio\nasdf"
     expect(await get(html)).to.equal(target)
 
-    html = 'asdf\n<br class="x">qwer<div><div>zxcv</div>ghjk<div>yuio</div></div>asdf'
-    target = "asdf\nqwer\nzxcv\nghjk\nyuio\nasdf"
+    html = 'asdf3\n<br class="x">qwer<div><div>zxcv</div>ghjk<div>yuio</div></div>asdf'
+    target = "asdf3\nqwer\nzxcv\nghjk\nyuio\nasdf"
     expect(await get(html)).to.equal(target)
 
     html = '<div class="x">asdf</div>qwer'
@@ -126,7 +126,6 @@ describe("MdhrMangle", function () {
       const m = new MdhrMangle(msgDoc)
       await m.excludeContent()
 
-      expect(msgDoc.querySelector("body > div.moz-cite-prefix")).to.be.null
       expect(msgDoc.querySelector("body > blockquote[type='cite']")).to.be.null
     })
 

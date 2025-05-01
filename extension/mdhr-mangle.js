@@ -83,11 +83,16 @@ export class MdhrMangle {
     }
     const br_elems = this.doc.body.querySelectorAll("br")
     for (const br_elem of br_elems) {
-      const sibling = br_elem.nextSibling
+      const previousSibling = br_elem.previousSibling
+      const nextSibling = br_elem.nextSibling
+
       if (
-        sibling &&
-        sibling.nodeType === Node.TEXT_NODE &&
-        !sibling.textContent.startsWith("\n")
+        previousSibling &&
+        previousSibling.nodeType === Node.TEXT_NODE &&
+        !previousSibling.textContent.endsWith("\n") &&
+        nextSibling &&
+        nextSibling.nodeType === Node.TEXT_NODE &&
+        !nextSibling.textContent.startsWith("\n")
       ) {
         br_elem.insertAdjacentText("afterend", "\n")
       }
