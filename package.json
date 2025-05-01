@@ -7,6 +7,7 @@
     "release": "web-ext build -n markdown-here-revival.xpi",
     "lint": "eslint .",
     "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f /home/rob/bin/thunderbird128 --keep-profile-changes",
+    "testrelease": "web-ext run --verbose -f /home/rob/bin/thunderbird-release --keep-profile-changes",
     "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
     "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f thunderbird-daily"
   },
@@ -27,7 +28,6 @@
     ]
   },
   "devDependencies": {
-    "@jfx2006/mailext-options-sync": "file:mailext-options-sync",
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@textcomplete/contenteditable": "^0.1.13",

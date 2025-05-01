@@ -70,16 +70,3 @@ vendored:
   marked-directive:
     path: dist/index.js
     method: rollup
-
-  mailext-options-sync:
-    method: bash
-    vendor_prefix: options
-    node_pkg: "@jfx2006/mailext-options-sync"
-    paths:
-      mailext-options-sync.js: index.js
-    cmds:
-      - ./node_modules/.bin/rollup --format es \
-      - --file "$(EXTENSION)/{vendor_prefix}/mailext-options-sync.js" \
-      - -p @rollup/plugin-node-resolve \
-      - -p @rollup/plugin-commonjs \
-      - "$<"

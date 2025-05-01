@@ -20,15 +20,6 @@ $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.
 	$<
 	python ./tools/highlightjs_styles.py node_modules/highlight.js/styles $(EXTENSION)/highlightjs/styles
 
-mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
-
-$(EXTENSION)/options/mailext-options-sync.js: node_modules/@jfx2006/mailext-options-sync/index.js
-	./node_modules/.bin/rollup --format es \
-	--file "$(EXTENSION)/options/mailext-options-sync.js" \
-	-p @rollup/plugin-node-resolve \
-	-p @rollup/plugin-commonjs \
-	$<
-
 marked: $(EXTENSION)/vendor/marked.esm.js
 
 $(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
@@ -75,7 +66,6 @@ clean:
 	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
 	rm -rf $(EXTENSION)/highlightjs/styles
-	rm -f $(EXTENSION)/options/mailext-options-sync.js
 	rm -f $(EXTENSION)/vendor/marked.esm.js
 	rm -f $(EXTENSION)/vendor/marked-directive.esm.js
 	rm -f $(EXTENSION)/vendor/marked-emoji.esm.js
@@ -85,4 +75,4 @@ clean:
 	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive mailext-options-sync
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive
