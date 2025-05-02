@@ -6,6 +6,7 @@
 
 import TurndownService from "./vendor/turndown.esm.js"
 import { degausser } from "./vendor/degausser.esm.js"
+import { strToBase64 } from "./base64.js"
 
 const MDHR_RAW_PREFIX = "MDH:"
 const MDHR_RAW_CSS =
@@ -13,12 +14,6 @@ const MDHR_RAW_CSS =
 
 async function sha256Digest(data) {
   return messenger.runtime.sendMessage({ action: "sha256", data: data })
-}
-
-function strToBase64(str) {
-  const bytes = new TextEncoder().encode(str)
-  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("")
-  return btoa(binString)
 }
 
 export class MdhrMangle {

@@ -4,12 +4,13 @@
  * https://gitlab.com/jfx2006
  */
 
-/* global describe, expect, it, before, beforeEach, after, afterEach */
+/* global describe, expect, it, before, beforeEach, after, afterEach, simple */
 
 import { MdhrMangle } from "../mdhr-mangle.js"
+import { bytes_btoa, bytes_toBase64 } from "../base64.js"
 
 describe("MdhrMangle", function () {
-  it("should exist", function () {
+  it("should exist", function() {
     expect(MdhrMangle).to.exist
   })
 
@@ -68,12 +69,12 @@ describe("MdhrMangle", function () {
   }
 
   // FIXME: Mangle does not work with strings!
-  it("should be okay with an empty string", async function () {
+  it("should be okay with an empty string", async function() {
     expect(await get("")).to.equal("")
   })
 
   // Test some cases with bare text nodes
-  it("should properly handle bare text nodes", async function () {
+  it("should properly handle bare text nodes", async function() {
     let html, target
     html = ""
     target = ""
@@ -112,8 +113,8 @@ describe("MdhrMangle", function () {
     expect(await get(html)).to.equal(target)
   })
 
-  describe("excludeContent", function () {
-    it("should exclude signatures", async function () {
+  describe("excludeContent", function() {
+    it("should exclude signatures", async function() {
       msgDoc = replyMsg.cloneNode(true)
       const m = new MdhrMangle(msgDoc)
       await m.excludeContent()
@@ -121,7 +122,7 @@ describe("MdhrMangle", function () {
       expect(msgDoc.querySelector("body > .moz-signature")).to.be.null
     })
 
-    it("should exclude replies", async function () {
+    it("should exclude replies", async function() {
       msgDoc = replyMsg.cloneNode(true)
       const m = new MdhrMangle(msgDoc)
       await m.excludeContent()
@@ -129,7 +130,7 @@ describe("MdhrMangle", function () {
       expect(msgDoc.querySelector("body > blockquote[type='cite']")).to.be.null
     })
 
-    it("should exclude forwards", async function () {
+    it("should exclude forwards", async function() {
       msgDoc = fwdMsg.cloneNode(true)
       const m = new MdhrMangle(msgDoc)
       await m.excludeContent()
@@ -139,7 +140,7 @@ describe("MdhrMangle", function () {
   })
 
   // Fix for https://github.com/adam-p/markdown-here/issues/104
-  it("should correctly handle pre-rendered links in inline code (fix for issue #104)", async function () {
+  it("should correctly handle pre-rendered links in inline code (fix for issue #104)", async function() {
     const html = 'aaa `<a href="bbb">ccc</a>`'
 
     // Real target
@@ -148,7 +149,7 @@ describe("MdhrMangle", function () {
   })
 
   // Fix for https://github.com/adam-p/markdown-here/issues/104
-  it("should correctly handle pre-rendered links in code blocks (fix for issue #104)", async function () {
+  it("should correctly handle pre-rendered links in code blocks (fix for issue #104)", async function() {
     const html = '```<br><a href="aaa">bbb</a><br>```'
 
     // Real target
@@ -157,7 +158,7 @@ describe("MdhrMangle", function () {
   })
 
   // Busted due to https://github.com/adam-p/markdown-here/issues/104
-  it("should NOT correctly handle pre-rendered links in code blocks (busted due to issue #104)", async function () {
+  it("should NOT correctly handle pre-rendered links in code blocks (busted due to issue #104)", async function() {
     const html = '&nbsp;&nbsp;&nbsp;&nbsp;<a href="aaa">bbb</a><br>'
 
     // Real target
@@ -168,10 +169,38 @@ describe("MdhrMangle", function () {
 
   // Test fix for bug https://github.com/adam-p/markdown-here/issues/251
   // <br> at the end of <div> should not add a newline
-  it("should not add an extra newline for br at end of div", async function () {
+  it("should not add an extra newline for br at end of div", async function() {
     // HTML from issue
     const html = "<div><div>markdown | test<br>-- |---<br></div>1 | test<br></div>2 | test2<br>"
     const target = "markdown | test\n-- |---\n1 | test\n2 | test2"
     expect(await get(html)).to.equal(target)
+  })
+
+  describe("base64 encode (fast)", function() {
+    const textEncoder = new TextEncoder()
+    it("should base64 encode ascii string correctly", function() {
+      const data = textEncoder.encode("This is an ascii string")
+      const expected = "VGhpcyBpcyBhbiBhc2NpaSBzdHJpbmc="
+      expect(bytes_toBase64(data)).to.equal(expected)
+    })
+    it("should base64 encode unicode string correctly", function() {
+      const data = textEncoder.encode("This is a unicode 🤼‍♀️ string")
+      const expected = "VGhpcyBpcyBhIHVuaWNvZGUg8J+kvOKAjeKZgO+4jyBzdHJpbmc="
+      expect(bytes_toBase64(data)).to.equal(expected)
+    })
+  })
+
+  describe("base64 encode (legacy)", function() {
+    const textEncoder = new TextEncoder()
+    it("should base64 encode ascii string correctly", function() {
+      const data = textEncoder.encode("This is an ascii string")
+      const expected = "VGhpcyBpcyBhbiBhc2NpaSBzdHJpbmc="
+      expect(bytes_btoa(data)).to.equal(expected)
+    })
+    it("should base64 encode unicode string correctly", function() {
+      const data = textEncoder.encode("This is a unicode 🤼‍♀️ string")
+      const expected = "VGhpcyBpcyBhIHVuaWNvZGUg8J+kvOKAjeKZgO+4jyBzdHJpbmc="
+      expect(bytes_btoa(data)).to.equal(expected)
+    })
   })
 })
