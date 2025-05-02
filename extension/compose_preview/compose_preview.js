@@ -5,7 +5,7 @@
  */
 
 import DOMPurify from "../vendor/purify.es.mjs"
-import { getMainCSS, getSyntaxCSS, debounce, toInt, fetchExtFile } from "../async_utils.mjs"
+import { debounce, fetchExtFile, getMainCSS, getSyntaxCSS, toInt } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
@@ -164,6 +164,17 @@ async function getMsgContent() {
   const html_msg = p_iframe.contentDocument
   removeMDPreviewStyles(html_msg)
   deShadowRoot(html_msg)
+
+  // Load message source from compose window
+  const tabId = await getTabId()
+  const MdhrRaw_html = await messenger.tabs.sendMessage(tabId, {
+    action: "get-md-source",
+  })
+  const rawDoc = parseHTMLFromString(MdhrRaw_html)
+  const MdhrRaw = rawDoc.querySelector("div.mdhr-raw")
+
+  // Inject the message source into the HTML message about to send
+  html_msg.body.insertAdjacentElement("beforeend", MdhrRaw)
   const serializer = new XMLSerializer()
   return serializer.serializeToString(html_msg)
 }
@@ -198,6 +209,17 @@ messenger.ex_customui.onEvent.addListener(async (type, details) => {
   }
 })
 
+async function getTabId() {
+  const context = await messenger.ex_customui.getContext()
+  if (context.windowId) {
+    const win = await messenger.windows.get(context.windowId, {
+      populate: true,
+      windowTypes: ["messageCompose"],
+    })
+    return win.tabs[0]?.id
+  }
+}
+
 async function previewFrameLoaded(e) {
   // await addMDPreviewStyles()
   p_iframe.contentWindow.onclick = function (e) {
@@ -210,13 +232,8 @@ async function previewFrameLoaded(e) {
   } else {
     await setClassicMode()
   }
-  const context = await messenger.ex_customui.getContext()
-  if (context.windowId) {
-    const win = await messenger.windows.get(context.windowId, {
-      populate: true,
-      windowTypes: ["messageCompose"],
-    })
-    const tabId = win.tabs[0]?.id
+  const tabId = await getTabId()
+  if (tabId) {
     const hidden = !(await OptionsStore.get("enable-markdown-mode"))["enable-markdown-mode"]
     await sendPreviewStateToCompose(tabId, hidden)
   }

@@ -22,7 +22,7 @@ function requestHandler(request, sender, sendResponse) {
     const body_copy = window.document.cloneNode(true)
     return Promise.resolve(looksLikeMarkdown(body_copy))
   } else if (request.action === "get-md-source") {
-    return getMdText()
+    return getMdSource()
   } else if (request.action === "edit-as-new-markdown") {
     return loadOldMarkdown()
   }
@@ -128,11 +128,11 @@ async function looksLikeMarkdown(msgDocument) {
   return false
 }
 
-async function getMdText() {
+async function getMdSource() {
   const body_copy = window.document.cloneNode(true)
   const mdHtmlToText = new MdhrMangle.MdhrMangle(body_copy)
-  const pre_process = await mdHtmlToText.preprocess()
-  return mdHtmlToText.postprocess(pre_process)
+  const MdhrRaw = await mdHtmlToText.getMdhrRaw()
+  return MdhrRaw.outerHTML
 }
 
 async function doRenderPreview() {

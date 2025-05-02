@@ -24,7 +24,6 @@ export class MdhrMangle {
   }
 
   async preprocess() {
-    await this.saveContent()
     await this.excludeContent()
     this.insertLinebreaks()
     this.convertHTML()
@@ -32,7 +31,7 @@ export class MdhrMangle {
     return text.replaceAll(" ", " ")
   }
 
-  async saveContent() {
+  async getMdhrRaw() {
     const content = `${this.doc.body.innerHTML}`
     const rawHolder = this.doc.createElement("div")
     rawHolder.classList.add("mdhr-raw")
@@ -41,7 +40,7 @@ export class MdhrMangle {
     rawHolder.innerText = "&#8203;"
     const encoded = strToBase64(content)
     rawHolder.title = `${MDHR_RAW_PREFIX}${encoded}`
-    this.doc.body.insertAdjacentElement("beforeend", rawHolder)
+    return rawHolder
   }
 
   async excludeContent() {
