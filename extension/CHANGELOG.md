@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.5]
+
+- Fix problems with options not saving in the last couple versions.
+  [#120](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/120)
+  [#119](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/119)
+- Support up to Thunderbird 140.
+  [#116](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/116)
+  [#117](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/117)
+- Improve performance of the preview rendering.
+  [#121](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/121)
+
 ## [4.0.4]
 
 - Emoji autocomplete background in dark mode was white
