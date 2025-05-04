@@ -40,7 +40,7 @@ def main(source, dest):
         for s in shortcuts:
             emoji_shortcuts[s] = entities
 
-    with open(dest, "w") as fp:
+    with open(dest, "w", encoding="utf-8") as fp:
         json.dump(
             emoji_shortcuts,
             fp,
