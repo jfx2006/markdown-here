@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_app_name__",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "__MSG_app_slogan__",
   "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
   "browser_specific_settings": {
@@ -28,7 +28,9 @@
     "storage",
     "tabs"
   ],
-  "background": { "page": "background.html" },
+  "background": {
+    "page": "background.html"
+  },
   "compose_action": {
     "browser_style": true,
     "default_area": "formattoolbar",
@@ -79,29 +81,53 @@
     "notificationbar": {
       "schema": "experiments/notificationbar/schema.json",
       "parent": {
-        "scopes": ["addon_parent"],
-        "paths": [["notificationbar"]],
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "notificationbar"
+          ]
+        ],
         "script": "experiments/notificationbar/implementation.js"
       }
     },
     "reply_prefs": {
       "schema": "experiments/preferences_schema.json",
       "parent": {
-        "scopes": ["addon_parent"],
-        "paths": [["reply_prefs"]],
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "reply_prefs"
+          ]
+        ],
         "script": "experiments/preferences.js"
       }
     },
     "ex_customui": {
       "schema": "experiments/customui/api.json",
       "parent": {
-        "scopes": ["addon_parent"],
-        "paths": [["ex_customui"]],
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "ex_customui"
+          ]
+        ],
         "script": "experiments/customui/parent.js"
       },
       "child": {
-        "scopes": ["addon_child"],
-        "paths": [["ex_customui"]],
+        "scopes": [
+          "addon_child"
+        ],
+        "paths": [
+          [
+            "ex_customui"
+          ]
+        ],
         "script": "experiments/customui/child.js"
       }
     }

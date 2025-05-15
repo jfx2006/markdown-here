@@ -1,7 +1,18 @@
 # Changelog
 
-## [4.0.5]
+## [4.0.6]
 
+### Fixed
+- Thunderbird's dark mode interfered with MDHR CSS-inlining causing unreadable
+  text in the sent message
+
+### Unresolved
+- "textcomplete.css" appears as a linked stylesheet in messages sent with
+  Markdown rendering disabled [#125](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/125)
+
+## [4.0.5] (not released on ATN)
+
+### Fixed
 - Fix problems with options not saving in the last couple versions.
   [#120](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/120)
   [#119](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/119)
