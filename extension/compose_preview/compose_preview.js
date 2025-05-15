@@ -10,12 +10,7 @@ import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 
 const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
-const REMOVE_ELEM_IDS = STYLE_ELEM_IDS.concat([
-  "MDHR_CSP",
-  "MDHR_tb_style",
-  "MDHR_preview_style",
-  "MDHR_textcomplete",
-])
+const REMOVE_ELEM_IDS = ["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style", "MDHR_textcomplete"]
 
 let cssInliner
 
@@ -24,8 +19,14 @@ function escapeHTML(strings, html) {
 }
 
 function removeMDPreviewStyles(html_msg) {
-  makeStylesExplicit(html_msg)
   for (const styleId of REMOVE_ELEM_IDS) {
+    const elem = html_msg.getElementById(styleId)
+    if (elem) {
+      elem.remove()
+    }
+  }
+  makeStylesExplicit(html_msg)
+  for (const styleId of STYLE_ELEM_IDS) {
     const elem = html_msg.getElementById(styleId)
     if (elem) {
       elem.remove()
