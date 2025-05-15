@@ -338,6 +338,6 @@ span.hidden {
 
 #mdhrChangeList {
     height: 30ch;
-    overflow: hidden;
+    overflow: scroll;
     font-size: smaller;
 }
