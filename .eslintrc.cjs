@@ -4,6 +4,7 @@
  * https://gitlab.com/jfx2006
  */
 
+
 module.exports = {
   env: {
     browser: true,
@@ -19,7 +20,7 @@ module.exports = {
     "plugin:prettier/recommended",
   ],
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "eslint-plugin-mailextensions-env", "html", "no-unsanitized", "prettier"],
+  plugins: ["json", "@typescript-eslint", "eslint-plugin-mailextensions-env", "html", "no-unsanitized", "prettier"],
   parserOptions: {
     sourceType: "module",
     //project: true,
@@ -50,6 +51,13 @@ module.exports = {
         node: true,
         browser: false,
       },
+    },
+    {
+        files: ["**/*.json"],
+        language: "json/json",
+        rules: {
+            "json/no-duplicate-keys": "error",
+        },
     },
   ],
 }
