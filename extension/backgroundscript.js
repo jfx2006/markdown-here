@@ -585,6 +585,7 @@ async function injectMDPreview() {
   if (savedState["mdhr-mode"] === "modern") {
     try {
       options["width"] = toInt(savedState["preview-width"])
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       options["width"] = toInt(savedState["saved-preview-width"])
     }

@@ -1,7 +1,6 @@
 [
   {
     "namespace": "notificationbar",
-    //"permissions": ["notificationbar"],
     "properties": {
       "PRIORITY_INFO_LOW": {
         "value": 1

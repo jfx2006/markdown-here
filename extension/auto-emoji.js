@@ -37,7 +37,7 @@ const INLINECODE = /`/g
 
 const EMOJI_STRATEGY = {
   id: "emoji",
-  match: /\B:([\-+\w]*)$/,
+  match: /\B:([-+\w]*)$/,
   search: async (term, callback) => {
     callback(await gatherCandidates(term))
   },
@@ -59,8 +59,9 @@ const EMOJI_STRATEGY = {
 }
 
 export function init() {
+  let linkElem
   if (!document.getElementById(STYLE_ID)) {
-    const linkElem = document.createElement("link")
+    linkElem = document.createElement("link")
     linkElem.id = STYLE_ID
     linkElem.rel = "stylesheet"
     linkElem.href = messenger.runtime.getURL("./vendor/textcomplete.css")

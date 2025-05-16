@@ -97,247 +97,248 @@ a:hover {
 }
 
 pre {
-    background-color: var(--mdhr-background-color);
-    color: var(--mdhr-text-color);
+  background-color: var(--mdhr-background-color);
+  color: var(--mdhr-text-color);
 }
 
 code {
-    background-color: var(--mdhr-background-color) !important;
-    color: var(--mdhr-text-color) !important;
+  background-color: var(--mdhr-background-color) !important;
+  color: var(--mdhr-text-color) !important;
 }
 
 main {
-    background: var(--mdhr-background-color);
+  background: var(--mdhr-background-color);
 }
 
 textarea {
-    font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 textarea,
 input,
 input[type="checkbox"],
 input[type="radio"] {
-    background-color: var(--mdhr-background-color) !important;
-    border-color: var(--mdhr-input-main-border-color) !important;
-    color: var(--mdhr-text-color) !important;
+  background-color: var(--mdhr-background-color) !important;
+  border-color: var(--mdhr-input-main-border-color) !important;
+  color: var(--mdhr-text-color) !important;
 }
 
 input[type="checkbox"],
 input[type="radio"] {
-    -moz-appearance: revert;
-    appearance: revert;
+  -moz-appearance: revert;
+  appearance: revert;
 }
 
 input[type="text"] {
-    width: 85%;
+  width: 85%;
 }
 
 input.hotkey-input {
-    width: 100px;
+  width: 100px;
 }
 
 textarea:active,
 input:active {
-    border-color: var(--mdhr-input-active-border-color);
+  border-color: var(--mdhr-input-active-border-color);
 }
 
 input:invalid {
-    background-color: var(--bs-danger) !important;
-    opacity: 0.3;
+  background-color: var(--bs-danger) !important;
+  opacity: 0.3;
 }
 
 input[disabled] {
-    opacity: .3!important;
+  opacity: 0.3 !important;
 }
 
 textarea {
-    height: 15em;
-    width: 100%;
-    font-family: var(--bs-font-monospace);
-    line-height: normal;
+  height: 15em;
+  width: 100%;
+  font-family: var(--bs-font-monospace);
+  line-height: normal;
 }
 
 footer {
-    bottom: 1rem;
+  bottom: 1rem;
 }
 
 footer.small {
-    font-size: .75rem;
+  font-size: 0.75rem;
 }
 
 button {
-    height: 30px;
-    margin: 10px;
+  height: 30px;
+  margin: 10px;
 }
 
 .tab-pane {
-    display: none;
+  display: none;
 }
 
 .tab-pane.show {
-    display: block;
+  display: block;
 }
 
 select {
-    background-color: var(--mdhr-input-background-color) !important;
-    color: var(--mdhr-text-color) !important;
+  background-color: var(--mdhr-input-background-color) !important;
+  color: var(--mdhr-text-color) !important;
 }
 
 select option {
-    background-color: var(--mdhr-input-background-color);
-    color: var(--mdhr-text-color);
+  background-color: var(--mdhr-input-background-color);
+  color: var(--mdhr-text-color);
 }
 
 select.form-control {
-    -moz-appearance: revert;
-    appearance: revert;
+  -moz-appearance: revert;
+  appearance: revert;
 }
 
 pre {
-    white-space: pre-line;
+  white-space: pre-line;
 }
 
 .close {
-    color: var(--mdhr-text-color);
+  color: var(--mdhr-text-color);
 }
 
 .card {
-    background-color: var(--mdhr-card-background-color);
-    border-color: var(--mdhr-card-border-color);
+  background-color: var(--mdhr-card-background-color);
+  border-color: var(--mdhr-card-border-color);
 }
 
 .card-header {
-    background-color: var(--mdhr-card-header-color);
-    color: var(--mdhr-text-color);
+  background-color: var(--mdhr-card-header-color);
+  color: var(--mdhr-text-color);
 }
 
 .card-body {
-    background-color: var(--mdhr-card-background-color);
-    color: var(--mdhr-text-color);
+  background-color: var(--mdhr-card-background-color);
+  color: var(--mdhr-text-color);
 }
 
 .invalid-feedback {
-    color: var(--mdhr-link-color);
+  color: var(--mdhr-link-color);
 }
 
 .invalid-feedback code {
-    color: var(--mdhr-link-hover-color) !important;
+  color: var(--mdhr-link-hover-color) !important;
 }
 
 .sidebar {
-    background-color: var(--mdhr-sidebar-background-color) !important;
-    height: 50px;
-    bottom: 0;
-    position: fixed;
-    top: 0;
-    z-index: 100;
+  background-color: var(--mdhr-sidebar-background-color) !important;
+  height: 50px;
+  bottom: 0;
+  position: fixed;
+  top: 0;
+  z-index: 100;
 }
 
 .sidebar a {
-    border: 1px solid transparent;
+  border: 1px solid transparent;
 }
 
 #sidebar {
-    background-color: var(--mdhr-sidebar-background-color) !important;
-    margin-top: 1em;
+  background-color: var(--mdhr-sidebar-background-color) !important;
+  margin-top: 1em;
 }
 
 .active > a {
-    border-color: currentColor;
-    color: #a0a0a0 !important;
+  border-color: currentColor;
+  color: #a0a0a0 !important;
 }
 
 .collapse.show {
-    display: block !important;
+  display: block !important;
 }
 
 .modal-content {
-    background: var(--mdhr-background-color);
-    color: var(--mdhr-text-color);
+  background: var(--mdhr-background-color);
+  color: var(--mdhr-text-color);
 }
 
 .input-wrapper,
 .input-wrapper > input,
 .input-wrapper > span {
-    display: flex;
-    position: relative;
-    margin-top: 5px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+  display: flex;
+  position: relative;
+  margin-top: 5px;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .input-wrapper > span {
-    padding-top: 8px;
-    font-size: medium;
-    font-style: italic;
+  padding-top: 8px;
+  font-size: medium;
+  font-style: italic;
 }
 
 .input-wrapper-block {
-    display: block;
+  display: block;
 }
 
 .input-wrapper-block > .input-wrapper-block {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 #math-gchart-url {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
-#saved-msg, #invalid-msg {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: xx-large;
+#saved-msg,
+#invalid-msg {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: xx-large;
 }
 
 #saved-msg {
-    background: linear-gradient(225deg, #326b29, #357e2a);
+  background: linear-gradient(225deg, #326b29, #357e2a);
 }
 
 #invalid-msg {
-    background: linear-gradient(225deg, #ef1212, #b44343);
+  background: linear-gradient(225deg, #ef1212, #b44343);
 }
 
 .toast-header {
-    background-color: transparent;
-    color: #202020;
+  background-color: transparent;
+  color: #202020;
 }
 
 #copyVersionToClipboard + span {
-    color: var(--bs-success);
-    font-size: xx-large;
+  color: var(--bs-success);
+  font-size: xx-large;
 }
 
 #preview_input {
-    height: 25em;
+  height: 25em;
 }
 
 #preview {
-    width: 100%;
-    height: 100%;
-    background-color: #eee;
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
 }
 
 @media (min-width: 768px) {
-    .sidebar {
-        height: auto;
-    }
+  .sidebar {
+    height: auto;
+  }
 }
 
 @media (min-width: 1440px) {
-    .sidebar {
-        width: 240px;
-    }
+  .sidebar {
+    width: 240px;
+  }
 }
 
 span.hidden {
-    display: none !important;
+  display: none !important;
 }
 
 #mdhrChangeList {
-    height: 30ch;
-    overflow: scroll;
-    font-size: smaller;
+  height: 30ch;
+  overflow: scroll;
+  font-size: smaller;
 }
