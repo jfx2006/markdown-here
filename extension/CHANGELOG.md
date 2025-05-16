@@ -1,5 +1,10 @@
 # Changelog
 
+## [next]
+
+### New
+- Add a donation button to Options->About panel
+
 ## [4.0.6]
 
 ### Fixed

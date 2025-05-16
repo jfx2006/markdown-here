@@ -342,3 +342,50 @@ span.hidden {
   overflow: scroll;
   font-size: smaller;
 }
+
+/* Paypal button styles taken from Paypal's */
+.paypal-donate {
+  position: relative;
+  border-radius: 1000px;
+  cursor: pointer;
+  display: inline-block;
+  min-width: 6rem;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    color 0.2s,
+    background-color 0.2s,
+    border-color 0.2s;
+  border: 0.125rem solid rgb(255, 209, 64);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  padding: 0.625rem 1.875rem;
+  background: rgb(255, 209, 64);
+  color: rgb(0, 48, 135);
+}
+
+.paypal-donate:focus {
+    box-shadow: rgb(255, 255, 255) 0 0 0 0.125rem;
+    outline-offset: 0.125rem;
+    outline: rgb(9, 127, 245) solid 0.125rem;
+}
+
+.paypal-donate:focus-visible {
+  outline: 1px dotted ButtonText;
+}
+
+.paypal-donate:hover {
+  background: rgb(255, 232, 136);
+  border-color: rgb(255, 232, 136);
+  color: rgb(0, 48, 135);
+  text-decoration: none;
+}
+
+.paypal-donate:active {
+  background: rgb(255, 145, 0);
+  border-color: rgb(255, 145, 0);
+  color: rgb(0, 48, 135);
+  outline: none;
+}
