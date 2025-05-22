@@ -5,6 +5,11 @@ degausser: $(EXTENSION)/vendor/degausser.esm.js
 $(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
 	./tools/rollup.sh degausser $<
 
+dompurify: $(EXTENSION)/vendor/purify.es.mjs
+
+$(EXTENSION)/vendor/purify.es.mjs: node_modules/dompurify/dist/purify.es.mjs
+	cp -v $< $@
+
 emoji_codes: $(EXTENSION)/data/emoji_codes.json
 
 $(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/github.json
@@ -63,6 +68,7 @@ $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.
 
 clean:
 	rm -f $(EXTENSION)/vendor/degausser.esm.js
+	rm -f $(EXTENSION)/vendor/purify.es.mjs
 	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
 	rm -rf $(EXTENSION)/highlightjs/styles
@@ -75,4 +81,4 @@ clean:
 	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive dompurify

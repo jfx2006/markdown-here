@@ -43,6 +43,7 @@
     "chai": "^5.1.2",
     "chai-dom": "^1.12.0",
     "degausser": "^2.4.4",
+    "dompurify": "^3.2.6",
     "emojibase-data": "^15.3.2",
     "esbuild": "^0.25.4",
     "esbuild-plugin-replace-regex": "^0.0.2",

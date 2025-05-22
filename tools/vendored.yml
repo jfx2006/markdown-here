@@ -70,3 +70,8 @@ vendored:
   marked-directive:
     path: dist/index.js
     method: rollup
+
+  dompurify:
+    paths:
+      purify.es.mjs: dist/purify.es.mjs
+    method: copy
