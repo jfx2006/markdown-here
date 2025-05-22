@@ -15,6 +15,11 @@ emoji_codes: $(EXTENSION)/data/emoji_codes.json
 $(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/github.json
 	python ./tools/emoji-grab.py $< $@
 
+fuse.js: $(EXTENSION)/vendor/fuse.basic.mjs
+
+$(EXTENSION)/vendor/fuse.basic.mjs: node_modules/fuse.js/dist/fuse.basic.mjs
+	cp -v $< $@
+
 highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
 $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.js
@@ -70,6 +75,7 @@ clean:
 	rm -f $(EXTENSION)/vendor/degausser.esm.js
 	rm -f $(EXTENSION)/vendor/purify.es.mjs
 	rm -f $(EXTENSION)/data/emoji_codes.json
+	rm -f $(EXTENSION)/vendor/fuse.basic.mjs
 	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
 	rm -rf $(EXTENSION)/highlightjs/styles
 	rm -f $(EXTENSION)/vendor/marked.esm.js
@@ -81,4 +87,4 @@ clean:
 	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
 	rm -f $(EXTENSION)/vendor/turndown.esm.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive dompurify
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes marked-directive dompurify fuse.js

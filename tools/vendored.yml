@@ -75,3 +75,8 @@ vendored:
     paths:
       purify.es.mjs: dist/purify.es.mjs
     method: copy
+
+  fuse.js:
+    paths:
+      fuse.basic.mjs: dist/fuse.basic.mjs
+    method: copy
