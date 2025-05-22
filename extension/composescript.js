@@ -23,35 +23,9 @@ function requestHandler(request, sender, sendResponse) {
     return Promise.resolve(looksLikeMarkdown(body_copy))
   } else if (request.action === "get-md-source") {
     return getMdSource()
-  } else if (request.action === "edit-as-new-markdown") {
-    return loadOldMarkdown()
   }
 }
 messenger.runtime.onMessage.addListener(requestHandler)
-
-function base64ToStr(base64) {
-  const binString = atob(base64)
-  const arr = Uint8Array.from(binString, (m) => m.codePointAt(0))
-  return new TextDecoder().decode(arr)
-}
-
-async function loadOldMarkdown() {
-  const DOMPurify = await import(messenger.runtime.getURL("../vendor/purify.es.m  js"))
-
-  function escapeHTML(strings, html) {
-    return `${DOMPurify.default.sanitize(html)}`
-  }
-
-  const mailBody = window.document.body
-  const rawMDHR = mailBody.querySelectorAll(".mdhr-raw")
-  if (rawMDHR.length > 0) {
-    for (const raw of rawMDHR) {
-      const data = raw.title.substring(4)
-      const origMD = base64ToStr(data)
-      mailBody.innerHTML = escapeHTML`${origMD}`
-    }
-  }
-}
 
 messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
   if (response.reply_position === "bottom") {
