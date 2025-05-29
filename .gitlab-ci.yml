@@ -14,7 +14,7 @@ stages:
   needs:
     - job: docker-build
       optional: true
-  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  image: "registry.gitlab.com/mdhr-extension/markdown-here-revival:ci"
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
@@ -105,7 +105,7 @@ mdhr-release:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
-  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  image: "registry.gitlab.com/mdhr-extension/markdown-here-revival:ci"
   needs:
     - job: mdhr-build
       artifacts: true
