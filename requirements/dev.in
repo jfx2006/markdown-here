@@ -1,4 +1,5 @@
 black
+black-gl-code-quality
 pip
 pip-tools
 pip-compile-multi

@@ -5,19 +5,19 @@
 #
 #    pip-compile-multi
 #
-certifi==2024.7.4
+certifi==2025.4.26
     # via requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.2
     # via requests
-idna==3.7
+idna==3.10
     # via requests
 requests==2.32.3
-    # via -r requirements/requirements.in
-ruamel-yaml==0.18.6
-    # via -r requirements/requirements.in
-ruamel-yaml-clib==0.2.8
+    # via -r requirements.in
+ruamel-yaml==0.18.11
+    # via -r requirements.in
+ruamel-yaml-clib==0.2.12
     # via
-    #   -r requirements/requirements.in
+    #   -r requirements.in
     #   ruamel-yaml
-urllib3==2.2.2
+urllib3==2.4.0
     # via requests
