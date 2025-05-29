@@ -58,7 +58,7 @@ lint:black:
     - .standard-rules
     - .python-testing
   script:
-    - black-gl-cq tools/ > black-code-quality-report.json
+    - black-gl-cq -v tools/ > black-code-quality-report.json
   artifacts:
     when: always
     reports:
