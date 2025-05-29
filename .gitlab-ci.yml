@@ -3,7 +3,14 @@ stages:
   - build
   - release
 
+.standard-rules:       # Make a hidden job to hold the common rules
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+
 docker-build:
+  extends: .standard-rules
   image: docker:cli
   stage: build
   services:
@@ -25,6 +32,7 @@ docker-build:
         - CI/Dockerfile
 
 mdhr-build:
+  extends: .standard-rules
   stage: build
   needs:
     - job: docker-build
@@ -54,7 +62,8 @@ mdhr-build:
 mdhr-release:
   stage: release
   rules:
-    - when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
   image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
   needs:
     - job: mdhr-build
