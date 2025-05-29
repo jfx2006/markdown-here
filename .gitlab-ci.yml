@@ -1,5 +1,7 @@
 
 stages:
+  - prep
+  - test
   - build
   - release
 
@@ -8,11 +10,31 @@ stages:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
+.python-common:
+  needs:
+    - job: docker-build
+      optional: true
+  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
+
+.python-testing:
+  extends:
+    - .python-common
+  stage: test
+  before_script:
+    - python --version ; pip --version  # For debugging
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements/dev.txt
 
 docker-build:
   extends: .standard-rules
   image: docker:cli
-  stage: build
+  stage: prep
   services:
     - docker:dind
   variables:
@@ -31,18 +53,37 @@ docker-build:
     - changes:
         - CI/Dockerfile
 
+lint:black:
+  extends:
+    - .standard-rules
+    - .python-testing
+  script:
+    - black-gl-cq src/ > black-code-quality-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality: $CI_PROJECT_DIR/black-code-quality-report.json
+
+lint:ruff:
+  extends:
+    - .standard-rules
+    - .python-testing
+  script:
+    - ruff check --output-format=gitlab > ruff-code-quality-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality: $CI_PROJECT_DIR/ruff-code-quality-report.json
+  rules:
+    - when: never  # TODO: Enable Ruff in CI
+
 mdhr-build:
-  extends: .standard-rules
+  extends:
+    - .standard-rules
+    - .python-common
   stage: build
-  needs:
-    - job: docker-build
-      optional: true
-  image: "registry.gitlab.com/jfx2006/markdown-here-revival:ci"
-  variables:
-    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
     paths:
-      - .cache/pip
       - .pnpm-store
   before_script:
   - pnpm config set store-dir .pnpm-store
