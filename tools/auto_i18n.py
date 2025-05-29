@@ -10,39 +10,41 @@ from argostranslate.translate import get_installed_languages, ITranslation
 
 SOURCE_LANG = "en"
 WEBEXT_LOCALES = [
-        "de",
-        "es",
-        "fr",
-        "it",
-        "ja",
-        "ko",
-        "pl",
-        "pt_BR",
-        "ru",
-        "tr",
-        "zh_CN",
-        "zh_TW",
-    ]
+    "de",
+    "es",
+    "fr",
+    "it",
+    "ja",
+    "ko",
+    "pl",
+    "pt_BR",
+    "ru",
+    "tr",
+    "zh_CN",
+    "zh_TW",
+]
 ARGOS_LOCALES = [
-        "de",
-        "es",
-        "fr",
-        "it",
-        "ja",
-        "ko",
-        "pl",
-        "pt",
-        "ru",
-        "tr",
-        "zh",
-        "zt",
-    ]
+    "de",
+    "es",
+    "fr",
+    "it",
+    "ja",
+    "ko",
+    "pl",
+    "pt",
+    "ru",
+    "tr",
+    "zh",
+    "zt",
+]
 LOCALES = dict(zip(WEBEXT_LOCALES, ARGOS_LOCALES))
 print(LOCALES)
 
+
 def mkHash(s):
     a = mmh3.hash128(s, signed=False)
-    return hex(((a & 0xffffffffffffffff) << 64) + (a >> 64))[2:]
+    return hex(((a & 0xFFFFFFFFFFFFFFFF) << 64) + (a >> 64))[2:]
+
 
 class ArgosTranslate:
     SOURCE_LANG = "en"
@@ -139,7 +141,9 @@ class ArgosTranslate:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         return out_path
 
-    def i18n_translate(self, source_file: Path, dest_file: Path, underlying_translation: ITranslation):
+    def i18n_translate(
+        self, source_file: Path, dest_file: Path, underlying_translation: ITranslation
+    ):
         with open(source_file, "r") as fp:
             messages_source = json.load(fp)
 

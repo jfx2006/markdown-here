@@ -4,19 +4,19 @@ import os.path as osp
 import json
 
 WEBEXT_LOCALES = [
-        "de",
-        "es",
-        "fr",
-        "it",
-        "ja",
-        "ko",
-        "pl",
-        "pt_BR",
-        "ru",
-        "tr",
-        "zh_CN",
-        "zh_TW",
-    ]
+    "de",
+    "es",
+    "fr",
+    "it",
+    "ja",
+    "ko",
+    "pl",
+    "pt_BR",
+    "ru",
+    "tr",
+    "zh_CN",
+    "zh_TW",
+]
 
 
 def main():
@@ -25,7 +25,11 @@ def main():
     with open(osp.join(src_root, "_locales/en/messages.json")) as fp:
         source_strings_data = json.load(fp)
 
-    source_messages_items = [(key, source_strings_data[key]["message"]) for key in source_strings_data.keys() if not key.startswith("__WET")]
+    source_messages_items = [
+        (key, source_strings_data[key]["message"])
+        for key in source_strings_data.keys()
+        if not key.startswith("__WET")
+    ]
     source_messages = dict(source_messages_items)
 
     for lang in WEBEXT_LOCALES:

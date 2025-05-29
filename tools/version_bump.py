@@ -9,6 +9,7 @@ TOP = Path(__file__).parent.parent
 MANIFEST_FILE = TOP / "extension/manifest.json"
 PACKAGES_FILE = TOP / "package.json"
 
+
 def update_version_file(filepath: Path, new_version: str) -> None:
     with open(filepath, "r") as f:
         data = json.load(f)
@@ -18,9 +19,11 @@ def update_version_file(filepath: Path, new_version: str) -> None:
     with open(filepath, "w") as f:
         json.dump(data, f, indent=2)
 
+
 def main(new_version: str):
     update_version_file(MANIFEST_FILE, new_version)
     update_version_file(PACKAGES_FILE, new_version)
+
 
 if __name__ == "__main__":
     try:
@@ -30,4 +33,3 @@ if __name__ == "__main__":
         raise
 
     main(version)
-

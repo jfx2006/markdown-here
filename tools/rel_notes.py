@@ -25,5 +25,5 @@ def main():
     print(f"Wrote {NOTES_FILE}.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
