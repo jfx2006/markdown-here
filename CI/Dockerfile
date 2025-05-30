@@ -1,3 +1,5 @@
+
+# From https://github.com/nodejs/docker-node/blob/main/22/bookworm/Dockerfile
 FROM buildpack-deps:bookworm
 
 RUN groupadd --gid 1000 node \
@@ -7,24 +9,20 @@ RUN groupadd --gid 1000 node \
 # ensure local node/python is preferred over distribution
 ENV PATH /usr/local/bin:$PATH
 
-ENV NODE_VERSION 20.18.3
+ENV NODE_VERSION 22.16.0
 ENV ARCH x64
 
 RUN export GNUPGHOME="$(mktemp -d)" \
   && set -ex \
   && for key in \
-    4ED778F539E3634C779C87C6D7062848A1AB005C \
-    141F07595B7B3FFE74309A937405533BE57C7D57 \
-    74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+    C0D6248439F1D5604AAFFB4021D900FFDB233756 \
     DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
-    61FC681DFB92A079F1685E77973F295594EC4689 \
+    CC68F5A3106FF448322E48ED27F5E38D5B0A215F \
     8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
     890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
     C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
     108F52B48DB57BB0CC439B2997B01419BD92F80A \
     A363A499291CBBC940DD62E41F10027AF002F8B0 \
-    CC68F5A3106FF448322E48ED27F5E38D5B0A215F \
   ; do \
       gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
       gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
@@ -46,13 +44,17 @@ RUN export GNUPGHOME="$(mktemp -d)" \
   && corepack enable \
   && corepack prepare pnpm@latest --activate
 
-# http://bugs.python.org/issue19846
-# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
+
+# From https://github.com/docker-library/python/blob/master/3.12/bookworm/Dockerfile
+
+# cannot remove LANG even though https://bugs.python.org/issue19846 is fixed
+# last attempted removal of LANG broke many users:
+# https://github.com/docker-library/python/pull/570
 ENV LANG C.UTF-8
 
-ENV PYTHON_VER 3.12.9
-ENV STANDALONE_TAG 20250212
-ENV PYTHON_URL https://github.com/indygreg/python-build-standalone/releases/download/$STANDALONE_TAG/cpython-$PYTHON_VER+$STANDALONE_TAG-x86_64-unknown-linux-gnu-install_only.tar.gz
+ENV PYTHON_VER 3.12.10
+ENV STANDALONE_TAG 20250517
+ENV PYTHON_URL https://github.com/indygreg/python-build-standalone/releases/download/$STANDALONE_TAG/cpython-$PYTHON_VER+$STANDALONE_TAG-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz
 
 RUN curl -fsSLO --compressed $PYTHON_URL \
     && curl -fsSLO --compressed $PYTHON_URL.sha256 \
@@ -63,7 +65,7 @@ RUN curl -fsSLO --compressed $PYTHON_URL \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV GLAB_CLI_VER 1.53.0
+ENV GLAB_CLI_VER 1.58.0
 
 RUN curl --location --output /tmp/glab.deb "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
     && dpkg --install /tmp/glab.deb
