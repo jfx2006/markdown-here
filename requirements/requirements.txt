@@ -13,7 +13,7 @@ idna==3.10
     # via requests
 requests==2.32.3
     # via -r requirements.in
-ruamel-yaml==0.18.11
+ruamel-yaml==0.18.12
     # via -r requirements.in
 ruamel-yaml-clib==0.2.12
     # via

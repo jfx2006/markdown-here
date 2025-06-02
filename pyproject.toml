@@ -4,6 +4,7 @@ target-version = ['py312']
 include = "\\.py$"
 
 [tool.ruff]
+line-length = 99
 target-version = "py312"
 include = [
     "tools/**/*.py",

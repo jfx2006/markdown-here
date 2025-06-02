@@ -8,7 +8,7 @@
 -r requirements.txt
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.12.4
+aiohttp==3.12.6
     # via mintrans
 aiosignal==1.3.2
     # via aiohttp

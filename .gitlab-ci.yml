@@ -38,7 +38,7 @@ stages:
         echo -e "${TXT_RED}Test ${CI_JOB_NAME} failed${TXT_RESET}\n"
         jq . ${REPORT_FILENAME}
       else
-        echo -e "${TXT_GREEN}Test ${CI_JOB_NAME} succeeded{$TXT_RESET}\n"
+        echo -e "${TXT_GREEN}Test ${CI_JOB_NAME} succeeded${TXT_RESET}\n"
       fi
 
 docker-build:
@@ -63,15 +63,18 @@ docker-build:
     - changes:
         - CI/Dockerfile
 
-lint:black:
+lint:ruff-format:
   extends:
     - .standard-rules
     - .python-testing
   variables:
+    FORMAT_DIFF: format_diff.diff
     REPORT_FILENAME: black-code-quality-report.json
   script:
-    - black-gl-cq -v tools/ > $REPORT_FILENAME
-    - echo "RV=$?" >> $GITLAB_ENV
+    - RV=0
+    - ruff format --diff --verbose > $FORMAT_DIFF || RV=$?
+    - echo "RV=$RV" >> $GITLAB_ENV
+    - black-codeclimate $FORMAT_DIFF > $REPORT_FILENAME
   artifacts:
     when: always
     reports:
