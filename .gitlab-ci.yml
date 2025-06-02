@@ -37,6 +37,7 @@ stages:
       if [[ "$RV" -gt 0 ]]; then
         echo -e "${TXT_RED}Test ${CI_JOB_NAME} failed${TXT_RESET}\n"
         jq . ${REPORT_FILENAME}
+        exit $RV
       else
         echo -e "${TXT_GREEN}Test ${CI_JOB_NAME} succeeded${TXT_RESET}\n"
       fi
