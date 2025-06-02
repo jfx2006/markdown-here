@@ -16,6 +16,12 @@ function requestHandler(request, sender, sendResponse) {
     if (!previewHidden) {
       const scrolled = window.document.scrollingElement
       composeScroll(scrolled).then(() => {})
+      loadEmojiCompleter().then(() => {})
+    } else {
+      if (emojiDestroy) {
+        emojiDestroy()
+        emojiDestroy = null
+      }
     }
   } else if (request.action === "check-forgot-render") {
     const body_copy = window.document.cloneNode(true)
@@ -48,9 +54,9 @@ let mdhrManglePromise = null
 
 function getMdhrMangle() {
   if (!mdhrManglePromise) {
-    mdhrManglePromise = import(
-      messenger.runtime.getURL("./mdhr-mangle.js")
-      ).then(module => module.MdhrMangle)
+    mdhrManglePromise = import(messenger.runtime.getURL("./mdhr-mangle.js")).then(
+      (module) => module.MdhrMangle,
+    )
   }
   return mdhrManglePromise
 }
@@ -222,20 +228,30 @@ async function editorMutationCb(mutationList, observer) {
   return debounce(debouncedRenderPreview())
 }
 
-async function loadEmojiCompleter() {
-  const emojiCompleterEnabled = await messenger.runtime.sendMessage({
-    action: "get-option",
-    key: "emoji-autocomplete-enabled",
-  })
-  if (emojiCompleterEnabled === "true" || emojiCompleterEnabled === true) {
-    const autoEmoji = await import(messenger.runtime.getURL("./auto-emoji.js"))
-    return autoEmoji.init()
+let autoEmojiPromise = null
+function getAutoEmoji() {
+  if (!autoEmojiPromise) {
+    autoEmojiPromise = import(messenger.runtime.getURL("./auto-emoji.js")).then((module) => module)
   }
-  return null
+  return autoEmojiPromise
 }
 
-// eslint-disable-next-line no-unused-vars
-let emojiDestroy
+let emojiDestroy = null
+async function loadEmojiCompleter() {
+  if (!previewHidden) {
+    const emojiCompleterEnabled = await messenger.runtime.sendMessage({
+      action: "get-option",
+      key: "emoji-autocomplete-enabled",
+    })
+    if (emojiCompleterEnabled === "true" || emojiCompleterEnabled === true) {
+      if (!emojiDestroy) {
+        const autoEmoji = await getAutoEmoji()
+        emojiDestroy = autoEmoji.init()
+      }
+    }
+  }
+}
+
 ;(async () => {
   const mutation_config = {
     attributes: true,
@@ -245,5 +261,5 @@ let emojiDestroy
   }
   MsgMutationObserver = new MutationObserver(editorMutationCb)
   MsgMutationObserver.observe(window.document.body, mutation_config)
-  emojiDestroy = await loadEmojiCompleter()
+  await loadEmojiCompleter()
 })()
