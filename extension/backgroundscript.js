@@ -235,6 +235,7 @@ async function resetModernMode(preview = true, width = true) {
 // they must be added via the API.
 messenger.composeScripts.register({
   js: [{ file: "composescript.js" }],
+  css: [{ file: "vendor/textcomplete.css" }],
 })
 
 async function getOpenComposeWindows() {

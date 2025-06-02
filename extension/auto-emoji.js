@@ -8,8 +8,6 @@ import Fuse from "./vendor/fuse.basic.mjs"
 
 let _fuse = null
 
-const STYLE_ID = "MDHR_textcomplete"
-
 const loadEmoji = async () => {
   if (_fuse == null) {
     const url = messenger.runtime.getURL("./data/emoji_codes.json")
@@ -59,15 +57,6 @@ const EMOJI_STRATEGY = {
 }
 
 export function init() {
-  let linkElem
-  if (!document.getElementById(STYLE_ID)) {
-    linkElem = document.createElement("link")
-    linkElem.id = STYLE_ID
-    linkElem.rel = "stylesheet"
-    linkElem.href = messenger.runtime.getURL("./vendor/textcomplete.css")
-    document.head.append(linkElem)
-  }
-
   const editor = new ContenteditableEditor(document.body)
   const textcomplete = new Textcomplete(editor, [EMOJI_STRATEGY])
 
@@ -76,7 +65,6 @@ export function init() {
   textcomplete.dropdown.el.popover = "auto"
 
   const destroy = function () {
-    linkElem.remove()
     textcomplete.destroy()
   }
 
