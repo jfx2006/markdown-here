@@ -7,7 +7,6 @@
 "use strict"
 
 let previewHidden = null
-let MdhrMangle
 
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
@@ -45,8 +44,20 @@ messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
   return doRenderPreview()
 })
 
+let mdhrManglePromise = null
+
+function getMdhrMangle() {
+  if (!mdhrManglePromise) {
+    mdhrManglePromise = import(
+      messenger.runtime.getURL("./mdhr-mangle.js")
+      ).then(module => module.MdhrMangle)
+  }
+  return mdhrManglePromise
+}
+
 async function looksLikeMarkdown(msgDocument) {
-  const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
+  const MdhrMangle = await getMdhrMangle()
+  const mdHtmlToText = new MdhrMangle(msgDocument)
   let mdMaybe = await mdHtmlToText.preprocess()
   // Ensure that we're not checking on enormous amounts of text.
   if (mdMaybe.length > 10000) {
@@ -104,7 +115,8 @@ async function looksLikeMarkdown(msgDocument) {
 
 async function getMdSource() {
   const body_copy = window.document.cloneNode(true)
-  const mdHtmlToText = new MdhrMangle.MdhrMangle(body_copy)
+  const MdhrMangle = await getMdhrMangle()
+  const mdHtmlToText = new MdhrMangle(body_copy)
   const MdhrRaw = await mdHtmlToText.getMdhrRaw()
   return MdhrRaw.outerHTML
 }
@@ -114,7 +126,8 @@ async function doRenderPreview() {
 
   let finalHTML
   try {
-    const mdHtmlToText = new MdhrMangle.MdhrMangle(msgDocument)
+    const MdhrMangle = await getMdhrMangle()
+    const mdHtmlToText = new MdhrMangle(msgDocument)
     const mdText = await mdHtmlToText.preprocess()
     const result_html = await messenger.runtime.sendMessage({
       action: "render-md",
@@ -226,7 +239,6 @@ async function loadEmojiCompleter() {
 // eslint-disable-next-line no-unused-vars
 let emojiDestroy
 ;(async () => {
-  MdhrMangle = await import(messenger.runtime.getURL("/mdhr-mangle.js"))
   const mutation_config = {
     attributes: true,
     childList: true,
