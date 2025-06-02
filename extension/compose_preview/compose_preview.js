@@ -103,11 +103,7 @@ async function sendPreviewStateToCompose(tabId, value) {
 }
 
 async function disableForPlainText(winId) {
-  const win = await messenger.windows.get(winId, {
-    populate: true,
-    windowTypes: ["messageCompose"],
-  })
-  const tabId = win.tabs[0]?.id
+  const tabId = await getTabIdFromWinId(winId)
   const hidden = true
   await messenger.ex_customui.setLocalOptions({ hidden: hidden })
   await sendPreviewStateToCompose(tabId, hidden)
@@ -116,11 +112,7 @@ async function disableForPlainText(winId) {
 
 async function togglePreview(winId) {
   const context = await messenger.ex_customui.getContext()
-  const win = await messenger.windows.get(winId, {
-    populate: true,
-    windowTypes: ["messageCompose"],
-  })
-  const tabId = win.tabs[0]?.id
+  const tabId = await getTabIdFromWinId(winId)
   const changedHidden = !context.hidden
   await messenger.ex_customui.setLocalOptions({ hidden: changedHidden })
   await sendPreviewStateToCompose(tabId, changedHidden)
@@ -210,15 +202,17 @@ messenger.ex_customui.onEvent.addListener(async (type, details) => {
   }
 })
 
+async function getTabIdFromWinId(winId) {
+  const win = await messenger.windows.get(winId, {
+    populate: true,
+    windowTypes: ["messageCompose"],
+  })
+  return win.tabs[0]?.id
+}
+
 async function getTabId() {
   const context = await messenger.ex_customui.getContext()
-  if (context.windowId) {
-    const win = await messenger.windows.get(context.windowId, {
-      populate: true,
-      windowTypes: ["messageCompose"],
-    })
-    return win.tabs[0]?.id
-  }
+  return await getTabIdFromWinId(context.windowId)
 }
 
 async function previewFrameLoaded(e) {
@@ -227,13 +221,14 @@ async function previewFrameLoaded(e) {
     e.preventDefault()
   }
   contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
+  const context = await messenger.ex_customui.getContext()
   const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   if (mdhr_mode === "modern") {
     await setModernMode()
   } else {
     await setClassicMode()
   }
-  const tabId = await getTabId()
+  const tabId = await getTabIdFromWinId(context.windowId)
   if (tabId) {
     const hidden = !(await OptionsStore.get("enable-markdown-mode"))["enable-markdown-mode"]
     await sendPreviewStateToCompose(tabId, hidden)
