@@ -10,6 +10,7 @@ import json
 import re
 
 from blessings import Terminal
+
 # from bs4 import BeautifulSoup
 
 HTML_RE = re.compile(r'data-i18n="([a-z0-9_]+)"')
@@ -67,14 +68,16 @@ def main():
     unused_strings = string_keys - set(result)
     print(T.bold_red("Unused source strings"))
     for _string in unused_strings:
-        if _string.startswith("__WET_"): continue
+        if _string.startswith("__WET_"):
+            continue
         print(_string)
 
     print("\n\n")
     missing_strings = set(result) - string_keys
     print(T.bold_red("Missing source strings"))
     for _string in missing_strings:
-        if _string.startswith("__WET_GROUP__"): continue
+        if _string.startswith("__WET_GROUP__"):
+            continue
         print(_string)
         # content = source_strings_data[_string]["message"]
         # print(T.yellow(f"  {content}"))

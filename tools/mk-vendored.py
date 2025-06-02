@@ -43,9 +43,12 @@ class MkVendored:
         for lib, data in sorted(self.vendored.items()):
             clean_cmds.extend(self.mk_rule(lib, data))
 
-        self.out.writelines([
-            "clean:\n",
-        ] + [f"\t{cmd}\n" for cmd in clean_cmds])
+        self.out.writelines(
+            [
+                "clean:\n",
+            ]
+            + [f"\t{cmd}\n" for cmd in clean_cmds]
+        )
 
     def mk_rule(self, lib, context):
         vendor_prefix = context.pop("vendor_prefix", "vendor")

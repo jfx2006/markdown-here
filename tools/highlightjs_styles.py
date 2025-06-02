@@ -34,8 +34,9 @@ def copy_css(source_dir, dest_dir):
     if os.path.exists(dest_dir):
         shutil.rmtree(dest_dir)
     dest_dir.mkdir(exist_ok=True)
-    source_css_files = [css_file for css_file in source_dir.glob("*.css") if
-                        ".min" not in css_file.suffixes]
+    source_css_files = [
+        css_file for css_file in source_dir.glob("*.css") if ".min" not in css_file.suffixes
+    ]
     for css_file in source_css_files:
         shutil.copy2(css_file, dest_dir)
         yield css_file

@@ -10,6 +10,7 @@ TOP = Path(__file__).parent.parent
 MANIFEST_FILE = TOP / "extension/manifest.json"
 PACKAGES_FILE = TOP / "packages.json"
 
+
 def main():
     with open(MANIFEST_FILE, "r") as f:
         manifest = json.load(f)
@@ -17,6 +18,6 @@ def main():
 
     print(version)
 
+
 if __name__ == "__main__":
     main()
-

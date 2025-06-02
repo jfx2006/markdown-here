@@ -45,7 +45,11 @@ def main():
     req = requests.get(UPDATES_URL)
     updates = req.json()
 
-    update = {"version": version, "update_link": XPI_URL.format(version=version), "update_hash": f"sha256:{sha256sum}"}
+    update = {
+        "version": version,
+        "update_link": XPI_URL.format(version=version),
+        "update_hash": f"sha256:{sha256sum}",
+    }
     updates["addons"][ADDON_ID]["updates"].append(update)
 
     with open(UPDATES_FILE, "w") as f:

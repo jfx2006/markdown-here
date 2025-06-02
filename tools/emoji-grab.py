@@ -3,6 +3,7 @@
 Build emoji_codes.json file for the marked-emoji plugin.
 Uses emojbase-data to get the Github shortcodes.
 """
+
 import json
 import sys
 
@@ -23,7 +24,7 @@ def gh_uni2entities(code):
 
 def gh_uni2char(code):
     """2764 --> \u2764
-    1F1F7-1F1FC --> \U0001F1F7\U0001F1FC
+    1F1F7-1F1FC --> \U0001f1f7\U0001f1fc
     """
     codes = code.split("-")
     char = "".join([chr(int(c, 16)) for c in codes])
