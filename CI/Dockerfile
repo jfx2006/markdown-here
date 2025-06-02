@@ -70,4 +70,14 @@ ENV GLAB_CLI_VER 1.58.0
 RUN curl --location --output /tmp/glab.deb "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
     && dpkg --install /tmp/glab.deb
 
+
+# Add some other utilities that come in handy
+RUN set -ex; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+        bash \
+        jq \
+    ; \
+	rm -rf /var/lib/apt/lists/*
+
 SHELL ["/bin/bash", "-l"]

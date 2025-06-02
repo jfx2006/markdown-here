@@ -30,6 +30,16 @@ stages:
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r requirements/dev.txt
+    - TXT_RED="\e[31m" && TXT_GREEN="\e[32m" && TXT_RESET="\e[39m"
+  after_script:
+    - if [[ "$CI_JOB_STATUS" == "canceled" ]]; then exit 0; fi
+    - |
+      if [[ "$RV" -gt 0 ]]; then
+        echo -e "${TXT_RED}Test ${CI_JOB_NAME} failed${TXT_RESET}\n"
+        jq . ${REPORT_FILENAME}
+      else
+        echo -e "${TXT_GREEN}Test ${CI_JOB_NAME} succeeded{$TXT_RESET}\n"
+      fi
 
 docker-build:
   extends: .standard-rules
@@ -57,23 +67,33 @@ lint:black:
   extends:
     - .standard-rules
     - .python-testing
+  variables:
+    REPORT_FILENAME: black-code-quality-report.json
   script:
-    - black-gl-cq -v tools/ > black-code-quality-report.json
+    - black-gl-cq -v tools/ > $REPORT_FILENAME
+    - echo "RV=$?" >> $GITLAB_ENV
   artifacts:
     when: always
     reports:
-      codequality: $CI_PROJECT_DIR/black-code-quality-report.json
+      codequality: $CI_PROJECT_DIR/$REPORT_FILENAME
+    paths:
+      - $REPORT_FILENAME
 
 lint:ruff:
   extends:
     - .standard-rules
     - .python-testing
+  variables:
+    REPORT_FILENAME: ruff-code-quality-report.json
   script:
-    - ruff check --output-format=gitlab > ruff-code-quality-report.json
+    - ruff check --output-format=gitlab > $REPORT_FILENAME
+    - echo "RV=$?" >> $GITLAB_ENV
   artifacts:
     when: always
     reports:
-      codequality: $CI_PROJECT_DIR/ruff-code-quality-report.json
+      codequality: $CI_PROJECT_DIR/$REPORT_FILENAME
+    paths:
+      - $REPORT_FILENAME
   rules:
     - when: never  # TODO: Enable Ruff in CI
 
