@@ -88,6 +88,10 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
       responseCallback(prefs)
     })
     return true
+  } else if (request.action === "get-option") {
+    return getOptionValue(request.key)
+  } else if (request.action === "fetch-emojis") {
+    return fetchEmojis()
   } else if (request.action === "set-composeaction-purple") {
     messenger.composeAction.setIcon({
       path: {
@@ -144,6 +148,24 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     throw "unmatched request action: " + request.action
   }
 })
+
+async function getOptionValue(key) {
+  const valueObj = await OptionsStore.get(key)
+  return valueObj[key]
+}
+
+async function fetchEmojis() {
+  const url = messenger.runtime.getURL("./data/emoji_codes.json")
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Error fetching Emojis: ${response.status}`)
+  }
+  // emojis = Object.entries(await response.json())
+  const _emojis = Object.entries(await response.json()).map(
+    ([k, v]) => new Object({ key: k.replaceAll("_", " "), value: v }),
+  )
+  return _emojis
+}
 
 async function doRender(mdText) {
   async function getSyntaxCSS() {

@@ -10,15 +10,7 @@ let _fuse = null
 
 const loadEmoji = async () => {
   if (_fuse == null) {
-    const url = messenger.runtime.getURL("./data/emoji_codes.json")
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Error fetching Emojis: ${response.status}`)
-    }
-    // emojis = Object.entries(await response.json())
-    const _emojis = Object.entries(await response.json()).map(
-      ([k, v]) => new Object({ key: k.replaceAll("_", " "), value: v }),
-    )
+    const _emojis = await messenger.runtime.sendMessage({ action: "fetch-emojis" })
     _fuse = new Fuse(_emojis, { keys: ["key"], includeMatches: true, includeScore: true })
   }
   return _fuse
