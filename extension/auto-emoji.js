@@ -48,14 +48,22 @@ const EMOJI_STRATEGY = {
   },
 }
 
+let textcomplete
+
 export function init() {
-  const editor = new ContenteditableEditor(document.body)
-  const textcomplete = new Textcomplete(editor, [EMOJI_STRATEGY])
+  if (!textcomplete) {
+    const editor = new ContenteditableEditor(document.body)
+    textcomplete = new Textcomplete(editor, [EMOJI_STRATEGY])
 
-  textcomplete.dropdown.el.contentEditable = false
-  textcomplete.dropdown.el.setAttribute("_moz_resizing", false)
-  textcomplete.dropdown.el.popover = "auto"
+    textcomplete.dropdown.el.contentEditable = false
+    textcomplete.dropdown.el.setAttribute("_moz_resizing", false)
+    textcomplete.dropdown.el.popover = "auto"
+  }
 
+  const domElem = document.querySelector("ul.dropdown-menu.textcomplete-dropdown")
+  if (!domElem) {
+    document.body.appendChild(textcomplete.el)
+  }
   const destroy = function () {
     textcomplete.destroy()
   }
