@@ -4,13 +4,11 @@
  * https://gitlab.com/jfx2006
  */
 
-
 const ALLOW_CSS_PROPS = [
   /^--.*$"/i,
   /^align.*$/i,
   /^background.*$/i,
   /^border.*$/i,
-  /^bottom$/i,
   /^color.*$/i,
   /^column.*$/i,
   /^contain$/i,
@@ -22,18 +20,16 @@ const ALLOW_CSS_PROPS = [
   /^font-.*$/i,
   /^gap$/i,
   /^grid.*$/i,
-  /^height$/i,
   /^hyphen.*$/i,
-  /^inline-size$/i,
   /^inset.*$/i,
   /^isolation$/i,
   /^letter-spacing$/i,
   /^line-.*$/i,
-  /^line-height$/i,
   /^list-style.*$/i,
-  /^margin.*$/i,
-  /^max-.*$/i,
-  /^min-.*$/i,
+  /^margin-bottom$/i,
+  /^margin-right$/i,
+  /^margin-left$/i,
+  /^margin-top$/i,
   /^object-.*$/i,
   /^opacity$/i,
   /^order$/i,
@@ -45,16 +41,12 @@ const ALLOW_CSS_PROPS = [
   /^tab-size$/i,
   /^table-layout$/i,
   /^text-.*$/i,
-  /^top$/i,
   /^unicode-bidi$/i,
   /^vertical-align$/i,
   /^visibility$/i,
   /^white-space.*$/i,
-  /^width$/i,
   /^word-.*$/i,
 ]
-
-
 
 export class CSSInliner {
   #defaultStyles
