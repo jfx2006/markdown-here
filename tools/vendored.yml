@@ -57,6 +57,7 @@ vendored:
     cmds:
       - node tools/bundle-textcomplete.mjs
       - cp -v textcomplete-bundle.mjs $@
+      - rm -f textcomplete-bundle.mjs
 
   emoji_codes:
     paths:

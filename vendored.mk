@@ -65,6 +65,7 @@ textcomplete: $(EXTENSION)/vendor/textcomplete.esm.js
 $(EXTENSION)/vendor/textcomplete.esm.js: node_modules/@textcomplete/contenteditable/src/index.ts
 	node tools/bundle-textcomplete.mjs
 	cp -v textcomplete-bundle.mjs $@
+	rm -f textcomplete-bundle.mjs
 
 turndown: $(EXTENSION)/vendor/turndown.esm.js
 

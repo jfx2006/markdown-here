@@ -1,9 +1,12 @@
 EXTENSION = extension
 
 all: node_modules mailext-options-sync vendored
+	touch all
+
+release: all git_status
 	pnpm run release
 
-ci: clean all
+ci: clean all release
 	python tools/rel_notes.py
 	python tools/version_env.py
 
@@ -32,11 +35,20 @@ vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
 vendored: package.json node_modules vendored.mk
 	make -f vendored.mk clean all
 
+git_status:
+	COUNT=$$(git status --porcelain=2 -uno | wc -l); \
+	if [ $$COUNT -gt 0 ]; then \
+  		echo 'ERROR!! git status found changes to tracked files. This is not okay for release.'; \
+  		git status --porcelain=2 -uno; \
+  		exit 1; \
+  	fi
+
 clean:
 	rm -f mailext-options-sync/mailext-options-sync.js
 	rm -f $(EXTENSION)/options/mailext-options-sync.js
 	rm -rf mailext-options-sync/node_modules
 	rm -rf node_modules
+	rm -f all
 	make -f vendored.mk clean
 
 
