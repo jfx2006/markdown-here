@@ -1560,7 +1560,7 @@ function requireCore () {
 	  return mode;
 	}
 
-	var version = "11.10.0";
+	var version = "11.11.1";
 
 	class HTMLInjectionError extends Error {
 	  constructor(reason, html) {
@@ -2087,6 +2087,7 @@ function requireCore () {
 	      // first handler (when ignoreIllegals is true)
 	      if (match.type === "illegal" && lexeme === "") {
 	        // advance so we aren't stuck in an infinite loop
+	        modeBuffer += "\n";
 	        return 1;
 	      }
 
@@ -2380,24 +2381,23 @@ function requireCore () {
 	   * auto-highlights all pre>code elements on the page
 	   */
 	  function highlightAll() {
+	    function boot() {
+	      // if a highlight was requested before DOM was loaded, do now
+	      highlightAll();
+	    }
+
 	    // if we are called too early in the loading process
 	    if (document.readyState === "loading") {
+	      // make sure the event listener is only added once
+	      if (!wantsHighlight) {
+	        window.addEventListener('DOMContentLoaded', boot, false);
+	      }
 	      wantsHighlight = true;
 	      return;
 	    }
 
 	    const blocks = document.querySelectorAll(options.cssSelector);
 	    blocks.forEach(highlightElement);
-	  }
-
-	  function boot() {
-	    // if a highlight was requested before DOM was loaded, do now
-	    if (wantsHighlight) highlightAll();
-	  }
-
-	  // make sure we are in the browser environment
-	  if (typeof window !== 'undefined' && window.addEventListener) {
-	    window.addEventListener('DOMContentLoaded', boot, false);
 	  }
 
 	  /**
@@ -4059,6 +4059,10 @@ function requireApache () {
 	          keywords: { literal: 'on off all deny allow' },
 	          contains: [
 	            {
+	              scope: "punctuation",
+	              match: /\\\n/
+	            },
+	            {
 	              className: 'meta',
 	              begin: /\s\[/,
 	              end: /\]$/
@@ -4248,7 +4252,6 @@ function requireApplescript () {
 /*
  Language: ArcGIS Arcade
  Category: scripting
- Author: John Foster <jfoster@esri.com>
  Website: https://developers.arcgis.com/arcade/
  Description: ArcGIS Arcade is an expression language used in many Esri ArcGIS products such as Pro, Online, Server, Runtime, JavaScript, and Python
 */
@@ -4279,6 +4282,7 @@ function requireArcade () {
 	      "import",
 	      "in",
 	      "new",
+	      "of",
 	      "return",
 	      "switch",
 	      "try",
@@ -4349,6 +4353,7 @@ function requireArcade () {
 	      "Disjoint",
 	      "Distance",
 	      "DistanceGeodetic",
+	      "DistanceToCoordinate",
 	      "Distinct",
 	      "Domain",
 	      "DomainCode",
@@ -4360,6 +4365,7 @@ function requireArcade () {
 	      "Expects",
 	      "Extent",
 	      "Feature",
+	      "FeatureInFilter",
 	      "FeatureSet",
 	      "FeatureSetByAssociation",
 	      "FeatureSetById",
@@ -4368,6 +4374,7 @@ function requireArcade () {
 	      "FeatureSetByRelationshipClass",
 	      "FeatureSetByRelationshipName",
 	      "Filter",
+	      "FilterBySubtypeCode",
 	      "Find",
 	      "First|0",
 	      "Floor",
@@ -4402,6 +4409,7 @@ function requireArcade () {
 	      "IsNan",
 	      "IsSelfIntersecting",
 	      "IsSimple",
+	      "KnowledgeGraphByPortalItem",
 	      "Left|0",
 	      "Length",
 	      "Length3D",
@@ -4411,6 +4419,7 @@ function requireArcade () {
 	      "Map",
 	      "Max",
 	      "Mean",
+	      "MeasureToCoordinate",
 	      "Mid",
 	      "Millisecond",
 	      "Min",
@@ -4428,6 +4437,7 @@ function requireArcade () {
 	      "OrderBy",
 	      "Overlaps",
 	      "Point",
+	      "PointToCoordinate",
 	      "Polygon",
 	      "Polyline",
 	      "Pop",
@@ -4435,6 +4445,7 @@ function requireArcade () {
 	      "Pow",
 	      "Proper",
 	      "Push",
+	      "QueryGraph",
 	      "Random",
 	      "Reduce",
 	      "Relate",
@@ -4455,6 +4466,7 @@ function requireArcade () {
 	      "Splice",
 	      "Split",
 	      "Sqrt",
+	      "StandardizeFilename",
 	      "StandardizeGuid",
 	      "Stdev",
 	      "SubtypeCode",
@@ -4517,6 +4529,7 @@ function requireArcade () {
 	    "feedfeature",
 	    "fencefeature",
 	    "fencenotificationtype",
+	    "graph",
 	    "join",
 	    "layer",
 	    "locationupdate",
@@ -4534,7 +4547,9 @@ function requireArcade () {
 	    "targetdatastore",
 	    "targetfeature",
 	    "targetlayer",
+	    "userInput",
 	    "value",
+	    "variables",
 	    "view"
 	  ];
 	  const SYMBOL = {
@@ -4926,6 +4941,8 @@ function requireArduino () {
 	    'counting_semaphore',
 	    'deque',
 	    'false_type',
+	    'flat_map',
+	    'flat_set',
 	    'future',
 	    'imaginary',
 	    'initializer_list',
@@ -5251,7 +5268,7 @@ function requireArduino () {
 	      [
 	        PREPROCESSOR,
 	        { // containers: ie, `vector <int> rooms (9);`
-	          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function)\\s*<(?!<)',
+	          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function|flat_map|flat_set)\\s*<(?!<)',
 	          end: '>',
 	          keywords: CPP_KEYWORDS,
 	          contains: [
@@ -7342,6 +7359,7 @@ function requireBash () {
 	    "else",
 	    "elif",
 	    "fi",
+	    "time",
 	    "for",
 	    "while",
 	    "until",
@@ -7350,6 +7368,7 @@ function requireBash () {
 	    "done",
 	    "case",
 	    "esac",
+	    "coproc",
 	    "function",
 	    "select"
 	  ];
@@ -7833,7 +7852,13 @@ function requireBasic () {
 	      keyword: KEYWORDS
 	    },
 	    contains: [
-	      hljs.QUOTE_STRING_MODE,
+	      {
+	        // Match strings that start with " and end with " or a line break
+	        scope: 'string',
+	        begin: /"/,
+	        end: /"|$/,
+	        contains: [ hljs.BACKSLASH_ESCAPE ]
+	      },
 	      hljs.COMMENT('REM', '$', { relevance: 10 }),
 	      hljs.COMMENT('\'', '$', { relevance: 0 }),
 	      {
@@ -8042,13 +8067,14 @@ function requireC () {
 	  const NUMBERS = {
 	    className: 'number',
 	    variants: [
-	      { begin: '\\b(0b[01\']+)' },
-	      { begin: '(-?)\\b([\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)' },
-	      { begin: '(-?)(\\b0[xX][a-fA-F0-9\']+|(\\b[\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)([eE][-+]?[\\d\']+)?)' }
-	    ],
+	      { match: /\b(0b[01']+)/ },  
+	      { match: /(-?)\b([\d']+(\.[\d']*)?|\.[\d']+)((ll|LL|l|L)(u|U)?|(u|U)(ll|LL|l|L)?|f|F|b|B)/ },  
+	      { match: /(-?)\b(0[xX][a-fA-F0-9]+(?:'[a-fA-F0-9]+)*(?:\.[a-fA-F0-9]*(?:'[a-fA-F0-9]*)*)?(?:[pP][-+]?[0-9]+)?(l|L)?(u|U)?)/ },  
+	      { match: /(-?)\b\d+(?:'\d+)*(?:\.\d*(?:'\d*)*)?(?:[eE][-+]?\d+)?/ }  
+	  ],
 	    relevance: 0
-	  };
-
+	  };  
+	  
 	  const PREPROCESSOR = {
 	    className: 'meta',
 	    begin: /#\s*[a-z]+\b/,
@@ -9169,7 +9195,9 @@ function requireCoffeescript () {
 	  "import",
 	  "from",
 	  "export",
-	  "extends"
+	  "extends",
+	  // It's reached stage 3, which is "recommended for implementation":
+	  "using"
 	];
 	const LITERALS = [
 	  "true",
@@ -10355,6 +10383,8 @@ function requireCpp () {
 	    'counting_semaphore',
 	    'deque',
 	    'false_type',
+	    'flat_map',
+	    'flat_set',
 	    'future',
 	    'imaginary',
 	    'initializer_list',
@@ -10680,7 +10710,7 @@ function requireCpp () {
 	      [
 	        PREPROCESSOR,
 	        { // containers: ie, `vector <int> rooms (9);`
-	          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function)\\s*<(?!<)',
+	          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function|flat_map|flat_set)\\s*<(?!<)',
 	          end: '>',
 	          keywords: CPP_KEYWORDS,
 	          contains: [
@@ -11267,11 +11297,14 @@ function requireCsharp () {
 	    'alias',
 	    'and',
 	    'ascending',
+	    'args',
 	    'async',
 	    'await',
 	    'by',
 	    'descending',
+	    'dynamic',
 	    'equals',
+	    'file',
 	    'from',
 	    'get',
 	    'global',
@@ -11287,7 +11320,10 @@ function requireCsharp () {
 	    'or',
 	    'orderby',
 	    'partial',
+	    'record',
 	    'remove',
+	    'required',
+	    'scoped',
 	    'select',
 	    'set',
 	    'unmanaged',
@@ -11932,7 +11968,9 @@ function requireCss () {
 	  'align-self',
 	  'alignment-baseline',
 	  'all',
+	  'anchor-name',
 	  'animation',
+	  'animation-composition',
 	  'animation-delay',
 	  'animation-direction',
 	  'animation-duration',
@@ -11940,8 +11978,14 @@ function requireCss () {
 	  'animation-iteration-count',
 	  'animation-name',
 	  'animation-play-state',
+	  'animation-range',
+	  'animation-range-end',
+	  'animation-range-start',
+	  'animation-timeline',
 	  'animation-timing-function',
 	  'appearance',
+	  'aspect-ratio',
+	  'backdrop-filter',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -11951,6 +11995,8 @@ function requireCss () {
 	  'background-image',
 	  'background-origin',
 	  'background-position',
+	  'background-position-x',
+	  'background-position-y',
 	  'background-repeat',
 	  'background-size',
 	  'baseline-shift',
@@ -11976,6 +12022,8 @@ function requireCss () {
 	  'border-bottom-width',
 	  'border-collapse',
 	  'border-color',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-image',
 	  'border-image-outset',
 	  'border-image-repeat',
@@ -12000,8 +12048,6 @@ function requireCss () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
-	  'border-end-end-radius',
-	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
@@ -12017,14 +12063,20 @@ function requireCss () {
 	  'border-top-width',
 	  'border-width',
 	  'bottom',
+	  'box-align',
 	  'box-decoration-break',
+	  'box-direction',
+	  'box-flex',
+	  'box-flex-group',
+	  'box-lines',
+	  'box-ordinal-group',
+	  'box-orient',
+	  'box-pack',
 	  'box-shadow',
 	  'box-sizing',
 	  'break-after',
 	  'break-before',
 	  'break-inside',
-	  'cx',
-	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -12048,19 +12100,31 @@ function requireCss () {
 	  'column-width',
 	  'columns',
 	  'contain',
+	  'contain-intrinsic-block-size',
+	  'contain-intrinsic-height',
+	  'contain-intrinsic-inline-size',
+	  'contain-intrinsic-size',
+	  'contain-intrinsic-width',
+	  'container',
+	  'container-name',
+	  'container-type',
 	  'content',
 	  'content-visibility',
 	  'counter-increment',
 	  'counter-reset',
+	  'counter-set',
 	  'cue',
 	  'cue-after',
 	  'cue-before',
 	  'cursor',
+	  'cx',
+	  'cy',
 	  'direction',
 	  'display',
 	  'dominant-baseline',
 	  'empty-cells',
 	  'enable-background',
+	  'field-sizing',
 	  'fill',
 	  'fill-opacity',
 	  'fill-rule',
@@ -12073,29 +12137,39 @@ function requireCss () {
 	  'flex-shrink',
 	  'flex-wrap',
 	  'float',
-	  'flow',
 	  'flood-color',
 	  'flood-opacity',
+	  'flow',
 	  'font',
 	  'font-display',
 	  'font-family',
 	  'font-feature-settings',
 	  'font-kerning',
 	  'font-language-override',
+	  'font-optical-sizing',
+	  'font-palette',
 	  'font-size',
 	  'font-size-adjust',
+	  'font-smooth',
 	  'font-smoothing',
 	  'font-stretch',
 	  'font-style',
 	  'font-synthesis',
+	  'font-synthesis-position',
+	  'font-synthesis-small-caps',
+	  'font-synthesis-style',
+	  'font-synthesis-weight',
 	  'font-variant',
+	  'font-variant-alternates',
 	  'font-variant-caps',
 	  'font-variant-east-asian',
+	  'font-variant-emoji',
 	  'font-variant-ligatures',
 	  'font-variant-numeric',
 	  'font-variant-position',
 	  'font-variation-settings',
 	  'font-weight',
+	  'forced-color-adjust',
 	  'gap',
 	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
@@ -12117,14 +12191,19 @@ function requireCss () {
 	  'grid-template-rows',
 	  'hanging-punctuation',
 	  'height',
+	  'hyphenate-character',
+	  'hyphenate-limit-chars',
 	  'hyphens',
 	  'icon',
 	  'image-orientation',
 	  'image-rendering',
 	  'image-resolution',
 	  'ime-mode',
+	  'initial-letter',
+	  'initial-letter-align',
 	  'inline-size',
 	  'inset',
+	  'inset-area',
 	  'inset-block',
 	  'inset-block-end',
 	  'inset-block-start',
@@ -12132,24 +12211,20 @@ function requireCss () {
 	  'inset-inline-end',
 	  'inset-inline-start',
 	  'isolation',
-	  'kerning',
 	  'justify-content',
 	  'justify-items',
 	  'justify-self',
+	  'kerning',
 	  'left',
 	  'letter-spacing',
 	  'lighting-color',
 	  'line-break',
 	  'line-height',
+	  'line-height-step',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
-	  'marker',
-	  'marker-end',
-	  'marker-mid',
-	  'marker-start',
-	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -12161,6 +12236,11 @@ function requireCss () {
 	  'margin-left',
 	  'margin-right',
 	  'margin-top',
+	  'margin-trim',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
 	  'marks',
 	  'mask',
 	  'mask-border',
@@ -12179,6 +12259,10 @@ function requireCss () {
 	  'mask-repeat',
 	  'mask-size',
 	  'mask-type',
+	  'masonry-auto-flow',
+	  'math-depth',
+	  'math-shift',
+	  'math-style',
 	  'max-block-size',
 	  'max-height',
 	  'max-inline-size',
@@ -12197,6 +12281,12 @@ function requireCss () {
 	  'normal',
 	  'object-fit',
 	  'object-position',
+	  'offset',
+	  'offset-anchor',
+	  'offset-distance',
+	  'offset-path',
+	  'offset-position',
+	  'offset-rotate',
 	  'opacity',
 	  'order',
 	  'orphans',
@@ -12206,9 +12296,19 @@ function requireCss () {
 	  'outline-style',
 	  'outline-width',
 	  'overflow',
+	  'overflow-anchor',
+	  'overflow-block',
+	  'overflow-clip-margin',
+	  'overflow-inline',
 	  'overflow-wrap',
 	  'overflow-x',
 	  'overflow-y',
+	  'overlay',
+	  'overscroll-behavior',
+	  'overscroll-behavior-block',
+	  'overscroll-behavior-inline',
+	  'overscroll-behavior-x',
+	  'overscroll-behavior-y',
 	  'padding',
 	  'padding-block',
 	  'padding-block-end',
@@ -12220,16 +12320,24 @@ function requireCss () {
 	  'padding-left',
 	  'padding-right',
 	  'padding-top',
+	  'page',
 	  'page-break-after',
 	  'page-break-before',
 	  'page-break-inside',
+	  'paint-order',
 	  'pause',
 	  'pause-after',
 	  'pause-before',
 	  'perspective',
 	  'perspective-origin',
+	  'place-content',
+	  'place-items',
+	  'place-self',
 	  'pointer-events',
 	  'position',
+	  'position-anchor',
+	  'position-visibility',
+	  'print-color-adjust',
 	  'quotes',
 	  'r',
 	  'resize',
@@ -12239,7 +12347,10 @@ function requireCss () {
 	  'right',
 	  'rotate',
 	  'row-gap',
+	  'ruby-align',
+	  'ruby-position',
 	  'scale',
+	  'scroll-behavior',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -12265,6 +12376,9 @@ function requireCss () {
 	  'scroll-snap-align',
 	  'scroll-snap-stop',
 	  'scroll-snap-type',
+	  'scroll-timeline',
+	  'scroll-timeline-axis',
+	  'scroll-timeline-name',
 	  'scrollbar-color',
 	  'scrollbar-gutter',
 	  'scrollbar-width',
@@ -12272,6 +12386,9 @@ function requireCss () {
 	  'shape-margin',
 	  'shape-outside',
 	  'shape-rendering',
+	  'speak',
+	  'speak-as',
+	  'src', // @font-face
 	  'stop-color',
 	  'stop-opacity',
 	  'stroke',
@@ -12282,19 +12399,17 @@ function requireCss () {
 	  'stroke-miterlimit',
 	  'stroke-opacity',
 	  'stroke-width',
-	  'speak',
-	  'speak-as',
-	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
-	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
+	  'text-anchor',
 	  'text-combine-upright',
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip',
 	  'text-decoration-skip-ink',
 	  'text-decoration-style',
 	  'text-decoration-thickness',
@@ -12308,23 +12423,37 @@ function requireCss () {
 	  'text-overflow',
 	  'text-rendering',
 	  'text-shadow',
+	  'text-size-adjust',
 	  'text-transform',
 	  'text-underline-offset',
 	  'text-underline-position',
+	  'text-wrap',
+	  'text-wrap-mode',
+	  'text-wrap-style',
+	  'timeline-scope',
 	  'top',
+	  'touch-action',
 	  'transform',
 	  'transform-box',
 	  'transform-origin',
 	  'transform-style',
 	  'transition',
+	  'transition-behavior',
 	  'transition-delay',
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
 	  'translate',
 	  'unicode-bidi',
+	  'user-modify',
+	  'user-select',
 	  'vector-effect',
 	  'vertical-align',
+	  'view-timeline',
+	  'view-timeline-axis',
+	  'view-timeline-inset',
+	  'view-timeline-name',
+	  'view-transition-name',
 	  'visibility',
 	  'voice-balance',
 	  'voice-duration',
@@ -12335,6 +12464,7 @@ function requireCss () {
 	  'voice-stress',
 	  'voice-volume',
 	  'white-space',
+	  'white-space-collapse',
 	  'widows',
 	  'width',
 	  'will-change',
@@ -12344,7 +12474,8 @@ function requireCss () {
 	  'writing-mode',
 	  'x',
 	  'y',
-	  'z-index'
+	  'z-index',
+	  'zoom'
 	].sort().reverse();
 
 	/*
@@ -13058,6 +13189,15 @@ function requireDart () {
 	    keywords: 'true false null this is new super'
 	  };
 
+	  const NUMBER = {
+	    className: 'number',
+	    relevance: 0,
+	    variants: [
+	      { match: /\b[0-9][0-9_]*(\.[0-9][0-9_]*)?([eE][+-]?[0-9][0-9_]*)?\b/ },
+	      { match: /\b0[xX][0-9A-Fa-f][0-9A-Fa-f_]*\b/ }
+	    ]
+	  };
+
 	  const STRING = {
 	    className: 'string',
 	    variants: [
@@ -13120,7 +13260,7 @@ function requireDart () {
 	    ]
 	  };
 	  BRACED_SUBST.contains = [
-	    hljs.C_NUMBER_MODE,
+	    NUMBER,
 	    STRING
 	  ];
 
@@ -13281,7 +13421,7 @@ function requireDart () {
 	          hljs.UNDERSCORE_TITLE_MODE
 	        ]
 	      },
-	      hljs.C_NUMBER_MODE,
+	      NUMBER,
 	      {
 	        className: 'meta',
 	        begin: '@[A-Za-z]+'
@@ -15180,7 +15320,7 @@ function requireRuby () {
 	    },
 	    {
 	      className: 'params',
-	      begin: /\|/,
+	      begin: /\|(?!=)/,
 	      end: /\|/,
 	      excludeBegin: true,
 	      excludeEnd: true,
@@ -15401,7 +15541,7 @@ function requireErlang () {
 	  const ERLANG_RESERVED = {
 	    keyword:
 	      'after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if '
-	      + 'let not of orelse|10 query receive rem try when xor',
+	      + 'let not of orelse|10 query receive rem try when xor maybe else',
 	    literal:
 	      'false true'
 	  };
@@ -15468,9 +15608,31 @@ function requireErlang () {
 	    scope: 'string',
 	    match: /\$(\\([^0-9]|[0-9]{1,3}|)|.)/,
 	  };
+	  const TRIPLE_QUOTE = {
+	    scope: 'string',
+	    match: /"""("*)(?!")[\s\S]*?"""\1/,
+	  };
+
+	  const SIGIL = {
+	    scope: 'string',
+	    contains: [ hljs.BACKSLASH_ESCAPE ],
+	    variants: [
+	      {match: /~\w?"""("*)(?!")[\s\S]*?"""\1/},
+	      {begin: /~\w?\(/, end: /\)/},
+	      {begin: /~\w?\[/, end: /\]/},
+	      {begin: /~\w?{/, end: /}/},
+	      {begin: /~\w?</, end: />/},
+	      {begin: /~\w?\//, end: /\//},
+	      {begin: /~\w?\|/, end: /\|/},
+	      {begin: /~\w?'/, end: /'/},
+	      {begin: /~\w?"/, end: /"/},
+	      {begin: /~\w?`/, end: /`/},
+	      {begin: /~\w?#/, end: /#/},
+	    ],
+	  };
 
 	  const BLOCK_STATEMENTS = {
-	    beginKeywords: 'fun receive if try case',
+	    beginKeywords: 'fun receive if try case maybe',
 	    end: 'end',
 	    keywords: ERLANG_RESERVED
 	  };
@@ -15480,6 +15642,8 @@ function requireErlang () {
 	    hljs.inherit(hljs.APOS_STRING_MODE, { className: '' }),
 	    BLOCK_STATEMENTS,
 	    FUNCTION_CALL,
+	    SIGIL,
+	    TRIPLE_QUOTE,
 	    hljs.QUOTE_STRING_MODE,
 	    NUMBER,
 	    TUPLE,
@@ -15494,6 +15658,8 @@ function requireErlang () {
 	    NAMED_FUN,
 	    BLOCK_STATEMENTS,
 	    FUNCTION_CALL,
+	    SIGIL,
+	    TRIPLE_QUOTE,
 	    hljs.QUOTE_STRING_MODE,
 	    NUMBER,
 	    TUPLE,
@@ -15516,6 +15682,7 @@ function requireErlang () {
 	    "-author",
 	    "-copyright",
 	    "-doc",
+	    "-moduledoc",
 	    "-vsn",
 	    "-import",
 	    "-include",
@@ -15527,7 +15694,9 @@ function requireErlang () {
 	    "-file",
 	    "-behaviour",
 	    "-behavior",
-	    "-spec"
+	    "-spec",
+	    "-on_load",
+	    "-nifs",
 	  ];
 
 	  const PARAMS = {
@@ -15570,9 +15739,16 @@ function requireErlang () {
 	          $pattern: '-' + hljs.IDENT_RE,
 	          keyword: DIRECTIVES.map(x => `${x}|1.5`).join(" ")
 	        },
-	        contains: [ PARAMS ]
+	        contains: [
+	          PARAMS,
+	          SIGIL,
+	          TRIPLE_QUOTE,
+	          hljs.QUOTE_STRING_MODE
+	        ]
 	      },
 	      NUMBER,
+	      SIGIL,
+	      TRIPLE_QUOTE,
 	      hljs.QUOTE_STRING_MODE,
 	      RECORD_ACCESS,
 	      VAR1,
@@ -15604,7 +15780,7 @@ function requireExcel () {
 	hasRequiredExcel = 1;
 	/** @type LanguageFn */
 	function excel(hljs) {
-	  // built-in functions imported from https://web.archive.org/web/20160513042710/https://support.office.com/en-us/article/Excel-functions-alphabetical-b3944572-255d-4efb-bb96-c6d90033e188
+	  // built-in functions imported from https://web.archive.org/web/20241205190205/https://support.microsoft.com/en-us/office/excel-functions-alphabetical-b3944572-255d-4efb-bb96-c6d90033e188
 	  const BUILT_INS = [
 	    "ABS",
 	    "ACCRINT",
@@ -15620,6 +15796,7 @@ function requireExcel () {
 	    "AND",
 	    "ARABIC",
 	    "AREAS",
+	    "ARRAYTOTEXT",
 	    "ASC",
 	    "ASIN",
 	    "ASINH",
@@ -15653,6 +15830,8 @@ function requireExcel () {
 	    "BITOR",
 	    "BITRSHIFT",
 	    "BITXOR",
+	    "BYCOL",
+	    "BYROW",
 	    "CALL",
 	    "CEILING",
 	    "CEILING.MATH",
@@ -15668,6 +15847,8 @@ function requireExcel () {
 	    "CHISQ.INV.RT",
 	    "CHISQ.TEST",
 	    "CHOOSE",
+	    "CHOOSECOLS",
+	    "CHOOSEROWS",
 	    "CLEAN",
 	    "CODE",
 	    "COLUMN",
@@ -15739,6 +15920,7 @@ function requireExcel () {
 	    "DOLLARDE",
 	    "DOLLARFR",
 	    "DPRODUCT",
+	    "DROP",
 	    "DSTDEV",
 	    "DSTDEVP",
 	    "DSUM",
@@ -15758,14 +15940,16 @@ function requireExcel () {
 	    "EVEN",
 	    "EXACT",
 	    "EXP",
+	    "EXPAND",
 	    "EXPON.DIST",
 	    "EXPONDIST",
 	    "FACT",
 	    "FACTDOUBLE",
-	    "FALSE|0",
+	    "FALSE",
 	    "F.DIST",
 	    "FDIST",
 	    "F.DIST.RT",
+	    "FILTER",
 	    "FILTERXML",
 	    "FIND",
 	    "FINDB",
@@ -15809,6 +15993,7 @@ function requireExcel () {
 	    "HEX2OCT",
 	    "HLOOKUP",
 	    "HOUR",
+	    "HSTACK",
 	    "HYPERLINK",
 	    "HYPGEOM.DIST",
 	    "HYPGEOMDIST",
@@ -15817,6 +16002,7 @@ function requireExcel () {
 	    "IFNA",
 	    "IFS",
 	    "IMABS",
+	    "IMAGE",
 	    "IMAGINARY",
 	    "IMARGUMENT",
 	    "IMCONJUGATE",
@@ -15859,6 +16045,7 @@ function requireExcel () {
 	    "ISNONTEXT",
 	    "ISNUMBER",
 	    "ISODD",
+	    "ISOMITTED",
 	    "ISREF",
 	    "ISTEXT",
 	    "ISO.CEILING",
@@ -15866,12 +16053,14 @@ function requireExcel () {
 	    "ISPMT",
 	    "JIS",
 	    "KURT",
+	    "LAMBDA",
 	    "LARGE",
 	    "LCM",
 	    "LEFT",
 	    "LEFTB",
 	    "LEN",
 	    "LENB",
+	    "LET",
 	    "LINEST",
 	    "LN",
 	    "LOG",
@@ -15883,6 +16072,8 @@ function requireExcel () {
 	    "LOGNORM.INV",
 	    "LOOKUP",
 	    "LOWER",
+	    "MAKEARRAY",
+	    "MAP",
 	    "MATCH",
 	    "MAX",
 	    "MAXA",
@@ -15891,7 +16082,7 @@ function requireExcel () {
 	    "MDURATION",
 	    "MEDIAN",
 	    "MID",
-	    "MIDBs",
+	    "MIDB",
 	    "MIN",
 	    "MINIFS",
 	    "MINA",
@@ -15968,12 +16159,14 @@ function requireExcel () {
 	    "QUOTIENT",
 	    "RADIANS",
 	    "RAND",
+	    "RANDARRAY",
 	    "RANDBETWEEN",
 	    "RANK.AVG",
 	    "RANK.EQ",
 	    "RANK",
 	    "RATE",
 	    "RECEIVED",
+	    "REDUCE",
 	    "REGISTER.ID",
 	    "REPLACE",
 	    "REPLACEB",
@@ -15989,11 +16182,13 @@ function requireExcel () {
 	    "RRI",
 	    "RSQ",
 	    "RTD",
+	    "SCAN",
 	    "SEARCH",
 	    "SEARCHB",
 	    "SEC",
 	    "SECH",
 	    "SECOND",
+	    "SEQUENCE",
 	    "SERIESSUM",
 	    "SHEET",
 	    "SHEETS",
@@ -16005,10 +16200,13 @@ function requireExcel () {
 	    "SLN",
 	    "SLOPE",
 	    "SMALL",
-	    "SQL.REQUEST",
+	    "SORT",
+	    "SORTBY",
 	    "SQRT",
 	    "SQRTPI",
+	    "SQL.REQUEST",
 	    "STANDARDIZE",
+	    "STOCKHISTORY",
 	    "STDEV",
 	    "STDEV.P",
 	    "STDEV.S",
@@ -16031,6 +16229,7 @@ function requireExcel () {
 	    "T",
 	    "TAN",
 	    "TANH",
+	    "TAKE",
 	    "TBILLEQ",
 	    "TBILLPRICE",
 	    "TBILLYIELD",
@@ -16039,26 +16238,33 @@ function requireExcel () {
 	    "T.DIST.RT",
 	    "TDIST",
 	    "TEXT",
+	    "TEXTAFTER",
+	    "TEXTBEFORE",
 	    "TEXTJOIN",
+	    "TEXTSPLIT",
 	    "TIME",
 	    "TIMEVALUE",
 	    "T.INV",
 	    "T.INV.2T",
 	    "TINV",
+	    "TOCOL",
+	    "TOROW",
 	    "TODAY",
 	    "TRANSPOSE",
 	    "TREND",
 	    "TRIM",
 	    "TRIMMEAN",
-	    "TRUE|0",
+	    "TRUE",
 	    "TRUNC",
 	    "T.TEST",
 	    "TTEST",
 	    "TYPE",
 	    "UNICHAR",
 	    "UNICODE",
+	    "UNIQUE",
 	    "UPPER",
 	    "VALUE",
+	    "VALUETOTEXT",
 	    "VAR",
 	    "VAR.P",
 	    "VAR.S",
@@ -16067,6 +16273,7 @@ function requireExcel () {
 	    "VARPA",
 	    "VDB",
 	    "VLOOKUP",
+	    "VSTACK",
 	    "WEBSERVICE",
 	    "WEEKDAY",
 	    "WEEKNUM",
@@ -16074,7 +16281,11 @@ function requireExcel () {
 	    "WEIBULL.DIST",
 	    "WORKDAY",
 	    "WORKDAY.INTL",
+	    "WRAPCOLS",
+	    "WRAPROWS",
 	    "XIRR",
+	    "XLOOKUP",
+	    "XMATCH",
 	    "XNPV",
 	    "XOR",
 	    "YEAR",
@@ -18019,58 +18230,170 @@ function requireGcode () {
 	if (hasRequiredGcode) return gcode_1;
 	hasRequiredGcode = 1;
 	function gcode(hljs) {
-	  const GCODE_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
-	  const GCODE_CLOSE_RE = '%';
+	  const regex = hljs.regex;
 	  const GCODE_KEYWORDS = {
-	    $pattern: GCODE_IDENT_RE,
-	    keyword: 'IF DO WHILE ENDWHILE CALL ENDIF SUB ENDSUB GOTO REPEAT ENDREPEAT '
-	      + 'EQ LT GT NE GE LE OR XOR'
+	    $pattern: /[A-Z]+|%/,
+	    keyword: [
+	      // conditions
+	      'THEN',
+	      'ELSE',
+	      'ENDIF',
+	      'IF',
+
+	      // controls
+	      'GOTO',
+	      'DO',
+	      'WHILE',
+	      'WH',
+	      'END',
+	      'CALL',
+
+	      // scoping
+	      'SUB',
+	      'ENDSUB',
+
+	      // comparisons
+	      'EQ',
+	      'NE',
+	      'LT',
+	      'GT',
+	      'LE',
+	      'GE',
+	      'AND',
+	      'OR',
+	      'XOR',
+
+	      // start/end of program
+	      '%'
+	    ],
+	    built_in: [
+	      'ATAN',
+	      'ABS',
+	      'ACOS',
+	      'ASIN',
+	      'COS',
+	      'EXP',
+	      'FIX',
+	      'FUP',
+	      'ROUND',
+	      'LN',
+	      'SIN',
+	      'SQRT',
+	      'TAN',
+	      'EXISTS'
+	    ]
 	  };
-	  const GCODE_START = {
-	    className: 'meta',
-	    begin: '([O])([0-9]+)'
-	  };
-	  const NUMBER = hljs.inherit(hljs.C_NUMBER_MODE, { begin: '([-+]?((\\.\\d+)|(\\d+)(\\.\\d*)?))|' + hljs.C_NUMBER_RE });
+
+
+	  // TODO: post v12 lets use look-behind, until then \b and a callback filter will be used
+	  // const LETTER_BOUNDARY_RE = /(?<![A-Z])/;
+	  const LETTER_BOUNDARY_RE = /\b/;
+
+	  function LETTER_BOUNDARY_CALLBACK(matchdata, response) {
+	    if (matchdata.index === 0) {
+	      return;
+	    }
+
+	    const charBeforeMatch = matchdata.input[matchdata.index - 1];
+	    if (charBeforeMatch >= '0' && charBeforeMatch <= '9') {
+	      return;
+	    }
+
+	    if (charBeforeMatch === '_') {
+	      return;
+	    }
+
+	    response.ignoreMatch();
+	  }
+
+	  const NUMBER_RE = /[+-]?((\.\d+)|(\d+)(\.\d*)?)/;
+
+	  const GENERAL_MISC_FUNCTION_RE = /[GM]\s*\d+(\.\d+)?/;
+	  const TOOLS_RE = /T\s*\d+/;
+	  const SUBROUTINE_RE = /O\s*\d+/;
+	  const SUBROUTINE_NAMED_RE = /O<.+>/;
+	  const AXES_RE = /[ABCUVWXYZ]\s*/;
+	  const PARAMETERS_RE = /[FHIJKPQRS]\s*/;
+
 	  const GCODE_CODE = [
-	    hljs.C_LINE_COMMENT_MODE,
-	    hljs.C_BLOCK_COMMENT_MODE,
+	    // comments
 	    hljs.COMMENT(/\(/, /\)/),
-	    NUMBER,
-	    hljs.inherit(hljs.APOS_STRING_MODE, { illegal: null }),
-	    hljs.inherit(hljs.QUOTE_STRING_MODE, { illegal: null }),
+	    hljs.COMMENT(/;/, /$/),
+	    hljs.APOS_STRING_MODE,
+	    hljs.QUOTE_STRING_MODE,
+	    hljs.C_NUMBER_MODE,
+
+	    // gcodes
 	    {
-	      className: 'name',
-	      begin: '([G])([0-9]+\\.?[0-9]?)'
-	    },
-	    {
-	      className: 'name',
-	      begin: '([M])([0-9]+\\.?[0-9]?)'
-	    },
-	    {
-	      className: 'attr',
-	      begin: '(VC|VS|#)',
-	      end: '(\\d+)'
-	    },
-	    {
-	      className: 'attr',
-	      begin: '(VZOFX|VZOFY|VZOFZ)'
-	    },
-	    {
-	      className: 'built_in',
-	      begin: '(ATAN|ABS|ACOS|ASIN|SIN|COS|EXP|FIX|FUP|ROUND|LN|TAN)(\\[)',
-	      contains: [ NUMBER ],
-	      end: '\\]'
-	    },
-	    {
-	      className: 'symbol',
+	      scope: 'title.function',
 	      variants: [
+	        // G General functions: G0, G5.1, G5.2, …
+	        // M Misc functions: M0, M55.6, M199, …
+	        { match: regex.concat(LETTER_BOUNDARY_RE, GENERAL_MISC_FUNCTION_RE) },
 	        {
-	          begin: 'N',
-	          end: '\\d+',
-	          illegal: '\\W'
+	          begin: GENERAL_MISC_FUNCTION_RE,
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
+	        },
+	        // T Tools
+	        { match: regex.concat(LETTER_BOUNDARY_RE, TOOLS_RE), },
+	        {
+	          begin: TOOLS_RE,
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
 	        }
 	      ]
-	    }
+	    },
+
+	    {
+	      scope: 'symbol',
+	      variants: [
+	        // O Subroutine ID: O100, O110, …
+	        { match: regex.concat(LETTER_BOUNDARY_RE, SUBROUTINE_RE) },
+	        {
+	          begin: SUBROUTINE_RE,
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
+	        },
+	        // O Subroutine name: O<some>, …
+	        { match: regex.concat(LETTER_BOUNDARY_RE, SUBROUTINE_NAMED_RE) },
+	        {
+	          begin: SUBROUTINE_NAMED_RE,
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
+	        },
+	        // Checksum at end of line: *71, *199, …
+	        { match: /\*\s*\d+\s*$/ }
+	      ]
+	    },
+
+	    {
+	      scope: 'operator', // N Line number: N1, N2, N1020, …
+	      match: /^N\s*\d+/
+	    },
+
+	    {
+	      scope: 'variable',
+	      match: /-?#\s*\d+/
+	    },
+
+	    {
+	      scope: 'property', // Physical axes,
+	      variants: [
+	        { match: regex.concat(LETTER_BOUNDARY_RE, AXES_RE, NUMBER_RE) },
+	        {
+	          begin: regex.concat(AXES_RE, NUMBER_RE),
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
+	        },
+	      ]
+	    },
+
+	    {
+	      scope: 'params', // Different types of parameters
+	      variants: [
+	        { match: regex.concat(LETTER_BOUNDARY_RE, PARAMETERS_RE, NUMBER_RE) },
+	        {
+	          begin: regex.concat(PARAMETERS_RE, NUMBER_RE),
+	          'on:begin': LETTER_BOUNDARY_CALLBACK
+	        },
+	      ]
+	    },
 	  ];
 
 	  return {
@@ -18079,14 +18402,10 @@ function requireGcode () {
 	    // Some implementations (CNC controls) of G-code are interoperable with uppercase and lowercase letters seamlessly.
 	    // However, most prefer all uppercase and uppercase is customary.
 	    case_insensitive: true,
+	    // TODO: post v12 with the use of look-behind this can be enabled
+	    disableAutodetect: true,
 	    keywords: GCODE_KEYWORDS,
-	    contains: [
-	      {
-	        className: 'meta',
-	        begin: GCODE_CLOSE_RE
-	      },
-	      GCODE_START
-	    ].concat(GCODE_CODE)
+	    contains: GCODE_CODE
 	  };
 	}
 
@@ -26935,7 +27254,8 @@ function requireJava () {
 	    'sealed',
 	    'yield',
 	    'permits',
-	    'goto'
+	    'goto',
+	    'when'
 	  ];
 
 	  const BUILT_INS = [
@@ -27165,7 +27485,9 @@ function requireJavascript () {
 	  "import",
 	  "from",
 	  "export",
-	  "extends"
+	  "extends",
+	  // It's reached stage 3, which is "recommended for implementation":
+	  "using"
 	];
 	const LITERALS = [
 	  "true",
@@ -27547,7 +27869,7 @@ function requireJavascript () {
 	  const PARAMS = {
 	    className: 'params',
 	    // convert this to negative lookbehind in v12
-	    begin: /(\s*)\(/, // to match the parms with 
+	    begin: /(\s*)\(/, // to match the parms with
 	    end: /\)/,
 	    excludeBegin: true,
 	    excludeEnd: true,
@@ -27758,8 +28080,8 @@ function requireJavascript () {
 	      NUMBER,
 	      CLASS_REFERENCE,
 	      {
-	        className: 'attr',
-	        begin: IDENT_RE$1 + regex.lookahead(':'),
+	        scope: 'attr',
+	        match: IDENT_RE$1 + regex.lookahead(':'),
 	        relevance: 0
 	      },
 	      FUNCTION_VARIABLE,
@@ -29755,7 +30077,9 @@ function requireLess () {
 	  'align-self',
 	  'alignment-baseline',
 	  'all',
+	  'anchor-name',
 	  'animation',
+	  'animation-composition',
 	  'animation-delay',
 	  'animation-direction',
 	  'animation-duration',
@@ -29763,8 +30087,14 @@ function requireLess () {
 	  'animation-iteration-count',
 	  'animation-name',
 	  'animation-play-state',
+	  'animation-range',
+	  'animation-range-end',
+	  'animation-range-start',
+	  'animation-timeline',
 	  'animation-timing-function',
 	  'appearance',
+	  'aspect-ratio',
+	  'backdrop-filter',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -29774,6 +30104,8 @@ function requireLess () {
 	  'background-image',
 	  'background-origin',
 	  'background-position',
+	  'background-position-x',
+	  'background-position-y',
 	  'background-repeat',
 	  'background-size',
 	  'baseline-shift',
@@ -29799,6 +30131,8 @@ function requireLess () {
 	  'border-bottom-width',
 	  'border-collapse',
 	  'border-color',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-image',
 	  'border-image-outset',
 	  'border-image-repeat',
@@ -29823,8 +30157,6 @@ function requireLess () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
-	  'border-end-end-radius',
-	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
@@ -29840,14 +30172,20 @@ function requireLess () {
 	  'border-top-width',
 	  'border-width',
 	  'bottom',
+	  'box-align',
 	  'box-decoration-break',
+	  'box-direction',
+	  'box-flex',
+	  'box-flex-group',
+	  'box-lines',
+	  'box-ordinal-group',
+	  'box-orient',
+	  'box-pack',
 	  'box-shadow',
 	  'box-sizing',
 	  'break-after',
 	  'break-before',
 	  'break-inside',
-	  'cx',
-	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -29871,19 +30209,31 @@ function requireLess () {
 	  'column-width',
 	  'columns',
 	  'contain',
+	  'contain-intrinsic-block-size',
+	  'contain-intrinsic-height',
+	  'contain-intrinsic-inline-size',
+	  'contain-intrinsic-size',
+	  'contain-intrinsic-width',
+	  'container',
+	  'container-name',
+	  'container-type',
 	  'content',
 	  'content-visibility',
 	  'counter-increment',
 	  'counter-reset',
+	  'counter-set',
 	  'cue',
 	  'cue-after',
 	  'cue-before',
 	  'cursor',
+	  'cx',
+	  'cy',
 	  'direction',
 	  'display',
 	  'dominant-baseline',
 	  'empty-cells',
 	  'enable-background',
+	  'field-sizing',
 	  'fill',
 	  'fill-opacity',
 	  'fill-rule',
@@ -29896,29 +30246,39 @@ function requireLess () {
 	  'flex-shrink',
 	  'flex-wrap',
 	  'float',
-	  'flow',
 	  'flood-color',
 	  'flood-opacity',
+	  'flow',
 	  'font',
 	  'font-display',
 	  'font-family',
 	  'font-feature-settings',
 	  'font-kerning',
 	  'font-language-override',
+	  'font-optical-sizing',
+	  'font-palette',
 	  'font-size',
 	  'font-size-adjust',
+	  'font-smooth',
 	  'font-smoothing',
 	  'font-stretch',
 	  'font-style',
 	  'font-synthesis',
+	  'font-synthesis-position',
+	  'font-synthesis-small-caps',
+	  'font-synthesis-style',
+	  'font-synthesis-weight',
 	  'font-variant',
+	  'font-variant-alternates',
 	  'font-variant-caps',
 	  'font-variant-east-asian',
+	  'font-variant-emoji',
 	  'font-variant-ligatures',
 	  'font-variant-numeric',
 	  'font-variant-position',
 	  'font-variation-settings',
 	  'font-weight',
+	  'forced-color-adjust',
 	  'gap',
 	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
@@ -29940,14 +30300,19 @@ function requireLess () {
 	  'grid-template-rows',
 	  'hanging-punctuation',
 	  'height',
+	  'hyphenate-character',
+	  'hyphenate-limit-chars',
 	  'hyphens',
 	  'icon',
 	  'image-orientation',
 	  'image-rendering',
 	  'image-resolution',
 	  'ime-mode',
+	  'initial-letter',
+	  'initial-letter-align',
 	  'inline-size',
 	  'inset',
+	  'inset-area',
 	  'inset-block',
 	  'inset-block-end',
 	  'inset-block-start',
@@ -29955,24 +30320,20 @@ function requireLess () {
 	  'inset-inline-end',
 	  'inset-inline-start',
 	  'isolation',
-	  'kerning',
 	  'justify-content',
 	  'justify-items',
 	  'justify-self',
+	  'kerning',
 	  'left',
 	  'letter-spacing',
 	  'lighting-color',
 	  'line-break',
 	  'line-height',
+	  'line-height-step',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
-	  'marker',
-	  'marker-end',
-	  'marker-mid',
-	  'marker-start',
-	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -29984,6 +30345,11 @@ function requireLess () {
 	  'margin-left',
 	  'margin-right',
 	  'margin-top',
+	  'margin-trim',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
 	  'marks',
 	  'mask',
 	  'mask-border',
@@ -30002,6 +30368,10 @@ function requireLess () {
 	  'mask-repeat',
 	  'mask-size',
 	  'mask-type',
+	  'masonry-auto-flow',
+	  'math-depth',
+	  'math-shift',
+	  'math-style',
 	  'max-block-size',
 	  'max-height',
 	  'max-inline-size',
@@ -30020,6 +30390,12 @@ function requireLess () {
 	  'normal',
 	  'object-fit',
 	  'object-position',
+	  'offset',
+	  'offset-anchor',
+	  'offset-distance',
+	  'offset-path',
+	  'offset-position',
+	  'offset-rotate',
 	  'opacity',
 	  'order',
 	  'orphans',
@@ -30029,9 +30405,19 @@ function requireLess () {
 	  'outline-style',
 	  'outline-width',
 	  'overflow',
+	  'overflow-anchor',
+	  'overflow-block',
+	  'overflow-clip-margin',
+	  'overflow-inline',
 	  'overflow-wrap',
 	  'overflow-x',
 	  'overflow-y',
+	  'overlay',
+	  'overscroll-behavior',
+	  'overscroll-behavior-block',
+	  'overscroll-behavior-inline',
+	  'overscroll-behavior-x',
+	  'overscroll-behavior-y',
 	  'padding',
 	  'padding-block',
 	  'padding-block-end',
@@ -30043,16 +30429,24 @@ function requireLess () {
 	  'padding-left',
 	  'padding-right',
 	  'padding-top',
+	  'page',
 	  'page-break-after',
 	  'page-break-before',
 	  'page-break-inside',
+	  'paint-order',
 	  'pause',
 	  'pause-after',
 	  'pause-before',
 	  'perspective',
 	  'perspective-origin',
+	  'place-content',
+	  'place-items',
+	  'place-self',
 	  'pointer-events',
 	  'position',
+	  'position-anchor',
+	  'position-visibility',
+	  'print-color-adjust',
 	  'quotes',
 	  'r',
 	  'resize',
@@ -30062,7 +30456,10 @@ function requireLess () {
 	  'right',
 	  'rotate',
 	  'row-gap',
+	  'ruby-align',
+	  'ruby-position',
 	  'scale',
+	  'scroll-behavior',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -30088,6 +30485,9 @@ function requireLess () {
 	  'scroll-snap-align',
 	  'scroll-snap-stop',
 	  'scroll-snap-type',
+	  'scroll-timeline',
+	  'scroll-timeline-axis',
+	  'scroll-timeline-name',
 	  'scrollbar-color',
 	  'scrollbar-gutter',
 	  'scrollbar-width',
@@ -30095,6 +30495,9 @@ function requireLess () {
 	  'shape-margin',
 	  'shape-outside',
 	  'shape-rendering',
+	  'speak',
+	  'speak-as',
+	  'src', // @font-face
 	  'stop-color',
 	  'stop-opacity',
 	  'stroke',
@@ -30105,19 +30508,17 @@ function requireLess () {
 	  'stroke-miterlimit',
 	  'stroke-opacity',
 	  'stroke-width',
-	  'speak',
-	  'speak-as',
-	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
-	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
+	  'text-anchor',
 	  'text-combine-upright',
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip',
 	  'text-decoration-skip-ink',
 	  'text-decoration-style',
 	  'text-decoration-thickness',
@@ -30131,23 +30532,37 @@ function requireLess () {
 	  'text-overflow',
 	  'text-rendering',
 	  'text-shadow',
+	  'text-size-adjust',
 	  'text-transform',
 	  'text-underline-offset',
 	  'text-underline-position',
+	  'text-wrap',
+	  'text-wrap-mode',
+	  'text-wrap-style',
+	  'timeline-scope',
 	  'top',
+	  'touch-action',
 	  'transform',
 	  'transform-box',
 	  'transform-origin',
 	  'transform-style',
 	  'transition',
+	  'transition-behavior',
 	  'transition-delay',
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
 	  'translate',
 	  'unicode-bidi',
+	  'user-modify',
+	  'user-select',
 	  'vector-effect',
 	  'vertical-align',
+	  'view-timeline',
+	  'view-timeline-axis',
+	  'view-timeline-inset',
+	  'view-timeline-name',
+	  'view-transition-name',
 	  'visibility',
 	  'voice-balance',
 	  'voice-duration',
@@ -30158,6 +30573,7 @@ function requireLess () {
 	  'voice-stress',
 	  'voice-volume',
 	  'white-space',
+	  'white-space-collapse',
 	  'widows',
 	  'width',
 	  'will-change',
@@ -30167,7 +30583,8 @@ function requireLess () {
 	  'writing-mode',
 	  'x',
 	  'y',
-	  'z-index'
+	  'z-index',
+	  'zoom'
 	].sort().reverse();
 
 	// some grammars use them all as a single group
@@ -30788,7 +31205,9 @@ function requireLivescript () {
 	  "import",
 	  "from",
 	  "export",
-	  "extends"
+	  "extends",
+	  // It's reached stage 3, which is "recommended for implementation":
+	  "using"
 	];
 	const LITERALS = [
 	  "true",
@@ -31392,6 +31811,7 @@ function requireLua () {
 	  ];
 	  return {
 	    name: 'Lua',
+	    aliases: ['pluto'],
 	    keywords: {
 	      $pattern: hljs.UNDERSCORE_IDENT_RE,
 	      literal: "true false nil",
@@ -31492,7 +31912,10 @@ function requireMakefile () {
 	        + 'word wordlist firstword lastword dir notdir suffix basename '
 	        + 'addsuffix addprefix join wildcard realpath abspath error warning '
 	        + 'shell origin flavor foreach if or and call eval file value' },
-	    contains: [ VARIABLE ]
+	    contains: [ 
+	      VARIABLE,
+	      QUOTE_STRING // Added QUOTE_STRING as they can be a part of functions
+	    ]
 	  };
 	  /* Variable assignment */
 	  const ASSIGNMENT = { begin: '^' + hljs.UNDERSCORE_IDENT_RE + '\\s*(?=[:+?]?=)' };
@@ -41560,9 +41983,11 @@ function requireNim () {
 	    "break",
 	    "case",
 	    "cast",
+	    "concept",
 	    "const",
 	    "continue",
 	    "converter",
+	    "defer",
 	    "discard",
 	    "distinct",
 	    "div",
@@ -41696,89 +42121,366 @@ var hasRequiredNix;
 function requireNix () {
 	if (hasRequiredNix) return nix_1;
 	hasRequiredNix = 1;
+	/** @type LanguageFn */
 	function nix(hljs) {
+	  const regex = hljs.regex;
 	  const KEYWORDS = {
 	    keyword: [
-	      "rec",
-	      "with",
-	      "let",
+	      "assert",
+	      "else",
+	      "if",
 	      "in",
 	      "inherit",
-	      "assert",
-	      "if",
-	      "else",
-	      "then"
+	      "let",
+	      "or",
+	      "rec",
+	      "then",
+	      "with",
 	    ],
 	    literal: [
 	      "true",
 	      "false",
-	      "or",
-	      "and",
-	      "null"
+	      "null",
 	    ],
 	    built_in: [
-	      "import",
+	      // toplevel builtins
 	      "abort",
 	      "baseNameOf",
-	      "dirOf",
-	      "isNull",
 	      "builtins",
+	      "derivation",
+	      "derivationStrict",
+	      "dirOf",
+	      "fetchGit",
+	      "fetchMercurial",
+	      "fetchTarball",
+	      "fetchTree",
+	      "fromTOML",
+	      "import",
+	      "isNull",
 	      "map",
+	      "placeholder",
 	      "removeAttrs",
+	      "scopedImport",
 	      "throw",
 	      "toString",
-	      "derivation"
-	    ]
+	    ],
 	  };
-	  const ANTIQUOTE = {
-	    className: 'subst',
-	    begin: /\$\{/,
-	    end: /\}/,
-	    keywords: KEYWORDS
+
+	  const BUILTINS = {
+	    scope: 'built_in',
+	    match: regex.either(...[
+	      "abort",
+	      "add",
+	      "addDrvOutputDependencies",
+	      "addErrorContext",
+	      "all",
+	      "any",
+	      "appendContext",
+	      "attrNames",
+	      "attrValues",
+	      "baseNameOf",
+	      "bitAnd",
+	      "bitOr",
+	      "bitXor",
+	      "break",
+	      "builtins",
+	      "catAttrs",
+	      "ceil",
+	      "compareVersions",
+	      "concatLists",
+	      "concatMap",
+	      "concatStringsSep",
+	      "convertHash",
+	      "currentSystem",
+	      "currentTime",
+	      "deepSeq",
+	      "derivation",
+	      "derivationStrict",
+	      "dirOf",
+	      "div",
+	      "elem",
+	      "elemAt",
+	      "false",
+	      "fetchGit",
+	      "fetchMercurial",
+	      "fetchTarball",
+	      "fetchTree",
+	      "fetchurl",
+	      "filter",
+	      "filterSource",
+	      "findFile",
+	      "flakeRefToString",
+	      "floor",
+	      "foldl'",
+	      "fromJSON",
+	      "fromTOML",
+	      "functionArgs",
+	      "genList",
+	      "genericClosure",
+	      "getAttr",
+	      "getContext",
+	      "getEnv",
+	      "getFlake",
+	      "groupBy",
+	      "hasAttr",
+	      "hasContext",
+	      "hashFile",
+	      "hashString",
+	      "head",
+	      "import",
+	      "intersectAttrs",
+	      "isAttrs",
+	      "isBool",
+	      "isFloat",
+	      "isFunction",
+	      "isInt",
+	      "isList",
+	      "isNull",
+	      "isPath",
+	      "isString",
+	      "langVersion",
+	      "length",
+	      "lessThan",
+	      "listToAttrs",
+	      "map",
+	      "mapAttrs",
+	      "match",
+	      "mul",
+	      "nixPath",
+	      "nixVersion",
+	      "null",
+	      "parseDrvName",
+	      "parseFlakeRef",
+	      "partition",
+	      "path",
+	      "pathExists",
+	      "placeholder",
+	      "readDir",
+	      "readFile",
+	      "readFileType",
+	      "removeAttrs",
+	      "replaceStrings",
+	      "scopedImport",
+	      "seq",
+	      "sort",
+	      "split",
+	      "splitVersion",
+	      "storeDir",
+	      "storePath",
+	      "stringLength",
+	      "sub",
+	      "substring",
+	      "tail",
+	      "throw",
+	      "toFile",
+	      "toJSON",
+	      "toPath",
+	      "toString",
+	      "toXML",
+	      "trace",
+	      "traceVerbose",
+	      "true",
+	      "tryEval",
+	      "typeOf",
+	      "unsafeDiscardOutputDependency",
+	      "unsafeDiscardStringContext",
+	      "unsafeGetAttrPos",
+	      "warn",
+	      "zipAttrsWith",
+	    ].map(b => `builtins\\.${b}`)),
+	    relevance: 10,
 	  };
-	  const ESCAPED_DOLLAR = {
-	    className: 'char.escape',
-	    begin: /''\$/,
+
+	  const IDENTIFIER_REGEX = '[A-Za-z_][A-Za-z0-9_\'-]*';
+
+	  const LOOKUP_PATH = {
+	    scope: 'symbol',
+	    match: new RegExp(`<${IDENTIFIER_REGEX}(/${IDENTIFIER_REGEX})*>`),
 	  };
+
+	  const PATH_PIECE = "[A-Za-z0-9_\\+\\.-]+";
+	  const PATH = {
+	    scope: 'symbol',
+	    match: new RegExp(`(\\.\\.|\\.|~)?/(${PATH_PIECE})?(/${PATH_PIECE})*(?=[\\s;])`),
+	  };
+
+	  const OPERATOR_WITHOUT_MINUS_REGEX = regex.either(...[
+	    '==',
+	    '=',
+	    '\\+\\+',
+	    '\\+',
+	    '<=',
+	    '<\\|',
+	    '<',
+	    '>=',
+	    '>',
+	    '->',
+	    '//',
+	    '/',
+	    '!=',
+	    '!',
+	    '\\|\\|',
+	    '\\|>',
+	    '\\?',
+	    '\\*',
+	    '&&',
+	  ]);
+
+	  const OPERATOR = {
+	    scope: 'operator',
+	    match: regex.concat(OPERATOR_WITHOUT_MINUS_REGEX, /(?!-)/),
+	    relevance: 0,
+	  };
+
+	  // '-' is being handled by itself to ensure we are able to tell the difference
+	  // between a dash in an identifier and a minus operator
+	  const NUMBER = {
+	    scope: 'number',
+	    match: new RegExp(`${hljs.NUMBER_RE}(?!-)`),
+	    relevance: 0,
+	  };
+	  const MINUS_OPERATOR = {
+	    variants: [
+	      {
+	        scope: 'operator',
+	        beforeMatch: /\s/,
+	        // The (?!>) is used to ensure this doesn't collide with the '->' operator
+	        begin: /-(?!>)/,
+	      },
+	      {
+	        begin: [
+	          new RegExp(`${hljs.NUMBER_RE}`),
+	          /-/,
+	          /(?!>)/,
+	        ],
+	        beginScope: {
+	          1: 'number',
+	          2: 'operator'
+	        },
+	      },
+	      {
+	        begin: [
+	          OPERATOR_WITHOUT_MINUS_REGEX,
+	          /-/,
+	          /(?!>)/,
+	        ],
+	        beginScope: {
+	          1: 'operator',
+	          2: 'operator'
+	        },
+	      },
+	    ],
+	    relevance: 0,
+	  };
+
 	  const ATTRS = {
-	    begin: /[a-zA-Z0-9-_]+(\s*=)/,
+	    beforeMatch: /(^|\{|;)\s*/,
+	    begin: new RegExp(`${IDENTIFIER_REGEX}(\\.${IDENTIFIER_REGEX})*\\s*=(?!=)`),
 	    returnBegin: true,
 	    relevance: 0,
 	    contains: [
 	      {
-	        className: 'attr',
-	        begin: /\S+/,
-	        relevance: 0.2
+	        scope: 'attr',
+	        match: new RegExp(`${IDENTIFIER_REGEX}(\\.${IDENTIFIER_REGEX})*(?=\\s*=)`),
+	        relevance: 0.2,
 	      }
-	    ]
+	    ],
+	  };
+
+	  const NORMAL_ESCAPED_DOLLAR = {
+	    scope: 'char.escape',
+	    match: /\\\$/,
+	  };
+	  const INDENTED_ESCAPED_DOLLAR = {
+	    scope: 'char.escape',
+	    match: /''\$/,
+	  };
+	  const ANTIQUOTE = {
+	    scope: 'subst',
+	    begin: /\$\{/,
+	    end: /\}/,
+	    keywords: KEYWORDS,
+	  };
+	  const ESCAPED_DOUBLEQUOTE = {
+	    scope: 'char.escape',
+	    match: /'''/,
+	  };
+	  const ESCAPED_LITERAL = {
+	    scope: 'char.escape',
+	    match: /\\(?!\$)./,
 	  };
 	  const STRING = {
-	    className: 'string',
-	    contains: [ ESCAPED_DOLLAR, ANTIQUOTE ],
+	    scope: 'string',
 	    variants: [
 	      {
 	        begin: "''",
-	        end: "''"
+	        end: "''",
+	        contains: [
+	          INDENTED_ESCAPED_DOLLAR,
+	          ANTIQUOTE,
+	          ESCAPED_DOUBLEQUOTE,
+	          ESCAPED_LITERAL,
+	        ],
 	      },
 	      {
 	        begin: '"',
-	        end: '"'
-	      }
-	    ]
+	        end: '"',
+	        contains: [
+	          NORMAL_ESCAPED_DOLLAR,
+	          ANTIQUOTE,
+	          ESCAPED_LITERAL,
+	        ],
+	      },
+	    ],
 	  };
+
+	  const FUNCTION_PARAMS = {
+	    scope: 'params',
+	    match: new RegExp(`${IDENTIFIER_REGEX}\\s*:(?=\\s)`),
+	  };
+
 	  const EXPRESSIONS = [
-	    hljs.NUMBER_MODE,
+	    NUMBER,
 	    hljs.HASH_COMMENT_MODE,
 	    hljs.C_BLOCK_COMMENT_MODE,
+	    hljs.COMMENT(
+	      /\/\*\*(?!\/)/,
+	      /\*\//,
+	      {
+	        subLanguage: 'markdown',
+	        relevance: 0
+	      }
+	    ),
+	    BUILTINS,
 	    STRING,
-	    ATTRS
+	    LOOKUP_PATH,
+	    PATH,
+	    FUNCTION_PARAMS,
+	    ATTRS,
+	    MINUS_OPERATOR,
+	    OPERATOR,
 	  ];
+
 	  ANTIQUOTE.contains = EXPRESSIONS;
+
+	  const REPL = [
+	    {
+	      scope: 'meta.prompt',
+	      match: /^nix-repl>(?=\s)/,
+	      relevance: 10,
+	    },
+	    {
+	      scope: 'meta',
+	      beforeMatch: /\s+/,
+	      begin: /:([a-z]+|\?)/,
+	    },
+	  ];
+
 	  return {
 	    name: 'Nix',
 	    aliases: [ "nixos" ],
 	    keywords: KEYWORDS,
-	    contains: EXPRESSIONS
+	    contains: EXPRESSIONS.concat(REPL),
 	  };
 	}
 
@@ -43626,12 +44328,15 @@ function requirePhp () {
 	  const PASCAL_CASE_CLASS_NAME_RE = regex.concat(
 	    /(\\?[A-Z][a-z0-9_\x7f-\xff]+|\\?[A-Z]+(?=[A-Z][a-z0-9_\x7f-\xff])){1,}/,
 	    NOT_PERL_ETC);
+	  const UPCASE_NAME_RE = regex.concat(
+	    /[A-Z]+/,
+	    NOT_PERL_ETC);
 	  const VARIABLE = {
 	    scope: 'variable',
 	    match: '\\$+' + IDENT_RE,
 	  };
 	  const PREPROCESSOR = {
-	    scope: 'meta',
+	    scope: "meta",
 	    variants: [
 	      { begin: /<\?php/, relevance: 10 }, // boost for obvious PHP
 	      { begin: /<\?=/ },
@@ -44045,7 +44750,12 @@ function requirePhp () {
 	  ];
 
 	  const ATTRIBUTES = {
-	    begin: regex.concat(/#\[\s*/, PASCAL_CASE_CLASS_NAME_RE),
+	    begin: regex.concat(/#\[\s*\\?/,
+	      regex.either(
+	        PASCAL_CASE_CLASS_NAME_RE,
+	        UPCASE_NAME_RE
+	      )
+	    ),
 	    beginScope: "meta",
 	    end: /]/,
 	    endScope: "meta",
@@ -44075,7 +44785,10 @@ function requirePhp () {
 	      ...ATTRIBUTE_CONTAINS,
 	      {
 	        scope: 'meta',
-	        match: PASCAL_CASE_CLASS_NAME_RE
+	        variants: [
+	          { match: PASCAL_CASE_CLASS_NAME_RE },
+	          { match: UPCASE_NAME_RE }
+	        ]
 	      }
 	    ]
 	  };
@@ -44155,6 +44868,7 @@ function requirePhp () {
 	            keywords: KEYWORDS,
 	            contains: [
 	              'self',
+	              ATTRIBUTES,
 	              VARIABLE,
 	              LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
 	              hljs.C_BLOCK_COMMENT_MODE,
@@ -47673,15 +48387,25 @@ function requireRust () {
 	        illegal: null
 	      }),
 	      {
-	        className: 'string',
-	        variants: [
-	          { begin: /b?r(#*)"(.|\n)*?"\1(?!#)/ },
-	          { begin: /b?'\\?(x\w{2}|u\w{4}|U\w{8}|.)'/ }
-	        ]
+	        className: 'symbol',
+	        // negative lookahead to avoid matching `'`
+	        begin: /'[a-zA-Z_][a-zA-Z0-9_]*(?!')/
 	      },
 	      {
-	        className: 'symbol',
-	        begin: /'[a-zA-Z_][a-zA-Z0-9_]*/
+	        scope: 'string',
+	        variants: [
+	          { begin: /b?r(#*)"(.|\n)*?"\1(?!#)/ },
+	          {
+	            begin: /b?'/,
+	            end: /'/,
+	            contains: [
+	              {
+	                scope: "char.escape",
+	                match: /\\('|\w|x\w{2}|u\w{4}|U\w{8})/
+	              }
+	            ]
+	          }
+	        ]
 	      },
 	      {
 	        className: 'number',
@@ -49175,7 +49899,9 @@ function requireScss () {
 	  'align-self',
 	  'alignment-baseline',
 	  'all',
+	  'anchor-name',
 	  'animation',
+	  'animation-composition',
 	  'animation-delay',
 	  'animation-direction',
 	  'animation-duration',
@@ -49183,8 +49909,14 @@ function requireScss () {
 	  'animation-iteration-count',
 	  'animation-name',
 	  'animation-play-state',
+	  'animation-range',
+	  'animation-range-end',
+	  'animation-range-start',
+	  'animation-timeline',
 	  'animation-timing-function',
 	  'appearance',
+	  'aspect-ratio',
+	  'backdrop-filter',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -49194,6 +49926,8 @@ function requireScss () {
 	  'background-image',
 	  'background-origin',
 	  'background-position',
+	  'background-position-x',
+	  'background-position-y',
 	  'background-repeat',
 	  'background-size',
 	  'baseline-shift',
@@ -49219,6 +49953,8 @@ function requireScss () {
 	  'border-bottom-width',
 	  'border-collapse',
 	  'border-color',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-image',
 	  'border-image-outset',
 	  'border-image-repeat',
@@ -49243,8 +49979,6 @@ function requireScss () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
-	  'border-end-end-radius',
-	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
@@ -49260,14 +49994,20 @@ function requireScss () {
 	  'border-top-width',
 	  'border-width',
 	  'bottom',
+	  'box-align',
 	  'box-decoration-break',
+	  'box-direction',
+	  'box-flex',
+	  'box-flex-group',
+	  'box-lines',
+	  'box-ordinal-group',
+	  'box-orient',
+	  'box-pack',
 	  'box-shadow',
 	  'box-sizing',
 	  'break-after',
 	  'break-before',
 	  'break-inside',
-	  'cx',
-	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -49291,19 +50031,31 @@ function requireScss () {
 	  'column-width',
 	  'columns',
 	  'contain',
+	  'contain-intrinsic-block-size',
+	  'contain-intrinsic-height',
+	  'contain-intrinsic-inline-size',
+	  'contain-intrinsic-size',
+	  'contain-intrinsic-width',
+	  'container',
+	  'container-name',
+	  'container-type',
 	  'content',
 	  'content-visibility',
 	  'counter-increment',
 	  'counter-reset',
+	  'counter-set',
 	  'cue',
 	  'cue-after',
 	  'cue-before',
 	  'cursor',
+	  'cx',
+	  'cy',
 	  'direction',
 	  'display',
 	  'dominant-baseline',
 	  'empty-cells',
 	  'enable-background',
+	  'field-sizing',
 	  'fill',
 	  'fill-opacity',
 	  'fill-rule',
@@ -49316,29 +50068,39 @@ function requireScss () {
 	  'flex-shrink',
 	  'flex-wrap',
 	  'float',
-	  'flow',
 	  'flood-color',
 	  'flood-opacity',
+	  'flow',
 	  'font',
 	  'font-display',
 	  'font-family',
 	  'font-feature-settings',
 	  'font-kerning',
 	  'font-language-override',
+	  'font-optical-sizing',
+	  'font-palette',
 	  'font-size',
 	  'font-size-adjust',
+	  'font-smooth',
 	  'font-smoothing',
 	  'font-stretch',
 	  'font-style',
 	  'font-synthesis',
+	  'font-synthesis-position',
+	  'font-synthesis-small-caps',
+	  'font-synthesis-style',
+	  'font-synthesis-weight',
 	  'font-variant',
+	  'font-variant-alternates',
 	  'font-variant-caps',
 	  'font-variant-east-asian',
+	  'font-variant-emoji',
 	  'font-variant-ligatures',
 	  'font-variant-numeric',
 	  'font-variant-position',
 	  'font-variation-settings',
 	  'font-weight',
+	  'forced-color-adjust',
 	  'gap',
 	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
@@ -49360,14 +50122,19 @@ function requireScss () {
 	  'grid-template-rows',
 	  'hanging-punctuation',
 	  'height',
+	  'hyphenate-character',
+	  'hyphenate-limit-chars',
 	  'hyphens',
 	  'icon',
 	  'image-orientation',
 	  'image-rendering',
 	  'image-resolution',
 	  'ime-mode',
+	  'initial-letter',
+	  'initial-letter-align',
 	  'inline-size',
 	  'inset',
+	  'inset-area',
 	  'inset-block',
 	  'inset-block-end',
 	  'inset-block-start',
@@ -49375,24 +50142,20 @@ function requireScss () {
 	  'inset-inline-end',
 	  'inset-inline-start',
 	  'isolation',
-	  'kerning',
 	  'justify-content',
 	  'justify-items',
 	  'justify-self',
+	  'kerning',
 	  'left',
 	  'letter-spacing',
 	  'lighting-color',
 	  'line-break',
 	  'line-height',
+	  'line-height-step',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
-	  'marker',
-	  'marker-end',
-	  'marker-mid',
-	  'marker-start',
-	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -49404,6 +50167,11 @@ function requireScss () {
 	  'margin-left',
 	  'margin-right',
 	  'margin-top',
+	  'margin-trim',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
 	  'marks',
 	  'mask',
 	  'mask-border',
@@ -49422,6 +50190,10 @@ function requireScss () {
 	  'mask-repeat',
 	  'mask-size',
 	  'mask-type',
+	  'masonry-auto-flow',
+	  'math-depth',
+	  'math-shift',
+	  'math-style',
 	  'max-block-size',
 	  'max-height',
 	  'max-inline-size',
@@ -49440,6 +50212,12 @@ function requireScss () {
 	  'normal',
 	  'object-fit',
 	  'object-position',
+	  'offset',
+	  'offset-anchor',
+	  'offset-distance',
+	  'offset-path',
+	  'offset-position',
+	  'offset-rotate',
 	  'opacity',
 	  'order',
 	  'orphans',
@@ -49449,9 +50227,19 @@ function requireScss () {
 	  'outline-style',
 	  'outline-width',
 	  'overflow',
+	  'overflow-anchor',
+	  'overflow-block',
+	  'overflow-clip-margin',
+	  'overflow-inline',
 	  'overflow-wrap',
 	  'overflow-x',
 	  'overflow-y',
+	  'overlay',
+	  'overscroll-behavior',
+	  'overscroll-behavior-block',
+	  'overscroll-behavior-inline',
+	  'overscroll-behavior-x',
+	  'overscroll-behavior-y',
 	  'padding',
 	  'padding-block',
 	  'padding-block-end',
@@ -49463,16 +50251,24 @@ function requireScss () {
 	  'padding-left',
 	  'padding-right',
 	  'padding-top',
+	  'page',
 	  'page-break-after',
 	  'page-break-before',
 	  'page-break-inside',
+	  'paint-order',
 	  'pause',
 	  'pause-after',
 	  'pause-before',
 	  'perspective',
 	  'perspective-origin',
+	  'place-content',
+	  'place-items',
+	  'place-self',
 	  'pointer-events',
 	  'position',
+	  'position-anchor',
+	  'position-visibility',
+	  'print-color-adjust',
 	  'quotes',
 	  'r',
 	  'resize',
@@ -49482,7 +50278,10 @@ function requireScss () {
 	  'right',
 	  'rotate',
 	  'row-gap',
+	  'ruby-align',
+	  'ruby-position',
 	  'scale',
+	  'scroll-behavior',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -49508,6 +50307,9 @@ function requireScss () {
 	  'scroll-snap-align',
 	  'scroll-snap-stop',
 	  'scroll-snap-type',
+	  'scroll-timeline',
+	  'scroll-timeline-axis',
+	  'scroll-timeline-name',
 	  'scrollbar-color',
 	  'scrollbar-gutter',
 	  'scrollbar-width',
@@ -49515,6 +50317,9 @@ function requireScss () {
 	  'shape-margin',
 	  'shape-outside',
 	  'shape-rendering',
+	  'speak',
+	  'speak-as',
+	  'src', // @font-face
 	  'stop-color',
 	  'stop-opacity',
 	  'stroke',
@@ -49525,19 +50330,17 @@ function requireScss () {
 	  'stroke-miterlimit',
 	  'stroke-opacity',
 	  'stroke-width',
-	  'speak',
-	  'speak-as',
-	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
-	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
+	  'text-anchor',
 	  'text-combine-upright',
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip',
 	  'text-decoration-skip-ink',
 	  'text-decoration-style',
 	  'text-decoration-thickness',
@@ -49551,23 +50354,37 @@ function requireScss () {
 	  'text-overflow',
 	  'text-rendering',
 	  'text-shadow',
+	  'text-size-adjust',
 	  'text-transform',
 	  'text-underline-offset',
 	  'text-underline-position',
+	  'text-wrap',
+	  'text-wrap-mode',
+	  'text-wrap-style',
+	  'timeline-scope',
 	  'top',
+	  'touch-action',
 	  'transform',
 	  'transform-box',
 	  'transform-origin',
 	  'transform-style',
 	  'transition',
+	  'transition-behavior',
 	  'transition-delay',
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
 	  'translate',
 	  'unicode-bidi',
+	  'user-modify',
+	  'user-select',
 	  'vector-effect',
 	  'vertical-align',
+	  'view-timeline',
+	  'view-timeline-axis',
+	  'view-timeline-inset',
+	  'view-timeline-name',
+	  'view-transition-name',
 	  'visibility',
 	  'voice-balance',
 	  'voice-duration',
@@ -49578,6 +50395,7 @@ function requireScss () {
 	  'voice-stress',
 	  'voice-volume',
 	  'white-space',
+	  'white-space-collapse',
 	  'widows',
 	  'width',
 	  'will-change',
@@ -49587,7 +50405,8 @@ function requireScss () {
 	  'writing-mode',
 	  'x',
 	  'y',
-	  'z-index'
+	  'z-index',
+	  'zoom'
 	].sort().reverse();
 
 	/*
@@ -52763,19 +53582,19 @@ function requireSql () {
 	  const regex = hljs.regex;
 	  const COMMENT_MODE = hljs.COMMENT('--', '$');
 	  const STRING = {
-	    className: 'string',
+	    scope: 'string',
 	    variants: [
 	      {
 	        begin: /'/,
 	        end: /'/,
-	        contains: [ { begin: /''/ } ]
+	        contains: [ { match: /''/ } ]
 	      }
 	    ]
 	  };
 	  const QUOTED_IDENTIFIER = {
 	    begin: /"/,
 	    end: /"/,
-	    contains: [ { begin: /""/ } ]
+	    contains: [ { match: /""/ } ]
 	  };
 
 	  const LITERALS = [
@@ -53345,20 +54164,40 @@ function requireSql () {
 	  });
 
 	  const VARIABLE = {
-	    className: "variable",
-	    begin: /@[a-z0-9][a-z0-9_]*/,
+	    scope: "variable",
+	    match: /@[a-z0-9][a-z0-9_]*/,
 	  };
 
 	  const OPERATOR = {
-	    className: "operator",
-	    begin: /[-+*/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?/,
+	    scope: "operator",
+	    match: /[-+*/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?/,
 	    relevance: 0,
 	  };
 
 	  const FUNCTION_CALL = {
-	    begin: regex.concat(/\b/, regex.either(...FUNCTIONS), /\s*\(/),
+	    match: regex.concat(/\b/, regex.either(...FUNCTIONS), /\s*\(/),
 	    relevance: 0,
 	    keywords: { built_in: FUNCTIONS }
+	  };
+
+	  // turns a multi-word keyword combo into a regex that doesn't
+	  // care about extra whitespace etc.
+	  // input: "START QUERY"
+	  // output: /\bSTART\s+QUERY\b/
+	  function kws_to_regex(list) {
+	    return regex.concat(
+	      /\b/,
+	      regex.either(...list.map((kw) => {
+	        return kw.replace(/\s+/, "\\s+")
+	      })),
+	      /\b/
+	    )
+	  }
+
+	  const MULTI_WORD_KEYWORDS = {
+	    scope: "keyword",
+	    match: kws_to_regex(COMBOS),
+	    relevance: 0,
 	  };
 
 	  // keywords with less than 3 letters are reduced in relevancy
@@ -53393,19 +54232,10 @@ function requireSql () {
 	    },
 	    contains: [
 	      {
-	        begin: regex.either(...COMBOS),
-	        relevance: 0,
-	        keywords: {
-	          $pattern: /[\w\.]+/,
-	          keyword: KEYWORDS.concat(COMBOS),
-	          literal: LITERALS,
-	          type: TYPES
-	        },
+	        scope: "type",
+	        match: kws_to_regex(MULTI_WORD_TYPES)
 	      },
-	      {
-	        className: "type",
-	        begin: regex.either(...MULTI_WORD_TYPES)
-	      },
+	      MULTI_WORD_KEYWORDS,
 	      FUNCTION_CALL,
 	      VARIABLE,
 	      STRING,
@@ -54398,7 +55228,9 @@ function requireStylus () {
 	  'align-self',
 	  'alignment-baseline',
 	  'all',
+	  'anchor-name',
 	  'animation',
+	  'animation-composition',
 	  'animation-delay',
 	  'animation-direction',
 	  'animation-duration',
@@ -54406,8 +55238,14 @@ function requireStylus () {
 	  'animation-iteration-count',
 	  'animation-name',
 	  'animation-play-state',
+	  'animation-range',
+	  'animation-range-end',
+	  'animation-range-start',
+	  'animation-timeline',
 	  'animation-timing-function',
 	  'appearance',
+	  'aspect-ratio',
+	  'backdrop-filter',
 	  'backface-visibility',
 	  'background',
 	  'background-attachment',
@@ -54417,6 +55255,8 @@ function requireStylus () {
 	  'background-image',
 	  'background-origin',
 	  'background-position',
+	  'background-position-x',
+	  'background-position-y',
 	  'background-repeat',
 	  'background-size',
 	  'baseline-shift',
@@ -54442,6 +55282,8 @@ function requireStylus () {
 	  'border-bottom-width',
 	  'border-collapse',
 	  'border-color',
+	  'border-end-end-radius',
+	  'border-end-start-radius',
 	  'border-image',
 	  'border-image-outset',
 	  'border-image-repeat',
@@ -54466,8 +55308,6 @@ function requireStylus () {
 	  'border-left-width',
 	  'border-radius',
 	  'border-right',
-	  'border-end-end-radius',
-	  'border-end-start-radius',
 	  'border-right-color',
 	  'border-right-style',
 	  'border-right-width',
@@ -54483,14 +55323,20 @@ function requireStylus () {
 	  'border-top-width',
 	  'border-width',
 	  'bottom',
+	  'box-align',
 	  'box-decoration-break',
+	  'box-direction',
+	  'box-flex',
+	  'box-flex-group',
+	  'box-lines',
+	  'box-ordinal-group',
+	  'box-orient',
+	  'box-pack',
 	  'box-shadow',
 	  'box-sizing',
 	  'break-after',
 	  'break-before',
 	  'break-inside',
-	  'cx',
-	  'cy',
 	  'caption-side',
 	  'caret-color',
 	  'clear',
@@ -54514,19 +55360,31 @@ function requireStylus () {
 	  'column-width',
 	  'columns',
 	  'contain',
+	  'contain-intrinsic-block-size',
+	  'contain-intrinsic-height',
+	  'contain-intrinsic-inline-size',
+	  'contain-intrinsic-size',
+	  'contain-intrinsic-width',
+	  'container',
+	  'container-name',
+	  'container-type',
 	  'content',
 	  'content-visibility',
 	  'counter-increment',
 	  'counter-reset',
+	  'counter-set',
 	  'cue',
 	  'cue-after',
 	  'cue-before',
 	  'cursor',
+	  'cx',
+	  'cy',
 	  'direction',
 	  'display',
 	  'dominant-baseline',
 	  'empty-cells',
 	  'enable-background',
+	  'field-sizing',
 	  'fill',
 	  'fill-opacity',
 	  'fill-rule',
@@ -54539,29 +55397,39 @@ function requireStylus () {
 	  'flex-shrink',
 	  'flex-wrap',
 	  'float',
-	  'flow',
 	  'flood-color',
 	  'flood-opacity',
+	  'flow',
 	  'font',
 	  'font-display',
 	  'font-family',
 	  'font-feature-settings',
 	  'font-kerning',
 	  'font-language-override',
+	  'font-optical-sizing',
+	  'font-palette',
 	  'font-size',
 	  'font-size-adjust',
+	  'font-smooth',
 	  'font-smoothing',
 	  'font-stretch',
 	  'font-style',
 	  'font-synthesis',
+	  'font-synthesis-position',
+	  'font-synthesis-small-caps',
+	  'font-synthesis-style',
+	  'font-synthesis-weight',
 	  'font-variant',
+	  'font-variant-alternates',
 	  'font-variant-caps',
 	  'font-variant-east-asian',
+	  'font-variant-emoji',
 	  'font-variant-ligatures',
 	  'font-variant-numeric',
 	  'font-variant-position',
 	  'font-variation-settings',
 	  'font-weight',
+	  'forced-color-adjust',
 	  'gap',
 	  'glyph-orientation-horizontal',
 	  'glyph-orientation-vertical',
@@ -54583,14 +55451,19 @@ function requireStylus () {
 	  'grid-template-rows',
 	  'hanging-punctuation',
 	  'height',
+	  'hyphenate-character',
+	  'hyphenate-limit-chars',
 	  'hyphens',
 	  'icon',
 	  'image-orientation',
 	  'image-rendering',
 	  'image-resolution',
 	  'ime-mode',
+	  'initial-letter',
+	  'initial-letter-align',
 	  'inline-size',
 	  'inset',
+	  'inset-area',
 	  'inset-block',
 	  'inset-block-end',
 	  'inset-block-start',
@@ -54598,24 +55471,20 @@ function requireStylus () {
 	  'inset-inline-end',
 	  'inset-inline-start',
 	  'isolation',
-	  'kerning',
 	  'justify-content',
 	  'justify-items',
 	  'justify-self',
+	  'kerning',
 	  'left',
 	  'letter-spacing',
 	  'lighting-color',
 	  'line-break',
 	  'line-height',
+	  'line-height-step',
 	  'list-style',
 	  'list-style-image',
 	  'list-style-position',
 	  'list-style-type',
-	  'marker',
-	  'marker-end',
-	  'marker-mid',
-	  'marker-start',
-	  'mask',
 	  'margin',
 	  'margin-block',
 	  'margin-block-end',
@@ -54627,6 +55496,11 @@ function requireStylus () {
 	  'margin-left',
 	  'margin-right',
 	  'margin-top',
+	  'margin-trim',
+	  'marker',
+	  'marker-end',
+	  'marker-mid',
+	  'marker-start',
 	  'marks',
 	  'mask',
 	  'mask-border',
@@ -54645,6 +55519,10 @@ function requireStylus () {
 	  'mask-repeat',
 	  'mask-size',
 	  'mask-type',
+	  'masonry-auto-flow',
+	  'math-depth',
+	  'math-shift',
+	  'math-style',
 	  'max-block-size',
 	  'max-height',
 	  'max-inline-size',
@@ -54663,6 +55541,12 @@ function requireStylus () {
 	  'normal',
 	  'object-fit',
 	  'object-position',
+	  'offset',
+	  'offset-anchor',
+	  'offset-distance',
+	  'offset-path',
+	  'offset-position',
+	  'offset-rotate',
 	  'opacity',
 	  'order',
 	  'orphans',
@@ -54672,9 +55556,19 @@ function requireStylus () {
 	  'outline-style',
 	  'outline-width',
 	  'overflow',
+	  'overflow-anchor',
+	  'overflow-block',
+	  'overflow-clip-margin',
+	  'overflow-inline',
 	  'overflow-wrap',
 	  'overflow-x',
 	  'overflow-y',
+	  'overlay',
+	  'overscroll-behavior',
+	  'overscroll-behavior-block',
+	  'overscroll-behavior-inline',
+	  'overscroll-behavior-x',
+	  'overscroll-behavior-y',
 	  'padding',
 	  'padding-block',
 	  'padding-block-end',
@@ -54686,16 +55580,24 @@ function requireStylus () {
 	  'padding-left',
 	  'padding-right',
 	  'padding-top',
+	  'page',
 	  'page-break-after',
 	  'page-break-before',
 	  'page-break-inside',
+	  'paint-order',
 	  'pause',
 	  'pause-after',
 	  'pause-before',
 	  'perspective',
 	  'perspective-origin',
+	  'place-content',
+	  'place-items',
+	  'place-self',
 	  'pointer-events',
 	  'position',
+	  'position-anchor',
+	  'position-visibility',
+	  'print-color-adjust',
 	  'quotes',
 	  'r',
 	  'resize',
@@ -54705,7 +55607,10 @@ function requireStylus () {
 	  'right',
 	  'rotate',
 	  'row-gap',
+	  'ruby-align',
+	  'ruby-position',
 	  'scale',
+	  'scroll-behavior',
 	  'scroll-margin',
 	  'scroll-margin-block',
 	  'scroll-margin-block-end',
@@ -54731,6 +55636,9 @@ function requireStylus () {
 	  'scroll-snap-align',
 	  'scroll-snap-stop',
 	  'scroll-snap-type',
+	  'scroll-timeline',
+	  'scroll-timeline-axis',
+	  'scroll-timeline-name',
 	  'scrollbar-color',
 	  'scrollbar-gutter',
 	  'scrollbar-width',
@@ -54738,6 +55646,9 @@ function requireStylus () {
 	  'shape-margin',
 	  'shape-outside',
 	  'shape-rendering',
+	  'speak',
+	  'speak-as',
+	  'src', // @font-face
 	  'stop-color',
 	  'stop-opacity',
 	  'stroke',
@@ -54748,19 +55659,17 @@ function requireStylus () {
 	  'stroke-miterlimit',
 	  'stroke-opacity',
 	  'stroke-width',
-	  'speak',
-	  'speak-as',
-	  'src', // @font-face
 	  'tab-size',
 	  'table-layout',
-	  'text-anchor',
 	  'text-align',
 	  'text-align-all',
 	  'text-align-last',
+	  'text-anchor',
 	  'text-combine-upright',
 	  'text-decoration',
 	  'text-decoration-color',
 	  'text-decoration-line',
+	  'text-decoration-skip',
 	  'text-decoration-skip-ink',
 	  'text-decoration-style',
 	  'text-decoration-thickness',
@@ -54774,23 +55683,37 @@ function requireStylus () {
 	  'text-overflow',
 	  'text-rendering',
 	  'text-shadow',
+	  'text-size-adjust',
 	  'text-transform',
 	  'text-underline-offset',
 	  'text-underline-position',
+	  'text-wrap',
+	  'text-wrap-mode',
+	  'text-wrap-style',
+	  'timeline-scope',
 	  'top',
+	  'touch-action',
 	  'transform',
 	  'transform-box',
 	  'transform-origin',
 	  'transform-style',
 	  'transition',
+	  'transition-behavior',
 	  'transition-delay',
 	  'transition-duration',
 	  'transition-property',
 	  'transition-timing-function',
 	  'translate',
 	  'unicode-bidi',
+	  'user-modify',
+	  'user-select',
 	  'vector-effect',
 	  'vertical-align',
+	  'view-timeline',
+	  'view-timeline-axis',
+	  'view-timeline-inset',
+	  'view-timeline-name',
+	  'view-transition-name',
 	  'visibility',
 	  'voice-balance',
 	  'voice-duration',
@@ -54801,6 +55724,7 @@ function requireStylus () {
 	  'voice-stress',
 	  'voice-volume',
 	  'white-space',
+	  'white-space-collapse',
 	  'widows',
 	  'width',
 	  'will-change',
@@ -54810,7 +55734,8 @@ function requireStylus () {
 	  'writing-mode',
 	  'x',
 	  'y',
-	  'z-index'
+	  'z-index',
+	  'zoom'
 	].sort().reverse();
 
 	/*
@@ -55917,6 +56842,33 @@ function requireSwift () {
 	    end: /}/
 	  };
 
+	  const CLASS_FUNC_DECLARATION = {
+	    match: [
+	      /class\b/,          
+	      /\s+/,
+	      /func\b/,
+	      /\s+/,
+	      /\b[A-Za-z_][A-Za-z0-9_]*\b/ 
+	    ],
+	    scope: {
+	      1: "keyword",
+	      3: "keyword",
+	      5: "title.function"
+	    }
+	  };
+
+	  const CLASS_VAR_DECLARATION = {
+	    match: [
+	      /class\b/,
+	      /\s+/,          
+	      /var\b/, 
+	    ],
+	    scope: {
+	      1: "keyword",
+	      3: "keyword"
+	    }
+	  };
+
 	  const TYPE_DECLARATION = {
 	    begin: [
 	      /(struct|protocol|class|extension|enum|actor)/,
@@ -55981,6 +56933,8 @@ function requireSwift () {
 	      ...COMMENTS,
 	      FUNCTION_OR_MACRO,
 	      INIT_SUBSCRIPT,
+	      CLASS_FUNC_DECLARATION,
+	      CLASS_VAR_DECLARATION,
 	      TYPE_DECLARATION,
 	      OPERATOR_DECLARATION,
 	      PRECEDENCEGROUP,
@@ -56106,15 +57060,15 @@ function requireYaml () {
 	  const KEY = {
 	    className: 'attr',
 	    variants: [
-	      // added brackets support 
-	      { begin: /\w[\w :()\./-]*:(?=[ \t]|$)/ },
-	      { // double quoted keys - with brackets
-	        begin: /"\w[\w :()\./-]*":(?=[ \t]|$)/ },
-	      { // single quoted keys - with brackets
-	        begin: /'\w[\w :()\./-]*':(?=[ \t]|$)/ },
+	      // added brackets support and special char support
+	      { begin: /[\w*@][\w*@ :()\./-]*:(?=[ \t]|$)/ },
+	      { // double quoted keys - with brackets and special char support
+	        begin: /"[\w*@][\w*@ :()\./-]*":(?=[ \t]|$)/ },
+	      { // single quoted keys - with brackets and special char support
+	        begin: /'[\w*@][\w*@ :()\./-]*':(?=[ \t]|$)/ },
 	    ]
 	  };
-
+	  
 	  const TEMPLATE_VARIABLES = {
 	    className: 'template-variable',
 	    variants: [
@@ -56128,14 +57082,25 @@ function requireYaml () {
 	      }
 	    ]
 	  };
+
+	  const SINGLE_QUOTE_STRING = {
+	    className: 'string',
+	    relevance: 0,
+	    begin: /'/,
+	    end: /'/,
+	    contains: [
+	      {
+	        match: /''/,
+	        scope: 'char.escape',
+	        relevance: 0
+	      }
+	    ]
+	  };
+
 	  const STRING = {
 	    className: 'string',
 	    relevance: 0,
 	    variants: [
-	      {
-	        begin: /'/,
-	        end: /'/
-	      },
 	      {
 	        begin: /"/,
 	        end: /"/
@@ -56153,7 +57118,13 @@ function requireYaml () {
 	  const CONTAINER_STRING = hljs.inherit(STRING, { variants: [
 	    {
 	      begin: /'/,
-	      end: /'/
+	      end: /'/,
+	      contains: [
+	        {
+	          begin: /''/,
+	          relevance: 0
+	        }
+	      ]
 	    },
 	    {
 	      begin: /"/,
@@ -56262,6 +57233,7 @@ function requireYaml () {
 	    },
 	    OBJECT,
 	    ARRAY,
+	    SINGLE_QUOTE_STRING,
 	    STRING
 	  ];
 
@@ -57122,7 +58094,9 @@ function requireTypescript () {
 	  "import",
 	  "from",
 	  "export",
-	  "extends"
+	  "extends",
+	  // It's reached stage 3, which is "recommended for implementation":
+	  "using"
 	];
 	const LITERALS = [
 	  "true",
@@ -57504,7 +58478,7 @@ function requireTypescript () {
 	  const PARAMS = {
 	    className: 'params',
 	    // convert this to negative lookbehind in v12
-	    begin: /(\s*)\(/, // to match the parms with 
+	    begin: /(\s*)\(/, // to match the parms with
 	    end: /\)/,
 	    excludeBegin: true,
 	    excludeEnd: true,
@@ -57715,8 +58689,8 @@ function requireTypescript () {
 	      NUMBER,
 	      CLASS_REFERENCE,
 	      {
-	        className: 'attr',
-	        begin: IDENT_RE$1 + regex.lookahead(':'),
+	        scope: 'attr',
+	        match: IDENT_RE$1 + regex.lookahead(':'),
 	        relevance: 0
 	      },
 	      FUNCTION_VARIABLE,
@@ -57858,6 +58832,7 @@ function requireTypescript () {
 
 	/** @type LanguageFn */
 	function typescript(hljs) {
+	  const regex = hljs.regex;
 	  const tsLanguage = javascript(hljs);
 
 	  const IDENT_RE$1 = IDENT_RE;
@@ -57914,13 +58889,11 @@ function requireTypescript () {
 	    "override",
 	    "satisfies"
 	  ];
-
 	  /*
 	    namespace is a TS keyword but it's fine to use it as a variable name too.
 	    const message = 'foo';
 	    const namespace = 'bar';
 	  */
-
 	  const KEYWORDS$1 = {
 	    $pattern: IDENT_RE,
 	    keyword: KEYWORDS.concat(TS_SPECIFIC_KEYWORDS),
@@ -57928,6 +58901,7 @@ function requireTypescript () {
 	    built_in: BUILT_INS.concat(TYPES),
 	    "variable.language": BUILT_IN_VARIABLES
 	  };
+
 	  const DECORATOR = {
 	    className: 'meta',
 	    begin: '@' + IDENT_RE$1,
@@ -57948,15 +58922,25 @@ function requireTypescript () {
 	  tsLanguage.exports.PARAMS_CONTAINS.push(DECORATOR);
 
 	  // highlight the function params
-	  const ATTRIBUTE_HIGHLIGHT = tsLanguage.contains.find(c => c.className === "attr");
+	  const ATTRIBUTE_HIGHLIGHT = tsLanguage.contains.find(c => c.scope === "attr");
+
+	  // take default attr rule and extend it to support optionals
+	  const OPTIONAL_KEY_OR_ARGUMENT = Object.assign({},
+	    ATTRIBUTE_HIGHLIGHT,
+	    { match: regex.concat(IDENT_RE$1, regex.lookahead(/\s*\?:/)) }
+	  );
 	  tsLanguage.exports.PARAMS_CONTAINS.push([
 	    tsLanguage.exports.CLASS_REFERENCE, // class reference for highlighting the params types
 	    ATTRIBUTE_HIGHLIGHT, // highlight the params key
+	    OPTIONAL_KEY_OR_ARGUMENT, // Added for optional property assignment highlighting
 	  ]);
+
+	  // Add the optional property assignment highlighting for objects or classes
 	  tsLanguage.contains = tsLanguage.contains.concat([
 	    DECORATOR,
 	    NAMESPACE,
 	    INTERFACE,
+	    OPTIONAL_KEY_OR_ARGUMENT, // Added for optional property assignment highlighting
 	  ]);
 
 	  // TS gets a simpler shebang rule than JS
