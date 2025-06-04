@@ -1,47 +1,68 @@
 import globals from "globals"
 import js from "@eslint/js"
 import json from "@eslint/json"
-import css from "@eslint/css";
+import css from "@eslint/css"
+import markdown from "@eslint/markdown"
 //import tseslint from 'typescript-eslint'
 import mailextensionsEnv from "eslint-plugin-mailextensions-env"
 import html from "eslint-plugin-html"
 import noUnsanitized from "eslint-plugin-no-unsanitized"
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 
+import { globalIgnores } from "eslint/config"
+import { includeIgnoreFile } from "@eslint/compat"
+import { fileURLToPath } from "node:url"
+
+const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url))
+
 export default [
+  includeIgnoreFile(gitignorePath),
+  globalIgnores([
+    ".ruff_cache/**",
+    "CI/**",
+    "requirements/**",
+    "mailext-options-sync/**",
+    "test/**",
+    "venv/**",
+  ]),
+  globalIgnores([
+    "extension/highlightjs/**",
+    "extension/locale_maker/**",
+    "extension/vendor/**",
+    "extension/experiments/notificationbar/**",
+    "extension/experiments/customui/**",
+    "extension/options/mailext-options-sync.js",
+    "extension/options/shortcuts.js",
+    "extension/test/chai.js",
+    "extension/test/chai-dom.js",
+    "extension/test/jquery.slim.js",
+    "extension/test/mocha.js",
+    "extension/test/underscore.js",
+  ]),
   {
-    files: ["extension/**/*.json"],
-    ignores: ["package-lock.json"],
+    files: ["package.json", "extension/**/*.json"],
+    plugins: { json },
+    ignores: [
+      "extension/_locales/**/*.json",
+      "extension/data/emoji_codes.json",
+      "extension/experiments/notificationbar/*.json",
+      "extension/experiments/customui/*.json",
+    ],
     language: "json/json",
     ...json.configs.recommended,
   },
   {
-		files: ["**/*.css"],
-		language: "css/css",
-		plugins: { css },
-		extends: ["css/recommended"],
-	},
-  {
-    files: ["extension/**/*.js", "extension/**/*.mjs"],
-    ...js.configs.recommended,
+    files: ["extension/**/*.css"],
+    ignores: ["extension/test/mocha.css"],
+    language: "css/css",
+    plugins: { css },
+    ...css.configs.recommended,
   },
-  //tseslint.configs.recommended,
-  noUnsanitized.configs.recommended,
-  eslintPluginPrettierRecommended,
   {
-    files: ["extension/**/*.js", "extension/**/*.mjs"],
-    ignores: [
-      "extension/highlightjs/*.js",
-      "extension/vendor/*.js",
-      "extension/experiments/notificationbar/*.js",
-      "extension/experiments/customui/*.js",
-      "extension/options/mailext-options-sync.js",
-      "extension/options/shortcuts.js",
-      "extension/test/chai.js",
-      "extension/test/jquery.slim.js",
-      "extension/test/mocha.js",
-      "extension/test/underscore.js",
-    ],
+    files: ["*.js", "extension/**/*.js", "extension/**/*.mjs", "tools/**/*js"],
+    ...js.configs.recommended,
+    //tseslint.configs.recommended,
+    ...noUnsanitized.configs.recommended,
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -53,9 +74,9 @@ export default [
       parserOptions: {},
     },
     plugins: {
+      js,
       "mailextensions-env": mailextensionsEnv,
     },
-
     rules: {
       quotes: [
         "error",
@@ -65,11 +86,9 @@ export default [
           allowTemplateLiterals: true,
         },
       ],
-
       semi: ["error", "never"],
       "no-eval": "error",
       curly: ["error", "all"],
-
       "no-unused-vars": [
         "error",
         {
@@ -77,7 +96,6 @@ export default [
           vars: "local",
         },
       ],
-
       "max-len": [
         "error",
         {
@@ -89,20 +107,22 @@ export default [
     },
   },
   {
-    files: ["**!/!*.html"],
+    files: ["extension/**/*.html"],
     plugins: { html },
   },
   {
-    files: ["**/web-ext-config.js"],
-
-    languageOptions: {
-      ecmaVersion: 12,
-      parserOptions: {},
-
-      globals: {
-        ...globals.node,
-        ...Object.fromEntries(Object.entries(globals.browser).map(([key]) => [key, "off"])),
-      },
+    files: ["*.md", "extension/**/*.md"],
+    plugins: { markdown },
+    processor: "markdown/markdown",
+    ignores: [
+      "extension/_locales/**/*.md",
+      "!extension/experiments/notificationbar/*.md",
+      "!extension/experiments/customui/README.md",
+    ],
+    language: "markdown/gfm",
+    rules: {
+      "markdown/no-html": "error",
     },
   },
+  eslintPluginPrettierRecommended,
 ]
