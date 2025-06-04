@@ -1,9 +1,21 @@
 # Changelog
 
-## [next]
+## [4.0.7]
 
 ### New
 - Add a donation button to Options->About panel
+
+### Fixed
+- Some sent messages had overlapping text blocks
+  [#129](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/129)
+  [#132](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/132)
+- CSS and display element from Emoji autocomplete feature was included in
+  sent messages with MDHR Live Preview disabled
+  [#125](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/125)
+  [#130](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/130)
+  [#131](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/131)
+- CHANGELOG panel in MDHR Options did not scroll, cutting off content
+- Build and stability fixes contributed by Luc Bennett
 
 ## [4.0.6]
 
