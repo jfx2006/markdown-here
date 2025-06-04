@@ -162,14 +162,18 @@ function once(function_) {
 }
 /** Indicates whether the code is being run in a background context */ const isBackground = () =>
   isBackgroundPage() || isBackgroundWorker()
-/** Indicates whether the code is being run in a background page */
-const isBackgroundPage = once(() => {
-  const manifest = getManifest()
-  return (
-    !(!manifest || !isCurrentPathname(manifest.background_page ?? manifest.background?.page)) ||
-    Boolean(manifest?.background?.scripts && isCurrentPathname("/_generated_background_page.html"))
-  )
-})
+
+/** Indicates whether the code is being run in a background page */ const isBackgroundPage = once(
+  () => {
+    const manifest = getManifest()
+    return (
+      !(!manifest || !isCurrentPathname(manifest.background_page ?? manifest.background?.page)) ||
+      Boolean(
+        manifest?.background?.scripts && isCurrentPathname("/_generated_background_page.html")
+      )
+    )
+  }
+)
 
 /** Indicates whether the code is being run in a background worker */ const isBackgroundWorker =
   once(() => isCurrentPathname(getManifest()?.background?.service_worker))
