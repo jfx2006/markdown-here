@@ -389,3 +389,9 @@ span.hidden {
   color: rgb(0, 48, 135);
   outline: none;
 }
+
+.paypal-donate > img {
+    height: 24px;
+    width: 24px;
+    margin-right: 8px;
+}
