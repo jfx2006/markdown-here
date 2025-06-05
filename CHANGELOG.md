@@ -2,9 +2,6 @@
 
 ## [4.0.7]
 
-### New
-- Add a donation button to Options->About panel
-
 ### Fixed
 - Some sent messages had overlapping text blocks
   [#129](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/129)

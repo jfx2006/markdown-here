@@ -61,6 +61,7 @@
     "message": "Edit as new Markdown message",
     "description": "Context menu item displayed from message list"
   },
+
   "__WET_GROUP__settings": { "message": "Extension Settings Pages" },
   "options_page__page_title": {
     "message": "$APPNAME$ Options",
@@ -68,6 +69,7 @@
       "appname": { "content": "$1" }
     }
   },
+
   "__WET_GROUP__options": { "message": "Options" },
   "options_page__options_title": {
     "message": "Options"
@@ -202,6 +204,7 @@
   "options_page__tips_tricks_link": {
     "message": "Tips and Tricks"
   },
+
   "__WET_GROUP__theme": { "message": "Theme" },
   "options_page__primary_css_title": {
     "message": "Primary Styling CSS",
@@ -219,6 +222,7 @@
     "message": "Preview",
     "description": "section title for the Markdown preview section"
   },
+
   "__WET_GROUP__about": { "message": "About" },
   "options_page__about": {
     "message": "About"
@@ -249,31 +253,6 @@
   "options_page__localemaker_2": {
     "message": "Thank you to erosman for its creation.",
     "description": "Credit to Locale Maker author."
-  },
-  "options_page__donate_title": {
-    "message": "Support $APPNAME$",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    }
-  },
-  "options_page__donate_1": {
-    "message": "If you find this extension helpful, please consider making a donation. Your support is greatly appreciated!"
-  },
-  "options_page__donate_2": {
-    "message": "Donations are completely voluntary and are a way to show appreciation for the time and effort put into developing and maintaining this project. While donations encourage continued development, they do not imply any obligation on my part to provide support, implement specific features, or respond to individual requests."
-  },
-  "options_page__donate_3": {
-    "message": "Thank you for using $APPNAME$ and for your support!",
-    "placeholders": {
-      "appname": { "content": "$1" }
-    }
-  },
-  "options_page__donate_with_paypal": {
-    "message": "Donate with Paypal"
-  },
-  "options_page__donate_with_paypal-Alt": {
-    "message": "Donate with Paypal",
-    "description": "Used for the 'alt' attribute of the paypal logo on the button, should be same as above."
   },
   "options_page__changelog_title": {
     "message": "Changelog"

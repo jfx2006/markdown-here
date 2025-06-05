@@ -383,12 +383,6 @@ import OptionsStore from "./options-storage.js"
           n.title = message
         }
       }
-      if (n.nodeName === "IMG" && n.alt) {
-        message = getMessage(`${message_id}-Alt`)
-        if (message) {
-          n.alt = message
-        }
-      }
     }
   }
   await onOptionsLoaded()
