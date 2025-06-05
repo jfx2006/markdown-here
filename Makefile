@@ -1,12 +1,12 @@
 EXTENSION = extension
 
-all: node_modules mailext-options-sync vendored
+all: node_modules mailext-options-sync vendored build
 	touch all
 
-release: all git_status
-	pnpm run release
+build: all
+	pnpm run build
 
-ci: clean all release
+ci: clean all build git_status
 	python tools/rel_notes.py
 	python tools/version_env.py
 

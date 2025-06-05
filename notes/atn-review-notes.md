@@ -14,10 +14,22 @@ its content is kept in sync with the editor via messages.
 
 Other new features are listed in the changelog.
 
+## How release builds are handled
+
+The XPI and source files uploaded to ATN are built in a Docker container
+on GitLab's CI.
+
+In addition to the steps run by "make all" described below, prior to creating
+the XPI and source tar files, "git status" gets run to verify that files
+generated during the build match the ones checked in to the repository. I
+acknowledge that there have been unexpected differences in past versions
+which led to bugs in the extension.
+
 ## Reproducing the build
 
 ### Requirements
-- Node 20
+
+- Node 22
 - pnPm
 - GNU Make
 - Bash
@@ -43,8 +55,9 @@ Running `make all` will do the following:
   - If a full rebuild of this is needed, `make clean` will reset the
     subrepo and force a rebuild.
 - Regenerate vendored.mk
-- Copy the vendored NPM packages to extension/vendor (mostly)
-- Copy CHANGELOG.md from the repository root to the extension/ directory
+- Build and copy the vendored NPM packages to the appropriate place under extension/
+  - Some packages like highlightjs use a custom script, packages with dependencies
+    are built with Rollup. Packages without dependencies are copied when possible.
 - Build the XPI file using web-ext
 
 ## Other vendored code 
@@ -54,10 +67,6 @@ https://raw.githubusercontent.com/twbs/bootstrap/v5.2.2/dist/js/bootstrap.bundle
 https://raw.githubusercontent.com/thomaspark/bootswatch/v5.2.2/dist/darkly/bootstrap.css
 Parts of shortcuts.js from Firefox source code:
     https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
-
-https://github.com/krisk/Fuse/raw/refs/tags/v7.0.0/dist/fuse.basic.mjs
-
-https://github.com/cure53/DOMPurify/blob/3.1.7/dist/purify.es.mjs
 
 https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
 (modified to be importable as an esm module)
