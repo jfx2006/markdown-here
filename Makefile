@@ -6,7 +6,7 @@ all: node_modules mailext-options-sync vendored build
 build: all
 	pnpm run build
 
-ci: clean all build git_status
+ci: clean all build
 	python tools/rel_notes.py
 	python tools/version_env.py
 
