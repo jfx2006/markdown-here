@@ -65,7 +65,7 @@ RUN curl -fsSLO --compressed $PYTHON_URL \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV GLAB_CLI_VER 1.58.0
+ENV GLAB_CLI_VER 1.61.0
 
 RUN curl --location --output /tmp/glab.deb "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
     && dpkg --install /tmp/glab.deb
