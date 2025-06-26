@@ -22,7 +22,10 @@ vendored:
 
   marked-extended-tables:
     path: src/index.js
-    method: copy
+    method: bash
+    cmds:
+      - cp -v $< $@
+      - dos2unix $@
 
   marked-emoji:
     path: src/index.js

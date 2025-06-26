@@ -40,6 +40,7 @@ git_status:
 	if [ $$COUNT -gt 0 ]; then \
   		echo 'ERROR!! git status found changes to tracked files. This is not okay for release.'; \
   		git status --porcelain=2 -uno; \
+  		git diff \
   		exit 1; \
   	fi
 

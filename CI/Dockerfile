@@ -76,6 +76,7 @@ RUN set -ex; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
         bash \
+        dos2unix \
         jq \
     ; \
 	rm -rf /var/lib/apt/lists/*
