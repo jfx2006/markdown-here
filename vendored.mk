@@ -49,6 +49,7 @@ marked-extended-tables: $(EXTENSION)/vendor/marked-extended-tables.esm.js
 
 $(EXTENSION)/vendor/marked-extended-tables.esm.js: node_modules/marked-extended-tables/src/index.js
 	cp -v $< $@
+	dos2unix $@
 
 marked-highlight: $(EXTENSION)/vendor/marked-highlight.esm.js
 

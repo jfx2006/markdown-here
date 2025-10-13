@@ -1,5 +1,10 @@
 # Changelog
 
+## [HEAD]
+
+- Table rows with fewer columns than head did not insert empty cells.
+  [#137](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/137)
+
 ## [4.0.7]
 
 ### Fixed

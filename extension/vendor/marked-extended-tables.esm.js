@@ -1,16 +1,16 @@
-export default function(endRegex = []) {
+export default function({ interruptPatterns = [], skipEmptyRows = true } = {}) {
   return {
     extensions: [
       {
         name: 'spanTable',
         level: 'block', // Is this a block-level or inline-level tokenizer?
-        start(src) { return src.match(/^\n *([^\n ].*\|.*)\n/)?.index; }, // Hint to Marked.js to stop and check for a match
+        start(src) { return src.match(/\n *([^\n ].*\|.*)\n/m)?.index; }, // Hint to Marked.js to stop and check for a match
         tokenizer(src, tokens) {
           // const regex = this.tokenizer.rules.block.table;
           let regexString = '^ *([^\\n ].*\\|.*\\n(?: *[^\\s].*\\n)*?)' // Header
-              + ' {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)(?:\\| *)?' // Align
+              + ' {0,3}(?:\\| *)?(:?-+(?: *(?:100|[1-9][0-9]?%) *-+)?:? *(?:\\| *:?-+(?: *(?:100|[1-9][0-9]?%) *-+)?:? *)*)(?:\\| *)?' // Align
               + '(?:\\n((?:(?! *\\n| {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})' // Cells
-              + '(?:\\n+|$)| {0,3}#{1,6} | {0,3}>| {4}[^\\n]| {0,3}(?:`{3,}'
+              + '(?:\\n+|$)| {0,3}#{1,6}(?:\\s|$)| {0,3}>| {4}[^\\n]| {0,3}(?:`{3,}'
               + '(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n| {0,3}(?:[*+-]|1[.)]) |'
               + '<\\/?(?:address|article|aside|base|basefont|blockquote|body'
               + '|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt'
@@ -20,7 +20,8 @@ export default function(endRegex = []) {
               + '|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)'
               + '(?: +|\\n|\\/?>)|<(?:script|pre|style|textarea|!--)endRegex).*(?:\\n|$))*)\\n*|$)'; // Cells
 
-          regexString = regexString.replace('endRegex', endRegex.map(str => `|(?:${str})`).join(''));
+          regexString = regexString.replace('endRegex', interruptPatterns.map(str => `|(?:${str})`).join(''));
+          const widthRegex = / *(?:100|[1-9][0-9]?%) */g;
           const regex = new RegExp(regexString);
           const cap = regex.exec(src);
 
@@ -28,8 +29,9 @@ export default function(endRegex = []) {
             const item = {
               type: 'spanTable',
               header: cap[1].replace(/\n$/, '').split('\n'),
-              align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-              rows: cap[3] ? cap[3].replace(/\n$/, '').split('\n') : []
+              align: cap[2].replace(widthRegex, '').replace(/^ *|\| *$/g, '').split(/ *\| */),
+              rows: cap[3]?.trim() ? cap[3].replace(/\n[ \t]*$/, '').split('\n') : [],
+              width: cap[2].replace(/:/g, '').replace(/-+| /g, '').split('|')
             };
 
             // Get first header row to determine how many columns
@@ -62,13 +64,13 @@ export default function(endRegex = []) {
               // Get any remaining header rows
               l = item.header.length;
               for (i = 1; i < l; i++) {
-                item.header[i] = splitCells(item.header[i], colCount, item.header[i - 1]);
+                item.header[i] = splitCells(item.header[i], colCount, item.header[i - 1], skipEmptyRows);
               }
 
               // Get main table cells
               l = item.rows.length;
               for (i = 0; i < l; i++) {
-                item.rows[i] = splitCells(item.rows[i], colCount, item.rows[i - 1]);
+                item.rows[i] = splitCells(item.rows[i], colCount, item.rows[i - 1], skipEmptyRows);
               }
 
               // header child tokens
@@ -105,7 +107,7 @@ export default function(endRegex = []) {
             for (j = 0; j < row.length; j++) {
               cell = row[j];
               text = this.parser.parseInline(cell.tokens);
-              output += getTableCell(text, cell, 'th', token.align[col]);
+              output += getTableCell(text, cell, 'th', token.align[col], token.width[col]);
               col += cell.colspan;
             }
             output += '</tr>';
@@ -116,14 +118,16 @@ export default function(endRegex = []) {
             for (i = 0; i < token.rows.length; i++) {
               row = token.rows[i];
               col = 0;
-              output += '<tr>';
-              for (j = 0; j < row.length; j++) {
-                cell = row[j];
-                text = this.parser.parseInline(cell.tokens);
-                output += getTableCell(text, cell, 'td', token.align[col]);
-                col += cell.colspan;
+              if (!row[0].emptyRow) {
+                output += '<tr>';
+                for (j = 0; j < row.length; j++) {
+                  cell = row[j];
+                  text = this.parser.parseInline(cell.tokens);
+                  output += getTableCell(text, cell, 'td', token.align[col], token.width[col]);
+                  col += cell.colspan;
+                }
+                output += '</tr>';
               }
-              output += '</tr>';
             }
             output += '</tbody>';
           }
@@ -135,19 +139,20 @@ export default function(endRegex = []) {
   };
 }
 
-const getTableCell = (text, cell, type, align) => {
+const getTableCell = (text, cell, type, align, width) => {
   if (!cell.rowspan) {
     return '';
   }
   const tag = `<${type}`
             + `${cell.colspan > 1 ? ` colspan=${cell.colspan}` : ''}`
             + `${cell.rowspan > 1 ? ` rowspan=${cell.rowspan}` : ''}`
-            + `${align ? ` align=${align}` : ''}>`;
+            + `${align ? ` align=${align}` : ''}`
+            + `${width ? ` width=${width}` : ''}>`;
   return `${tag + text}</${type}>\n`;
 };
 
-const splitCells = (tableRow, count, prevRow = []) => {
-  const cells = [...tableRow.matchAll(/(?:[^|\\]|\\.?)+(?:\|+|$)/g)].map((x) => x[0]);
+const splitCells = (tableRow, count, prevRow = [], skipEmptyRows) => {
+  const cells = [...tableRow.trim().matchAll(/(?:[^|\\]|\\.?)+(?:\|+|$)/g)].map((x) => x[0]);
 
   // Remove first/last cell in a row if whitespace only and no leading/trailing pipe
   if (!cells[0]?.trim()) { cells.shift(); }
@@ -187,12 +192,21 @@ const splitCells = (tableRow, count, prevRow = []) => {
     numCols += cells[i].colspan;
   }
 
+  // If all cells have been merged, flag as an empty row
+  if (cells.length > 0 && skipEmptyRows && cells.length === cells.filter((cell) => { return cell.rowspan === 0; }).length) {
+    cells[0].emptyRow = true;
+    for (i = 0; i < cells.length; i++) {
+      cells[i].rowSpanTarget.rowspan -= 1;
+    }
+  }
+
   // Force main cell rows to match header column count
   if (numCols > count) {
     cells.splice(count);
   } else {
     while (numCols < count) {
       cells.push({
+        rowspan: 1,
         colspan: 1,
         text: ''
       });

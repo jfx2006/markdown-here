@@ -108,8 +108,8 @@ importers:
         specifier: ^1.4.3
         version: 1.4.3(marked@15.0.12)
       marked-extended-tables:
-        specifier: 1.0.10
-        version: 1.0.10(marked@15.0.12)
+        specifier: 2.0.1
+        version: 2.0.1(marked@15.0.12)
       marked-highlight:
         specifier: ^2.2.1
         version: 2.2.1(marked@15.0.12)
@@ -1904,10 +1904,10 @@ packages:
     peerDependencies:
       marked: '>=4 <16'
 
-  marked-extended-tables@1.0.10:
-    resolution: {integrity: sha512-zvRS0GPTkxq8UWawSDecd1Rxd2KD8crrmq2QALGDdrgkcgRNQzHlbnlujBGuXxdgDJg7f6UTv+JpcfejBpKdSg==}
+  marked-extended-tables@2.0.1:
+    resolution: {integrity: sha512-DV4Si978ZdaFbycIxzG4TdaNMtC0J8QfIKj1UOCejgJHwVjVJse8DNdJriWDeo/n74DWVYpRC6S56AdgWDPrPA==}
     peerDependencies:
-      marked: '>=3 <15'
+      marked: '>=3 <16'
 
   marked-highlight@2.2.1:
     resolution: {integrity: sha512-SiCIeEiQbs9TxGwle9/OwbOejHCZsohQRaNTY2u8euEXYt2rYUFoiImUirThU3Gd/o6Q1gHGtH9qloHlbJpNIA==}
@@ -4635,7 +4635,7 @@ snapshots:
     dependencies:
       marked: 15.0.12
 
-  marked-extended-tables@1.0.10(marked@15.0.12):
+  marked-extended-tables@2.0.1(marked@15.0.12):
     dependencies:
       marked: 15.0.12
 
