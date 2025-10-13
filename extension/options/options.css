@@ -84,7 +84,6 @@ body {
     background-color: var(--mdhr-background-color);
     color: var(--mdhr-text-color);
     font-size: 1.2rem;
-    max-width: 1440px;
 }
 
 a {
