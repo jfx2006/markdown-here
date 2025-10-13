@@ -8,7 +8,7 @@
     "gecko": {
       "id": "markdown-here-revival@xul.calypsoblue.org",
       "strict_min_version": "128.0",
-      "strict_max_version": "140.*"
+      "strict_max_version": "145.*"
     }
   },
   "default_locale": "en",
