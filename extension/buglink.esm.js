@@ -26,7 +26,7 @@ export function BugLinker(options) {
           return src.match(/#[0-9a-zA-Z]/)?.index
         },
         tokenizer(src, tokens) {
-          const match = src.match(/^#(\w+)/)
+          const match = src.match(/^#([\w\-]+)/)
           if (!match) {
             return
           }
