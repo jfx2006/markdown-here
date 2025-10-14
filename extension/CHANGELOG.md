@@ -2,6 +2,8 @@
 
 ## [HEAD]
 
+- Disable inline directives due to disappearing tex
+  [#138](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/138)
 - Table rows with fewer columns than head did not insert empty cells.
   [#137](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/137)
 
