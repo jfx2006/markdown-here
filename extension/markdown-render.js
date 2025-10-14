@@ -80,7 +80,7 @@ export async function resetMarked(userprefs) {
   if (userprefs["emoji-shortcode-enabled"]) {
     const { markedEmoji } = await import("./vendor/marked-emoji.esm.js")
     const { default: emojis } = await import("./data/shortcodes.mjs")
-    marked.use(markedEmoji({ emojis, unicode: true }))
+    marked.use(markedEmoji({ emojis, renderer: (token) => token.emoji }))
   }
 
   if (userprefs["buglink-enabled"]) {
