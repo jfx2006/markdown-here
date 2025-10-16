@@ -32,8 +32,11 @@ mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
 vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
 	python tools/mk-vendored.py
 
-vendored: package.json node_modules vendored.mk
+vendored-clean: package.json node_modules vendored.mk
 	make -f vendored.mk clean all
+
+vendored: package.json node_modules vendored.mk
+	make -f vendored.mk all
 
 git_status:
 	COUNT=$$(git status --porcelain=2 -uno | wc -l); \
