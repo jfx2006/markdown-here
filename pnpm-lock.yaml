@@ -4,6 +4,14 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  marked-directive: link:node_modules/.pnpm/marked-extensions@https+++codeload.github.com+bent10+marked-extensions+tar.gz+3d58361ba_c2d45d5a47dc2e9de9c428766b970d78/node_modules/marked-extensions/packages/directive
+
+patchedDependencies:
+  marked-extensions@0.0.0-development:
+    hash: 1826b607e6c2130dc5e434b9b268a6f3449d829258ac6de6dbd90f3be0382b57
+    path: patches/marked-extensions@0.0.0-development.patch
+
 importers:
 
   .:
@@ -44,9 +52,15 @@ importers:
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
+      '@types/moo':
+        specifier: ^0.5.1
+        version: 0.5.10
       '@types/thunderbird-webext-browser':
         specifier: ^127.0.0
         version: 127.0.0
+      attributes-parser:
+        specifier: ^2.2.3
+        version: 2.2.3
       chai:
         specifier: ^5.1.2
         version: 5.1.2
@@ -102,14 +116,17 @@ importers:
         specifier: ^15.0.12
         version: 15.0.12
       marked-directive:
-        specifier: ^1.0.7
-        version: 1.0.7(marked@15.0.12)
+        specifier: link:node_modules/.pnpm/marked-extensions@https+++codeload.github.com+bent10+marked-extensions+tar.gz+3d58361ba_c2d45d5a47dc2e9de9c428766b970d78/node_modules/marked-extensions/packages/directive
+        version: link:node_modules/.pnpm/marked-extensions@https+++codeload.github.com+bent10+marked-extensions+tar.gz+3d58361ba_c2d45d5a47dc2e9de9c428766b970d78/node_modules/marked-extensions/packages/directive
       marked-emoji:
         specifier: ^2.0.1
         version: 2.0.1(marked@15.0.12)
       marked-extended-tables:
         specifier: 2.0.1
         version: 2.0.1(marked@15.0.12)
+      marked-extensions:
+        specifier: github:bent10/marked-extensions#marked-directive@1.0.7
+        version: https://codeload.github.com/bent10/marked-extensions/tar.gz/3d58361ba954627c0ee2289fb684598cd5226caf(patch_hash=1826b607e6c2130dc5e434b9b268a6f3449d829258ac6de6dbd90f3be0382b57)
       marked-highlight:
         specifier: ^2.2.1
         version: 2.2.1(marked@15.0.12)
@@ -119,12 +136,18 @@ importers:
       mocha:
         specifier: ^10.8.2
         version: 10.8.2
+      moo:
+        specifier: ^0.5.2
+        version: 0.5.2
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
       rollup:
         specifier: ^4.17.2
         version: 4.18.0
+      seedrandom:
+        specifier: ^3.0.5
+        version: 3.0.5
       turndown:
         specifier: ^7.2.0
         version: 7.2.0
@@ -648,6 +671,9 @@ packages:
 
   '@types/mocha@10.0.10':
     resolution: {integrity: sha512-xPyYSz1cMPnJQhl0CLMH68j3gprKZaTjG3s5Vi+fDgx+uhG9NOXwbVt52eFS8ECyXhyKcjDLCBEqBExKuiZb7Q==}
+
+  '@types/moo@0.5.10':
+    resolution: {integrity: sha512-W6KzyZjXUYpwQfLK1O1UDzqcqYlul+lO7Bt71luyIIyNlOZwJaNeWWdqFs1C/f2hohZvUFHMk6oFNe9Rg48DbA==}
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
@@ -1894,11 +1920,6 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
-  marked-directive@1.0.7:
-    resolution: {integrity: sha512-2OilBJg5kSM0b7ijKlmIne8k1eA1YrNAWasw84fmfihgWuOQJFPmI5GzZd3DgM8PSquAKnYx87Qt5j/2Sw7JNA==}
-    peerDependencies:
-      marked: '>=7.0.0'
-
   marked-emoji@2.0.1:
     resolution: {integrity: sha512-P+nRr02dD+yPOFhtGdaVBzp0qzwlksI2f5GumIdHW/3UadzJ5sVi78CZikiSLr9PmdtUOZodZUBNIO6k38pDMQ==}
     peerDependencies:
@@ -1908,6 +1929,10 @@ packages:
     resolution: {integrity: sha512-DV4Si978ZdaFbycIxzG4TdaNMtC0J8QfIKj1UOCejgJHwVjVJse8DNdJriWDeo/n74DWVYpRC6S56AdgWDPrPA==}
     peerDependencies:
       marked: '>=3 <16'
+
+  marked-extensions@https://codeload.github.com/bent10/marked-extensions/tar.gz/3d58361ba954627c0ee2289fb684598cd5226caf:
+    resolution: {tarball: https://codeload.github.com/bent10/marked-extensions/tar.gz/3d58361ba954627c0ee2289fb684598cd5226caf}
+    version: 0.0.0-development
 
   marked-highlight@2.2.1:
     resolution: {integrity: sha512-SiCIeEiQbs9TxGwle9/OwbOejHCZsohQRaNTY2u8euEXYt2rYUFoiImUirThU3Gd/o6Q1gHGtH9qloHlbJpNIA==}
@@ -2445,6 +2470,9 @@ packages:
 
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
+
+  seedrandom@3.0.5:
+    resolution: {integrity: sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==}
 
   semver@7.6.2:
     resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
@@ -3292,6 +3320,8 @@ snapshots:
   '@types/minimatch@3.0.5': {}
 
   '@types/mocha@10.0.10': {}
+
+  '@types/moo@0.5.10': {}
 
   '@types/ms@2.1.0': {}
 
@@ -4626,11 +4656,6 @@ snapshots:
 
   markdown-table@3.0.4: {}
 
-  marked-directive@1.0.7(marked@15.0.12):
-    dependencies:
-      attributes-parser: 2.2.3
-      marked: 15.0.12
-
   marked-emoji@2.0.1(marked@15.0.12):
     dependencies:
       marked: 15.0.12
@@ -4638,6 +4663,8 @@ snapshots:
   marked-extended-tables@2.0.1(marked@15.0.12):
     dependencies:
       marked: 15.0.12
+
+  marked-extensions@https://codeload.github.com/bent10/marked-extensions/tar.gz/3d58361ba954627c0ee2289fb684598cd5226caf(patch_hash=1826b607e6c2130dc5e434b9b268a6f3449d829258ac6de6dbd90f3be0382b57): {}
 
   marked-highlight@2.2.1(marked@15.0.12):
     dependencies:
@@ -5379,6 +5406,8 @@ snapshots:
   safer-buffer@2.1.2: {}
 
   sax@1.4.1: {}
+
+  seedrandom@3.0.5: {}
 
   semver@7.6.2: {}
 
