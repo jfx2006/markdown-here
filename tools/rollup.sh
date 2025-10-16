@@ -8,4 +8,5 @@ shift
     --file "extension/vendor/${OUTBASE}.esm.js" \
     -p @rollup/plugin-node-resolve \
     -p @rollup/plugin-commonjs \
+    -m inline \
     "$1"
