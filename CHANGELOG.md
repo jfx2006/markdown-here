@@ -1,9 +1,12 @@
 # Changelog
 
-## [HEAD]
+## [4.0.8]
 
 - Table rows with fewer columns than head did not insert empty cells.
   [#137](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/137)
+- Fix problems with text following a colon :likethis
+  [#138](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/138)
+- Update render tests for directives and emojis
 
 ## [4.0.7]
 
