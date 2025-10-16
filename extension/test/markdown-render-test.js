@@ -8,7 +8,6 @@
  * Copyright Adam Pritchard 2013
  * MIT License : http://adampritchard.mit-license.org/
  */
-/* eslint-disable max-len */
 
 import { markdownRender, resetMarked } from "../markdown-render.js"
 import { MdhrMangle } from "../mdhr-mangle.js"
@@ -94,12 +93,12 @@ describe("Markdown-Render", function () {
       await resetMarked(userprefs)
 
       var md = "$x$"
-      var target = '<p><img width="18" height="16" alt="x"'
+      var target = '<p><img width="19" height="18" alt="x"'
       expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
       md = "$xx$"
-      target = '<p><img width="27" height="16" alt="xx'
+      target = '<p><img width="28" height="18" alt="xx'
       expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
     })
 
@@ -157,8 +156,76 @@ describe("Markdown-Render", function () {
       var target = "<p>aaa\nbbb\nccc</p>\n"
       expect(await markdownRender(md)).to.equal(target)
     })
-  })
 
+    it("should not mangle text after a colon", async function () {
+      var md = ":darktrojan"
+      var target = "<p>:darktrojan</p>\n"
+      expect(await markdownRender(md)).to.equal(target)
+    })
+
+    it("should render emojis", async function () {
+      var md = ":smiley:"
+      var target = "<p>😃</p>\n"
+      expect(await markdownRender(md)).to.equal(target)
+    })
+
+    it("should not render bad emojis", async function () {
+      var md = ":smileyfork:"
+      var target = "<p>:smileyfork:</p>\n"
+      expect(await markdownRender(md)).to.equal(target)
+    })
+
+    it("should create a tag for inline directives", async function () {
+      var md = ":span[content]"
+      var target = "<p><span>content</span></p>\n"
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = ":span[content]{.myclass}"
+      target = '<p><span class="myclass">content</span></p>\n'
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = ":span[content]{.myclass1 .myclass2}"
+      target = '<p><span class="myclass1 myclass2">content</span></p>\n'
+      expect(await markdownRender(md)).to.equal(target)
+    })
+
+    it("should handle double colon blocks", async function () {
+      var md = "::hr{style='color: red;'}"
+      var target = '<hr style="color: red;" />\n'
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = "::hr { style='color: blue;' }"
+      target = '<hr style="color: blue;" />\n'
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = "::div[This is content.]"
+      target = "<div>This is content.</div>\n"
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = "::div[This is content.]{.myclass}"
+      target = '<div class="myclass">This is content.</div>\n'
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = "::div [This is content.] { .myclass #mydiv }"
+      target = '<div id="mydiv" class="myclass">This is content.</div>\n'
+      expect(await markdownRender(md)).to.equal(target)
+    })
+
+    it("should handle triple colon blocks", async function () {
+      var md = `:::div{style='color: red;'}
+This is content.
+:::`
+      var target = '<div style="color: red;">\n<p>This is content.</p>\n</div>\n'
+      expect(await markdownRender(md)).to.equal(target)
+
+      md = `::: div { style='color: red;' #myid .myclass }
+This is content.
+:::`
+      target =
+        '<div style="color: red;" id="myid" class="myclass">\n<p>This is content.</p>\n</div>\n'
+      expect(await markdownRender(md)).to.equal(target)
+    })
+  })
   // This includes going from original HTML to MD to HTML and then postprocessing.
   describe("HTML to Markdown to HTML", function () {
     beforeEach(async function () {
@@ -215,17 +282,17 @@ describe("Markdown-Render", function () {
 
       tests.push([
         'asdf <a href="http://www.aaa.com">bbb</a> asdf',
-        '<p>asdf <a href="http://www.aaa.com">bbb</a> asdf',
+        '<p>asdf <a href="http://www.aaa.com">bbb</a> asdf</p>',
       ])
 
-      tests.push(['<a href="aaa">bbb</a>', '<p><a href="https://aaa">bbb</a>'])
+      tests.push(['<a href="aaa">bbb</a>', '<p><a href="https://aaa">bbb</a></p>'])
 
       tests.push([
         '[xxx](yyy) <a href="aaa">bbb</a>',
-        '<p><a href="https://yyy">xxx</a> <a href="https://aaa">bbb</a>',
+        '<p><a href="https://yyy">xxx</a> <a href="https://aaa">bbb</a></p>',
       ])
 
-      tests.push(['asdf (<a href="aaa">bbb</a>)', '<p>asdf (<a href="https://aaa">bbb</a>)'])
+      tests.push(['asdf (<a href="aaa">bbb</a>)', '<p>asdf (<a href="https://aaa">bbb</a>)</p>'])
 
       for (i = 0; i < tests.length; i++) {
         expect(await fullRender(tests[i][0])).to.equal(tests[i][1])
@@ -235,32 +302,31 @@ describe("Markdown-Render", function () {
     // Test issue #57: https://github.com/adam-p/markdown-here/issues/57
     it("should add the schema to links missing it", async function () {
       var md = "asdf [aaa](bbb) asdf [ccc](ftp://ddd) asdf"
-      var target =
-        '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf'
+      var target = '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>'
       expect(await fullRender(md)).to.equal(target)
     })
 
     it("should *not* add the schema to anchor links", async function () {
       var md = "asdf [aaa](#bbb) asdf [ccc](ftp://ddd) asdf"
-      var target = '<p>asdf <a href="#bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf'
+      var target = '<p>asdf <a href="#bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>'
       expect(await fullRender(md)).to.equal(target)
     })
 
     // Test issue #87: https://github.com/adam-p/markdown-here/issues/87
     it("should smartypants apostrophes properly", async function () {
       var md = "Adam's parents' place"
-      var target = "<p>Adam\u2019s parents\u2019 place"
+      var target = "<p>Adam’s parents’ place</p>"
       expect(await fullRender(md)).to.equal(target)
     })
 
     // Test issue #83: https://github.com/adam-p/markdown-here/issues/83
     it("should not alter MD-link-looking text in code blocks", async function () {
       var md = "`[a](b)`"
-      var target = "<p><code>[a](b)</code>"
+      var target = "<p><code>[a](b)</code></p>"
       expect(await fullRender(md)).to.equal(target)
 
       md = "```<br>\n[a](b)<br>\n```<br>\n"
-      target = "<pre><code>[a](b)\n</code></pre>"
+      target = "<pre><code>[a](b)</code></pre>"
       expect(await fullRender(md)).to.equal(target)
     })
 
@@ -271,12 +337,12 @@ describe("Markdown-Render", function () {
       await resetMarked(userprefs)
 
       var md = "$x$"
-      var target = '<p><img width="18" height="16" alt="x"'
+      var target = '<p><img width="19" height="18" alt="x"'
       expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
       md = "$xx$"
-      target = '<p><img width="27" height="16" alt="xx'
+      target = '<p><img width="28" height="18" alt="xx'
       expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
     })
   })
