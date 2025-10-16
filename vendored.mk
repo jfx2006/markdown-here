@@ -37,8 +37,8 @@ $(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
 
 marked-directive: $(EXTENSION)/vendor/marked-directive.esm.js
 
-$(EXTENSION)/vendor/marked-directive.esm.js: node_modules/marked-directive/dist/index.js
-	./tools/rollup.sh marked-directive $<
+$(EXTENSION)/vendor/marked-directive.esm.js: node_modules/marked-directive/src/index.ts
+	node tools/bundle-directive.mjs
 
 marked-emoji: $(EXTENSION)/vendor/marked-emoji.esm.js
 
