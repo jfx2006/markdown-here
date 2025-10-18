@@ -22,7 +22,7 @@ MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
 
 mailext-options-sync/mailext-options-sync.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
-	cd mailext-options-sync && pnpm install && npm run build && cp -f index.js mailext-options-sync.js
+	cd mailext-options-sync && pnpm install --ignore-workspace && pnpm run build && cp -f index.js mailext-options-sync.js
 
 $(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/mailext-options-sync.js
 	cp -v $< $@
