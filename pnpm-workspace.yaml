@@ -1,5 +1,0 @@
-overrides:
-  marked-directive: link:node_modules/.pnpm/marked-extensions@https+++codeload.github.com+bent10+marked-extensions+tar.gz+3d58361ba_c2d45d5a47dc2e9de9c428766b970d78/node_modules/marked-extensions/packages/directive
-
-patchedDependencies:
-  marked-extensions@0.0.0-development: patches/marked-extensions@0.0.0-development.patch
