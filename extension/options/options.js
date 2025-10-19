@@ -15,14 +15,13 @@ import DOMPurify from "../vendor/purify.es.mjs"
 import { fetchExtFile, getHljsStyles, getLanguage, getMessage } from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
 ;(async () => {
-  // eslint-disable-next-line no-unused-vars
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
   const cssSyntaxSelect = document.getElementById("css-syntax-select")
   const previewInput = document.getElementById("preview_input")
   const previewIframe = document.getElementById("preview")
   let inputDirty = true
-  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   let checkChangeTimeout = null
   let savedMsgToast
   let invalidMsgToast
@@ -57,6 +56,7 @@ import OptionsStore from "./options-storage.js"
           tests_link.hidden = false
         }
       })
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       const tests_link = document.getElementById("tests-link")
       tests_link.hidden = false

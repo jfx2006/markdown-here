@@ -53,6 +53,7 @@ export async function migrate_oldHotKey(options, defaults) {
     // Might not be JSON encoded?
     try {
       old_hotkey = JSON.parse(old_hotkey)
+      // eslint-disable-next-line no-unused-vars
     } catch (ex) {
       // do nothing, leave the value as-is
     }
