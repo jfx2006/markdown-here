@@ -40,7 +40,7 @@ vendored:
     method: bash
     vendor_prefix: highlightjs
     node_pkg: highlight.js
-    clean: "rm -rf $(EXTENSION)/{vendor_prefix}/styles"
+    clean: "rm -rf $(EXTENSION)/{vendor_prefix}/highlightjs.esm.js $(EXTENSION)/{vendor_prefix}/styles"
     cmds:
       - ./node_modules/.bin/rollup --format es \
       - --file "$(EXTENSION)/{vendor_prefix}/highlightjs.esm.js" \
@@ -68,6 +68,7 @@ vendored:
     method: bash
     node_pkg: emojibase-data
     vendor_prefix: data
+    clean: rm -f $(EXTENSION)/data/emoji_codes.json
     cmds:
       - python ./tools/emoji-grab.py $< $@
 

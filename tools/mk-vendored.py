@@ -46,6 +46,7 @@ class MkVendored:
         self.out.writelines(
             [
                 "clean:\n",
+                "\trm -f $(EXTENSION)/vendor/*\n",
             ]
             + [f"\t{cmd}\n" for cmd in clean_cmds]
         )
@@ -87,7 +88,6 @@ class MkVendored:
 
             self.out.writelines([f"{line}\n" for line in rule])
 
-            yield "rm -f {dest}".format(**context)
             if "clean" in context:
                 cmd = context.pop("clean")
                 yield cmd.format(**context)

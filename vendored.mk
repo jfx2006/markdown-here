@@ -69,18 +69,8 @@ $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.
 	cp -v $< $@
 
 clean:
-	rm -f $(EXTENSION)/vendor/degausser.esm.js
-	rm -f $(EXTENSION)/vendor/purify.es.mjs
+	rm -f $(EXTENSION)/vendor/*
 	rm -f $(EXTENSION)/data/emoji_codes.json
-	rm -f $(EXTENSION)/vendor/fuse.basic.mjs
-	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js
-	rm -rf $(EXTENSION)/highlightjs/styles
-	rm -f $(EXTENSION)/vendor/marked.esm.js
-	rm -f $(EXTENSION)/vendor/marked-emoji.esm.js
-	rm -f $(EXTENSION)/vendor/marked-extended-tables.esm.js
-	rm -f $(EXTENSION)/vendor/marked-highlight.esm.js
-	rm -f $(EXTENSION)/vendor/marked-linkify-it.esm.js
-	rm -f $(EXTENSION)/vendor/textcomplete.esm.js
-	rm -f $(EXTENSION)/vendor/turndown.esm.js
+	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles
 
 all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js
