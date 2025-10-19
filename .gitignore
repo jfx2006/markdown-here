@@ -8,3 +8,5 @@ node_modules
 /mdhr_test_profiles/
 
 venv
+
+.pnpm-store
