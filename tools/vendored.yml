@@ -72,11 +72,8 @@ vendored:
       - python ./tools/emoji-grab.py $< $@
 
   marked-directive:
-    path: src/index.ts
-    method: bash
-    node_pkg: marked-directive
-    cmds:
-      - node tools/bundle-directive.mjs
+    path: dist/index.js
+    method: rollup
 
   dompurify:
     paths:
