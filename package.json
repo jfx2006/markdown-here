@@ -68,6 +68,7 @@
     "mocha": "^10.8.2",
     "prettier": "^3.5.3",
     "rollup": "^4.17.2",
+    "texzilla": "^1.0.2",
     "turndown": "^7.2.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",

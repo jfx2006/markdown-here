@@ -48,10 +48,10 @@ importers:
         specifier: ^127.0.0
         version: 127.0.0
       bootstrap:
-        specifier: ^5.2.3
+        specifier: ^5.3.8
         version: 5.3.8(@popperjs/core@2.11.8)
       bootswatch:
-        specifier: ^5.2.3
+        specifier: ^5.3.8
         version: 5.3.8
       chai:
         specifier: ^5.1.2
@@ -107,9 +107,6 @@ importers:
       marked:
         specifier: ^15.0.12
         version: 15.0.12
-      marked-directive:
-        specifier: ^1.0.7
-        version: 1.0.7(marked@15.0.12)
       marked-emoji:
         specifier: ^2.0.1
         version: 2.0.1(marked@15.0.12)
@@ -131,6 +128,9 @@ importers:
       rollup:
         specifier: ^4.17.2
         version: 4.18.0
+      texzilla:
+        specifier: ^1.0.2
+        version: 1.0.2
       turndown:
         specifier: ^7.2.0
         version: 7.2.0
@@ -841,9 +841,6 @@ packages:
 
   atomically@2.0.3:
     resolution: {integrity: sha512-kU6FmrwZ3Lx7/7y3hPS5QnbJfaohcIul5fGqf7ok+4KklIEk9tJ0C2IQPdacSbVUWv6zVHXEBWoWd6NrVMT7Cw==}
-
-  attributes-parser@2.2.3:
-    resolution: {integrity: sha512-zjOUWt95la8AdUO+kP1GBOonWrV5jy9NjJP+z9tva/DSA6FIzGKcN/gk3tdqQf/pOeB8dkyd3FCPrjhELMmrkg==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1832,9 +1829,6 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
-  json-loose@1.2.4:
-    resolution: {integrity: sha512-lwMWNC5pvVI33rhYWmAsmtICWE2IH7euDY/iIPeMFE5AuzAifYgqQrjqSMzwbrFV6MWPs41XD+CajElHI4cZMQ==}
-
   json-merge-patch@1.0.2:
     resolution: {integrity: sha512-M6Vp2GN9L7cfuMXiWOmHj9bEFbeC250iVtcKQbqVgEsDVYnIsrNsbU+h/Y/PkbBQCtEa4Bez+Ebv0zfbC8ObLg==}
 
@@ -1910,11 +1904,6 @@ packages:
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
-
-  marked-directive@1.0.7:
-    resolution: {integrity: sha512-2OilBJg5kSM0b7ijKlmIne8k1eA1YrNAWasw84fmfihgWuOQJFPmI5GzZd3DgM8PSquAKnYx87Qt5j/2Sw7JNA==}
-    peerDependencies:
-      marked: '>=7.0.0'
 
   marked-emoji@2.0.1:
     resolution: {integrity: sha512-P+nRr02dD+yPOFhtGdaVBzp0qzwlksI2f5GumIdHW/3UadzJ5sVi78CZikiSLr9PmdtUOZodZUBNIO6k38pDMQ==}
@@ -2127,9 +2116,6 @@ packages:
     resolution: {integrity: sha512-VZlYo/WE8t1tstuRmqgeyBgCbJc/lEdopaa+axcKzTBJ+UIdlAB9XnmvTCAH4pwR4ElNInaedhEBmZD8iCSVEg==}
     engines: {node: '>= 14.0.0'}
     hasBin: true
-
-  moo@0.5.2:
-    resolution: {integrity: sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q==}
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -2638,6 +2624,10 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+
+  texzilla@1.0.2:
+    resolution: {integrity: sha512-Mn5rZ8Jww7uHzNoyCfKTK02s8GolXtWgVerF/TAk2xupv2n8S4Ijdz84zqEq81PKt6QqmYHA1kmetWGRpCTdGw==}
+    hasBin: true
 
   thread-stream@2.7.0:
     resolution: {integrity: sha512-qQiRWsU/wvNolI6tbbCKd9iKaTnCXsTwVxhhKM6nctPdujTyztjlbUkUTUymidWcMnZ5pWR0ej4a0tjsW021vw==}
@@ -3531,10 +3521,6 @@ snapshots:
     dependencies:
       stubborn-fs: 1.2.5
       when-exit: 2.1.4
-
-  attributes-parser@2.2.3:
-    dependencies:
-      json-loose: 1.2.4
 
   balanced-match@1.0.2: {}
 
@@ -4567,10 +4553,6 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
-  json-loose@1.2.4:
-    dependencies:
-      moo: 0.5.2
-
   json-merge-patch@1.0.2:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -4650,11 +4632,6 @@ snapshots:
   make-error@1.3.6: {}
 
   markdown-table@3.0.4: {}
-
-  marked-directive@1.0.7(marked@15.0.12):
-    dependencies:
-      attributes-parser: 2.2.3
-      marked: 15.0.12
 
   marked-emoji@2.0.1(marked@15.0.12):
     dependencies:
@@ -5052,8 +5029,6 @@ snapshots:
       yargs: 16.2.0
       yargs-parser: 20.2.9
       yargs-unparser: 2.0.0
-
-  moo@0.5.2: {}
 
   ms@2.0.0: {}
 
@@ -5584,6 +5559,8 @@ snapshots:
       '@pkgr/core': 0.2.4
 
   text-table@0.2.0: {}
+
+  texzilla@1.0.2: {}
 
   thread-stream@2.7.0:
     dependencies:

@@ -91,3 +91,11 @@ vendored:
     paths:
       bootswatch.css: dist/darkly/bootstrap.css
     method: copy
+
+  texzilla:
+    paths:
+      TeXZilla.js: TeXZilla.js
+    method: bash
+    cmds:
+      - cp -v $< $@
+      - echo -e "\nexport default TeXZilla" >> $@

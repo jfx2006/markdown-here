@@ -73,6 +73,12 @@ $(EXTENSION)/vendor/textcomplete.esm.js: node_modules/@textcomplete/contentedita
 	cp -v textcomplete-bundle.mjs $@
 	rm -f textcomplete-bundle.mjs
 
+texzilla: $(EXTENSION)/vendor/TeXZilla.js
+
+$(EXTENSION)/vendor/TeXZilla.js: node_modules/texzilla/TeXZilla.js
+	cp -v $< $@
+	echo -e "\nexport default TeXZilla" >> $@
+
 turndown: $(EXTENSION)/vendor/turndown.esm.js
 
 $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
@@ -83,4 +89,4 @@ clean:
 	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js bootstrap bootswatch
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js bootstrap bootswatch texzilla
