@@ -173,56 +173,9 @@ describe("Markdown-Render", function () {
       var md = ":smileyfork:"
       var target = "<p>:smileyfork:</p>\n"
       expect(await markdownRender(md)).to.equal(target)
-    })
 
-    it("should create a tag for inline directives", async function () {
-      var md = ":span[content]"
-      var target = "<p><span>content</span></p>\n"
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = ":span[content]{.myclass}"
-      target = '<p><span class="myclass">content</span></p>\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = ":span[content]{.myclass1 .myclass2}"
-      target = '<p><span class="myclass1 myclass2">content</span></p>\n'
-      expect(await markdownRender(md)).to.equal(target)
-    })
-
-    it("should handle double colon blocks", async function () {
-      var md = "::hr{style='color: red;'}"
-      var target = '<hr style="color: red;" />\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = "::hr { style='color: blue;' }"
-      target = '<hr style="color: blue;" />\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = "::div[This is content.]"
-      target = "<div>This is content.</div>\n"
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = "::div[This is content.]{.myclass}"
-      target = '<div class="myclass">This is content.</div>\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = "::div [This is content.] { .myclass #mydiv }"
-      target = '<div id="mydiv" class="myclass">This is content.</div>\n'
-      expect(await markdownRender(md)).to.equal(target)
-    })
-
-    it("should handle triple colon blocks", async function () {
-      var md = `:::div{style='color: red;'}
-This is content.
-:::`
-      var target = '<div style="color: red;">\n<p>This is content.</p>\n</div>\n'
-      expect(await markdownRender(md)).to.equal(target)
-
-      md = `::: div { style='color: red;' #myid .myclass }
-This is content.
-:::`
-      target =
-        '<div style="color: red;" id="myid" class="myclass">\n<p>This is content.</p>\n</div>\n'
+      md = ":unclosed emoji"
+      target = "<p>:unclosed emoji</p>\n"
       expect(await markdownRender(md)).to.equal(target)
     })
   })
@@ -302,7 +255,8 @@ This is content.
     // Test issue #57: https://github.com/adam-p/markdown-here/issues/57
     it("should add the schema to links missing it", async function () {
       var md = "asdf [aaa](bbb) asdf [ccc](ftp://ddd) asdf"
-      var target = '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>'
+      var target =
+        '<p>asdf <a href="https://bbb">aaa</a> asdf <a href="ftp://ddd">ccc</a> asdf</p>'
       expect(await fullRender(md)).to.equal(target)
     })
 

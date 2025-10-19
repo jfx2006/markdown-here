@@ -71,10 +71,6 @@ vendored:
     cmds:
       - python ./tools/emoji-grab.py $< $@
 
-  marked-directive:
-    path: dist/index.js
-    method: rollup
-
   dompurify:
     paths:
       purify.es.mjs: dist/purify.es.mjs

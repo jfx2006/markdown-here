@@ -19,7 +19,6 @@ import hljs from "./highlightjs/highlightjs.esm.js"
 import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
-import { createDirectives, presetDirectiveConfigs } from "./vendor/marked-directive.esm.js"
 import { urlSchemify } from "./marked-link-scheme.esm.js"
 
 import OptionsStore from "./options/options-storage.js"
@@ -76,7 +75,6 @@ export async function resetMarked(userprefs) {
     }
     marked.use(markedMath(mathOptions))
   }
-  marked.use(createDirectives([...presetDirectiveConfigs]))
   if (userprefs["emoji-shortcode-enabled"]) {
     const { markedEmoji } = await import("./vendor/marked-emoji.esm.js")
     const { default: emojis } = await import("./data/shortcodes.mjs")

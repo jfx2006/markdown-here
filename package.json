@@ -59,7 +59,6 @@
     "globals": "^16.2.0",
     "highlight.js": "^11.11.1",
     "marked": "^15.0.12",
-    "marked-directive": "^1.0.7",
     "marked-emoji": "^2.0.1",
     "marked-extended-tables": "2.0.1",
     "marked-highlight": "^2.2.1",
