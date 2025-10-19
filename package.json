@@ -43,6 +43,8 @@
     "@types/thunderbird-webext-browser": "^127.0.0",
     "chai": "^5.1.2",
     "chai-dom": "^1.12.0",
+    "bootstrap": "^5.3.8",
+    "bootswatch": "^5.3.8",
     "degausser": "^2.4.4",
     "dompurify": "^3.2.6",
     "emojibase-data": "^16.0.3",

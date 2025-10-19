@@ -81,3 +81,13 @@ vendored:
     paths:
       fuse.basic.mjs: dist/fuse.basic.mjs
     method: copy
+
+  bootstrap:
+    paths:
+      bootstrap.bundle.js: dist/js/bootstrap.bundle.js
+    method: copy
+
+  bootswatch:
+    paths:
+      bootswatch.css: dist/darkly/bootstrap.css
+    method: copy

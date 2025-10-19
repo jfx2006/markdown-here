@@ -1,5 +1,15 @@
 EXTENSION = extension
 
+bootstrap: $(EXTENSION)/vendor/bootstrap.bundle.js
+
+$(EXTENSION)/vendor/bootstrap.bundle.js: node_modules/bootstrap/dist/js/bootstrap.bundle.js
+	cp -v $< $@
+
+bootswatch: $(EXTENSION)/vendor/bootswatch.css
+
+$(EXTENSION)/vendor/bootswatch.css: node_modules/bootswatch/dist/darkly/bootstrap.css
+	cp -v $< $@
+
 degausser: $(EXTENSION)/vendor/degausser.esm.js
 
 $(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
@@ -73,4 +83,4 @@ clean:
 	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js bootstrap bootswatch
