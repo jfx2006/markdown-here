@@ -3,8 +3,6 @@
  * MIT License
  */
 
-import { getMessage } from "./async_utils.mjs"
-
 const defaultOptions = {
   math_renderer: "disabled",
   math_url: undefined,
@@ -50,21 +48,9 @@ function createRenderer(options) {
 
   if (options.math_renderer === "disabled") {
     throw new Error("math_renderer is disabled")
-  } else if (options.math_renderer === "gchart") {
+  } else if (options.math_renderer === "codecogs") {
     if (!options.math_url) {
-      throw new Error("GChart math_renderer requires options.math_url")
-    }
-    if (options.math_url.includes("chart.googleapis.com")) {
-      return function () {
-        const message = getMessage("options_page__tex_math_gchart_discontinued")
-        return `<a style="color:red; font-weight: bold;" href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Google-Image-Charts-API-discontinued">${message}</a>`
-      }
-    }
-    if (options.math_url.includes("www.example.com")) {
-      return function () {
-        const message = getMessage("set_math_api_url")
-        return `<a style="color:red; font-weight: bold;" href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Google-Image-Charts-API-discontinued">${message}</a>`
-      }
+      throw new Error("CodeCogs math_renderer requires options.math_url")
     }
     return mathifyGChart
   } else if (options.math_renderer === "texzilla") {

@@ -329,7 +329,7 @@ import OptionsStore from "./options-storage.js"
       }
       let e_math_url = document.getElementById("math-value")
       let e_math_url_reset = document.getElementById("math-reset-button")
-      if (value === "gchart") {
+      if (value === "codecogs") {
         e_math_url.disabled = false
         e_math_url_reset.disabled = false
       } else {
@@ -375,7 +375,11 @@ import OptionsStore from "./options-storage.js"
       }
       let message = getMessage(message_id, arg)
       if (message) {
-        n.textContent = message
+        if (n.dataset.i18nHtml === "true") {
+          n.innerHTML = escapeHTML`${message}`
+        } else {
+          n.textContent = message
+        }
       }
       if (n.title) {
         message = getMessage(`${message_id}-Title`)

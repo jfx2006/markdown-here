@@ -22,6 +22,7 @@ import {
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
+  migrate_mathCodecogs,
 } from "./options_migration.js"
 
 function hotKeyDefault() {
@@ -34,7 +35,8 @@ function hotKeyDefault() {
 export const kOptDefaults = {
   "main-css": "",
   "syntax-css": "nnfx-light.css",
-  "math-value": `<img src="https://www.example.com/path/to/api/{urlmathcode}" alt="{mathcode}">`,
+  "math-value":
+    '<img src="https://latex.codecogs.com/png.image?\\inline&space;\\dpi{200}&space;{urlmathcode}" alt="{mathcode}">',
   "math-renderer-enabled": false,
   "math-renderer": "texzilla",
   "hotkey-input": hotKeyDefault(),
@@ -63,6 +65,7 @@ let MIGRATIONS = [
   migrate_mathRenderer,
   migrate_mathRenderer2,
   migrate_macHotkeys,
+  migrate_mathCodecogs,
   migrate_removeUnused,
 ]
 

@@ -253,18 +253,27 @@
                         <span data-i18n="tex_math_texzilla_label-Title">Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.</span>
                       </div>
                       <div class="form-check">
-                        <input id="math-renderer-gchart" class="form-check-input" type="radio"
+                        <input id="math-renderer-codecogs" class="form-check-input" type="radio"
                                name="math-renderer"
-                               value="gchart" />
-                        <label class="form-check-label" for="math-renderer-gchart"
-                               data-i18n="tex_math_gchart_label">
-                          Math rendering using Google Chart API (deprecated)</label>
-                        <span data-i18n="tex_math_gchart_label-Title">To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.</span>
-                      </div>
-                      <div id="math-gchart-url">
-                        <div class="alert alert-warning" role="alert" data-i18n="tex_math_gchart_discontinued">
-                            <a href="https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/Google-Image-Charts-API-discontinued">Google Image Chart API is discontinued.</a>
+                               value="codecogs" />
+                        <label class="form-check-label" for="math-renderer-codecogs"
+                               data-i18n="tex_math_codecogs_label">
+                          Math rendering using CodeCogs Equation Rendering API</label>
+                        <div id="codecogs-extras">
+                          <span data-i18n="tex_math_codecogs_customization_1">To generate the image for the formula, a request is sent to CodeCogs.
+                            That effectively means that you are sharing your formula with CodeCogs. It also means that recipients of your
+                            message will be making a request to CodeCogs to have the image rendered.</span><br>
+                          <span data-i18n="tex_math_codecogs_customization_2" data-i18n-html="true">
+                            For render customization options, see the <a href="https://editor.codecogs.com/docs/4-LaTeX_rendering.php" target="_blank">
+                            CodeCogs documentation</a> for this service.
+                          </span><br>
+                          <span data-i18n="tex_math_codecogs_customization_3" data-i18n-html="true">
+                            A good resource for creating TeX formulae is the <a href="https://editor.codecogs.com/" target="_blank">
+                            CodeCogs Equation Editor</a>.
+                          </span><br>
                         </div>
+                      </div>
+                      <div id="math-codecogs-url">
                         <label class="form-check-label" for="math-value"></label>
                         <input id="math-value" class="form-text" type="text" name="math-value" />
                         <button id="math-reset-button" class="btn btn-sm btn-primary reset-button"

@@ -8,11 +8,13 @@ import {
   testCssSum,
   migrate_badMathValue,
   migrate_MainCSS,
-  migrate_setLastVersion, migrate_smartReplacements,
-  migrate_syntaxCSS
+  migrate_setLastVersion,
+  migrate_smartReplacements,
+  migrate_syntaxCSS,
+  migrate_mathCodecogs,
 } from "../options/options_migration.js"
 
-import {fetchExtFile, sha256Digest} from "../async_utils.mjs"
+import { fetchExtFile, sha256Digest } from "../async_utils.mjs"
 
 const DEFAULTS = {
   "main-css": "/* MAIN.CSS */",
@@ -96,10 +98,39 @@ describe("options_migrations tests", function () {
   })
 
   describe("migrate_smartReplacements", function () {
-    it("should migrate 'smart-quotes' option", async function() {
+    it("should migrate 'smart-quotes' option", async function () {
       let options = { "smart-quotes-enabled": false }
       let changed = await migrate_smartReplacements(options)
       expect(changed["smart-replacements-enabled"]).to.equal(false)
+    })
+  })
+
+  describe("migrate_mathCodecogs", function () {
+    it("should fixup gchart urls", async function () {
+      let options = {
+        "math-value":
+          '<img src="https://chart.googleapis.com/chart?cht=tx&chl={urlmathcode}" alt="{mathcode}">',
+      }
+      let changed = await migrate_mathCodecogs(options, DEFAULTS)
+      expect(changed["math-value"]).to.equal(DEFAULTS["math-value"])
+    })
+    it("should fixup example urls", async function () {
+      let options = {
+        "math-value":
+          '<img src="https://www.example.com/path/to/api/{urlmathcode}" alt="{mathcode}">',
+      }
+      let changed = await migrate_mathCodecogs(options, DEFAULTS)
+      expect(changed["math-value"]).to.equal(DEFAULTS["math-value"])
+    })
+    it("should change gchart rendering to codecogs", async function () {
+      let options = { "math-renderer": "gchart" }
+      let changed = await migrate_mathCodecogs(options, DEFAULTS)
+      expect(changed["math-renderer"]).to.equal("codecogs")
+    })
+    it("should leave TeXZilla rendering alone", async function () {
+      let options = { "math-renderer": "texzilla" }
+      let changed = await migrate_mathCodecogs(options, DEFAULTS)
+      expect(changed).to.be.null
     })
   })
 })

@@ -194,3 +194,20 @@ export async function migrate_macHotkeys(options, defaults) {
   }
   return null
 }
+
+export async function migrate_mathCodecogs(options, defaults) {
+  const rv = {}
+  if (
+    options["math-value"]?.indexOf("chart.googleapis.com") >= 0 ||
+    options["math-value"]?.indexOf("www.example.com") >= 0
+  ) {
+    rv["math-value"] = defaults["math-value"]
+  }
+  if (options["math-renderer"] === "gchart") {
+    rv["math-renderer"] = "codecogs"
+  }
+  if (Object.values(rv).length > 0) {
+    return rv
+  }
+  return null
+}

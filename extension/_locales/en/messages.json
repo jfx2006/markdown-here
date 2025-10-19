@@ -136,17 +136,37 @@
     "message": "Math formulae are rendered with TeXZilla.js using the browser canvas. No network request is sent.",
     "description": "description how math is rendered when TexZilla option is selected"
   },
-  "options_page__tex_math_gchart_label": {
-    "message": "Math rendering using Google Chart API (deprecated)",
-    "description": "Label for GChart math rendering option"
+  "options_page__tex_math_codecogs_label": {
+    "message": "Math rendering using CodeCogs Equation Rendering API",
+    "description": "Label for CodeCogs math rendering option"
   },
-  "options_page__tex_math_gchart_label-Title": {
-    "message": "To generate the image for the formula, a request is sent to Google. That effectively means that you are sharing your formula with Google. It also means that recipients of your message will be making a request to Google to have the image rendered.",
-    "description": "one of the TeX math privacy concerns"
+  "options_page__tex_math_codecogs_customization_1": {
+    "message": "To generate the image for the formula, a request is sent to CodeCogs. That effectively means that you are sharing your formula with CodeCogs. It also means that recipients of your message will be making a request to CodeCogs to have the image rendered.",
+    "description": "one of the CodeCogs TeX math privacy concerns"
   },
-  "options_page__tex_math_gchart_discontinued": {
-    "message": "Google Image Chart API is discontinued.",
-    "description": "Information about the discontinued GChart Image API formerly used to render math formula."
+  "options_page__tex_math_codecogs_customization_2": {
+    "message": "For render customization options, see the $LINK$CodeCogs documentation$CLOSELINK$ for this service.",
+    "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/docs/4-LaTeX_rendering.php\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    }
+  },
+  "options_page__tex_math_codecogs_customization_3": {
+    "message": "A good resource for creating TeX formulae is the $LINK$CodeCogs Equation Editor$CLOSELINK$.",
+    "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    }
   },
   "options_page__buglink_description": {
     "message": "Create links to bug or issue trackers like `#12345`. The fields below are used to template the URL and text of the links.",
