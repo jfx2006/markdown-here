@@ -2,11 +2,18 @@
 
 ## [4.0.8]
 
+### New
+
+- Add support for CodeCogs math rendering (real replacement for GChart Image API)
+  Based on Adam P's work in the original Markdown Here extension
+- Match issue numbers with dashes as used in Jira (thanks @koug44)
+
+### Fixed
+
 - Table rows with fewer columns than head did not insert empty cells
   [#137](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/137)
-- Remove support for Markdown directivesd
+- Remove support for Markdown directives
   [#138](https://gitlab.com/jfx2006/markdown-here-revival/-/issues/138)
-- Match issue numbers with dashes as used in Jira (thanks @koug44)
 
 ## [4.0.7]
 
