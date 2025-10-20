@@ -179,25 +179,46 @@
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
-  "options_page__tex_math_gchart_label": {
-    "message": "Математический рендеринг с использованием Google Chart API (устаревший)",
-    "description": "Label for GChart math rendering option",
-    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  "options_page__tex_math_codecogs_label": {
+    "message": "Математический рендеринг с использованием CodeCogs Equation Rendering API",
+    "description": "Label for CodeCogs math rendering option",
+    "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
-  "options_page__tex_math_gchart_label-Title": {
-    "message": "Для рендеринга изображения для формулы, запрос отправляется Google. Это фактически означает, что вы показываете вашу формулу Google. Это также означает, что получатель вашего сообщения сделает запрос к Google, чтобы увидеть отрендеренное  изображение этой формулы.",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "45421bd5f89bb7b4209792e558a5684f"
+  "options_page__tex_math_codecogs_customization_1": {
+    "message": "Чтобы создать изображение для формулы, запрос отправляется в CodeCogs. Это означает, что вы делитесь своей формулой с CodeCogs. Это также означает, что получатели вашего сообщения будут запрашивать у CodeCogs визуализацию изображения.",
+    "description": "one of the CodeCogs TeX math privacy concerns",
+    "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
-  "options_page__tex_math_gchart_discontinued": {
-    "message": "Google Image Chart API был закрыт.",
-    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
-    "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  "options_page__tex_math_codecogs_customization_2": {
+    "message": "Для опций настройки рендеринга см. документацию $LINK$CodeCogs $CLOSELINK$ для этой услуги.",
+    "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/docs/4-LaTeX_rendering.php\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "d108daece31e555fb937bda04f5d6c32"
+  },
+  "options_page__tex_math_codecogs_customization_3": {
+    "message": "Хорошим ресурсом для создания формул TeX является редактор уравнений $LINK$CodeCogs Близнецы.",
+    "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "Создавайте ссылки на трекеры ошибок или проблем, такие как#12345. Поля ниже используются для шаблонизации URL и текста ссылок.",
+    "message": "Создавайте ссылки на трекеры ошибок или проблем, такие как #12345. Поля ниже используются для шаблонизации URL и текста ссылок.",
     "description": "Description of bug/issue link feature.",
-    "hash": "2802e093c06e7d053e596261afe9fe27"
+    "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
     "message": "Включить ссылки Bug/Issue",

@@ -179,25 +179,46 @@
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
-  "options_page__tex_math_gchart_label": {
-    "message": "rendu de mathématiques en utilisant l'API Google Chart (déprécié)",
-    "description": "Label for GChart math rendering option",
-    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  "options_page__tex_math_codecogs_label": {
+    "message": "Rendre les mathématiques à l'aide de l'API CodeCogs Equation",
+    "description": "Label for CodeCogs math rendering option",
+    "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
-  "options_page__tex_math_gchart_label-Title": {
-    "message": "Afin de générer une image pour la formule, une requête est effectuée chez Google. Cela signifie concrètement que vous partagez cette formule avec Google. Cela signifie également que les destinataires de votre message feront également une requête chez Google pour afficher cette image.",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "45421bd5f89bb7b4209792e558a5684f"
+  "options_page__tex_math_codecogs_customization_1": {
+    "message": "Pour générer l'image de la formule, une requête est envoyée à CodeCogs. Cela signifie effectivement que vous partagez votre formule avec CodeCogs. Cela signifie également que les destinataires de votre message feront une demande à CodeCogs pour que l'image soit rendue.",
+    "description": "one of the CodeCogs TeX math privacy concerns",
+    "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
-  "options_page__tex_math_gchart_discontinued": {
-    "message": "Google Image Chart API est arrêté.",
-    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
-    "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  "options_page__tex_math_codecogs_customization_2": {
+    "message": "Pour les options de personnalisation des rendus, consultez la documentation $LINK$CodeCogs$CLOSELINK$ pour ce service.",
+    "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/docs/4-LaTeX_rendering.php\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "d108daece31e555fb937bda04f5d6c32"
+  },
+  "options_page__tex_math_codecogs_customization_3": {
+    "message": "Une bonne ressource pour créer des formules TeX est le $LINK$CodeCogs Equation Editor$ CLOSELINK$.",
+    "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "Créer des liens vers des traqueurs de bugs ou de problèmes comme `#12345`. Les champs ci-dessous sont utilisés pour modéliser l'URL et le texte des liens.",
+    "message": "Créer des liens vers des trackers de bogues ou de problèmes comme `#12345`. Les champs ci-dessous sont utilisés pour modéliser l'URL et le texte des liens.",
     "description": "Description of bug/issue link feature.",
-    "hash": "2802e093c06e7d053e596261afe9fe27"
+    "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
     "message": "Activer les liens Bug/Issue",

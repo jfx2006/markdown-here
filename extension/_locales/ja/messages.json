@@ -179,25 +179,46 @@
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
-  "options_page__tex_math_gchart_label": {
-    "message": "Google チャート API を使用した数学レンダリング(非推奨)",
-    "description": "Label for GChart math rendering option",
-    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  "options_page__tex_math_codecogs_label": {
+    "message": "CodeCogs Equation Rendering API を使用した数学レンダリング",
+    "description": "Label for CodeCogs math rendering option",
+    "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
-  "options_page__tex_math_gchart_label-Title": {
-    "message": "数式の画像を生成するためにGoogleにリクエストを送信します。 これはGoogleにあなたの数式が共有されることを意味します。 また、レンダリングされた画像を取得するためにGoogleにリクエストを送信することも意味します。",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "45421bd5f89bb7b4209792e558a5684f"
+  "options_page__tex_math_codecogs_customization_1": {
+    "message": "式のイメージを生成するには、CodeCogs にリクエストが送信されます。 つまり、CodeCogs で式を共有していることを意味します。 また、メッセージの受信者は、イメージがレンダリングされるように、CodeCogs へのリクエストをリクエストすることを意味します。",
+    "description": "one of the CodeCogs TeX math privacy concerns",
+    "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
-  "options_page__tex_math_gchart_discontinued": {
-    "message": "Google Image Chart API が廃止されました。",
-    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
-    "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  "options_page__tex_math_codecogs_customization_2": {
+    "message": "レンダリングのカスタマイズオプションについては、$LINK$CodeCogs documentation$CLOSELINK$を参照してください。",
+    "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/docs/4-LaTeX_rendering.php\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "d108daece31e555fb937bda04f5d6c32"
+  },
+  "options_page__tex_math_codecogs_customization_3": {
+    "message": "TeX の式を作るための良いリソースは $LINK$CodeCogs の式エディタ $ ログイン",
+    "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
     "message": "`#12345` のようなバグや問題トラッカーへのリンクを作成します。 下のフィールドは、リンクのURLとテキストをテンプレートに使用されます。",
     "description": "Description of bug/issue link feature.",
-    "hash": "2802e093c06e7d053e596261afe9fe27"
+    "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
     "message": "Bug/Issueリンクを有効にする",

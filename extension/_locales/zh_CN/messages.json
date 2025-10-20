@@ -179,25 +179,46 @@
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
-  "options_page__tex_math_gchart_label": {
-    "message": "使用 Google 图表 API 进行数学渲染( 已过期)",
-    "description": "Label for GChart math rendering option",
-    "hash": "c6a8eb172130d05f0820da44862d8b99"
+  "options_page__tex_math_codecogs_label": {
+    "message": "使用 CodeCogs 公式渲染 API 的数学渲染",
+    "description": "Label for CodeCogs math rendering option",
+    "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
-  "options_page__tex_math_gchart_label-Title": {
-    "message": "为了生成公式的图片, 浏览器会向谷歌发送请求. 这事实上意味着你在和谷歌分享公式。 就是说你编辑的信息会被发给谷歌以转换成图片。",
-    "description": "one of the TeX math privacy concerns",
-    "hash": "45421bd5f89bb7b4209792e558a5684f"
+  "options_page__tex_math_codecogs_customization_1": {
+    "message": "要生成公式的图像,会向 CodeCogs 发送请求. 这实际上意味着你和CodeCogs分享你的公式. 这也意味着您消息的收件人会向 CodeCogs 请求将图像渲染出来.",
+    "description": "one of the CodeCogs TeX math privacy concerns",
+    "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
-  "options_page__tex_math_gchart_discontinued": {
-    "message": "Google 图像图 API 停止使用.",
-    "description": "Information about the discontinued GChart Image API formerly used to render math formula.",
-    "hash": "11547235a52d1c5e18f5066ff170e3e1"
+  "options_page__tex_math_codecogs_customization_2": {
+    "message": "关于定制选项,请参见这项服务的$LINK$CodeCogs文档$CLOSELINK$。",
+    "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/docs/4-LaTeX_rendering.php\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "d108daece31e555fb937bda04f5d6c32"
+  },
+  "options_page__tex_math_codecogs_customization_3": {
+    "message": "创建 TeX 公式的好资源是 $LINK$CodeCogs 方程式编辑器$ 闭关元.",
+    "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
+    "placeholders": {
+      "link": {
+        "content": "<a href=\"https://editor.codecogs.com/\" target=\"_blank\">"
+      },
+      "closelink": {
+        "content": "</a>"
+      }
+    },
+    "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "创建错误的链接或像‘#12345'这样的发行跟踪器. 以下字段用于模板链接的URL和文本.",
+    "message": "创建错误的链接或像 QQ12345 这样的发行跟踪器 。 以下字段用于模板链接的URL和文本.",
     "description": "Description of bug/issue link feature.",
-    "hash": "2802e093c06e7d053e596261afe9fe27"
+    "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
     "message": "启用臭虫/ 发行链接",
