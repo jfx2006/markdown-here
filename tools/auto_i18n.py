@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import copy
 import json
 import sys
@@ -49,8 +50,9 @@ def mkHash(s):
 class ArgosTranslate:
     SOURCE_LANG = "en"
 
-    def __init__(self, locales_path: Path):
+    def __init__(self, locales_path: Path, run_locales: list[str]):
         self.locales_path = locales_path
+        self.run_locales = run_locales
         argostranslate.package.update_package_index()
         self.available_packages = argostranslate.package.get_available_packages()
         self.installed_packages = argostranslate.package.get_installed_packages()
@@ -118,7 +120,7 @@ class ArgosTranslate:
 
     def translate_all_locales(self):
         result_paths = []
-        for locale in LOCALES:
+        for locale in self.run_locales:
             result_paths.append(self.translate_single_locale(locale))
 
         self.print_results(result_paths)
@@ -197,17 +199,27 @@ class ArgosTranslate:
         return dest_file
 
 
-def main(locales_path: Path):
-    if not locales_path.is_dir():
-        raise NotADirectoryError(locales_path)
-    translator = ArgosTranslate(locales_path)
+def main():
+    parser = argparse.ArgumentParser(description="Translate locales.")
+    parser.add_argument("locales_path", type=Path, default=Path("extension/_locales"))
+    parser.add_argument("locales", nargs="+", default="all")
+
+    args = parser.parse_args()
+
+    if not args.locales_path.is_dir():
+        raise NotADirectoryError(args.locales_path)
+
+    if args.locales == ["all"]:
+        run_locales = WEBEXT_LOCALES
+    else:
+        run_locales = args.locales
+    bad_locales = [single_locale for single_locale in run_locales if single_locale not in WEBEXT_LOCALES]
+    if any(bad_locales):
+        raise ValueError(f"Invalid locales: {bad_locales}")
+
+    translator = ArgosTranslate(args.locales_path, run_locales)
     translator.translate_all_locales()
 
 
 if __name__ == "__main__":
-    try:
-        argv1 = Path(sys.argv[1])
-    except Exception as e:
-        print(f"Problem initializing {sys.argv[1]} for translations.")
-        raise
-    sys.exit(main(argv1))
+    sys.exit(main())
