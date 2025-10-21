@@ -36,7 +36,7 @@ export const kOptDefaults = {
   "main-css": "",
   "syntax-css": "nnfx-light.css",
   "math-value":
-    '<img src="https://latex.codecogs.com/png.image?\\inline&space;\\dpi{200}&space;{urlmathcode}" alt="{mathcode}">',
+    '<img src="https://latex.codecogs.com/png.image?\\inline&space;\\bg{white}&space;\\fg{black}&space;\\dpi{200}&space;{urlmathcode}" alt="{mathcode}">',
   "math-renderer-enabled": false,
   "math-renderer": "texzilla",
   "hotkey-input": hotKeyDefault(),
