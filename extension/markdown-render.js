@@ -67,7 +67,7 @@ export async function resetMarked(userprefs) {
       },
     }),
   )
-  if (userprefs["math-renderer"] !== "disabled") {
+  if (userprefs["math-renderer-enabled"]) {
     const { markedMath } = await import("./marked-math.js")
     const mathOptions = {
       math_renderer: userprefs["math-renderer"],
