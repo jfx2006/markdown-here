@@ -14,6 +14,18 @@ its content is kept in sync with the editor via messages.
 
 Other new features are listed in the changelog.
 
+## About vendored code
+
+Per the suggestion from the ATN review team, vendored code is no longer
+kept in the repository. Running `make vendored` will download the
+required libraries and copy them where they need to go. Note that
+vendored code is now ignored by git.
+
+Running `make all` will also run `make vendored`.
+
+Running `make clean` removes the vendored code.
+
+
 ## How release builds are handled
 
 The XPI and source files uploaded to ATN are built in a Docker container
@@ -59,14 +71,3 @@ Running `make all` will do the following:
   - Some packages like highlightjs use a custom script, packages with dependencies
     are built with Rollup. Packages without dependencies are copied when possible.
 - Build the XPI file using web-ext
-
-## Other vendored code 
-#### not handled by vendored.mk
-
-https://raw.githubusercontent.com/twbs/bootstrap/v5.2.2/dist/js/bootstrap.bundle.js
-https://raw.githubusercontent.com/thomaspark/bootswatch/v5.2.2/dist/darkly/bootstrap.css
-Parts of shortcuts.js from Firefox source code:
-    https://hg.mozilla.org/mozilla-central/file/9d0d26dacd7f8d76a7805cffb98faec5cd6aa7fa/toolkit/mozapps/extensions/content/shortcuts.js
-
-https://raw.githubusercontent.com/fred-wang/TeXZilla/v1.0.2.0/TeXZilla.js
-(modified to be importable as an esm module)

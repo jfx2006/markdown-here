@@ -10,3 +10,11 @@ node_modules
 venv
 
 .pnpm-store
+
+# Vendored code
+extension/data/emoji_codes.json
+extension/highlightjs/highlightjs.esm.js
+extension/highlightjs/styles/*.css
+extension/highlightjs/styles/styles.json
+extension/vendor/*js
+extension/vendor/*.css

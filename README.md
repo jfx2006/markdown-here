@@ -101,6 +101,11 @@ Coming soon!
     styles must be explicitly applied to all elements -- stylesheets get stripped.)
 
 
+## Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Make sure to run `make all` to
+download vendored dependencies.
+
 ## Building
 
 Use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/),
