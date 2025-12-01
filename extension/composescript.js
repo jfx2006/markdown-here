@@ -225,7 +225,7 @@ async function editorMutationCb(mutationList, observer) {
   if (mutationList.type === "attributes" && mutationList.target.nodeName !== "IMG") {
     return
   }
-  return debounce(debouncedRenderPreview())
+  return debouncedRenderPreview()
 }
 
 let autoEmojiPromise = null
