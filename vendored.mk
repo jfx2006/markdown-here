@@ -87,6 +87,6 @@ $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.
 clean:
 	rm -f $(EXTENSION)/vendor/*
 	rm -f $(EXTENSION)/data/emoji_codes.json
-	rm -f $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*
+	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
 
 all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js bootstrap bootswatch texzilla
