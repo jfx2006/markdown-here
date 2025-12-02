@@ -25,11 +25,6 @@ emoji_codes: $(EXTENSION)/data/emoji_codes.json
 $(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/github.json
 	python ./tools/emoji-grab.py $< $@
 
-fuse.js: $(EXTENSION)/vendor/fuse.basic.mjs
-
-$(EXTENSION)/vendor/fuse.basic.mjs: node_modules/fuse.js/dist/fuse.basic.mjs
-	cp -v $< $@
-
 highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
 $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.js
@@ -89,4 +84,4 @@ clean:
 	rm -f $(EXTENSION)/data/emoji_codes.json
 	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify fuse.js bootstrap bootswatch texzilla
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla

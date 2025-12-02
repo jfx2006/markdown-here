@@ -4,22 +4,21 @@
  */
 
 import { Textcomplete, ContenteditableEditor } from "./vendor/textcomplete.esm.js"
-import Fuse from "./vendor/fuse.basic.mjs"
 
-let _fuse = null
+let _emojis = null
 
-const loadEmoji = async () => {
-  if (_fuse == null) {
-    const _emojis = await messenger.runtime.sendMessage({ action: "fetch-emojis" })
-    _fuse = new Fuse(_emojis, { keys: ["key"], includeMatches: true, includeScore: true })
+async function loadEmoji() {
+  if (_emojis === null) {
+    _emojis = await messenger.runtime.sendMessage({ action: "fetch-emojis" })
   }
-  return _fuse
+  return _emojis
 }
 
 async function gatherCandidates(term, limit = 10) {
-  const fuse = await loadEmoji()
-  const results = fuse.search(term)
-  return results.slice(0, limit).map((obj) => [obj.item.key, obj.item.value])
+  const emojis = await loadEmoji()
+  term = term.toLowerCase()
+  const results = emojis.filter((k) => k[0].includes(term))
+  return results.slice(0, limit)
 }
 
 const CODEBLOCK = /`{3}/g
@@ -31,8 +30,9 @@ const EMOJI_STRATEGY = {
   search: async (term, callback) => {
     callback(await gatherCandidates(term))
   },
-  replace: ([key]) => `:${key.replaceAll(" ", "_")}: `,
-  template: ([key, emoji_unicode]) => `${emoji_unicode}&nbsp;<small>${key}</small>`,
+  replace: ([key]) => `:${key}: `,
+  template: ([key, emoji_unicode]) =>
+    `${emoji_unicode}&nbsp;<small>${key.replaceAll("_", " ")}</small>`,
   context: (text) => {
     const blockmatch = text.match(CODEBLOCK)
     if (blockmatch && blockmatch.length % 2) {
