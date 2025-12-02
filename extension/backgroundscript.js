@@ -160,11 +160,8 @@ async function fetchEmojis() {
   if (!response.ok) {
     throw new Error(`Error fetching Emojis: ${response.status}`)
   }
-  // emojis = Object.entries(await response.json())
-  const _emojis = Object.entries(await response.json()).map(
-    ([k, v]) => new Object({ key: k.replaceAll("_", " "), value: v }),
-  )
-  return _emojis
+  const emojis = Object.entries(await response.json())
+  return emojis
 }
 
 async function doRender(mdText) {

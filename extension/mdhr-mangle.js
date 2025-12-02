@@ -6,11 +6,6 @@
 
 import TurndownService from "./vendor/turndown.esm.js"
 import { degausser } from "./vendor/degausser.esm.js"
-import { strToBase64 } from "./base64.js"
-
-const MDHR_RAW_PREFIX = "MDH:"
-const MDHR_RAW_CSS =
-  "height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
 
 async function sha256Digest(data) {
   return messenger.runtime.sendMessage({ action: "sha256", data: data })
@@ -29,18 +24,6 @@ export class MdhrMangle {
     this.convertHTML()
     const text = degausser(this.doc.body)
     return text.replaceAll(" ", " ")
-  }
-
-  async getMdhrRaw() {
-    const content = `${this.doc.body.innerHTML}`
-    const rawHolder = this.doc.createElement("div")
-    rawHolder.classList.add("mdhr-raw")
-    rawHolder.setAttribute("style", MDHR_RAW_CSS)
-    rawHolder.setAttribute("aria-hidden", "true")
-    rawHolder.innerText = "&#8203;"
-    const encoded = strToBase64(content)
-    rawHolder.title = `${MDHR_RAW_PREFIX}${encoded}`
-    return rawHolder
   }
 
   async excludeContent() {

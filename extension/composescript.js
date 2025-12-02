@@ -10,7 +10,7 @@ let previewHidden = null
 
 function requestHandler(request, sender, sendResponse) {
   if (request.action === "request-preview") {
-    return doRenderPreview()
+    return sendHTMLToPreview()
   } else if (request.action === "md-preview-toggle") {
     previewHidden = request.value
     if (!previewHidden) {
@@ -24,10 +24,9 @@ function requestHandler(request, sender, sendResponse) {
       }
     }
   } else if (request.action === "check-forgot-render") {
-    const body_copy = window.document.cloneNode(true)
-    return Promise.resolve(looksLikeMarkdown(body_copy))
-  } else if (request.action === "get-md-source") {
-    return getMdSource()
+    return Promise.resolve(looksLikeMarkdown(window.document))
+  } else if (request.action === "get-raw-html") {
+    return Promise.resolve(window.document.documentElement.outerHTML)
   }
 }
 messenger.runtime.onMessage.addListener(requestHandler)
@@ -47,24 +46,11 @@ messenger.runtime.sendMessage({ action: "compose-data" }).then((response) => {
       mailBody.insertAdjacentElement("afterbegin", insertElem)
     }
   }
-  return doRenderPreview()
+  return sendHTMLToPreview().then()
 })
 
-let mdhrManglePromise = null
-
-function getMdhrMangle() {
-  if (!mdhrManglePromise) {
-    mdhrManglePromise = import(messenger.runtime.getURL("./mdhr-mangle.js")).then(
-      (module) => module.MdhrMangle,
-    )
-  }
-  return mdhrManglePromise
-}
-
 async function looksLikeMarkdown(msgDocument) {
-  const MdhrMangle = await getMdhrMangle()
-  const mdHtmlToText = new MdhrMangle(msgDocument)
-  let mdMaybe = await mdHtmlToText.preprocess()
+  let mdMaybe = msgDocument.body.innerText
   // Ensure that we're not checking on enormous amounts of text.
   if (mdMaybe.length > 10000) {
     mdMaybe = mdMaybe.slice(0, 10000)
@@ -119,51 +105,13 @@ async function looksLikeMarkdown(msgDocument) {
   return false
 }
 
-async function getMdSource() {
-  const body_copy = window.document.cloneNode(true)
-  const MdhrMangle = await getMdhrMangle()
-  const mdHtmlToText = new MdhrMangle(body_copy)
-  const MdhrRaw = await mdHtmlToText.getMdhrRaw()
-  return MdhrRaw.outerHTML
+async function sendHTMLToPreview() {
+  await messenger.runtime.sendMessage({
+    action: "cp.render-preview",
+    doc_html: window.document.documentElement.outerHTML,
+  })
 }
-
-async function doRenderPreview() {
-  const msgDocument = window.document.cloneNode(true)
-
-  let finalHTML
-  try {
-    const MdhrMangle = await getMdhrMangle()
-    const mdHtmlToText = new MdhrMangle(msgDocument)
-    const mdText = await mdHtmlToText.preprocess()
-    const result_html = await messenger.runtime.sendMessage({
-      action: "render-md",
-      mdText: mdText,
-    })
-    finalHTML = mdHtmlToText.postprocess(result_html)
-  } catch (reason) {
-    console.log(`Error rendering markdown. ${reason}`)
-    return
-  }
-  await sendToPreview(finalHTML)
-}
-const debouncedRenderPreview = debounce(doRenderPreview, 500)
-
-async function sendToPreview(finalHTML, attempts = 1) {
-  // Called by doRenderPreview
-  try {
-    return await messenger.runtime.sendMessage({
-      action: "cp.render-preview",
-      payload: finalHTML,
-    })
-  } catch (reason) {
-    if (!reason.message.includes("contentDiv") && attempts > 0) {
-      // Not sure about this error. Throw
-      throw new Error(reason)
-    }
-    console.log(`Error sending HTML to preview. ${reason}. Retrying`)
-    await sendToPreview(finalHTML, 0)
-  }
-}
+const debouncedRenderPreview = debounce(sendHTMLToPreview, 500)
 
 let currentlyScrolling = null
 

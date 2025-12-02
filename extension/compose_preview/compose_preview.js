@@ -8,9 +8,15 @@ import DOMPurify from "../vendor/purify.es.mjs"
 import { debounce, fetchExtFile, getMainCSS, getSyntaxCSS, toInt } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
+import { MdhrMangle } from "../mdhr-mangle.js"
+import { strToBase64 } from "../base64.js"
 
 const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
 const REMOVE_ELEM_IDS = ["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style"]
+
+const MDHR_RAW_PREFIX = "MDH:"
+const MDHR_RAW_CSS =
+  "height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
 
 let cssInliner
 
@@ -81,8 +87,17 @@ function deShadowRoot(doc) {
   }
 }
 
-async function renderMDEmail(unsanitized_html) {
+async function renderMDEmail(msg_html) {
   /* cp.render-preview */
+  const msgDocument = parseHTMLFromString(msg_html)
+  const mdHtmlToText = new MdhrMangle(msgDocument)
+  const mdText = await mdHtmlToText.preprocess()
+  const result_html = await messenger.runtime.sendMessage({
+    action: "render-md",
+    mdText: mdText,
+  })
+  const unsanitized_html = mdHtmlToText.postprocess(result_html)
+
   let doc = addDoctype(unsanitized_html)
   doc = parseHTMLFromString(escapeHTML`${doc}`)
   doc = wrapExternal(doc)
@@ -153,6 +168,18 @@ async function setModernMode() {
   }
 }
 
+function getMdhrRaw(msg_doc) {
+  const content = `${msg_doc.body.innerHTML}`
+  const rawHolder = this.doc.createElement("div")
+  rawHolder.classList.add("mdhr-raw")
+  rawHolder.setAttribute("style", MDHR_RAW_CSS)
+  rawHolder.setAttribute("aria-hidden", "true")
+  rawHolder.innerText = "&#8203;"
+  const encoded = strToBase64(content)
+  rawHolder.title = `${MDHR_RAW_PREFIX}${encoded}`
+  return rawHolder
+}
+
 async function getMsgContent() {
   const html_msg = p_iframe.contentDocument
   removeMDPreviewStyles(html_msg)
@@ -160,14 +187,14 @@ async function getMsgContent() {
 
   // Load message source from compose window
   const tabId = await getTabId()
-  const MdhrRaw_html = await messenger.tabs.sendMessage(tabId, {
-    action: "get-md-source",
+  const msg_html = await messenger.tabs.sendMessage(tabId, {
+    action: "get-raw-html",
   })
-  const rawDoc = parseHTMLFromString(MdhrRaw_html)
-  const MdhrRaw = rawDoc.querySelector("div.mdhr-raw")
+  const msg_doc = parseHTMLFromString(msg_html)
+  const msg_raw = getMdhrRaw(msg_doc)
 
   // Inject the message source into the HTML message about to send
-  html_msg.body.insertAdjacentElement("beforeend", MdhrRaw)
+  html_msg.body.insertAdjacentElement("beforeend", msg_raw)
   const serializer = new XMLSerializer()
   return serializer.serializeToString(html_msg)
 }
@@ -310,7 +337,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
         if (sender.tab.windowId !== context.windowId) {
           return false
         }
-        return renderMDEmail(request.payload)
+        return renderMDEmail(request.doc_html)
       case "cp.toggle-preview":
         if (request.windowId !== context.windowId) {
           return false
