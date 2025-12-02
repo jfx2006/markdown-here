@@ -5,6 +5,7 @@
  */
 
 "use strict"
+// global autoEmoji
 
 let previewHidden = null
 
@@ -176,14 +177,6 @@ async function editorMutationCb(mutationList, observer) {
   return debouncedRenderPreview()
 }
 
-let autoEmojiPromise = null
-function getAutoEmoji() {
-  if (!autoEmojiPromise) {
-    autoEmojiPromise = import(messenger.runtime.getURL("./auto-emoji.js")).then((module) => module)
-  }
-  return autoEmojiPromise
-}
-
 let emojiDestroy = null
 async function loadEmojiCompleter() {
   if (!previewHidden) {
@@ -193,7 +186,6 @@ async function loadEmojiCompleter() {
     })
     if (emojiCompleterEnabled === "true" || emojiCompleterEnabled === true) {
       if (!emojiDestroy) {
-        const autoEmoji = await getAutoEmoji()
         emojiDestroy = autoEmoji.init()
       }
     }

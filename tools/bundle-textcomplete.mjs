@@ -1,5 +1,8 @@
 import * as esbuild from "esbuild"
 import replacePlugin from "esbuild-plugin-replace-regex"
+import process from "node:process"
+
+const dest_file = process.argv[2]
 
 let result = await esbuild.build({
   plugins: [
@@ -28,8 +31,9 @@ export {ContenteditableEditor} from "@textcomplete/contenteditable/index.ts";
         "isolatedModules": "true",
     },
     "esModuleInterop": "true"}`,
-  format: "esm",
-  outfile: "textcomplete-bundle.mjs",
+  format: "iife",
+  globalName: "Textcomplete",
+  outfile: dest_file,
   bundle: true,
   target: "es2022",
 })

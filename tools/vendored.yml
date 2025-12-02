@@ -54,13 +54,12 @@ vendored:
     method: copy
 
   textcomplete:
-    path: contenteditable/src/index.ts
+    paths:
+      textcomplete.js: contenteditable/src/index.ts
     method: bash
     node_pkg: '@textcomplete'
     cmds:
-      - node tools/bundle-textcomplete.mjs
-      - cp -v textcomplete-bundle.mjs $@
-      - rm -f textcomplete-bundle.mjs
+      - node tools/bundle-textcomplete.mjs $@
 
   emoji_codes:
     paths:

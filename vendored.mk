@@ -61,12 +61,10 @@ marked-linkify-it: $(EXTENSION)/vendor/marked-linkify-it.esm.js
 $(EXTENSION)/vendor/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src/index.js
 	./tools/rollup.sh marked-linkify-it $<
 
-textcomplete: $(EXTENSION)/vendor/textcomplete.esm.js
+textcomplete: $(EXTENSION)/vendor/textcomplete.js
 
-$(EXTENSION)/vendor/textcomplete.esm.js: node_modules/@textcomplete/contenteditable/src/index.ts
-	node tools/bundle-textcomplete.mjs
-	cp -v textcomplete-bundle.mjs $@
-	rm -f textcomplete-bundle.mjs
+$(EXTENSION)/vendor/textcomplete.js: node_modules/@textcomplete/contenteditable/src/index.ts
+	node tools/bundle-textcomplete.mjs $@
 
 texzilla: $(EXTENSION)/vendor/TeXZilla.js
 

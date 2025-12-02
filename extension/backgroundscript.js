@@ -253,7 +253,11 @@ async function resetModernMode(preview = true, width = true) {
 // Mail Extensions are not able to add composeScripts via manifest.json,
 // they must be added via the API.
 messenger.composeScripts.register({
-  js: [{ file: "composescript.js" }],
+  js: [
+    { file: "vendor/textcomplete.js" },
+    { file: "auto-emoji.js" },
+    { file: "composescript.js" },
+  ],
   css: [{ file: "textcomplete.css" }],
 })
 
