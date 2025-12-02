@@ -1,9 +1,18 @@
-
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/user/application_security/secret_detection/pipeline/configure
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
   - prep
   - test
   - build
   - release
+
+variables:
+  DS_EXCLUDED_ANALYZERS: "gemnasium-maven, gemnasium-python"
 
 .standard-rules:       # Make a hidden job to hold the common rules
   rules:
@@ -14,7 +23,7 @@ stages:
   needs:
     - job: docker-build
       optional: true
-  image: "registry.gitlab.com/mdhr-extension/markdown-here-revival:ci"
+  image: registry.gitlab.com/mdhr-extension/markdown-here-revival:ci
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
@@ -110,13 +119,13 @@ mdhr-build:
     paths:
       - .pnpm-store
   before_script:
-  - pnpm config set store-dir .pnpm-store
-  - python --version ; pip --version  # For debugging
-  - python -m venv venv
-  - source venv/bin/activate
-  - pip install -r requirements/requirements.txt
+    - pnpm config set store-dir .pnpm-store
+    - python --version ; pip --version  # For debugging
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements/requirements.txt
   script:
-  - make ci
+    - make ci
   artifacts:
     paths:
       - web-ext-artifacts/markdown-here-revival.xpi
@@ -146,3 +155,6 @@ mdhr-release:
         --name ${RELEASE_NAME} \
         -F ./notes.md \
         web-ext-artifacts/${XPI_FILENAME}
+
+include:
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
