@@ -170,7 +170,7 @@ async function setModernMode() {
 
 function getMdhrRaw(msg_doc) {
   const content = `${msg_doc.body.innerHTML}`
-  const rawHolder = this.doc.createElement("div")
+  const rawHolder = msg_doc.createElement("div")
   rawHolder.classList.add("mdhr-raw")
   rawHolder.setAttribute("style", MDHR_RAW_CSS)
   rawHolder.setAttribute("aria-hidden", "true")
