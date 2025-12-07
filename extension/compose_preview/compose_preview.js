@@ -10,6 +10,7 @@ import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 import { MdhrMangle } from "../mdhr-mangle.js"
 import { strToBase64 } from "../base64.js"
+import { markdownRender, resetMarked } from "../markdown-render.js"
 
 const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
 const REMOVE_ELEM_IDS = ["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style"]
@@ -92,10 +93,7 @@ async function renderMDEmail(msg_html) {
   const msgDocument = parseHTMLFromString(msg_html)
   const mdHtmlToText = new MdhrMangle(msgDocument)
   const mdText = await mdHtmlToText.preprocess()
-  const result_html = await messenger.runtime.sendMessage({
-    action: "render-md",
-    mdText: mdText,
-  })
+  const result_html = await markdownRender(mdText)
   const unsanitized_html = mdHtmlToText.postprocess(result_html)
 
   let doc = addDoctype(unsanitized_html)
@@ -209,7 +207,6 @@ const onContextChange = async function (context) {
     }
     data["preview-width"] = preview_width
   } else {
-    // eslint-disable-next-line no-extra-boolean-cast
     if (Boolean(data["preview-width"])) {
       delete data["preview-width"]
     }
@@ -305,13 +302,16 @@ async function loadIFrame() {
   p_iframe.srcdoc = `<!DOCTYPE html>\n${doc.documentElement.outerHTML}`
 }
 
-loadIFrame()
-  .then(async () => {
-    await previewFrameLoaded()
-  })
-  .then(async () => {
-    cssInliner = new CSSInliner()
-  })
+;(async () => {
+  loadIFrame()
+    .then(async () => {
+      await previewFrameLoaded()
+    })
+    .then(async () => {
+      cssInliner = new CSSInliner()
+    })
+})()
+await resetMarked()
 
 messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
   if (
@@ -338,6 +338,8 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
           return false
         }
         return renderMDEmail(request.doc_html)
+      case "cp.renderer-reset":
+        return resetMarked()
       case "cp.toggle-preview":
         if (request.windowId !== context.windowId) {
           return false

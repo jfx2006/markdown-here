@@ -7,9 +7,8 @@
 /*
  * Mail Extension background script.
  */
-import { getHljsStylesheet, getMessage, sha256Digest, toInt } from "./async_utils.mjs"
+import { getMessage, sha256Digest, toInt } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
-import { markdownRender, resetMarked } from "./markdown-render.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
 
 const ICON_INACTIVE = "images/md_bw.svg"
@@ -78,11 +77,6 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
   // Ignore messages for compose-preview pane
   if (request.action.startsWith("cp.")) {
     return false
-  }
-  if (request.action === "render") {
-    return doRender(request.mdText)
-  } else if (request.action === "render-md") {
-    return markdownRender(request.mdText)
   } else if (request.action === "get-options") {
     OptionsStore.getAll().then((prefs) => {
       responseCallback(prefs)
@@ -133,8 +127,6 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
     return updateHotKey(request.hotkey_value, request.hotkey_tooltip)
   } else if (request.action === "compose-data") {
     return getComposeData(sender.tab)
-  } else if (request.action === "renderer-reset") {
-    return resetMarked()
   } else if (request.action === "sha256") {
     return sha256Digest(request.data)
   } else if (request.action === "mdhr-mode-set") {
@@ -162,23 +154,6 @@ async function fetchEmojis() {
   }
   const emojis = Object.entries(await response.json())
   return emojis
-}
-
-async function doRender(mdText) {
-  async function getSyntaxCSS() {
-    const syntax_css_name = await OptionsStore.get("syntax-css")
-    return await getHljsStylesheet(syntax_css_name["syntax-css"])
-  }
-  async function getMainCSS() {
-    const main_css = await OptionsStore.get("main-css")
-    return main_css["main-css"]
-  }
-  const syntax_css_p = getSyntaxCSS()
-  const main_css_p = getMainCSS()
-  const html_p = markdownRender(mdText)
-
-  const [main_css, syntax_css, html] = await Promise.all([main_css_p, syntax_css_p, html_p])
-  return { html, main_css, syntax_css }
 }
 
 // Add the composeAction (the button in the format toolbar) listener.
@@ -643,7 +618,6 @@ async function doStartup() {
     await OptionsStore.set({ "saved-preview-width": savedState["preview-width"] })
   }
   await updateHotKey()
-  await resetMarked()
   await injectMDPreview()
 }
 messenger.runtime.onStartup.addListener(async function () {

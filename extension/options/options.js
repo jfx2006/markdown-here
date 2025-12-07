@@ -11,8 +11,15 @@
 
 import HotkeyHandler from "./shortcuts.js"
 import DOMPurify from "../vendor/purify.es.mjs"
+import { markdownRender, resetMarked } from "../markdown-render.js"
 
-import { fetchExtFile, getHljsStyles, getLanguage, getMessage } from "../async_utils.mjs"
+import {
+  fetchExtFile,
+  getHljsStyles,
+  getHljsStylesheet,
+  getLanguage,
+  getMessage,
+} from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
 ;(async () => {
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
@@ -134,7 +141,8 @@ import OptionsStore from "./options-storage.js"
     handleDirectives()
     handleEmojiAutocomplete()
     showSavedMsg()
-    await messenger.runtime.sendMessage({ action: "renderer-reset" })
+    await messenger.runtime.sendMessage({ action: "cp.renderer-reset" })
+    await resetMarked()
   }
 
   function activatePillNav() {
@@ -179,12 +187,26 @@ import OptionsStore from "./options-storage.js"
     preview_scroll.scrollTop = getScrollPercent() * getScrollSize(preview_scroll)
   }
 
+  async function doRender(mdText) {
+    async function getSyntaxCSS() {
+      const syntax_css_name = await OptionsStore.get("syntax-css")
+      return await getHljsStylesheet(syntax_css_name["syntax-css"])
+    }
+    async function getMainCSS() {
+      const main_css = await OptionsStore.get("main-css")
+      return main_css["main-css"]
+    }
+    const syntax_css_p = getSyntaxCSS()
+    const main_css_p = getMainCSS()
+    const html_p = markdownRender(mdText)
+
+    const [main_css, syntax_css, html] = await Promise.all([main_css_p, syntax_css_p, html_p])
+    return { html, main_css, syntax_css }
+  }
+
   async function checkPreviewChanged() {
     if (inputDirty) {
-      const response = await messenger.runtime.sendMessage({
-        action: "render",
-        mdText: previewInput.value,
-      })
+      const response = await doRender(previewInput.value)
       try {
         let style_elem = previewIframe.contentDocument.getElementById("main_css")
         style_elem.replaceChildren(previewIframe.contentDocument.createTextNode(response.main_css))
@@ -240,7 +262,7 @@ import OptionsStore from "./options-storage.js"
     const changesElem = document.getElementById("mdhrChangeList")
     const changes = await fetchExtFile("/CHANGELOG.md")
 
-    const response = await messenger.runtime.sendMessage({ action: "render-md", mdText: changes })
+    const response = await markdownRender(changes)
     changesElem.innerHTML = escapeHTML`${response}`
   }
 
