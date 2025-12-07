@@ -11,6 +11,15 @@ async function sha256Digest(data) {
   return messenger.runtime.sendMessage({ action: "sha256", data: data })
 }
 
+async function convertToText(elem) {
+  if (messenger.messengerUtilities?.convertToPlainText === undefined) {
+    return degausser(elem)
+  }
+  return await messenger.messengerUtilities.convertToPlainText(elem.outerHTML, {
+    flowed: false,
+  })
+}
+
 export class MdhrMangle {
   #excludedContent = new Map()
   #result_html
@@ -22,7 +31,7 @@ export class MdhrMangle {
     await this.excludeContent()
     this.insertLinebreaks()
     this.convertHTML()
-    const text = degausser(this.doc.body)
+    const text = await convertToText(this.doc.body)
     return text.replaceAll(" ", " ")
   }
 
