@@ -292,16 +292,15 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   return Promise.resolve({ cancel: false, details: finalDetails })
 })
 
-messenger.windows.onCreated.addListener(async function (win) {
-  if (win.type !== "messageCompose") {
+messenger.tabs.onCreated.addListener(async function (tab) {
+  if (tab.type !== "messageCompose") {
     return
   }
-  win = await messenger.windows.get(win.id, { populate: true })
-  const composeDetails = await messenger.compose.getComposeDetails(win.tabs[0].id)
+  const composeDetails = await messenger.compose.getComposeDetails(tab.id)
   if (composeDetails.isPlainText) {
     await messenger.runtime.sendMessage({
       action: "cp.disableForPlainText",
-      windowId: win.id,
+      windowId: tab.windowId,
     })
   }
 })
