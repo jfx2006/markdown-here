@@ -67,6 +67,11 @@ function wrapExternal(doc) {
   )
   let i = 0
   for (const element of elements) {
+    // Remove any "mdhr-raw" elements in replies to keep the size of the message reasonable.
+    const rawElems = element.querySelectorAll("div.mdhr-raw")
+    for (const rawElem of rawElems) {
+      rawElem.remove()
+    }
     const wrapper = doc.createElement("div")
     wrapper.classList.add("external-content")
     wrapper.id = `extcontent-${i}`
@@ -84,7 +89,9 @@ function deShadowRoot(doc) {
     if (!element.shadowRoot) {
       continue
     }
-    element.replaceChildren(...element.shadowRoot.childNodes)
+    const parent = element.parentElement
+    const children = element.shadowRoot.childNodes
+    parent.replaceChildren(...children)
   }
 }
 
