@@ -28,7 +28,10 @@ function requestHandler(request, sender, sendResponse) {
     return Promise.resolve(looksLikeMarkdown(window.document))
   } else if (request.action === "get-raw-html") {
     return Promise.resolve(window.document.documentElement.outerHTML)
+  } else if (request.action === "disable-mutation-listener") {
+    MsgMutationObserver.disconnect()
   }
+  return Promise.resolve("okay")
 }
 messenger.runtime.onMessage.addListener(requestHandler)
 

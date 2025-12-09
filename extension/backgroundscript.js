@@ -288,6 +288,7 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
     windowId: tab.windowId,
   })
   const finalDetails = { body: msgHTML }
+  await messenger.runtime.sendMessage({ action: "disable-mutation-listener" })
   return Promise.resolve({ cancel: false, details: finalDetails })
 })
 
