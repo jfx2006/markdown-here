@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.0.9]
+
+### Fixed
+- Math rendering was always enabled (Thanks Sarke!)
+- Disable preview update prior to sending to prevent flash of double-rendered
+  content in the preview pane
+- Remove `mdhr-raw` elements from quoted or forwarded content. This will keep
+  the overall message size down in long threads and improve performance.
+- Improve markdown rendering when composing in "paragraph mode" to reduce
+  empty vertical space
+
+### Changed
+- Refactored dynamic imports out of the composescript.
+- Remove fuse.js dependency
+
 ## [4.0.8]
 
 ### New
