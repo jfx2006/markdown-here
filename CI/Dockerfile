@@ -65,7 +65,7 @@ RUN curl -fsSLO --compressed ${PYTHON_URL} \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV GLAB_CLI_VER=1.73.1
+ENV GLAB_CLI_VER=1.79.0
 
 RUN curl -fsSLO --compressed "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
     && curl -fsSLO --compressed "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/checksums.txt" \
