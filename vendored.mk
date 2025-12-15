@@ -70,7 +70,7 @@ texzilla: $(EXTENSION)/vendor/TeXZilla.js
 
 $(EXTENSION)/vendor/TeXZilla.js: node_modules/texzilla/TeXZilla.js
 	cp -v $< $@
-	echo -e "\nexport default TeXZilla" >> $@
+	/usr/bin/echo -e "\nexport default TeXZilla" >> $@
 
 turndown: $(EXTENSION)/vendor/turndown.esm.js
 

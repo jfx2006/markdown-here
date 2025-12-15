@@ -92,4 +92,4 @@ vendored:
     method: bash
     cmds:
       - cp -v $< $@
-      - echo -e "\nexport default TeXZilla" >> $@
+      - /usr/bin/echo -e "\nexport default TeXZilla" >> $@
