@@ -1,0 +1,10 @@
+/*
+ * Copyright JFX 2025
+ * MIT License
+ */
+
+/* Override paragraph margins in compose window. */
+p {
+    margin-block-start: .4em;
+    margin-block-end: .4em;
+}

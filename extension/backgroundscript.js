@@ -233,7 +233,7 @@ messenger.composeScripts.register({
     { file: "auto-emoji.js" },
     { file: "composescript.js" },
   ],
-  css: [{ file: "textcomplete.css" }],
+  css: [{ file: "composestyles.css" }, { file: "textcomplete.css" }],
 })
 
 async function getOpenComposeWindows() {
