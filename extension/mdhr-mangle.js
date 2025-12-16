@@ -29,11 +29,10 @@ export class MdhrMangle {
 
   async preprocess() {
     await this.excludeContent()
-    this.convertParagraphs()
     this.insertLinebreaks()
     this.convertHTML()
     const text = await convertToText(this.doc.body)
-    return text.replaceAll(" ", " ").replaceAll("\n\n", "\n")
+    return text.replaceAll(" ", " ")
   }
 
   async excludeContent() {
@@ -43,6 +42,7 @@ export class MdhrMangle {
     }
 
     const excluded = this.doc.querySelectorAll(
+      // eslint-disable-next-line max-len
       "body > blockquote[type='cite'], body > .moz-signature, body > div.moz-forward-container, img, div.mdhr-raw",
     )
     for (const e of excluded) {
@@ -53,19 +53,6 @@ export class MdhrMangle {
       placeholderElem.innerText = placeholder
       e.replaceWith(placeholderElem)
     }
-  }
-
-  convertParagraphs() {
-    const paragraphs = this.doc.querySelectorAll("body > p")
-    paragraphs.forEach((p, index) => {
-      const frag = this.doc.createDocumentFragment()
-      frag.replaceChildren(...p.childNodes)
-      const isLast = index === paragraphs.length - 1
-      if (!isLast) frag.appendChild(this.doc.createElement("br"))
-      frag.appendChild(this.doc.createTextNode("\n"))
-
-      p.replaceWith(frag)
-    })
   }
 
   insertLinebreaks() {
