@@ -1,6 +1,26 @@
 [
   {
     "namespace": "reply_prefs",
+    "events": [
+      {
+        "name": "onFormatChanged",
+        "type": "function",
+        "description": "Fired when use_paragraph_format has been changed.",
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Name of the preference."
+          },
+          {
+            "name": "value",
+            "type": "any",
+            "description": "Value of the preference."
+          }
+        ],
+        "extraParameters": [ ]
+      }
+    ],
     "functions": [
       {
         "name": "getReplyPosition",
@@ -21,6 +41,19 @@
         "description": "Retrieve default compose style (paragraph or body)",
         "async": true,
         "parameters": [
+        ]
+      },
+      {
+        "name": "setUseParagraph",
+        "type": "function",
+        "description": "Set Paragraph or Body Text format in composer",
+        "async": true,
+        "parameters": [
+          {
+            "name": "value",
+            "type": "boolean",
+            "description": "True sets Paragraph format; False sets Body Text format"
+          }
         ]
       }
     ]
