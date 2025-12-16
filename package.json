@@ -1,6 +1,6 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.8",
+  "version": "4.0.9.1",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build -n markdown-here-revival.xpi",

@@ -1,6 +1,13 @@
 # Changelog
 
-## [4.0.9]
+## [4.0.9.1]
+
+### New
+- Add option to use Body Text format in composer. Body Text is the preferred
+  format to ensure all features work properly. Tables and code blocks do
+  not render correctly with Paragraph mode.
+
+### [4.0.9] (unreleased)
 
 ### Fixed
 - Math rendering was always enabled (Thanks Sarke!)
