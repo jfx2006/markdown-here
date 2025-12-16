@@ -44,7 +44,7 @@
           <h2 class="pb-3 mt-0"><img class="text-align" src="../images/md_fucsia.svg" width="96"
                                      height="96" alt="logo" />
             <span data-i18n="page_title"
-                  data-i18n-arg="__APP_NAME">Markdown Here Revival Options</span></h2>
+                  data-i18n-arg="__app_name">Markdown Here Revival Options</span></h2>
         </div>
 
         <div class="content">
@@ -56,6 +56,9 @@
               </div>
               <div class="card-body">
                 <ol>
+                  <li class="my-md-2">
+                    <span data-i18n="disable_paragraph_format">Disable Paragraph format in Thunderbird settings.</span>
+                  </li>
                   <li class="my-md-2">
                     <span data-i18n="start_new_message_toggle">Start a new email message. Toggle
                       the composer to markdown mode with the action button on the format toolbar.</span>
@@ -116,16 +119,40 @@
               </div>
               <div class="card-body">
                 <div id="mode-radio" class="form-group" data-value="mdhr-modern">
-                  <div class="form-check">
-                    <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode"
-                           value="modern" checked />
-                    <label class="form-check-label" for="mdhr-modern" data-i18n="mdhr_modern_mode">Use live preview (modern) mode</label>
+                  <div class="input-wrapper-block mb-4">
+                    <div class="form-check">
+                      <input id="mdhr-modern" class="form-check-input" type="radio" name="mdhr-mode"
+                             value="modern" checked />
+                      <label class="form-check-label" for="mdhr-modern" data-i18n="mdhr_modern_mode">Use live preview (modern) mode</label>
+                    </div>
+                    <div class="input-wrapper-block">
+                      <div class="form-check">
+                        <input id="markdown-mode" class="form-check-input" type="checkbox"
+                               name="enable-markdown-mode" />
+                        <label class="form-check-label" for="markdown-mode"
+                               data-i18n="composer_start_markdown_mode">Start composer in markdown
+                          mode</label>
+                      </div>
+                    </div>
                   </div>
-                  <div class="form-check">
-                    <input id="mdhr-classic" class="form-check-input" type="radio" name="mdhr-mode"
-                           value="classic" />
-                    <label class="form-check-label" for="mdhr-classic"
-                           data-i18n="mdhr_classic_mode">Use pre-4.0 (classic) mode</label>
+                  <div class="input-wrapper-block">
+                    <div class="form-check">
+                      <input id="mdhr-classic" class="form-check-input" type="radio" name="mdhr-mode"
+                             value="classic" />
+                      <label class="form-check-label" for="mdhr-classic"
+                             data-i18n="mdhr_classic_mode">Use pre-4.0 (classic) mode</label>
+                    </div>
+                    <div class="input-wrapper-block">
+                      <div class="form-check">
+                        <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
+                        <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label2">Enable "forgot-to-render" check.</label>
+                        <div class="text-muted" data-i18n="forgot_to_render_2">
+                          When you send an email, this checks the content to see if it looks like you wrote it in Markdown,
+                          but forgot to render it (i.e., click "Markdown Toggle") before sending.
+                          This may need to be disabled if it interferes with your ability to send email.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -136,15 +163,6 @@
                 <span data-i18n="options_title">Options</span>
               </div>
               <div class="card-body">
-                <div class="form-group">
-                  <div class="form-check">
-                    <input id="markdown-mode" class="form-check-input" type="checkbox"
-                           name="enable-markdown-mode" />
-                    <label class="form-check-label" for="markdown-mode"
-                           data-i18n="composer_start_markdown_mode">Start composer in markdown
-                      mode</label>
-                  </div>
-                </div>
                 <div class="form-group">
                   <div class="form-check">
                     <label data-i18n="hotkey_title" for="hotkey-input">Hotkey (aka keyboard
@@ -161,12 +179,13 @@
                 </div>
                 <div class="form-group">
                   <div class="form-check">
-                    <input id="forgot-to-render" class="form-check-input" type="checkbox" name="forgot-to-render-check-enabled"/>
-                    <label class="form-check-label" for="forgot-to-render" data-i18n="forgot_to_render_label2">Enable "forgot-to-render" check.</label>
-                    <div class="text-muted" data-i18n="forgot_to_render_2">
-                      When you send an email, this checks the content to see if it looks like you wrote it in Markdown,
-                      but forgot to render it (i.e., click "Markdown Toggle") before sending.
-                      This may need to be disabled if it interferes with your ability to send email.
+                    <input id="use-bodytext-format" class="form-check-input" type="checkbox" name="use-bodytext-enabled"/>
+                    <label class="form-check-label" for="use-bodytext-format" data-i18n="use_bodytext_format_label">Use Body Text format in composer</label>
+                    <div>
+                      <div class="ms-3 float-start fs-5">⚠️</div>
+                      <div class="d-md-block ps-5" data-i18n="use_bodytext_format_description" data-i18n-arg="__use_paragraph_setting_label">
+                        This add-on works best when “Use Paragraph format instead of Body Text by default” is disabled in Thunderbird's Settings. Enable this option to apply the recommended setting.
+                      </div>
                     </div>
                   </div>
                 </div>

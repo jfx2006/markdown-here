@@ -53,6 +53,7 @@ export const kOptDefaults = {
   "saved-preview-width": 650,
   "enable-markdown-mode": true,
   "mdhr-mode": "modern",
+  "use-bodytext-enabled": true,
 }
 
 let MIGRATIONS = [

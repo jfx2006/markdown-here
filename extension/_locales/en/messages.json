@@ -97,6 +97,21 @@
   "options_page__composer_start_markdown_mode": {
     "message": "Start composer in markdown mode"
   },
+  "options_page__use_bodytext_format_label": {
+    "message": "Use Body Text format in composer",
+    "description": "Label for the checkbox that enables the Body Text format"
+  },
+  "use_paragraph_setting_label": {
+    "message": "Use Paragraph format instead of Body Text by default",
+    "description": "This string must match the Fluent string 'default-format-label' in preferences.ftl"
+  },
+  "options_page__use_bodytext_format_description": {
+    "message": "This add-on works best when “$PREF_STRING$” is disabled in Thunderbird's Settings. Enable this option to apply the recommended setting.",
+    "description": "Description of the 'Use Body Text Format' option.",
+    "placeholders": {
+      "pref_string": { "content": "$1" }
+    }
+  },
   "options_page__features_title": {
     "message": "Markdown Features",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering"
@@ -191,6 +206,9 @@
   },
   "options_page__basic_usage": {
     "message": "Basic Usage"
+  },
+  "options_page__disable_paragraph_format": {
+    "message": "Disable Paragraph format in Thunderbird settings."
   },
   "options_page__start_new_message_toggle": {
     "message": "Start a new email message. Toggle the composer to markdown mode with the action button on the format toolbar."

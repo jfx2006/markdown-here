@@ -305,6 +305,23 @@ messenger.tabs.onCreated.addListener(async function (tab) {
   }
 })
 
+messenger.reply_prefs.onFormatChanged.addListener(async (name, useParagraphPref) => {
+  await updateBodyTextOptionFromSettings(useParagraphPref)
+})
+
+async function updateBodyTextOptionFromSettings(useParagraphPref) {
+  const useBodyTextOpt = (await OptionsStore.get("use-bodytext-enabled"))["use-bodytext-enabled"]
+  if (typeof useParagraphPref === "boolean" && typeof useBodyTextOpt === "boolean") {
+    if (useParagraphPref === useBodyTextOpt) {
+      return await OptionsStore.set({ "use-bodytext-enabled": !useParagraphPref })
+    }
+  } else {
+    throw new Error(
+      `Type mismatch: useParagraphPref: ${typeof useParagraphPref}, useBodyTextOpt: ${typeof useBodyTextOpt}`,
+    )
+  }
+}
+
 async function composeAction(windowId) {
   const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   if (mdhr_mode === "classic") {
@@ -619,6 +636,8 @@ async function doStartup() {
   }
   await updateHotKey()
   await injectMDPreview()
+  const useParagraphPref = await messenger.reply_prefs.getUseParagraph()
+  await updateBodyTextOptionFromSettings(useParagraphPref)
 }
 messenger.runtime.onStartup.addListener(async function () {
   await doStartup()

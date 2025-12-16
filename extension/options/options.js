@@ -132,6 +132,7 @@ import OptionsStore from "./options-storage.js"
     handleMathRenderer()
     handleDirectives()
     handleEmojiAutocomplete()
+    // await handleBodyText()
   }
 
   async function onOptionsSaved(e) {
@@ -140,6 +141,7 @@ import OptionsStore from "./options-storage.js"
     await handleInput()
     handleDirectives()
     handleEmojiAutocomplete()
+    await handleBodyText()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "cp.renderer-reset" })
     await resetMarked()
@@ -380,7 +382,15 @@ import OptionsStore from "./options-storage.js"
     autocomplete_checkbox.disabled = !enabled.checked
   }
 
-  const SUBS = { __APP_NAME: getMessage("app_name") }
+  async function handleBodyText(e) {
+    const body_text = document.getElementById("use-bodytext-format")
+    if (body_text.checked) {
+      await messenger.reply_prefs.setUseParagraph(false)
+    } else {
+      await messenger.reply_prefs.setUseParagraph(true)
+    }
+  }
+
   async function localizePage() {
     const page_prefix = "options_page"
     const text_nodes = document.body.querySelectorAll("[data-i18n]")
@@ -389,11 +399,8 @@ import OptionsStore from "./options-storage.js"
       let arg_str = n.dataset.i18nArg
       let arg = null
       if (arg_str !== undefined) {
-        if (arg_str.startsWith("__")) {
-          arg = SUBS[arg_str]
-        } else {
-          arg = arg_str
-        }
+        // arg_str is '__message_id'
+        arg = getMessage(arg_str.substring(2))
       }
       let message = getMessage(message_id, arg)
       if (message) {
