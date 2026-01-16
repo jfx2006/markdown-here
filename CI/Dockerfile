@@ -65,13 +65,6 @@ RUN curl -fsSLO --compressed ${PYTHON_URL} \
     && rm -f $CPYTHON $CPYTHON.sha256 \
     && python3 --version
 
-ENV GLAB_CLI_VER=1.79.0
-
-RUN curl -fsSLO --compressed "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/glab_${GLAB_CLI_VER}_linux_amd64.deb" \
-    && curl -fsSLO --compressed "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_CLI_VER}/downloads/checksums.txt" \
-    && GLAB=$(echo glab_*.deb) \
-    && echo $(grep ${GLAB} checksums.txt) | sha256sum --check \
-    && dpkg --install ${GLAB}
 
 # Add some other utilities that come in handy
 RUN set -ex; \
