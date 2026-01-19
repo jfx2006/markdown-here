@@ -69,7 +69,7 @@ vendored:
     vendor_prefix: data
     clean: rm -f $(EXTENSION)/data/emoji_codes.json
     cmds:
-      - python ./tools/emoji-grab.py $< $@
+      - node ./tools/emoji-grab.js $< $@
 
   dompurify:
     paths:

@@ -23,7 +23,7 @@ $(EXTENSION)/vendor/purify.es.mjs: node_modules/dompurify/dist/purify.es.mjs
 emoji_codes: $(EXTENSION)/data/emoji_codes.json
 
 $(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/github.json
-	python ./tools/emoji-grab.py $< $@
+	node ./tools/emoji-grab.js $< $@
 
 highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
