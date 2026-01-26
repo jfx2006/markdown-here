@@ -46,8 +46,8 @@ vendored:
       - --file "$(EXTENSION)/{vendor_prefix}/highlightjs.esm.js" \
       - -p @rollup/plugin-node-resolve \
       - -p @rollup/plugin-commonjs \
-      - "$<"
-      - "python ./tools/highlightjs_styles.py node_modules/{node_pkg}/styles $(EXTENSION)/{vendor_prefix}/styles"
+      - $<
+      - "node ./tools/highlightjs_styles.js node_modules/{node_pkg}/styles $(EXTENSION)/{vendor_prefix}/styles"
 
   turndown:
     path: lib/turndown.browser.es.js

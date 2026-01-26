@@ -33,7 +33,7 @@ $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.
 	-p @rollup/plugin-node-resolve \
 	-p @rollup/plugin-commonjs \
 	$<
-	python ./tools/highlightjs_styles.py node_modules/highlight.js/styles $(EXTENSION)/highlightjs/styles
+	node ./tools/highlightjs_styles.js node_modules/highlight.js/styles $(EXTENSION)/highlightjs/styles
 
 marked: $(EXTENSION)/vendor/marked.esm.js
 
