@@ -11,23 +11,16 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 DATA = os.path.join(HERE, "vendored.yml")
 OUT = os.path.join(HERE, "..", "vendored.mk")
 
-CMDS_v1 = {
-    "copy": "cp -v $< $@",
-    "esmbuild": "./tools/esmify.sh {lib} $<",
-    "rollup": "./tools/rollup.sh {lib} $<",
-}
-
 
 class MkVendored:
     def __init__(self):
         yaml = YAML(typ="safe")
         yaml_data = yaml.load(open(DATA))
-        if yaml_data["version"] == 2:
-            self.commands = yaml_data["commands"]
-            self.vendored = yaml_data["vendored"]
-        else:
-            self.commands = CMDS_v1
-            self.vendored = yaml_data
+        if yaml_data["version"] != 2:
+            raise Exception("Unsupported vendored.yml version.")
+        self.commands = yaml_data["commands"]
+        self.vendored = yaml_data["vendored"]
+
         self.out = open(OUT, "w")
 
     def mk_header(self):
