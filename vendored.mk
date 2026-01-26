@@ -13,7 +13,8 @@ $(EXTENSION)/vendor/bootswatch.css: node_modules/bootswatch/dist/darkly/bootstra
 degausser: $(EXTENSION)/vendor/degausser.esm.js
 
 $(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
-	./tools/rollup.sh degausser $<
+	./node_modules/.bin/rollup --format es --file "$(EXTENSION)/vendor/degausser.esm.js" -p @rollup/plugin-node-resolve -p @rollup/plugin-commonjs -m inline $<
+
 
 dompurify: $(EXTENSION)/vendor/purify.es.mjs
 
@@ -59,7 +60,8 @@ $(EXTENSION)/vendor/marked-highlight.esm.js: node_modules/marked-highlight/src/i
 marked-linkify-it: $(EXTENSION)/vendor/marked-linkify-it.esm.js
 
 $(EXTENSION)/vendor/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src/index.js
-	./tools/rollup.sh marked-linkify-it $<
+	./node_modules/.bin/rollup --format es --file "$(EXTENSION)/vendor/marked-linkify-it.esm.js" -p @rollup/plugin-node-resolve -p @rollup/plugin-commonjs -m inline $<
+
 
 textcomplete: $(EXTENSION)/vendor/textcomplete.js
 

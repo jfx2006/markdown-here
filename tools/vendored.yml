@@ -4,7 +4,14 @@ vendor_prefix: vendor
 
 commands:
   copy: cp -v $< $@
-  rollup: ./tools/rollup.sh {node_pkg} $<
+  rollup: >
+          ./node_modules/.bin/rollup
+          --format es
+          --file "$(EXTENSION)/{vendor_prefix}/{node_pkg}.esm.js"
+          -p @rollup/plugin-node-resolve
+          -p @rollup/plugin-commonjs
+          -m inline
+          $<
   bash: null
 
 vendored:
