@@ -43,7 +43,7 @@ vendored:
     method: rollup
 
   highlightjs:
-    path: es/index.js
+    path: es/common.js
     method: bash
     vendor_prefix: highlightjs
     node_pkg: highlight.js

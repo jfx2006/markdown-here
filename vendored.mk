@@ -28,7 +28,7 @@ $(EXTENSION)/data/emoji_codes.json: node_modules/emojibase-data/en/shortcodes/gi
 
 highlightjs: $(EXTENSION)/highlightjs/highlightjs.esm.js
 
-$(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/index.js
+$(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/common.js
 	./node_modules/.bin/rollup --format es \
 	--file "$(EXTENSION)/highlightjs/highlightjs.esm.js" \
 	-p @rollup/plugin-node-resolve \
