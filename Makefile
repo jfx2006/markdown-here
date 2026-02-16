@@ -4,7 +4,7 @@ include ./tools/makecmds.mk
 all: node_modules mailext-options-sync vendored build
 	$(TOUCH) all
 
-build: all
+build:
 	npm run build
 
 ci: clean all build
