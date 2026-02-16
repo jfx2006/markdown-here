@@ -47,8 +47,6 @@ clean:
 	$(RM) mailext-options-sync/mailext-options-sync.js
 	$(RM) $(EXTENSION)/options/mailext-options-sync.js
 	$(RM) mailext-options-sync/node_modules
-	$(RM) node_modules
 	$(RM) all
 	make -f vendored.mk clean
-
-
+	$(RM) node_modules
