@@ -5,25 +5,20 @@ all: node_modules mailext-options-sync vendored build
 	$(TOUCH) all
 
 build: all
-	pnpm run build
+	npm run build
 
 ci: clean all build
 	python tools/rel_notes.py
 	python tools/version_env.py
 
-
-version: $(EXTENSION)/manifest.json pnpm-lock.json package.json
-	pnpm version --allow-same-version=true --git-tag-version=false $(python tools/version.py)
-	pnpm install
-
 node_modules: package.json
-	pnpm install
+	npm install
 
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
 
 mailext-options-sync/index.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
-	cd mailext-options-sync && pnpm install --ignore-workspace && pnpm run build
+	cd mailext-options-sync && npm install && npm run build
 
 $(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/index.js
 	$(CP) $< $@
