@@ -3,7 +3,7 @@ version: 2
 vendor_prefix: vendor
 
 commands:
-  copy: cp -v $< $@
+  copy: $(CP) $< $@
   rollup: >
           ./node_modules/.bin/rollup
           --format es
@@ -31,8 +31,8 @@ vendored:
     path: src/index.js
     method: bash
     cmds:
-      - cp -v $< $@
-      - dos2unix $@
+      - $(CP) $< $@
+      - node ./tools/dos2unix.js $@
 
   marked-emoji:
     path: src/index.js
@@ -47,7 +47,7 @@ vendored:
     method: bash
     vendor_prefix: highlightjs
     node_pkg: highlight.js
-    clean: "rm -rf $(EXTENSION)/{vendor_prefix}/highlightjs.esm.js $(EXTENSION)/{vendor_prefix}/styles/*.css"
+    clean: "$(RM) -g $(EXTENSION)/{vendor_prefix}/highlightjs.esm.js $(EXTENSION)/{vendor_prefix}/styles/*.css"
     cmds:
       - ./node_modules/.bin/rollup --format es \
       - --file "$(EXTENSION)/{vendor_prefix}/highlightjs.esm.js" \
@@ -74,7 +74,7 @@ vendored:
     method: bash
     node_pkg: emojibase-data
     vendor_prefix: data
-    clean: rm -f $(EXTENSION)/data/emoji_codes.json
+    clean: $(RM) $(EXTENSION)/data/emoji_codes.json
     cmds:
       - node ./tools/emoji-grab.js $< $@
 
@@ -98,5 +98,5 @@ vendored:
       TeXZilla.js: TeXZilla.js
     method: bash
     cmds:
-      - cp -v $< $@
-      - /usr/bin/echo -e "\nexport default TeXZilla" >> $@
+      - $(CP) $< $@
+      - node ./tools/fileappend.js $@ "export default TeXZilla"

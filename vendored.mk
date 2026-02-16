@@ -1,14 +1,16 @@
 EXTENSION = extension
 
+include ./tools/makecmds.mk
+
 bootstrap: $(EXTENSION)/vendor/bootstrap.bundle.js
 
 $(EXTENSION)/vendor/bootstrap.bundle.js: node_modules/bootstrap/dist/js/bootstrap.bundle.js
-	cp -v $< $@
+	$(CP) $< $@
 
 bootswatch: $(EXTENSION)/vendor/bootswatch.css
 
 $(EXTENSION)/vendor/bootswatch.css: node_modules/bootswatch/dist/darkly/bootstrap.css
-	cp -v $< $@
+	$(CP) $< $@
 
 degausser: $(EXTENSION)/vendor/degausser.esm.js
 
@@ -19,7 +21,7 @@ $(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
 dompurify: $(EXTENSION)/vendor/purify.es.mjs
 
 $(EXTENSION)/vendor/purify.es.mjs: node_modules/dompurify/dist/purify.es.mjs
-	cp -v $< $@
+	$(CP) $< $@
 
 emoji_codes: $(EXTENSION)/data/emoji_codes.json
 
@@ -39,23 +41,23 @@ $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/common
 marked: $(EXTENSION)/vendor/marked.esm.js
 
 $(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
-	cp -v $< $@
+	$(CP) $< $@
 
 marked-emoji: $(EXTENSION)/vendor/marked-emoji.esm.js
 
 $(EXTENSION)/vendor/marked-emoji.esm.js: node_modules/marked-emoji/src/index.js
-	cp -v $< $@
+	$(CP) $< $@
 
 marked-extended-tables: $(EXTENSION)/vendor/marked-extended-tables.esm.js
 
 $(EXTENSION)/vendor/marked-extended-tables.esm.js: node_modules/marked-extended-tables/src/index.js
-	cp -v $< $@
-	dos2unix $@
+	$(CP) $< $@
+	node ./tools/dos2unix.js $@
 
 marked-highlight: $(EXTENSION)/vendor/marked-highlight.esm.js
 
 $(EXTENSION)/vendor/marked-highlight.esm.js: node_modules/marked-highlight/src/index.js
-	cp -v $< $@
+	$(CP) $< $@
 
 marked-linkify-it: $(EXTENSION)/vendor/marked-linkify-it.esm.js
 
@@ -71,17 +73,17 @@ $(EXTENSION)/vendor/textcomplete.js: node_modules/@textcomplete/contenteditable/
 texzilla: $(EXTENSION)/vendor/TeXZilla.js
 
 $(EXTENSION)/vendor/TeXZilla.js: node_modules/texzilla/TeXZilla.js
-	cp -v $< $@
-	/usr/bin/echo -e "\nexport default TeXZilla" >> $@
+	$(CP) $< $@
+	node ./tools/fileappend.js $@ "export default TeXZilla"
 
 turndown: $(EXTENSION)/vendor/turndown.esm.js
 
 $(EXTENSION)/vendor/turndown.esm.js: node_modules/turndown/lib/turndown.browser.es.js
-	cp -v $< $@
+	$(CP) $< $@
 
 clean:
-	rm -f $(EXTENSION)/vendor/*
-	rm -f $(EXTENSION)/data/emoji_codes.json
-	rm -rf $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
+	$(RM) -g $(EXTENSION)/vendor/*
+	$(RM) $(EXTENSION)/data/emoji_codes.json
+	$(RM) -g $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
 
 all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla

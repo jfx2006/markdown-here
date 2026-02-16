@@ -28,6 +28,8 @@ class MkVendored:
             [
                 "EXTENSION = extension\n",
                 "\n",
+                "include ./tools/makecmds.mk\n",
+                "\n"
             ]
         )
 
@@ -39,7 +41,7 @@ class MkVendored:
         self.out.writelines(
             [
                 "clean:\n",
-                "\trm -f $(EXTENSION)/vendor/*\n",
+                "\t$(RM) -g $(EXTENSION)/vendor/*\n",
             ]
             + [f"\t{cmd}\n" for cmd in clean_cmds]
         )

@@ -1,7 +1,8 @@
 EXTENSION = extension
+include ./tools/makecmds.mk
 
 all: node_modules mailext-options-sync vendored build
-	touch all
+	$(TOUCH) all
 
 build: all
 	pnpm run build
@@ -21,11 +22,11 @@ node_modules: package.json
 MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
 MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
 
-mailext-options-sync/mailext-options-sync.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
-	cd mailext-options-sync && pnpm install --ignore-workspace && pnpm run build && cp -f index.js mailext-options-sync.js
+mailext-options-sync/index.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
+	cd mailext-options-sync && pnpm install --ignore-workspace && pnpm run build
 
-$(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/mailext-options-sync.js
-	cp -v $< $@
+$(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/index.js
+	$(CP) $< $@
 
 mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
 
@@ -48,11 +49,11 @@ git_status:
   	fi
 
 clean:
-	rm -f mailext-options-sync/mailext-options-sync.js
-	rm -f $(EXTENSION)/options/mailext-options-sync.js
-	rm -rf mailext-options-sync/node_modules
-	rm -rf node_modules
-	rm -f all
+	$(RM) mailext-options-sync/mailext-options-sync.js
+	$(RM) $(EXTENSION)/options/mailext-options-sync.js
+	$(RM) mailext-options-sync/node_modules
+	$(RM) node_modules
+	$(RM) all
 	make -f vendored.mk clean
 
 

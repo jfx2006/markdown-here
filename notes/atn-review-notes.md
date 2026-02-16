@@ -41,11 +41,12 @@ which led to bugs in the extension.
 
 ### Requirements
 
+(Python should not be needed for reproducing build with "make all")
+
 - Node 22
 - pnPm
 - GNU Make
 - Bash
-- Python 3.12 (earlier versions may work)
 
 or build in Docker using CI/Dockerfile
 
@@ -56,6 +57,10 @@ are listed in tools/vendored.yml. This file is used to generate vendored.mk,
 which is all handled from Makefile.
 
 ### Building
+
+I have removed the use of UNIX commands (cp, touch, dos2unix, rm) from
+the Makefiles and replaced them with node scripts. This will help with
+running the build on Windows.
 
 `make clean` will clear out node_modules and some other files to
 force a rebuild.
