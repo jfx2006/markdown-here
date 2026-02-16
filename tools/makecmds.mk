@@ -1,3 +1,4 @@
 TOUCH = node ./node_modules/.bin/nodetouch
-RM = node ./node_modules/.bin/rimraf
+RIMRAF = ./node_modules/.bin/rimraf
+RM = node $(RIMRAF)
 CP = node ./node_modules/.bin/cpy

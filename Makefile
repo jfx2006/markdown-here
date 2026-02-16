@@ -43,7 +43,10 @@ git_status:
   		exit 1; \
   	fi
 
-clean:
+$(RIMRAF):
+	npm install rimraf
+
+clean: $(RIMRAF)
 	$(RM) mailext-options-sync/mailext-options-sync.js
 	$(RM) $(EXTENSION)/options/mailext-options-sync.js
 	$(RM) mailext-options-sync/node_modules
