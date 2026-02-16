@@ -57,7 +57,6 @@
     "eslint-plugin-no-unsanitized": "^4.1.2",
     "eslint-plugin-prettier": "^5.4.1",
     "eventemitter3": "^5.0.1",
-    "fuse.js": "^7.1.0",
     "globals": "^16.2.0",
     "highlight.js": "^11.11.1",
     "marked": "^15.0.12",
