@@ -7,9 +7,14 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
     const { setTimeout } = ChromeUtils.importESModule(
         "resource://gre/modules/Timer.sys.mjs"
     );
-    const { E10SUtils } = ChromeUtils.importESModule(
-        "resource://gre/modules/E10SUtils.sys.mjs"
-    );
+    // E10SUtils is only needed if extension runs out-of-process
+    let E10SUtils;
+    try {
+      ({ E10SUtils } = ChromeUtils.importESModule(
+          "resource://gre/modules/E10SUtils.sys.mjs"));
+    } catch(e) {
+      console.warn("ex_customui: E10SUtils not available", e);
+    }
 
     const XULNS =
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -192,9 +197,9 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
           context.extension.policy.browsingContextGroupId);
       if (context.extension.remote) {
         result.setAttribute("remote", "true");
-        result.setAttribute("remoteType", E10SUtils.getRemoteTypeForURI(url,
-            true, false, E10SUtils.EXTENSION_REMOTE_TYPE, null,
-            E10SUtils.predictOriginAttributes({ result })));
+        result.setAttribute("remoteType",
+            E10SUtils ? E10SUtils.EXTENSION_REMOTE_TYPE : "extension");
+        result.setAttribute("forcemessagemanager", "true");
         result.setAttribute("maychangeremoteness", "true");
       }
       parentNode.insertBefore(result, referenceNode || null);
@@ -202,8 +207,7 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
         ExtensionParent.apiManager.emit("extension-browser-inserted", result);
         result.messageManager.loadFrameScript(
             "chrome://extensions/content/ext-browser-content.js", false, true);
-        result.messageManager.sendAsyncMessage("Extension:InitBrowser",
-            { stylesheets: ExtensionParent.extensionStylesheets });
+        result.messageManager.sendAsyncMessage("Extension:InitBrowser", {});
       }
       if (context.extension.remote) {
         result.addEventListener("DidChangeBrowserRemoteness", initBrowser);
@@ -630,6 +634,9 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             editor_column.style = "display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 1;"
             editor_wrapper.appendChild(editor_column)
             const editor_elem = window.document.getElementById("messageEditor");
+            if (!editor_elem) {
+              return;
+            }
             editor_elem.insertAdjacentElement("beforebegin", editor_wrapper)
             editor_column.appendChild(editor_elem);
             // Add the "sidebar"
