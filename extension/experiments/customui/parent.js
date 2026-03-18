@@ -45,11 +45,26 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             window = window.QueryInterface(
                 Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
           }
-          if (window.document.readyState === "complete") {
+          const handleLoad = () => {
+            // If the window loaded at about:blank, it will navigate to
+            // its real URL next. Re-listen so we catch the final load.
+            if (window.location.href === "about:blank") {
+              window.addEventListener("load", () => {
+                // Remove the about:blank entry so onWindowLoad can
+                // re-process this window at its real URL.
+                const idx = loadedWindows.indexOf(window);
+                if (idx >= 0) {
+                  loadedWindows.splice(idx, 1);
+                }
+                onWindowLoad(window);
+              }, {once: true});
+            }
             onWindowLoad(window);
+          };
+          if (window.document.readyState === "complete") {
+            handleLoad();
           } else {
-            window.addEventListener("load", () => {onWindowLoad(window);},
-                {once: true});
+            window.addEventListener("load", handleLoad, {once: true});
           }
         },
         onCloseWindow(window) {
