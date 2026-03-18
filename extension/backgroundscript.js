@@ -251,45 +251,73 @@ messenger.commands.onCommand.addListener(async function (command) {
   }
 })
 
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(`Timeout: ${label} (${ms}ms)`)), ms)),
+  ])
+}
+
 messenger.compose.onBeforeSend.addListener(async function (tab, details) {
   // If this is a plain text message, do not check for markdown-like content
   if (details.isPlainText) {
-    return Promise.resolve({})
+    return {}
   }
-  const savedState = await OptionsStore.get([
-    "forgot-to-render-check-enabled",
-    "enable-markdown-mode",
-  ])
-  const markdownEnabled = savedState["enable-markdown-mode"]
-  const forgotToRenderCheckEnabled = savedState["forgot-to-render-check-enabled"]
-  if (!markdownEnabled && forgotToRenderCheckEnabled) {
-    const isMarkdown = await messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" })
-    if (isMarkdown) {
-      const message = `${getMessage("forgot_to_render_prompt_info")}
-          ${getMessage("forgot_to_render_prompt_question")}`
-      const rv = await openNotification(
-        tab.windowId,
-        message,
-        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-        [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+  try {
+    const savedState = await OptionsStore.get([
+      "forgot-to-render-check-enabled",
+      "enable-markdown-mode",
+    ])
+    const markdownEnabled = savedState["enable-markdown-mode"]
+    const forgotToRenderCheckEnabled = savedState["forgot-to-render-check-enabled"]
+    if (!markdownEnabled && forgotToRenderCheckEnabled) {
+      const isMarkdown = await withTimeout(
+        messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" }),
+        5000,
+        "check-forgot-render",
       )
-      if (rv !== "ok") {
-        return Promise.resolve({ cancel: true }) // Markdown disabled and is markdown content
+      if (isMarkdown) {
+        const message = `${getMessage("forgot_to_render_prompt_info")}
+          ${getMessage("forgot_to_render_prompt_question")}`
+        const rv = await openNotification(
+          tab.windowId,
+          message,
+          messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+          [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+        )
+        if (rv !== "ok") {
+          return { cancel: true } // Markdown disabled and is markdown content
+        }
       }
+      return {} // Markdown disabled and not markdown content
     }
-    return Promise.resolve({}) // Markdown disabled and not markdown content
+    const previewHidden = savedState["enable-markdown-mode"] === "false"
+    if (previewHidden) {
+      return {}
+    }
+    const msgHTML = await withTimeout(
+      messenger.runtime.sendMessage({
+        action: "cp.get-content",
+        windowId: tab.windowId,
+      }),
+      5000,
+      "cp.get-content",
+    )
+    if (!msgHTML) {
+      console.warn("Markdown Here Revival: No content from preview, sending original message")
+      return {}
+    }
+    const finalDetails = { body: msgHTML }
+    await withTimeout(
+      messenger.runtime.sendMessage({ action: "disable-mutation-listener" }),
+      2000,
+      "disable-mutation-listener",
+    ).catch(() => {}) // non-critical, ignore timeout
+    return { cancel: false, details: finalDetails }
+  } catch (e) {
+    console.error("Markdown Here Revival: onBeforeSend error:", e)
+    return {} // Allow send to proceed without modifications
   }
-  const previewHidden = savedState["enable-markdown-mode"] === "false"
-  if (previewHidden) {
-    return Promise.resolve({})
-  }
-  const msgHTML = await messenger.runtime.sendMessage({
-    action: "cp.get-content",
-    windowId: tab.windowId,
-  })
-  const finalDetails = { body: msgHTML }
-  await messenger.runtime.sendMessage({ action: "disable-mutation-listener" })
-  return Promise.resolve({ cancel: false, details: finalDetails })
 })
 
 messenger.tabs.onCreated.addListener(async function (tab) {
