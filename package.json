@@ -6,9 +6,9 @@
     "build": "web-ext build -n markdown-here-revival.xpi",
     "lint": "eslint .",
     "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f /home/rob/bin/thunderbird128 --keep-profile-changes",
-    "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testingrelease -f /home/rob/bin/thunderbird-release --keep-profile-changes",
+    "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testing-release -f /home/rob/bin/thunderbird-release --keep-profile-changes",
     "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
-    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testingdaily -f /home/rob/bin/thunderbird-daily"
+    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testing-daily -f /home/rob/bin/thunderbird-daily"
   },
   "type": "module",
   "private": true,
