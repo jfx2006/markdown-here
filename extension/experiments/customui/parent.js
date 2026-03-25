@@ -7,9 +7,14 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
     const { setTimeout } = ChromeUtils.importESModule(
         "resource://gre/modules/Timer.sys.mjs"
     );
-    const { E10SUtils } = ChromeUtils.importESModule(
-        "resource://gre/modules/E10SUtils.sys.mjs"
-    );
+    // E10SUtils is only needed if extension runs out-of-process
+    let E10SUtils;
+    try {
+      ({ E10SUtils } = ChromeUtils.importESModule(
+          "resource://gre/modules/E10SUtils.sys.mjs"));
+    } catch(e) {
+      console.warn("ex_customui: E10SUtils not available", e);
+    }
 
     const XULNS =
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -40,11 +45,26 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             window = window.QueryInterface(
                 Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDOMWindow);
           }
-          if (window.document.readyState === "complete") {
+          const handleLoad = () => {
+            // If the window loaded at about:blank, it will navigate to
+            // its real URL next. Re-listen so we catch the final load.
+            if (window.location.href === "about:blank") {
+              window.addEventListener("load", () => {
+                // Remove the about:blank entry so onWindowLoad can
+                // re-process this window at its real URL.
+                const idx = loadedWindows.indexOf(window);
+                if (idx >= 0) {
+                  loadedWindows.splice(idx, 1);
+                }
+                onWindowLoad(window);
+              }, {once: true});
+            }
             onWindowLoad(window);
+          };
+          if (window.document.readyState === "complete") {
+            handleLoad();
           } else {
-            window.addEventListener("load", () => {onWindowLoad(window);},
-                {once: true});
+            window.addEventListener("load", handleLoad, {once: true});
           }
         },
         onCloseWindow(window) {
@@ -192,9 +212,9 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
           context.extension.policy.browsingContextGroupId);
       if (context.extension.remote) {
         result.setAttribute("remote", "true");
-        result.setAttribute("remoteType", E10SUtils.getRemoteTypeForURI(url,
-            true, false, E10SUtils.EXTENSION_REMOTE_TYPE, null,
-            E10SUtils.predictOriginAttributes({ result })));
+        result.setAttribute("remoteType",
+            E10SUtils ? E10SUtils.EXTENSION_REMOTE_TYPE : "extension");
+        result.setAttribute("forcemessagemanager", "true");
         result.setAttribute("maychangeremoteness", "true");
       }
       parentNode.insertBefore(result, referenceNode || null);
@@ -202,8 +222,7 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
         ExtensionParent.apiManager.emit("extension-browser-inserted", result);
         result.messageManager.loadFrameScript(
             "chrome://extensions/content/ext-browser-content.js", false, true);
-        result.messageManager.sendAsyncMessage("Extension:InitBrowser",
-            { stylesheets: ExtensionParent.extensionStylesheets });
+        result.messageManager.sendAsyncMessage("Extension:InitBrowser", {});
       }
       if (context.extension.remote) {
         result.addEventListener("DidChangeBrowserRemoteness", initBrowser);
@@ -630,6 +649,9 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             editor_column.style = "display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 1;"
             editor_wrapper.appendChild(editor_column)
             const editor_elem = window.document.getElementById("messageEditor");
+            if (!editor_elem) {
+              return;
+            }
             editor_elem.insertAdjacentElement("beforebegin", editor_wrapper)
             editor_column.appendChild(editor_elem);
             // Add the "sidebar"
