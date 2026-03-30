@@ -122,6 +122,7 @@ mdhr-build:
     - pip install -r requirements/requirements.txt
   script:
     - make ci
+    - python tools/get-glab-cli.py  # Appends download URL to version.env
   artifacts:
     paths:
       - web-ext-artifacts/markdown-here-revival.xpi
@@ -144,16 +145,7 @@ mdhr-release:
       XPI_FILENAME: "markdown_here_revival-${PACKAGE_VERSION}.xpi"
   script:
     - echo "Running the release job."
-    - |
-      GLAB_VERSION=$(
-        git ls-remote -t --sort -version:refname https://gitlab.com/gitlab-org/cli | head -n 1 | awk '{
-        ref=$2
-        sub(/refs\/tags\/v/, "", ref)
-        print ref
-        }'
-      )
-      GLAB_URL="https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VERSION}/downloads/glab_${GLAB_VERSION}_linux_amd64.tar.gz"
-      wget -qO- "${GLAB_URL}" | tar xvz --strip-components=1 bin/glab
+    - wget -qO- "${GLAB_URL}" | tar xvz --strip-components=1 bin/glab
     - mv -f web-ext-artifacts/markdown-here-revival.xpi web-ext-artifacts/${XPI_FILENAME}
     - ./glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_HOST --api-protocol $CI_SERVER_PROTOCOL
     - > 
