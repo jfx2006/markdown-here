@@ -82,11 +82,12 @@ function throttle(delay, callback, options) {
            */
           lastExec = Date.now()
           noTrailing || (timeoutID = setTimeout(debounceMode ? clear : exec, delay))
-        } else exec()
-        /*
-         * In throttle mode without noLeading, if `delay` time has been exceeded, execute
-         * `callback`.
-         */
+        } else
+          /*
+           * In throttle mode without noLeading, if `delay` time has been exceeded, execute
+           * `callback`.
+           */
+          exec()
       else
         true !== noTrailing &&
           /*
@@ -102,7 +103,7 @@ function throttle(delay, callback, options) {
            */
           (timeoutID = setTimeout(
             debounceMode ? clear : exec,
-            void 0 === debounceMode ? delay - elapsed : delay
+            void 0 === debounceMode ? delay - elapsed : delay,
           ))
     }
     // Execute `callback` and update the `lastExec` timestamp.
@@ -160,23 +161,23 @@ function once(function_) {
     return result
   }
 }
-/** Indicates whether the code is being run in a background context */ const isBackground = () =>
+/** Indicates whether you're in a background context */ const isBackground = () =>
   isBackgroundPage() || isBackgroundWorker()
 
-/** Indicates whether the code is being run in a background page */ const isBackgroundPage = once(
-  () => {
-    const manifest = getManifest()
-    return (
-      !(!manifest || !isCurrentPathname(manifest.background_page ?? manifest.background?.page)) ||
+/** Indicates whether you're in a background page */ const isBackgroundPage = once(() => {
+  const manifest = getManifest()
+  return (
+    !!manifest &&
+    (!!isCurrentPathname(manifest.background_page ?? manifest.background?.page) ||
       Boolean(
-        manifest?.background?.scripts && isCurrentPathname("/_generated_background_page.html")
-      )
-    )
-  }
-)
+        manifest.background?.scripts && isCurrentPathname("/_generated_background_page.html"),
+      ))
+  )
+})
 
-/** Indicates whether the code is being run in a background worker */ const isBackgroundWorker =
-  once(() => isCurrentPathname(getManifest()?.background?.service_worker))
+/** Indicates whether you're in a background worker */ const isBackgroundWorker = once(() =>
+  isCurrentPathname(getManifest()?.background?.service_worker),
+)
 var _typeof =
   "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
     ? function (obj) {
@@ -212,7 +213,7 @@ var createClass = (function () {
 var inherits = function (subClass, superClass) {
   if ("function" != typeof superClass && null !== superClass)
     throw new TypeError(
-      "Super expression must either be null or a function, not " + typeof superClass
+      "Super expression must either be null or a function, not " + typeof superClass,
     )
   subClass.prototype = Object.create(superClass && superClass.prototype, {
     constructor: { value: subClass, enumerable: false, writable: true, configurable: true },
@@ -262,7 +263,7 @@ var KeyExtractors = (function () {
     classCallCheck(this, KeyExtractors)
     var _this = possibleConstructorReturn(
       this,
-      (KeyExtractors.__proto__ || Object.getPrototypeOf(KeyExtractors)).call(this, options)
+      (KeyExtractors.__proto__ || Object.getPrototypeOf(KeyExtractors)).call(this, options),
     )
     _this.registerDefault(function (el) {
       return el.getAttribute("name") || ""
@@ -277,7 +278,7 @@ var InputReaders = (function () {
     classCallCheck(this, InputReaders)
     var _this = possibleConstructorReturn(
       this,
-      (InputReaders.__proto__ || Object.getPrototypeOf(InputReaders)).call(this, options)
+      (InputReaders.__proto__ || Object.getPrototypeOf(InputReaders)).call(this, options),
     )
     _this.registerDefault(function (el) {
       return el.value
@@ -328,8 +329,8 @@ var KeyAssignmentValidators = (function () {
       this,
       (KeyAssignmentValidators.__proto__ || Object.getPrototypeOf(KeyAssignmentValidators)).call(
         this,
-        options
-      )
+        options,
+      ),
     )
     _this.registerDefault(function () {
       return true
@@ -392,7 +393,7 @@ function getInputElements(element, options) {
         }
       }
       return !(!foundInInclude && (!!options.include || foundInExclude || foundInIgnored))
-    }
+    },
   )
 }
 function assignKeyValue(obj, keychain, value) {
@@ -425,7 +426,7 @@ function assignKeyValue(obj, keychain, value) {
   options.keyExtractors = new KeyExtractors(options.keyExtractors || {})
   options.inputReaders = new InputReaders(options.inputReaders || {})
   options.keyAssignmentValidators = new KeyAssignmentValidators(
-    options.keyAssignmentValidators || {}
+    options.keyAssignmentValidators || {},
   )
   Array.prototype.forEach.call(getInputElements(element, options), function (el) {
     var type = getElementType(el)
@@ -444,7 +445,7 @@ var InputWriters = (function () {
     classCallCheck(this, InputWriters)
     var _this = possibleConstructorReturn(
       this,
-      (InputWriters.__proto__ || Object.getPrototypeOf(InputWriters)).call(this, options)
+      (InputWriters.__proto__ || Object.getPrototypeOf(InputWriters)).call(this, options),
     )
     _this.registerDefault(function (el, value) {
       el.value = value
@@ -687,8 +688,8 @@ class OptionsSync {
   async _get(_keys) {
     "string" == typeof _keys && (_keys = [_keys])
     const storageResults = await this.storage.get(_keys)
-    // eslint-disable-next-line no-prototype-builtins
     for (const key of _keys)
+      // eslint-disable-next-line no-prototype-builtins
       !storageResults.hasOwnProperty(key) &&
         this.defaults.hasOwnProperty(key) &&
         (storageResults[key] = this.defaults[key]) // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -708,7 +709,7 @@ class OptionsSync {
       "info",
       "Will run",
       migrations.length,
-      1 === migrations.length ? "migration" : " migrations"
+      1 === migrations.length ? "migration" : " migrations",
     )
     let _migrateFunc
     for (_migrateFunc of migrations) {

@@ -9,7 +9,7 @@
  */
 
 import {debounce} from 'throttle-debounce';
-import {isBackground} from 'webext-detect-page';
+import {isBackground} from 'webext-detect';
 import {serialize, deserialize} from 'dom-form-serializer/dist/dom-form-serializer.mjs';
 
 async function shouldRunMigrations(): Promise<boolean> {
