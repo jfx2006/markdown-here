@@ -43,8 +43,8 @@ which led to bugs in the extension.
 
 (Python should not be needed for reproducing build with "make all")
 
-- Node 22
-- pnPm
+- Node 24.14
+- npm 11.12
 - GNU Make
 - Bash
 
@@ -67,7 +67,7 @@ force a rebuild.
 
 Running `make all` will do the following:
 
-- Run `pnpm install`
+- Run `npm install`
 - Copy mailext-options-sync.js from the subrepo to extension/options.
   - If a full rebuild of this is needed, `make clean` will reset the
     subrepo and force a rebuild.
