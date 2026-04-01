@@ -152,6 +152,7 @@ mdhr-release:
       ./glab release create ${RELEASE_NAME} \
         --name ${RELEASE_NAME} \
         -F ./notes.md \
+        --use-package-registry \
         web-ext-artifacts/${XPI_FILENAME}
 
 include:
