@@ -43,13 +43,10 @@ git_status:
   		exit 1; \
   	fi
 
-$(RIMRAF):
-	npm install rimraf
-
-clean: $(RIMRAF)
+clean:
 	$(RM) mailext-options-sync/mailext-options-sync.js
 	$(RM) $(EXTENSION)/options/mailext-options-sync.js
-	$(RM) mailext-options-sync/node_modules
+	$(RM) --recursive mailext-options-sync/node_modules
 	$(RM) all
 	make -f vendored.mk clean
-	$(RM) node_modules
+	$(RM) --recursive node_modules

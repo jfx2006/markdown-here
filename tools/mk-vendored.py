@@ -41,7 +41,7 @@ class MkVendored:
         self.out.writelines(
             [
                 "clean:\n",
-                "\t$(RM) -g $(EXTENSION)/vendor/*\n",
+                "\t$(RM) $(EXTENSION)/vendor/*\n",
             ]
             + [f"\t{cmd}\n" for cmd in clean_cmds]
         )
