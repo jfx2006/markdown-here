@@ -7,72 +7,61 @@
     "lint": "eslint .",
     "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f /home/rob/bin/thunderbird128 --keep-profile-changes",
     "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testing-release -f /home/rob/bin/thunderbird-release --keep-profile-changes",
-    "testbeta": "web-ext run --verbose -f thunderbird-beta --keep-profile-changes",
+    "testbeta": "web-ext run --verbose -f thunderbird-beta -p mdhr_test_profiles/testing-beta --keep-profile-changes",
     "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testing-daily -f /home/rob/bin/thunderbird-daily"
   },
   "type": "module",
   "private": true,
   "author": "JFX",
   "license": "MIT",
-  "mocha": {
-    "spec": [
-      "extension/test/.spec.js"
-    ],
-    "global": [
-      "jQuery",
-      "$"
-    ],
-    "extension": [
-      "js",
-      "mjs"
-    ]
-  },
-  "devDependencies": {
-    "@eslint/compat": "^1.2.9",
-    "@eslint/css": "^0.8.1",
-    "@eslint/js": "^9.28.0",
-    "@eslint/json": "^0.12.0",
-    "@eslint/markdown": "^6.4.0",
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-node-resolve": "^15.3.0",
+  "dependencies": {
     "@textcomplete/contenteditable": "^0.1.13",
     "@textcomplete/core": "^0.1.13",
     "@textcomplete/utils": "^0.1.13",
-    "@types/chai-dom": "1.11.3",
-    "@types/mocha": "^10.0.10",
-    "@types/thunderbird-webext-browser": "^127.0.0",
-    "chai": "^5.1.2",
-    "chai-dom": "^1.12.0",
-    "cpy-cli": "^7.0.0",
     "bootstrap": "^5.3.8",
     "bootswatch": "^5.3.8",
     "degausser": "^2.4.4",
-    "dompurify": "^3.2.6",
-    "emojibase-data": "^16.0.3",
-    "esbuild": "^0.25.4",
-    "esbuild-plugin-replace-regex": "^0.0.2",
-    "eslint": "^9.26.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-html": "^8.1.3",
-    "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
-    "eslint-plugin-no-unsanitized": "^4.1.2",
-    "eslint-plugin-prettier": "^5.4.1",
-    "eventemitter3": "^5.0.1",
-    "globals": "^16.2.0",
+    "dompurify": "^3.3.3",
+    "emojibase-data": "^17.0.0",
+    "eventemitter3": "^5.0.4",
     "highlight.js": "^11.11.1",
-    "marked": "^15.0.12",
+    "marked": "^17.0.5",
     "marked-emoji": "^2.0.1",
     "marked-extended-tables": "2.0.1",
-    "marked-highlight": "^2.2.1",
-    "marked-linkify-it": "^3.1.12",
-    "mocha": "^10.8.2",
-    "prettier": "^3.5.3",
-    "rollup": "^4.17.2",
+    "marked-highlight": "^2.2.3",
+    "marked-linkify-it": "^3.1.14",
     "texzilla": "^1.0.2",
+    "turndown": "^7.2.2"
+  },
+  "overrides": {
+    "marked-extended-tables": {
+      "marked": ">=3 <18"
+    }
+  },
+  "devDependencies": {
+    "@eslint/compat": "^2.0.3",
+    "@eslint/css": "^1.1.0",
+    "@eslint/js": "^9.39.4",
+    "@eslint/json": "^1.2.0",
+    "@eslint/markdown": "^8.0.1",
+    "@rollup/plugin-commonjs": "^29.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@types/thunderbird-webext-browser": "^127.0.0",
+    "cpy-cli": "^7.0.0",
+    "esbuild": "^0.27.4",
+    "esbuild-plugin-replace-regex": "^0.0.2",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-html": "^8.1.4",
+    "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
+    "eslint-plugin-no-unsanitized": "^4.1.5",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "rollup": "^4.17.2",
     "touch": "^3.1.1",
-    "turndown": "^7.2.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.1",
-    "web-ext": "^8.6.0"
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "web-ext": "^10.1.0"
   }
 }
