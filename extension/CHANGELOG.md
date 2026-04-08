@@ -1,11 +1,13 @@
 # Changelog
 
-## [4.0.11]
+## [4.0.12]
 
 ### Fixed
 - MDHR was not working with Thunderbird 148.0 and up. Thank you Cliff Brake for
   tracking down the problems and providing fixes.
 - Dependency updates
+
+## [4.0.11] (unreleased)
 
 ## [4.0.10] (unreleased)
 
