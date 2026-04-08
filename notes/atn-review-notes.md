@@ -1,18 +1,44 @@
 This extension allows composing emails in Markdown and renders them to HTML
 automatically. It only works when composing in HTML mode.
 
-This is a near total re-write of Markdown Here Revival 3.x. The big new
-feature is the split editing pane that's common in Markdown editors.
+## Reproducing the build
 
-The split screen editor is handled in two pieces, a modified "customui"
-experiment that adds a new "compose_editor" location. This limits the
-injected browser to the contentArea rather than using the entire window
-height like the "compose" location sidebar.
+### Requirements
 
-Within this browser, compose_preview/compose_preview.html is loaded and
-its content is kept in sync with the editor via messages.
+(Python should not be needed for reproducing build with "make all")
 
-Other new features are listed in the changelog.
+- Node 24.14
+- npm 11.12
+- GNU Make
+- Bash
+
+or build in Docker using CI/Dockerfile
+
+The extension code is not minified or bundled, however vendored libraries
+are mostly from NPM packages. Part of the build process described below
+is to copy and possibly esmify them. Libraries included in this manner
+are listed in tools/vendored.yml. This file is used to generate vendored.mk,
+which is all handled from Makefile.
+
+### Building
+
+The build is managed by GNU Make. 
+
+- Extract the source code from the uploaded tarball
+
+Install NPM dependencies, this runs `npm clean-install`
+- make npm
+
+Copy vendored dependencies into the extension directory
+- make vendored
+
+Build the extension XPI file.
+- make build
+
+The XPI file will be in the `web-ext-artifacts/` directory.
+
+The above steps can be run with a single command if desired:
+- make all
 
 ## About vendored code
 
@@ -37,42 +63,3 @@ generated during the build match the ones checked in to the repository. I
 acknowledge that there have been unexpected differences in past versions
 which led to bugs in the extension.
 
-## Reproducing the build
-
-### Requirements
-
-(Python should not be needed for reproducing build with "make all")
-
-- Node 24.14
-- npm 11.12
-- GNU Make
-- Bash
-
-or build in Docker using CI/Dockerfile
-
-The extension code is not minified or bundled, however vendored libraries
-are mostly from NPM packages. Part of the build process described below
-is to copy and possibly esmify them. Libraries included in this manner
-are listed in tools/vendored.yml. This file is used to generate vendored.mk,
-which is all handled from Makefile.
-
-### Building
-
-I have removed the use of UNIX commands (cp, touch, dos2unix, rm) from
-the Makefiles and replaced them with node scripts. This will help with
-running the build on Windows.
-
-`make clean` will clear out node_modules and some other files to
-force a rebuild.
-
-Running `make all` will do the following:
-
-- Run `npm install`
-- Copy mailext-options-sync.js from the subrepo to extension/options.
-  - If a full rebuild of this is needed, `make clean` will reset the
-    subrepo and force a rebuild.
-- Regenerate vendored.mk
-- Build and copy the vendored NPM packages to the appropriate place under extension/
-  - Some packages like highlightjs use a custom script, packages with dependencies
-    are built with Rollup. Packages without dependencies are copied when possible.
-- Build the XPI file using web-ext
