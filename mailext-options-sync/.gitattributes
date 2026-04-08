@@ -1,3 +1,0 @@
-* text=auto
-vendor/ linguist-vendored
-test/* linguist-detectable=false

@@ -100,3 +100,11 @@ vendored:
     cmds:
       - $(CP) $< $@
       - node ./tools/fileappend.js $@ "export default TeXZilla"
+
+  mailext-options-sync:
+    node_pkg: "@jfx2006/mailext-options-sync"
+    paths:
+      mailext-options-sync.js: index.js
+    vendor_prefix: options
+    clean: $(RM) $(EXTENSION)/options/mailext-options-sync.js
+    method: copy

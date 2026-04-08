@@ -15,6 +15,7 @@
   "author": "JFX",
   "license": "MIT",
   "dependencies": {
+    "@jfx2006/mailext-options-sync": "git+https://gitlab.com/mdhr-extension/mailext-options-sync.git#v4.0.3-jfx",
     "@textcomplete/contenteditable": "^0.1.13",
     "@textcomplete/core": "^0.1.13",
     "@textcomplete/utils": "^0.1.13",
