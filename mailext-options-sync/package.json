@@ -1,0 +1,84 @@
+{
+	"name": "@jfx2006/mailext-options-sync",
+	"version": "4.0.2",
+	"description": "Helps you manage and autosave your extension's options.",
+	"keywords": [
+		"extension",
+		"mailext",
+		"thunderbird",
+		"options",
+		"sync",
+		"thunderbird",
+		"webext"
+	],
+	"private": true,
+	"repository": "fregante/webext-options-sync",
+	"license": "MIT",
+	"author": "JFX",
+	"contributors": [
+		"Federico Brigante <me@fregante.com> (https://fregante.com)"
+	],
+	"type": "module",
+	"main": "index.js",
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"scripts": {
+		"build": "rollup -c",
+		"test": "run-p build ava xo",
+		"watch": "rollup -c --watch",
+		"ava": "ava",
+		"xo": "xo"
+	},
+	"xo": {
+		"envs": [
+			"browser",
+			"webextensions"
+		],
+		"ignores": [
+			"mail-ext-types.d.ts",
+			"mailext-options-sync.js"
+		],
+		"rules": {
+			"@typescript-eslint/no-unsafe-return": "off",
+			"@typescript-eslint/no-dynamic-delete": "off",
+			"@typescript-eslint/no-empty-function": "off",
+			"no-await-in-loop": "off"
+		}
+	},
+	"ava": {
+		"require": [
+			"./test/_env.js"
+		]
+	},
+  "overrides": {
+    "rollup-plugin-prettier":{
+      "diff": "^8.0.4"
+    }
+  },
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^29.0.2",
+		"@rollup/plugin-node-resolve": "^16.0.3",
+		"@rollup/plugin-terser": "^1.0.0",
+		"@rollup/plugin-typescript": "^12.3.0",
+		"@sindresorhus/tsconfig": "^8.1.0",
+		"@types/chrome": "0.0.210",
+		"@types/firefox-webext-browser": "^143.0.0",
+		"@types/throttle-debounce": "^5.0.2",
+		"ava": "^7.0.0",
+		"dom-form-serializer": "^2.0.0",
+		"npm-run-all": "^4.1.5",
+		"rollup": "^2.63.0",
+		"rollup-plugin-prettier": "^4.1.2",
+		"sinon": "^21.0.3",
+		"sinon-chrome": "^3.0.1",
+		"throttle-debounce": "^5.0.2",
+		"tslib": "^2.8.1",
+		"type-fest": "^5.5.0",
+		"typescript": "^6.0.2",
+		"webext-detect": "^5.3.2",
+		"webext-polyfill-kinda": "^1.0.2",
+		"xo": "^2.0.2"
+	}
+}

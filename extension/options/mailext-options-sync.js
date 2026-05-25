@@ -58,11 +58,7 @@ function throttle(delay, callback, options) {
    * functionality and when executed will limit the rate at which `callback`
    * is executed.
    */ function wrapper() {
-    for (
-      var _len = arguments.length, arguments_ = new Array(_len), _key = 0;
-      _key < _len;
-      _key++
-    )
+    for (var _len = arguments.length, arguments_ = new Array(_len), _key = 0; _key < _len; _key++)
       arguments_[_key] = arguments[_key]
     var self = this
     var elapsed = Date.now() - lastExec
@@ -85,8 +81,7 @@ function throttle(delay, callback, options) {
            * to execute after `delay` ms.
            */
           lastExec = Date.now()
-          noTrailing ||
-            (timeoutID = setTimeout(debounceMode ? clear : exec, delay))
+          noTrailing || (timeoutID = setTimeout(debounceMode ? clear : exec, delay))
         } else
           /*
            * In throttle mode without noLeading, if `delay` time has been exceeded, execute
@@ -142,11 +137,47 @@ function throttle(delay, callback, options) {
  *
  * @returns {Function} A new, debounced function.
  */ function debounce(delay, callback, options) {
-  var _ref$atBegin = {}.atBegin
+  var _ref$atBegin = (options || {}).atBegin
   return throttle(delay, callback, {
     debounceMode: false !== (void 0 !== _ref$atBegin && _ref$atBegin),
   })
 }
+function isCurrentPathname(path) {
+  if (!path) return false
+  try {
+    const { pathname: pathname } = new URL(path, location.origin)
+    return pathname === location.pathname
+  } catch {
+    return false
+  }
+}
+function getManifest(_version) {
+  return globalThis.chrome?.runtime?.getManifest?.()
+}
+function once(function_) {
+  let result
+  return () => {
+    void 0 === result && (result = function_())
+    return result
+  }
+}
+/** Indicates whether you're in a background context */ const isBackground = () =>
+  isBackgroundPage() || isBackgroundWorker()
+
+/** Indicates whether you're in a background page */ const isBackgroundPage = once(() => {
+  const manifest = getManifest()
+  return (
+    !!manifest &&
+    (!!isCurrentPathname(manifest.background_page ?? manifest.background?.page) ||
+      Boolean(
+        manifest.background?.scripts && isCurrentPathname("/_generated_background_page.html"),
+      ))
+  )
+})
+
+/** Indicates whether you're in a background worker */ const isBackgroundWorker = once(() =>
+  isCurrentPathname(getManifest()?.background?.service_worker),
+)
 var _typeof =
   "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
     ? function (obj) {
@@ -161,8 +192,7 @@ var _typeof =
           : typeof obj
       }
 var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor))
-    throw new TypeError("Cannot call a class as a function")
+  if (!(instance instanceof Constructor)) throw new TypeError("Cannot call a class as a function")
 }
 var createClass = (function () {
   function defineProperties(target, props) {
@@ -183,16 +213,10 @@ var createClass = (function () {
 var inherits = function (subClass, superClass) {
   if ("function" != typeof superClass && null !== superClass)
     throw new TypeError(
-      "Super expression must either be null or a function, not " +
-        typeof superClass,
+      "Super expression must either be null or a function, not " + typeof superClass,
     )
   subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true,
-    },
+    constructor: { value: subClass, enumerable: false, writable: true, configurable: true },
   })
   superClass &&
     (Object.setPrototypeOf
@@ -200,18 +224,12 @@ var inherits = function (subClass, superClass) {
       : (subClass.__proto__ = superClass))
 }
 var possibleConstructorReturn = function (self, call) {
-  if (!self)
-    throw new ReferenceError(
-      "this hasn't been initialised - super() hasn't been called",
-    )
-  return !call || ("object" != typeof call && "function" != typeof call)
-    ? self
-    : call
+  if (!self) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
+  return !call || ("object" != typeof call && "function" != typeof call) ? self : call
 }
 var TypeRegistry = (function () {
   function TypeRegistry() {
-    var initial =
-      arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
+    var initial = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
     classCallCheck(this, TypeRegistry)
     this.registeredTypes = initial
   }
@@ -227,8 +245,7 @@ var TypeRegistry = (function () {
     {
       key: "register",
       value: function (type, item) {
-        void 0 === this.registeredTypes[type] &&
-          (this.registeredTypes[type] = item)
+        void 0 === this.registeredTypes[type] && (this.registeredTypes[type] = item)
       },
     },
     {
@@ -246,10 +263,7 @@ var KeyExtractors = (function () {
     classCallCheck(this, KeyExtractors)
     var _this = possibleConstructorReturn(
       this,
-      (KeyExtractors.__proto__ || Object.getPrototypeOf(KeyExtractors)).call(
-        this,
-        options,
-      ),
+      (KeyExtractors.__proto__ || Object.getPrototypeOf(KeyExtractors)).call(this, options),
     )
     _this.registerDefault(function (el) {
       return el.getAttribute("name") || ""
@@ -264,10 +278,7 @@ var InputReaders = (function () {
     classCallCheck(this, InputReaders)
     var _this = possibleConstructorReturn(
       this,
-      (InputReaders.__proto__ || Object.getPrototypeOf(InputReaders)).call(
-        this,
-        options,
-      ),
+      (InputReaders.__proto__ || Object.getPrototypeOf(InputReaders)).call(this, options),
     )
     _this.registerDefault(function (el) {
       return el.value
@@ -301,10 +312,7 @@ function getSelectValue(elem) {
       ((option = options[i]).selected || i === index) &&
       // Don't return options that are disabled or in a disabled optgroup
       !option.disabled &&
-      !(
-        option.parentNode.disabled &&
-        "optgroup" === option.parentNode.tagName.toLowerCase()
-      )
+      !(option.parentNode.disabled && "optgroup" === option.parentNode.tagName.toLowerCase())
     ) {
       // Get the specific value for the option
       value = option.value // We don't need an array for one selects
@@ -319,10 +327,10 @@ var KeyAssignmentValidators = (function () {
     classCallCheck(this, KeyAssignmentValidators)
     var _this = possibleConstructorReturn(
       this,
-      (
-        KeyAssignmentValidators.__proto__ ||
-        Object.getPrototypeOf(KeyAssignmentValidators)
-      ).call(this, options),
+      (KeyAssignmentValidators.__proto__ || Object.getPrototypeOf(KeyAssignmentValidators)).call(
+        this,
+        options,
+      ),
     )
     _this.registerDefault(function () {
       return true
@@ -346,18 +354,14 @@ function keySplitter(key) {
 function getElementType(el) {
   var tagName = el.tagName
   var type = tagName
-  "input" === tagName.toLowerCase() &&
-    (type = el.getAttribute("type") || "text")
+  "input" === tagName.toLowerCase() && (type = el.getAttribute("type") || "text")
   return type.toLowerCase()
 }
 function getInputElements(element, options) {
   return Array.prototype.filter.call(
     element.querySelectorAll("input,select,textarea"),
     function (el) {
-      if (
-        "input" === el.tagName.toLowerCase() &&
-        ("submit" === el.type || "reset" === el.type)
-      )
+      if ("input" === el.tagName.toLowerCase() && ("submit" === el.type || "reset" === el.type))
         return false
       var myType = getElementType(el)
       var identifier = options.keyExtractors.get(myType)(el)
@@ -388,10 +392,7 @@ function getInputElements(element, options) {
           }
         }
       }
-      return !(
-        !foundInInclude &&
-        (!!options.include || foundInExclude || foundInIgnored)
-      )
+      return !(!foundInInclude && (!!options.include || foundInExclude || foundInIgnored))
     },
   )
 }
@@ -401,9 +402,7 @@ function assignKeyValue(obj, keychain, value) {
 
   obj[key] || (obj[key] = Array.isArray(key) ? [] : {}) // if it's the last key in the chain, assign the value directly
   0 === keychain.length &&
-    (Array.isArray(obj[key])
-      ? null !== value && obj[key].push(value)
-      : (obj[key] = value)) // recursive parsing of the array, depth-first
+    (Array.isArray(obj[key]) ? null !== value && obj[key].push(value) : (obj[key] = value)) // recursive parsing of the array, depth-first
   keychain.length > 0 && assignKeyValue(obj[key], keychain, value)
   return obj
 }
@@ -421,8 +420,7 @@ function assignKeyValue(obj, keychain, value) {
  * @param {string[]} options.ignoredTypes
  * @return {object}
  */ function serialize(element) {
-  var options =
-    arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}
+  var options = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {}
   var data = {}
   options.keySplitter = options.keySplitter || keySplitter
   options.keyExtractors = new KeyExtractors(options.keyExtractors || {})
@@ -430,18 +428,15 @@ function assignKeyValue(obj, keychain, value) {
   options.keyAssignmentValidators = new KeyAssignmentValidators(
     options.keyAssignmentValidators || {},
   )
-  Array.prototype.forEach.call(
-    getInputElements(element, options),
-    function (el) {
-      var type = getElementType(el)
-      var key = options.keyExtractors.get(type)(el)
-      var value = options.inputReaders.get(type)(el)
-      if (options.keyAssignmentValidators.get(type)(el, key, value)) {
-        var keychain = options.keySplitter(key)
-        data = assignKeyValue(data, keychain, value)
-      }
-    },
-  )
+  Array.prototype.forEach.call(getInputElements(element, options), function (el) {
+    var type = getElementType(el)
+    var key = options.keyExtractors.get(type)(el)
+    var value = options.inputReaders.get(type)(el)
+    if (options.keyAssignmentValidators.get(type)(el, key, value)) {
+      var keychain = options.keySplitter(key)
+      data = assignKeyValue(data, keychain, value)
+    }
+  })
   return data
 }
 var InputWriters = (function () {
@@ -450,10 +445,7 @@ var InputWriters = (function () {
     classCallCheck(this, InputWriters)
     var _this = possibleConstructorReturn(
       this,
-      (InputWriters.__proto__ || Object.getPrototypeOf(InputWriters)).call(
-        this,
-        options,
-      ),
+      (InputWriters.__proto__ || Object.getPrototypeOf(InputWriters)).call(this, options),
     )
     _this.registerDefault(function (el, value) {
       el.value = value
@@ -461,9 +453,7 @@ var InputWriters = (function () {
     _this.register("checkbox", function (el, value) {
       null === value
         ? (el.indeterminate = true)
-        : (el.checked = Array.isArray(value)
-            ? -1 !== value.indexOf(el.value)
-            : value)
+        : (el.checked = Array.isArray(value) ? -1 !== value.indexOf(el.value) : value)
     })
     _this.register("radio", function (el, value) {
       void 0 !== value && (el.checked = el.value === value.toString())
@@ -475,8 +465,7 @@ var InputWriters = (function () {
 })()
 function makeArray(arr) {
   var ret = []
-  null !== arr &&
-    (Array.isArray(arr) ? ret.push.apply(ret, arr) : ret.push(arr))
+  null !== arr && (Array.isArray(arr) ? ret.push.apply(ret, arr) : ret.push(arr))
   return ret
 }
 /**
@@ -505,8 +494,7 @@ function keyJoiner(parentKey, childKey) {
   return parentKey + "[" + childKey + "]"
 }
 function flattenData(data, parentKey) {
-  var options =
-    arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
+  var options = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
   var flatData = {}
   var keyJoiner$$ = options.keyJoiner || keyJoiner
   for (var keyName in data)
@@ -539,8 +527,7 @@ function flattenData(data, parentKey) {
  * @param {string[]} options.exclude
  * @param {string[]} options.ignoredTypes
  */ function deserialize(form, data) {
-  var options =
-    arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
+  var options = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {}
   var flattenedData = flattenData(data, null, options)
   options.keyExtractors = new KeyExtractors(options.keyExtractors || {})
   options.inputWriters = new InputWriters(options.inputWriters || {})
@@ -558,42 +545,7 @@ function flattenData(data, parentKey) {
    Use mail-ext-types.d.ts
    Remove lz4 compression
    Async migration functions
- */ function getManifest(_version) {
-  return messenger?.runtime?.getManifest?.()
-}
-function isCurrentPathname(path) {
-  if (!path) return false
-  try {
-    const { pathname: pathname } = new URL(path, location.origin)
-    return pathname === location.pathname
-  } catch {
-    return false
-  }
-}
-function once(function_) {
-  let result
-  return () => {
-    void 0 === result && (result = function_())
-    return result
-  }
-}
-const isBackground = () => isBackgroundPage()
-
-/** Indicates whether you're in a background page */ const isBackgroundPage =
-  once(() => {
-    const manifest = getManifest()
-    return (
-      !!manifest &&
-      (!!isCurrentPathname(
-        manifest.background_page ?? manifest.background?.page,
-      ) ||
-        Boolean(
-          manifest.background?.scripts &&
-          isCurrentPathname("/_generated_background_page.html"),
-        ))
-    )
-  })
-async function shouldRunMigrations() {
+ */ async function shouldRunMigrations() {
   const self = await messenger.management?.getSelf() // Always run migrations during development #25
 
   return (
@@ -613,8 +565,7 @@ class OptionsSync {
         Helper method that removes any option that isn't defined in the defaults. It's useful to avoid leaving old options taking up space.
         */
     removeUnused(options, defaults) {
-      for (const key of Object.keys(options))
-        key in defaults || delete options[key]
+      for (const key of Object.keys(options)) key in defaults || delete options[key]
     },
   }
   storageType
@@ -708,8 +659,7 @@ class OptionsSync {
     @param selector - The `<form>` that needs to be synchronized or a CSS selector (one element).
     The form fields' `name` attributes will have to match the option names.
     */ async syncForm(form) {
-    this._form =
-      form instanceof HTMLFormElement ? form : document.querySelector(form)
+    this._form = form instanceof HTMLFormElement ? form : document.querySelector(form)
     this._form.addEventListener("input", this._handleFormInput)
     this._form.addEventListener("submit", this._handleFormSubmit)
     messenger.storage.onChanged.addListener(this._handleStorageChangeOnForm)
@@ -721,9 +671,7 @@ class OptionsSync {
     if (this._form) {
       this._form.removeEventListener("input", this._handleFormInput)
       this._form.removeEventListener("submit", this._handleFormSubmit)
-      messenger.storage.onChanged.removeListener(
-        this._handleStorageChangeOnForm,
-      )
+      messenger.storage.onChanged.removeListener(this._handleStorageChangeOnForm)
       delete this._form
     }
   }
@@ -734,8 +682,7 @@ class OptionsSync {
     const _keys = Object.keys(this.defaults)
     const storageResults = await this.storage.get(_keys)
     for (const key of Object.keys(this.defaults))
-      Object.hasOwn(storageResults, key) ||
-        (storageResults[key] = this.defaults[key])
+      Object.hasOwn(storageResults, key) || (storageResults[key] = this.defaults[key])
     return storageResults
   }
   async _get(_keys) {
@@ -756,12 +703,7 @@ class OptionsSync {
     await this.storage.remove(_key)
   }
   async _runMigrations(migrations) {
-    if (
-      0 === migrations.length ||
-      !isBackground() ||
-      !(await shouldRunMigrations())
-    )
-      return
+    if (0 === migrations.length || !isBackground() || !(await shouldRunMigrations())) return
     const options = await this._getAll()
     this._log(
       "info",
@@ -780,9 +722,7 @@ class OptionsSync {
     const field = target
     if (field.name) {
       await this.set(this._parseForm(field.form))
-      field.form.dispatchEvent(
-        new CustomEvent("options-sync:form-synced", { bubbles: true }),
-      )
+      field.form.dispatchEvent(new CustomEvent("options-sync:form-synced", { bubbles: true }))
     }
   })
   _handleFormSubmit(event) {
@@ -803,9 +743,7 @@ class OptionsSync {
     const include = [] // Don't serialize disabled and invalid fields
 
     for (const field of form.querySelectorAll("[name]"))
-      field.validity.valid &&
-        !field.disabled &&
-        include.push(field.name.replace(/\[.*]/, ""))
+      field.validity.valid && !field.disabled && include.push(field.name.replace(/\[.*]/, ""))
     return serialize(form, { include: include })
   }
   _handleStorageChangeOnForm = (changes, areaName) => {
@@ -819,9 +757,8 @@ class OptionsSync {
         void 0 !== changes[change].newValue &&
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           (newValues[change] = changes[change].newValue)
-      Object.keys(newValues).length > 0 &&
-        this._updateForm(this._form, newValues)
+      Object.keys(newValues).length > 0 && this._updateForm(this._form, newValues)
     }
   }
 }
-export { OptionsSync as default, isBackground, isBackgroundPage }
+export { OptionsSync as default }

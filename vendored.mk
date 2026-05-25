@@ -38,11 +38,6 @@ $(EXTENSION)/highlightjs/highlightjs.esm.js: node_modules/highlight.js/es/common
 	$<
 	node ./tools/highlightjs_styles.js node_modules/highlight.js/styles $(EXTENSION)/highlightjs/styles
 
-mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
-
-$(EXTENSION)/options/mailext-options-sync.js: node_modules/@jfx2006/mailext-options-sync/index.js
-	$(CP) $< $@
-
 marked: $(EXTENSION)/vendor/marked.esm.js
 
 $(EXTENSION)/vendor/marked.esm.js: node_modules/marked/lib/marked.esm.js
@@ -90,6 +85,5 @@ clean:
 	$(RM) $(EXTENSION)/vendor/*
 	$(RM) $(EXTENSION)/data/emoji_codes.json
 	$(RM) $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
-	$(RM) $(EXTENSION)/options/mailext-options-sync.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla mailext-options-sync
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla
