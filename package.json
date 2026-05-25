@@ -1,6 +1,6 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.12",
+  "version": "4.0.11",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build -n markdown-here-revival.xpi",
@@ -26,13 +26,13 @@
     "emojibase-data": "^17.0.0",
     "eventemitter3": "^5.0.4",
     "highlight.js": "^11.11.1",
-    "marked": "^17.0.6",
+    "marked": "^17.0.5",
     "marked-emoji": "^2.0.1",
     "marked-extended-tables": "2.0.1",
-    "marked-highlight": "^2.2.4",
-    "marked-linkify-it": "^3.1.15",
+    "marked-highlight": "^2.2.3",
+    "marked-linkify-it": "^3.1.14",
     "texzilla": "^1.0.2",
-    "turndown": "^7.2.4"
+    "turndown": "^7.2.2"
   },
   "overrides": {
     "marked-extended-tables": {
@@ -40,18 +40,18 @@
     }
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.5",
+    "@eslint/compat": "^2.0.3",
     "@eslint/css": "^1.1.0",
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.4",
     "@eslint/json": "^1.2.0",
     "@eslint/markdown": "^8.0.1",
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/thunderbird-webext-browser": "^127.0.0",
     "cpy-cli": "^7.0.0",
-    "esbuild": "^0.27.7",
+    "esbuild": "^0.27.4",
     "esbuild-plugin-replace-regex": "^0.0.2",
-    "eslint": "^10.2.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-mailextensions-env": "file:tools/eslint-plugin-mailextensions-env",
@@ -62,7 +62,7 @@
     "rollup": "^4.17.2",
     "touch": "^3.1.1",
     "typescript": "^6.0.2",
-    "typescript-eslint": "^8.58.1",
+    "typescript-eslint": "^8.58.0",
     "web-ext": "^10.1.0"
   }
 }
