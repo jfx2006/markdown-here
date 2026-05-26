@@ -100,3 +100,14 @@ vendored:
     cmds:
       - $(CP) $< $@
       - node ./tools/fileappend.js $@ "export default TeXZilla"
+
+  mailext-options-sync:
+    node_pkg: "@jfx2006/mailext-options-sync"
+    paths:
+      mailext-options-sync.js: index.ts
+    vendor_prefix: options
+    clean: $(RM) $(EXTENSION)/options/mailext-options-sync.js mailext-options-sync/index.js
+    method: bash
+    cmds:
+      - node ./node_modules/.bin/rollup -c "node_modules/{node_pkg}/rollup.config.js"
+      - $(CP) "node_modules/{node_pkg}/index.js" $@

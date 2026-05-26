@@ -1,10 +1,9 @@
 EXTENSION = extension
 include ./tools/makecmds.mk
 
-all: node_modules mailext-options-sync vendored build
-	$(TOUCH) all
+all: node_modules vendored build
 
-build:
+build: node_modules vendored
 	npm run build
 
 ci: clean all build
@@ -12,18 +11,9 @@ ci: clean all build
 	python tools/version_env.py
 
 node_modules: package.json
-	npm install
+	npm clean-install
 
-MAILEXT_OPTIONS_SYNC_FILES = index.ts globals.d.ts
-MAILEXT_OPTIONS_SYNC_DEPS := $(addprefix mailext-options-sync/,$(MAILEXT_OPTIONS_SYNC_FILES))
-
-mailext-options-sync/index.js: $(MAILEXT_OPTIONS_SYNC_DEPS)
-	cd mailext-options-sync && npm install && npm run build
-
-$(EXTENSION)/options/mailext-options-sync.js: mailext-options-sync/index.js
-	$(CP) $< $@
-
-mailext-options-sync: $(EXTENSION)/options/mailext-options-sync.js
+npm: node_modules
 
 vendored.mk: package.json tools/vendored.yml tools/mk-vendored.py
 	python tools/mk-vendored.py
@@ -44,9 +34,5 @@ git_status:
   	fi
 
 clean:
-	$(RM) mailext-options-sync/mailext-options-sync.js
-	$(RM) $(EXTENSION)/options/mailext-options-sync.js
-	$(RM) --recursive mailext-options-sync/node_modules
-	$(RM) all
 	make -f vendored.mk clean
-	$(RM) --recursive node_modules
+	$(RM) --recursive node_modules mailext-options-sync/node_modules

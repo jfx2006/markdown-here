@@ -3,6 +3,10 @@ import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import prettier from 'rollup-plugin-prettier';
+import * as path from "path"
+
+const pwd = process.cwd()
+const relpath = path.relative(pwd, import.meta.dirname)
 
 const PREAMBLE = `/**
 * mailext-options-sync.js":
@@ -11,20 +15,15 @@ const PREAMBLE = `/**
 `;
 
 const config = {
-	input: 'index.ts',
+	input: path.join(".", relpath, "index.ts"),
 	output: {
-		file: 'index.js',
-		format: 'esm',
+		file: path.join(".", relpath, "index.js"),
+		format: "esm",
 	},
 	plugins: [
 		resolve(),
 		commonjs(),
-		typescript({
-			outDir: '.',
-			include: ['mail-ext-types.d.ts',
-				'globals.d.ts',
-				'index.ts'],
-		}),
+		typescript(),
 		terser({
 			toplevel: true,
 			output: {
@@ -45,9 +44,9 @@ const config = {
 			tabwidth: 2,
 			singleQuote: false,
 			semi: false,
-			parser: 'babel',
+			parser: "babel",
 		}),
 	],
-};
+}
 
 export default config;
