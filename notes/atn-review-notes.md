@@ -7,8 +7,8 @@ automatically. It only works when composing in HTML mode.
 
 (Python should not be needed for reproducing build with "make all")
 
-- Node 24.14
-- npm 11.12
+- Node 22.22.3
+- npm 10.9.8
 - GNU Make
 - Bash
 
@@ -50,16 +50,3 @@ vendored code is now ignored by git.
 Running `make all` will also run `make vendored`.
 
 Running `make clean` removes the vendored code.
-
-
-## How release builds are handled
-
-The XPI and source files uploaded to ATN are built in a Docker container
-on GitLab's CI.
-
-In addition to the steps run by "make all" described below, prior to creating
-the XPI and source tar files, "git status" gets run to verify that files
-generated during the build match the ones checked in to the repository. I
-acknowledge that there have been unexpected differences in past versions
-which led to bugs in the extension.
-

@@ -9,7 +9,7 @@ RUN groupadd --gid 1000 node \
 # ensure local node/python is preferred over distribution
 ENV PATH=/usr/local/bin:$PATH
 
-ENV NODE_VERSION=22.20.0
+ENV NODE_VERSION=22.22.3
 ENV ARCH=x64
 
 RUN export GNUPGHOME="$(mktemp -d)" \
