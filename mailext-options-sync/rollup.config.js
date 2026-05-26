@@ -2,7 +2,6 @@ import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import prettier from 'rollup-plugin-prettier';
 import * as path from "path"
 
 const pwd = process.cwd()
@@ -39,12 +38,6 @@ const config = {
 				sequences: false,
 				reduce_vars: false, // eslint-disable-line camelcase
 			},
-		}),
-		prettier({
-			tabwidth: 2,
-			singleQuote: false,
-			semi: false,
-			parser: "babel",
 		}),
 	],
 }
