@@ -18,3 +18,4 @@ extension/highlightjs/styles/*.css
 extension/highlightjs/styles/styles.json
 extension/vendor/*js
 extension/vendor/*.css
+extension/options/mailext-options-sync.js
