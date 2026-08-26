@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.0.14]
+
+### Fixed
+- Bump strict_max_version to support Thunderbird 154.
+
 ## [4.0.13]
 
 ### Fixed
