@@ -7,8 +7,8 @@ automatically. It only works when composing in HTML mode.
 
 (Python should not be needed for reproducing build with "make all")
 
-- Node 22.22.3
-- npm 10.9.8
+- Node 22.x
+- npm 10.x
 - GNU Make
 - Bash
 
