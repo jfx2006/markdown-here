@@ -9,7 +9,7 @@
     "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
   "__WET_GROUP__application": {
-    "message": "Demande",
+    "message": "Application",
     "hash": "705a7139d345ac5faa9a3cfc7114e189"
   },
   "toggle_button_tooltip_enable": {
@@ -122,7 +122,7 @@
     "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "Lorsque vous envoyez un email, cela vérifie le contenu pour voir s'il ressemble à vous l'avez écrit dans Markdown,\nmais a oublié de le rendre (c.-à-d., cliquez sur 'Markdown Toggle') avant d'envoyer.\nCela peut être désactivé s'il interfère avec votre capacité d'envoyer des courriels.",
+    "message": "Lorsque vous envoyez un courriel, ceci vérifie si son contenu semble avoir été écrit en Markdown,\nmais que vous auriez oublié de le rendre (c.-à-d. cliquer sur « Markdown Toggle ») avant l'envoi.\nCette option peut être désactivée si elle vous empêche d'envoyer vos courriels.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "1c100cda3b6f6da50138458b785b47cb"
   },
@@ -151,7 +151,7 @@
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__emoji_shortcode_enabled_label": {
-    "message": "Activer :emoji : (style github) Codes courts",
+    "message": "Activer les codes courts « :emoji: » (façon GitHub)",
     "description": "Label for enabling emoji shortcodes",
     "hash": "b20f1c09d205160478c354cfd2aefc59"
   },
@@ -236,11 +236,11 @@
     "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
-    "message": "Comment",
+    "message": "Mode d'emploi",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__howto": {
-    "message": "Comment",
+    "message": "Mode d'emploi",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__basic_usage": {
@@ -256,7 +256,7 @@
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "'Marquage' **Voici** _Renouveau_!",
+    "message": "`Markdown` **Here** _Revival_ !",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
   "options_page__compose_live_preview": {
@@ -268,7 +268,7 @@
     "hash": "4ab42a8334e6c82218c00d007d10fae5"
   },
   "options_page__toggle_hotkey": {
-    "message": "Ou utilisez la touche :",
+    "message": "Ou utilisez le raccourci clavier :",
     "description": "A step suggestion in the basic usage instructions",
     "hash": "64f745514a24fa38ae148ef25745c835"
   },
@@ -282,7 +282,7 @@
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
-    "message": "Markdown ici Revival wiki",
+    "message": "Wiki de Markdown Here Revival",
     "hash": "31514a95d56ddc2d8df5c4d15439d17f"
   },
   "options_page__tips_tricks_link": {
@@ -326,7 +326,7 @@
     "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
   },
   "options_page__create_gitlab_issue": {
-    "message": "Créer un nouveau numéro sur GitLab",
+    "message": "Créer un nouveau ticket sur GitLab",
     "description": "Text linking to Gitlab issue creation page",
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
@@ -356,7 +356,7 @@
     "hash": "fa17dd5843873b9c6fe69dfbedb640a3"
   },
   "options_page__changelog_title": {
-    "message": "Changer de journal",
+    "message": "Journal des modifications",
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
@@ -365,7 +365,7 @@
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
   "options_page__invalid_hotkey": {
-    "message": "C'est nul !",
+    "message": "Raccourci clavier invalide !",
     "description": "message that shows when an invalid hotkey combination was entered",
     "hash": "54331fedbb67ec446035ce5b0b51b92"
   },
