@@ -301,41 +301,51 @@ import OptionsStore from "./options-storage.js"
     }, 5000)
   }
 
-  async function handleUIMode(e, force = false) {
+  async function handleUIMode(e, isInit = false) {
     const value_elem = document.getElementById("mode-radio")
     const old_value = value_elem.dataset.value
     const mode_elem = document.querySelector("input[name='mdhr-mode']:checked")
     const new_value = mode_elem.id
-    if (old_value !== new_value || force) {
+    if (old_value !== new_value || isInit) {
       if (new_value === "mdhr-classic") {
-        await enableClassicOptions()
+        await enableClassicOptions(isInit)
       } else {
-        await enableModernOptions()
+        await enableModernOptions(isInit)
       }
       value_elem.dataset.value = new_value
     }
   }
 
-  async function enableClassicOptions() {
-    // This is the "Start Composer in Markdown Mode" checkbox, disabled in Classic Mode
-    await OptionsStore.set({ "enable-markdown-mode": false })
+  async function enableClassicOptions(isInit = false) {
     let elem = document.getElementById("markdown-mode")
     elem.disabled = true
     // This is the "Forgot to Render" option, enable it in Classic Mode
     elem = document.getElementById("forgot-to-render")
     elem.disabled = false
+    if (isInit) {
+      // Only sync the disabled state on page load; do not touch the user's
+      // actual saved "Start Composer in Markdown Mode" value.
+      return
+    }
+    // This is the "Start Composer in Markdown Mode" checkbox, disabled in Classic Mode
+    await OptionsStore.set({ "enable-markdown-mode": false })
     await messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: "classic" })
   }
 
-  async function enableModernOptions() {
-    // This is the "Start Composer in Markdown Mode" checkbox, enabled in Modern Mode
+  async function enableModernOptions(isInit = false) {
     let elem = document.getElementById("markdown-mode")
     elem.disabled = false
-    elem.checked = true
-    await OptionsStore.set({ "enable-markdown-mode": true })
-    // This is the "Forgot to Render" option, disable it in Modern Mode
     elem = document.getElementById("forgot-to-render")
     elem.disabled = true
+    if (isInit) {
+      // Only sync the disabled state on page load; do not touch the user's
+      // actual saved "Start Composer in Markdown Mode" value.
+      return
+    }
+    // This is the "Start Composer in Markdown Mode" checkbox, enabled in Modern Mode
+    elem = document.getElementById("markdown-mode")
+    elem.checked = true
+    await OptionsStore.set({ "enable-markdown-mode": true })
     await messenger.runtime.sendMessage({ action: "mdhr-mode-set", mode: "modern" })
   }
 

@@ -206,20 +206,21 @@ async function getMsgContent() {
 
 const onContextChange = async function (context) {
   const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
-  const data = { "enable-markdown-mode": !context.hidden }
-  if (mdhr_mode === "modern") {
-    let preview_width = context.width
-    if (Boolean(context.width) && context.width < 30) {
-      preview_width = 300
-    }
-    data["preview-width"] = preview_width
-  } else {
-    if (Boolean(data["preview-width"])) {
-      delete data["preview-width"]
-    }
+  if (mdhr_mode !== "modern") {
+    return
+  }
+  // Only the preview pane's width is a persisted global default here.
+  // Visibility ("hidden") is per-window session state, tracked via
+  // ex_customui's local options (see togglePreview/disableForPlainText) and
+  // must NOT be written back to "enable-markdown-mode" (the "Start composer
+  // in markdown mode" default): doing so used to make toggling the preview
+  // in any single compose window silently overwrite that global setting.
+  let preview_width = context.width
+  if (Boolean(context.width) && context.width < 30) {
+    preview_width = 300
   }
   try {
-    await OptionsStore.set(data)
+    await OptionsStore.set({ "preview-width": preview_width })
   } catch (e) {
     console.log(e)
   }
