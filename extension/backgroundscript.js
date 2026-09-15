@@ -264,36 +264,44 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
     return {}
   }
   try {
-    const savedState = await OptionsStore.get([
-      "forgot-to-render-check-enabled",
-      "enable-markdown-mode",
-    ])
-    const markdownEnabled = savedState["enable-markdown-mode"]
+    const savedState = await OptionsStore.get(["forgot-to-render-check-enabled"])
     const forgotToRenderCheckEnabled = savedState["forgot-to-render-check-enabled"]
-    if (!markdownEnabled && forgotToRenderCheckEnabled) {
-      const isMarkdown = await withTimeout(
-        messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" }),
-        5000,
-        "check-forgot-render",
-      )
-      if (isMarkdown) {
-        const message = `${getMessage("forgot_to_render_prompt_info")}
-          ${getMessage("forgot_to_render_prompt_question")}`
-        const rv = await openNotification(
-          tab.windowId,
-          message,
-          messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
-          [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+    // Whether markdown/preview mode is active in THIS specific compose window
+    // right now. This must be queried live from the window itself rather than
+    // from the persisted "enable-markdown-mode" default: that option only
+    // reflects the default for new windows and can legitimately differ from
+    // what the user is doing in the window they're sending from (e.g. they
+    // left the default off but turned preview on just for this email).
+    const previewHidden = await withTimeout(
+      messenger.runtime.sendMessage({
+        action: "cp.get-hidden",
+        windowId: tab.windowId,
+      }),
+      5000,
+      "cp.get-hidden",
+    ).catch(() => true)
+    if (previewHidden) {
+      if (forgotToRenderCheckEnabled) {
+        const isMarkdown = await withTimeout(
+          messenger.tabs.sendMessage(tab.id, { action: "check-forgot-render" }),
+          5000,
+          "check-forgot-render",
         )
-        if (rv !== "ok") {
-          return { cancel: true } // Markdown disabled and is markdown content
+        if (isMarkdown) {
+          const message = `${getMessage("forgot_to_render_prompt_info")}
+          ${getMessage("forgot_to_render_prompt_question")}`
+          const rv = await openNotification(
+            tab.windowId,
+            message,
+            messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+            [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+          )
+          if (rv !== "ok") {
+            return { cancel: true } // Preview inactive and content looks like markdown
+          }
         }
       }
-      return {} // Markdown disabled and not markdown content
-    }
-    const previewHidden = savedState["enable-markdown-mode"] === "false"
-    if (previewHidden) {
-      return {}
+      return {} // Preview inactive in this window
     }
     const msgHTML = await withTimeout(
       messenger.runtime.sendMessage({
