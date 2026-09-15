@@ -363,6 +363,11 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
           return false
         }
         return getMsgContent()
+      case "cp.get-hidden":
+        if (request.windowId !== context.windowId) {
+          return false
+        }
+        return messenger.ex_customui.getContext().then((ctx) => ctx.hidden)
       case "cp.scroll-to":
         if (sender.tab.windowId !== context.windowId) {
           return false
