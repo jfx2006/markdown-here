@@ -60,7 +60,6 @@ messenger.runtime.onInstalled.addListener(async (details) => {
       updateCallback(winId, onboardUrl)
       break
   }
-  await doStartup()
 })
 
 // Handle rendering requests from the content script.
@@ -675,6 +674,12 @@ async function doStartup() {
   const useParagraphPref = await messenger.reply_prefs.getUseParagraph()
   await updateBodyTextOptionFromSettings(useParagraphPref)
 }
-messenger.runtime.onStartup.addListener(async function () {
-  await doStartup()
-})
+// Run unconditionally whenever this background script executes: on a fresh
+// install, on update, on normal Thunderbird startup, AND when the user
+// simply re-enables the add-on after disabling it mid-session. Only
+// onInstalled/onStartup fire for the first three cases; re-enabling doesn't
+// dispatch either event to the extension, so relying on those alone left
+// injectMDPreview() (and the rest of doStartup()) never called after a
+// disable/re-enable cycle, leaving compose windows without the preview UI
+// until a full Thunderbird restart (#140).
+await doStartup()
