@@ -11,6 +11,7 @@ import { CSSInliner } from "./css-inliner.js"
 import { MdhrMangle } from "../mdhr-mangle.js"
 import { strToBase64 } from "../base64.js"
 import { markdownRender, resetMarked } from "../markdown-render.js"
+import { stripOldMdhrRaw } from "./mdhr-raw.js"
 
 const STYLE_ELEM_IDS = ["MDHR_syntax_css", "MDHR_main_css"]
 const REMOVE_ELEM_IDS = ["MDHR_CSP", "MDHR_tb_style", "MDHR_preview_style"]
@@ -68,10 +69,7 @@ function wrapExternal(doc) {
   let i = 0
   for (const element of elements) {
     // Remove any "mdhr-raw" elements in replies to keep the size of the message reasonable.
-    const rawElems = element.querySelectorAll("div.mdhr-raw")
-    for (const rawElem of rawElems) {
-      rawElem.remove()
-    }
+    stripOldMdhrRaw(element)
     const wrapper = doc.createElement("div")
     wrapper.classList.add("external-content")
     wrapper.id = `extcontent-${i}`
@@ -174,6 +172,10 @@ async function setModernMode() {
 }
 
 function getMdhrRaw(msg_doc) {
+  // Strip any raw dumps already nested in this document's quoted/forwarded
+  // history before capturing the content, otherwise this new dump would
+  // recursively encode every prior one (#82).
+  stripOldMdhrRaw(msg_doc)
   const content = `${msg_doc.body.innerHTML}`
   const rawHolder = msg_doc.createElement("div")
   rawHolder.classList.add("mdhr-raw")
@@ -189,6 +191,10 @@ async function getMsgContent() {
   const html_msg = p_iframe.contentDocument
   removeMDPreviewStyles(html_msg)
   deShadowRoot(html_msg)
+  // Remove raw dumps carried over from quoted/forwarded history so they
+  // don't keep piling up in the sent message on every reply (#82) — only
+  // the fresh one added below is kept.
+  stripOldMdhrRaw(html_msg)
 
   // Load message source from compose window
   const tabId = await getTabId()
