@@ -20,6 +20,7 @@ import { markedHighlight } from "./vendor/marked-highlight.esm.js"
 import markedExtendedTables from "./vendor/marked-extended-tables.esm.js"
 import markedLinkifyIt from "./vendor/marked-linkify-it.esm.js"
 import { urlSchemify } from "./marked-link-scheme.esm.js"
+import { stripFrontmatter } from "./frontmatter.js"
 
 import OptionsStore from "./options/options-storage.js"
 
@@ -102,5 +103,8 @@ export async function resetMarked(userprefs) {
  render html into pretty text.
  */
 export async function markdownRender(mdText) {
+  // Une éventuelle préambule YAML en tête de document n'est pas du contenu
+  // à rendre : on la retire avant le parsing (#80).
+  mdText = stripFrontmatter(mdText)
   return await marked.parse(mdText)
 }
