@@ -18,6 +18,19 @@
             "optional": "true",
             "description": "Desired total width of the custom UI component, in pixels. The actual available height may differ (and change dynamically)."
           },
+          "width_ratio": {
+            "type": "number",
+            "optional": true,
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Desired width of the component as a fraction of its container (compose_editor only)."
+          },
+          "width_mode": {
+            "type": "string",
+            "enum": ["ratio", "fixed"],
+            "optional": true,
+            "description": "How the component width is expressed: \"ratio\" (fraction of the container, tracks resizing) or \"fixed\" (fixed pixel width). compose_editor only."
+          },
           "hidden": {
             "type": "boolean",
             "optional": "true",

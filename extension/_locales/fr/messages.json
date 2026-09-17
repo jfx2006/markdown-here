@@ -130,6 +130,15 @@
     "message": "Démarrer le compositeur en mode balisage",
     "hash": "97a0a3d24c0345f5347393de128d07d0"
   },
+  "options_page__preview_width_mode_label": {
+    "message": "Largeur du panneau de preview"
+  },
+  "options_page__preview_width_mode_ratio_label": {
+    "message": "Suit la taille de la fenêtre (recommandé)"
+  },
+  "options_page__preview_width_mode_fixed_label": {
+    "message": "Largeur fixe, réglée en faisant glisser le séparateur"
+  },
   "options_page__features_title": {
     "message": "Caractéristiques du marquage",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",

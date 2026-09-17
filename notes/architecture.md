@@ -132,6 +132,17 @@ The modern mode's split-view panel:
   sandboxed iframe (`preview_iframe.html`).
 - `css-inliner.js` computes and inlines all CSS styles into elements so
   the email renders consistently across mail clients.
+- DOM layout (built in `experiments/customui/parent.js`):
+  `#customui-editor-wrapper` is a flex row containing the editor column
+  (`#customui-editor-col`), a XUL `<splitter>`, and the preview column
+  (the `vbox` holding the preview frame).
+- The preview column width is a *percentage* derived from the persisted
+  `preview-ratio` option (float 0.1–0.9, default 0.5), so the pane stays
+  proportional when the compose window is resized — no JS resize handler.
+- Drag flow: splitter drag sets a px width; on `mouseup` `parent.js`
+  converts it back to a ratio, reapplies it as `%`, and publishes it as
+  the `width_ratio` context property → `compose_preview.js`'s
+  `onContextChange` persists it to `preview-ratio`.
 
 ### Options System (`options/`)
 

@@ -7,7 +7,7 @@
 /*
  * Mail Extension background script.
  */
-import { getMessage, sha256Digest, toInt } from "./async_utils.mjs"
+import { getMessage, sha256Digest, toRatio, toWidthMode, toWidthPx } from "./async_utils.mjs"
 import OptionsStore from "./options/options-storage.js"
 import { getShortcutStruct } from "./options/shortcuts.js"
 
@@ -211,15 +211,12 @@ messenger.menus.onClicked.addListener(async (info, tab) => {
 })
 
 async function resetModernMode(preview = true, width = true) {
-  const savedPreviewWidth = (await OptionsStore.get("saved-preview-width"))["saved-preview-width"]
   const saved = await saveComposed()
   await unInjectMDPreview()
   await OptionsStore.set({
     "mdhr-mode": "modern",
     "enable-markdown-mode": "true",
-    "preview-width": savedPreviewWidth,
   })
-  //await OptionsStore.reset("preview-width")
   await injectMDPreview()
   await restoreComposed(saved)
 }
@@ -535,8 +532,6 @@ async function updateHotKey(rendered = null) {
 }
 
 async function setClassicMode(hidden = true) {
-  const previewWidth = (await OptionsStore.get("preview-width"))["preview-width"]
-  await OptionsStore.set({ "saved-preview-width": previewWidth })
   const wins = await getOpenComposeWindows()
   for (const win of wins) {
     await messenger.runtime.sendMessage({
@@ -559,8 +554,6 @@ async function setClassicMode(hidden = true) {
 }
 
 async function setModernMode(hidden = false) {
-  const savedPreviewWidth = (await OptionsStore.get("saved-preview-width"))["saved-preview-width"]
-  await OptionsStore.set({ "preview-width": savedPreviewWidth })
   const wins = await getOpenComposeWindows()
   for (const win of wins) {
     await messenger.runtime.sendMessage({
@@ -628,18 +621,16 @@ async function injectMDPreview() {
   // Register custom UI compose editor
   const savedState = await OptionsStore.get([
     "mdhr-mode",
+    "preview-ratio",
     "preview-width",
+    "preview-width-mode",
     "enable-markdown-mode",
-    "saved-preview-width",
   ])
   const options = { mode: savedState["mdhr-mode"] }
   if (savedState["mdhr-mode"] === "modern") {
-    try {
-      options["width"] = toInt(savedState["preview-width"])
-      // eslint-disable-next-line no-unused-vars
-    } catch (e) {
-      options["width"] = toInt(savedState["saved-preview-width"])
-    }
+    options["width_ratio"] = toRatio(savedState["preview-ratio"])
+    options["width"] = toWidthPx(savedState["preview-width"])
+    options["width_mode"] = toWidthMode(savedState["preview-width-mode"])
     options["hidden"] = savedState["enable-markdown-mode"] === "false"
   } else {
     options["hidden"] = true
@@ -665,10 +656,6 @@ async function unInjectMDPreview() {
 }
 
 async function doStartup() {
-  const savedState = await OptionsStore.get(["mdhr-mode", "preview-width"])
-  if (savedState["mdhr-mode"] === "modern") {
-    await OptionsStore.set({ "saved-preview-width": savedState["preview-width"] })
-  }
   await updateHotKey()
   await injectMDPreview()
   const useParagraphPref = await messenger.reply_prefs.getUseParagraph()
