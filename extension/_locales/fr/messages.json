@@ -160,6 +160,11 @@
     "description": "Label for enabling an auto-complete popup for emoji shortcodes",
     "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
+  "options_page__csv_table_enabled_label": {
+    "message": "Afficher les blocs de code CSV sous forme de tableau",
+    "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables",
+    "hash": "b5a6678449c84f0d5dd7207c9ba6504b"
+  },
   "options_page__hotkey_title": {
     "message": "Raccourci clavier",
     "description": "A section title",

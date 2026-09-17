@@ -42,6 +42,23 @@ vendored:
     path: src/degausser.js
     method: rollup
 
+  papaparse:
+    path: papaparse.js
+    method: bash
+    cmds:
+      # PapaParse's Node Duplex-stream mode does a lazy `require('stream')`
+      # that we never exercise (we only parse strings). The generic rollup
+      # method would hoist it into a static `import ... from 'stream'`,
+      # which doesn't resolve in a WebExtension context — tell commonjs to
+      # leave it as a plain runtime require instead (dead code for us).
+      - >
+        ./node_modules/.bin/rollup --format es
+        --file "$(EXTENSION)/{vendor_prefix}/{node_pkg}.esm.js"
+        -p @rollup/plugin-node-resolve
+        -p '@rollup/plugin-commonjs={{"ignore":["stream"]}}'
+        -m inline
+        $<
+
   highlightjs:
     path: es/common.js
     method: bash
