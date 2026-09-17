@@ -11,6 +11,9 @@ import {
   getHljsStylesheet,
   getHljsStyles,
   getMessage,
+  toRatio,
+  toWidthMode,
+  toWidthPx,
 } from "../async_utils.mjs"
 
 describe("AsyncUtils", function () {
@@ -68,6 +71,49 @@ describe("AsyncUtils", function () {
 
     it('return null on bad message ID', function() {
       expect(getMessage('BAADF00D')).to.be.null
+    })
+  })
+
+  describe("toRatio", function () {
+    it("should parse a numeric string", function () {
+      expect(toRatio("0.4")).to.equal(0.4)
+    })
+
+    it("should return the fallback for a non-numeric value", function () {
+      expect(toRatio("abc")).to.equal(0.5)
+    })
+
+    it("should clamp values above the maximum", function () {
+      expect(toRatio(2)).to.equal(0.9)
+    })
+
+    it("should clamp values below the minimum", function () {
+      expect(toRatio(0)).to.equal(0.1)
+    })
+  })
+
+  describe("toWidthMode", function () {
+    it("should keep the fixed mode", function () {
+      expect(toWidthMode("fixed")).to.equal("fixed")
+    })
+
+    it("should default to ratio for any other value", function () {
+      expect(toWidthMode("bogus")).to.equal("ratio")
+      expect(toWidthMode(undefined)).to.equal("ratio")
+    })
+  })
+
+  describe("toWidthPx", function () {
+    it("should parse a numeric string", function () {
+      expect(toWidthPx("420")).to.equal(420)
+    })
+
+    it("should return the fallback for a non-numeric value", function () {
+      expect(toWidthPx("abc")).to.equal(650)
+    })
+
+    it("should clamp values below the minimum", function () {
+      expect(toWidthPx(10)).to.equal(100)
     })
   })
 })

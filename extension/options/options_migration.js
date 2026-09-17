@@ -186,6 +186,18 @@ export async function migrate_mathRenderer2(options, defaults) {
   return null
 }
 
+export async function migrate_previewRatio(options, defaults) {
+  // Assainit "preview-ratio" : valeur numérique bornée entre 0.1 et 0.9
+  const raw = options["preview-ratio"]
+  const f = parseFloat(raw)
+  if (isNaN(f) || f < 0.1 || f > 0.9 || typeof raw === "string") {
+    return {
+      "preview-ratio": isNaN(f) ? defaults["preview-ratio"] : Math.min(0.9, Math.max(0.1, f)),
+    }
+  }
+  return null
+}
+
 export async function migrate_macHotkeys(options, defaults) {
   if (navigator.platform === "MacIntel") {
     if (options["hotkey-input"] === "Ctrl+Alt+M") {

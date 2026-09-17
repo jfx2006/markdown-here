@@ -5,7 +5,14 @@
  */
 
 import DOMPurify from "../vendor/purify.es.mjs"
-import { debounce, fetchExtFile, getMainCSS, getSyntaxCSS, toInt } from "../async_utils.mjs"
+import {
+  fetchExtFile,
+  getMainCSS,
+  getSyntaxCSS,
+  toRatio,
+  toWidthMode,
+  toWidthPx,
+} from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 import { MdhrMangle } from "../mdhr-mangle.js"
@@ -156,12 +163,21 @@ async function setClassicMode() {
 }
 
 async function setModernMode() {
-  const savedState = await OptionsStore.get(["preview-width", "enable-markdown-mode"])
-  const preview_width = toInt(savedState["preview-width"])
+  const savedState = await OptionsStore.get([
+    "preview-ratio",
+    "preview-width",
+    "preview-width-mode",
+    "enable-markdown-mode",
+  ])
+  const ratio = toRatio(savedState["preview-ratio"])
+  const width = toWidthPx(savedState["preview-width"])
+  const widthMode = toWidthMode(savedState["preview-width-mode"])
   const hidden = !savedState["enable-markdown-mode"]
   await messenger.ex_customui.setLocalOptions({
     mode: "modern",
-    width: preview_width,
+    width_ratio: ratio,
+    width: width,
+    width_mode: widthMode,
     hidden: hidden,
   })
   if (!hidden) {
@@ -210,25 +226,48 @@ async function getMsgContent() {
   return serializer.serializeToString(html_msg)
 }
 
+let lastPersistedRatio = null
+let lastPersistedWidth = null
 const onContextChange = async function (context) {
+  const hasRatio = typeof context.width_ratio === "number"
+  const hasWidth = typeof context.width === "number"
+  if (!hasRatio && !hasWidth) {
+    return
+  }
   const mdhr_mode = (await OptionsStore.get("mdhr-mode"))["mdhr-mode"]
   if (mdhr_mode !== "modern") {
     return
   }
-  // Only the preview pane's width is a persisted global default here.
+  // Only the preview pane's width ratio is a persisted global default here.
   // Visibility ("hidden") is per-window session state, tracked via
   // ex_customui's local options (see togglePreview/disableForPlainText) and
   // must NOT be written back to "enable-markdown-mode" (the "Start composer
   // in markdown mode" default): doing so used to make toggling the preview
   // in any single compose window silently overwrite that global setting.
-  let preview_width = context.width
-  if (Boolean(context.width) && context.width < 30) {
-    preview_width = 300
+  // Le ratio et la largeur px sont persistés indépendamment : chaque mode
+  // conserve sa propre valeur, on retrouve donc la dernière largeur fixe même
+  // après un passage par le mode ratio (et inversement).
+  if (hasRatio) {
+    const ratio = toRatio(context.width_ratio)
+    if (lastPersistedRatio === null || Math.abs(ratio - lastPersistedRatio) >= 0.001) {
+      lastPersistedRatio = ratio
+      try {
+        await OptionsStore.set({ "preview-ratio": ratio })
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
-  try {
-    await OptionsStore.set({ "preview-width": preview_width })
-  } catch (e) {
-    console.log(e)
+  if (hasWidth) {
+    const width = toWidthPx(context.width)
+    if (width !== lastPersistedWidth) {
+      lastPersistedWidth = width
+      try {
+        await OptionsStore.set({ "preview-width": width })
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 }
 
@@ -271,16 +310,6 @@ async function previewFrameLoaded(e) {
     const hidden = !(await OptionsStore.get("enable-markdown-mode"))["enable-markdown-mode"]
     await sendPreviewStateToCompose(tabId, hidden)
   }
-
-  window.addEventListener(
-    "resize",
-    debounce(function (event) {
-      const preview_width = p_iframe.parentElement.clientWidth
-      if (preview_width > 0) {
-        OptionsStore.set({ "preview-width": preview_width })
-      }
-    }, 500),
-  )
 }
 
 async function scrollTo(payload) {

@@ -12,6 +12,7 @@ import {
   migrate_smartReplacements,
   migrate_syntaxCSS,
   migrate_mathCodecogs,
+  migrate_previewRatio,
 } from "../options/options_migration.js"
 
 import { fetchExtFile, sha256Digest } from "../async_utils.mjs"
@@ -24,6 +25,7 @@ const DEFAULTS = {
   "hotkey-input": "HOTKEY_INPUT",
   "gfm-line-breaks-enabled": true,
   "last-version": "0",
+  "preview-ratio": 0.5,
 }
 
 describe("options_migrations tests", function () {
@@ -131,6 +133,34 @@ describe("options_migrations tests", function () {
       let options = { "math-renderer": "texzilla" }
       let changed = await migrate_mathCodecogs(options, DEFAULTS)
       expect(changed).to.be.null
+    })
+  })
+
+  describe("migrate_previewRatio", function () {
+    it("should leave a valid ratio alone", async function () {
+      let options = { "preview-ratio": 0.4 }
+      let changed = await migrate_previewRatio(options, DEFAULTS)
+      expect(changed).to.be.null
+    })
+    it("should convert a string ratio to a number", async function () {
+      let options = { "preview-ratio": "0.4" }
+      let changed = await migrate_previewRatio(options, DEFAULTS)
+      expect(changed["preview-ratio"]).to.equal(0.4)
+    })
+    it("should reset a non-numeric ratio to the default", async function () {
+      let options = { "preview-ratio": "BOGUS" }
+      let changed = await migrate_previewRatio(options, DEFAULTS)
+      expect(changed["preview-ratio"]).to.equal(DEFAULTS["preview-ratio"])
+    })
+    it("should clamp an out of range ratio", async function () {
+      let options = { "preview-ratio": 2 }
+      let changed = await migrate_previewRatio(options, DEFAULTS)
+      expect(changed["preview-ratio"]).to.equal(0.9)
+    })
+    it("should reset a missing ratio to the default", async function () {
+      let options = {}
+      let changed = await migrate_previewRatio(options, DEFAULTS)
+      expect(changed["preview-ratio"]).to.equal(DEFAULTS["preview-ratio"])
     })
   })
 })

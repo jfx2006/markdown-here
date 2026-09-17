@@ -97,6 +97,18 @@
   "options_page__composer_start_markdown_mode": {
     "message": "Start composer in markdown mode"
   },
+  "options_page__preview_width_mode_label": {
+    "message": "Preview pane width",
+    "description": "Label for the preview pane width mode radio group"
+  },
+  "options_page__preview_width_mode_ratio_label": {
+    "message": "Follow window size (recommended)",
+    "description": "Preview pane width tracks the compose window size"
+  },
+  "options_page__preview_width_mode_fixed_label": {
+    "message": "Fixed width, set by dragging the splitter",
+    "description": "Preview pane keeps a fixed pixel width"
+  },
   "options_page__use_bodytext_format_label": {
     "message": "Use Body Text format in composer",
     "description": "Label for the checkbox that enables the Body Text format"

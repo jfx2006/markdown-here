@@ -23,6 +23,7 @@ import {
   migrate_mathRenderer2,
   migrate_macHotkeys,
   migrate_mathCodecogs,
+  migrate_previewRatio,
 } from "./options_migration.js"
 
 function hotKeyDefault() {
@@ -50,8 +51,11 @@ export const kOptDefaults = {
   "buglink-url": "https://bugzil.la/{bug_number}",
   "buglink-text": "Bug {bug_number}",
   "last-version": "0",
+  "preview-ratio": 0.5,
+  // "ratio" : la largeur du panneau de preview suit la taille de la fenêtre.
+  // "fixed" : largeur en px figée (comportement d'avant #94).
+  "preview-width-mode": "ratio",
   "preview-width": 650,
-  "saved-preview-width": 650,
   "enable-markdown-mode": true,
   "mdhr-mode": "modern",
   "use-bodytext-enabled": true,
@@ -68,6 +72,7 @@ let MIGRATIONS = [
   migrate_mathRenderer2,
   migrate_macHotkeys,
   migrate_mathCodecogs,
+  migrate_previewRatio,
   migrate_removeUnused,
 ]
 

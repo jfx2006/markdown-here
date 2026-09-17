@@ -108,6 +108,29 @@ export function debounce(func, wait, immediate) {
   }
 }
 
+export function toRatio(value, fallback = 0.5, min = 0.1, max = 0.9) {
+  // Convertit une valeur en ratio borné ; renvoie le fallback si non numérique
+  const f = parseFloat(value)
+  if (isNaN(f)) {
+    return fallback
+  }
+  return Math.min(max, Math.max(min, f))
+}
+
+export function toWidthMode(value) {
+  // Mode de largeur du panneau de preview : "fixed" ou "ratio" (défaut)
+  return value === "fixed" ? "fixed" : "ratio"
+}
+
+export function toWidthPx(value, fallback = 650, min = 100) {
+  // Convertit une valeur en largeur entière en px ; fallback si non numérique
+  const px = parseInt(value, 10)
+  if (isNaN(px)) {
+    return fallback
+  }
+  return Math.max(min, px)
+}
+
 export function toInt(value) {
   // Wrapper around parseInt to always return an integer value or throw if not
   const rv = parseInt(value)

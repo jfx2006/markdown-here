@@ -287,16 +287,118 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
     };
 
     // Sets sensible sizes for an editor sidebar frame
-    const setWebextFrameSizesForEditor = function(frame, options) {
+    const setWebextFrameSizesForEditor = function(frame, options, composeWindow) {
       const previewCol = frame.parentElement;
       const wrapper = previewCol.parentElement;
       const editorCol = wrapper.firstChild;
+      const splitter = previewCol.previousElementSibling;
+      const clampRatio = r => Math.min(0.9, Math.max(0.1, r));
+
+      // La largeur est exprimée en % pour suivre les redimensionnements de
+      // fenêtre sans recalcul JS (le wrapper est un flex de largeur 100%).
+      // insertSidebarWebextFrame() marque ce vbox persist="width" pour le
+      // mécanisme natif splitter+persistance de Gecko (utilisé par les
+      // autres emplacements sidebar) ; on l'enlève ici pour que ce
+      // mécanisme ne reprenne pas la main sur la largeur en attribut et
+      // n'entre pas en conflit avec notre style inline en %.
+      previewCol.removeAttribute("persist");
+      editorCol.style.minWidth = "0";
+      previewCol.style.minWidth = "0";
+      previewCol.style.flex = "0 0 auto";
+      previewCol.style.boxSizing = "border-box";
+      previewCol.removeAttribute("width");
+
+      const applyRatio = ratio => {
+        previewCol.style.width = (ratio * 100).toFixed(2) + "%";
+        editorCol.style.width = "";
+      };
+      // Mode "fixed" : largeur en px figée, ne suit pas les redimensionnements
+      // de fenêtre (comportement d'avant #94, conservé en option).
+      const applyFixed = px => {
+        previewCol.style.width = px + "px";
+        editorCol.style.width = "";
+      };
+      const isFixedMode = () =>
+        frame.getAttribute("data-width-mode") === "fixed";
+
       previewCol.style.display = options.hidden ? "none" : "inline";
-      previewCol.style.width = (options.width || 650) + "px";
-      previewCol.setAttribute("width", (options.width || 650));
+      frame.setAttribute("data-width-mode",
+        options.width_mode === "fixed" ? "fixed" : "ratio");
+      if (options.width_mode === "fixed") {
+        applyFixed(typeof options.width === "number" ? options.width : 650);
+      } else {
+        applyRatio(clampRatio(
+          typeof options.width_ratio === "number" ? options.width_ratio : 0.5));
+      }
       frame.style.height = "100%";
       frame.style.width = "100%";
       frame.style.display = "block";
+
+      // Le splitter XUL natif redimensionne previewCol en écrivant du px
+      // directement dans son style inline pendant le drag (comportement du
+      // moteur, hors de notre contrôle). On ne sait pas avec certitude quel
+      // évènement DOM signale la fin du drag selon la version de Gecko
+      // (mouseup, pointerup, ou aucun évènement JS observable), donc plutôt
+      // que de parier sur un évènement précis, on observe directement le
+      // style du panneau : dès qu'il change et n'est plus en %, on
+      // reconvertit en ratio et on réapplique en %. La reconversion elle-même
+      // déclenche une nouvelle mutation mais se stabilise immédiatement
+      // (l'observer ignore les changements qu'il vient de provoquer via le
+      // flag "applying").
+      let applying = false;
+      const applyRatioTracked = ratio => {
+        applying = true;
+        applyRatio(ratio);
+        applying = false;
+      };
+      let lastFixedPx = null;
+      const reconcileWidthFromDrag = () => {
+        if (applying) {
+          return;
+        }
+        if (frame.getAttribute("data-mode") !== "modern") {
+          return;
+        }
+        if (previewCol.style.display === "none") {
+          return;
+        }
+        if (isFixedMode()) {
+          // En mode fixe on laisse en place le px écrit par le splitter : on
+          // se contente de le lire et de le persister. Aucune réécriture de
+          // previewCol.style.width ici, donc pas de boucle d'observer ; le
+          // dédoublonnage évite seulement les persists redondants.
+          const px = Math.round(previewCol.getBoundingClientRect().width);
+          if (px <= 0 || px === lastFixedPx) {
+            return;
+          }
+          lastFixedPx = px;
+          frame.setCustomUIContextProperty("width", px);
+          return;
+        }
+        if (previewCol.style.width.endsWith("%")) {
+          return; // déjà en %, rien à faire (évite une boucle infinie)
+        }
+        const total = wrapper.getBoundingClientRect().width;
+        if (total <= 0) {
+          return;
+        }
+        const ratio = clampRatio(
+          previewCol.getBoundingClientRect().width / total);
+        applyRatioTracked(ratio);
+        frame.setCustomUIContextProperty("width_ratio", ratio);
+      };
+      // On récupère le constructeur MutationObserver depuis la vraie fenêtre
+      // de composition (passée explicitement par l'appelant), pas depuis
+      // previewCol.ownerGlobal : cette propriété s'est révélée non fiable
+      // dans ce contexte privilégié (c'est ce qui causait déjà le bug
+      // "win is undefined" avec l'ancienne approche mouseup).
+      const dragWidthObserver = new composeWindow.MutationObserver(
+        reconcileWidthFromDrag);
+      dragWidthObserver.observe(previewCol, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+
       frame.addCustomUILocalOptionsListener(lOptions => {
         const mode = frame.getAttribute("data-mode")
         if (typeof lOptions.mode === "string") {
@@ -318,17 +420,33 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             }
           }
         }
-        if (typeof lOptions.width === "number") {
-          if (mode === "modern") {
-            previewCol.style.width = lOptions.width + "px";
-            previewCol.setAttribute("width", lOptions.width);
-            frame.setCustomUIContextProperty("width", lOptions.width);
+        if (typeof lOptions.width_mode === "string") {
+          frame.setAttribute("data-width-mode",
+            lOptions.width_mode === "fixed" ? "fixed" : "ratio");
+        }
+        if (frame.getAttribute("data-mode") === "modern") {
+          if (isFixedMode()) {
+            if (typeof lOptions.width === "number") {
+              lastFixedPx = Math.round(lOptions.width);
+              applyFixed(lastFixedPx);
+              frame.setCustomUIContextProperty("width", lastFixedPx);
+            }
+          } else if (typeof lOptions.width_ratio === "number") {
+            const ratio = clampRatio(lOptions.width_ratio);
+            applyRatio(ratio);
+            frame.setCustomUIContextProperty("width_ratio", ratio);
           }
         }
       });
       frame.setCustomUIContextProperty("hidden", options.hidden);
       if (options.mode === "modern") {
-        frame.setCustomUIContextProperty("width", options.width);
+        if (options.width_mode === "fixed") {
+          lastFixedPx = typeof options.width === "number"
+            ? Math.round(options.width) : 650;
+          frame.setCustomUIContextProperty("width", lastFixedPx);
+        } else {
+          frame.setCustomUIContextProperty("width_ratio", options.width_ratio ?? 0.5);
+        }
       }
       frame.setAttribute("data-mode", options.mode);
       frame.setCustomUIContextProperty("mdhr_mode", options.mode);
@@ -663,7 +781,7 @@ var ex_customui = class extends ExtensionCommon.ExtensionAPI {
             );
             const win = context.extension.windowManager.convert(window);
             //options.width = Math.floor(win.width / 2)
-            setWebextFrameSizesForEditor(frame, options);
+            setWebextFrameSizesForEditor(frame, options, window);
 
             frame.setCustomUIContextProperty("windowId", win.id);
             frame.setCustomUIContextProperty("windowType", win.type)
