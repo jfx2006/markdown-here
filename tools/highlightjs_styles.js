@@ -19,6 +19,12 @@ function mkname(n) {
     .join(" ")
 }
 
+// highlight.js ships some themes (e.g. Dracula, #126) in subdirectories of
+// styles/ (base16/, etc.) that the top-level scan below doesn't see. List
+// the ones we want here instead of recursing into every subdirectory, which
+// would pull in dozens of unrequested base16 variants.
+const EXTRA_STYLES = ["base16/dracula.css"]
+
 /**
  * Copies CSS files from source to destination and generates a styles.json mapping.
  * @param {string} sourceDir
@@ -59,6 +65,13 @@ function main(sourceDir, destDir) {
   const res = {}
   for (const file of cssFiles) {
     fs.copyFileSync(path.join(sourcePath, file), path.join(destPath, file))
+    const name = mkname(file)
+    res[name] = file
+  }
+
+  for (const relPath of EXTRA_STYLES) {
+    const file = path.basename(relPath)
+    fs.copyFileSync(path.join(sourcePath, relPath), path.join(destPath, file))
     const name = mkname(file)
     res[name] = file
   }
