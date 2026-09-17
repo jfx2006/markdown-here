@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.0.16] (unreleased)
+
+### Fixed
+- `mdhr-raw` markdown-source dumps accumulating in reply chains, growing message
+  size roughly quadratically over a long thread. #82
+- Dracula theme missing from Syntax Highlighting CSS options. #126
+- Documents starting with a YAML frontmatter block (`---\n...\n---\n`) produced
+  garbled output; the block is now silently stripped before rendering. #80
+
+### New
+- Render `\`\`\`csv`/`\`\`\`tsv` fenced code blocks as tables (opt-in, off by
+  default). Delimiter is auto-detected (comma/semicolon/tab). #54
+
 ## [4.0.15]
 
 ### Fixed
