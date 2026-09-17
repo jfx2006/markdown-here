@@ -136,6 +136,10 @@
     "message": "Enable Emoji auto-complete popup",
     "description": "Label for enabling an auto-complete popup for emoji shortcodes"
   },
+  "options_page__csv_table_enabled_label": {
+    "message": "Render CSV code blocks as tables",
+    "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables"
+  },
   "options_page__hotkey_title": {
     "message": "Hotkey (aka keyboard shortcut)",
     "description": "A section title"

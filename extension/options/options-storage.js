@@ -45,6 +45,7 @@ export const kOptDefaults = {
   "smart-replacements-enabled": true,
   "emoji-shortcode-enabled": true,
   "emoji-autocomplete-enabled": true,
+  "csv-table-enabled": false,
   "buglink-enabled": false,
   "buglink-url": "https://bugzil.la/{bug_number}",
   "buglink-text": "Bug {bug_number}",

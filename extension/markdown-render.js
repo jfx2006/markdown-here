@@ -67,6 +67,10 @@ export async function resetMarked(userprefs) {
       },
     }),
   )
+  if (userprefs["csv-table-enabled"]) {
+    const { markedCsv } = await import("./marked-csv.esm.js")
+    marked.use(markedCsv())
+  }
   if (userprefs["math-renderer-enabled"]) {
     const { markedMath } = await import("./marked-math.js")
     const mathOptions = {

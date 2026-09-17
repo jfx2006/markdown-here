@@ -71,6 +71,12 @@ $(EXTENSION)/vendor/marked-linkify-it.esm.js: node_modules/marked-linkify-it/src
 	./node_modules/.bin/rollup --format es --file "$(EXTENSION)/vendor/marked-linkify-it.esm.js" -p @rollup/plugin-node-resolve -p @rollup/plugin-commonjs -m inline $<
 
 
+papaparse: $(EXTENSION)/vendor/papaparse.esm.js
+
+$(EXTENSION)/vendor/papaparse.esm.js: node_modules/papaparse/papaparse.js
+	./node_modules/.bin/rollup --format es --file "$(EXTENSION)/vendor/papaparse.esm.js" -p @rollup/plugin-node-resolve -p '@rollup/plugin-commonjs={"ignore":["stream"]}' -m inline $<
+
+
 textcomplete: $(EXTENSION)/vendor/textcomplete.js
 
 $(EXTENSION)/vendor/textcomplete.js: node_modules/@textcomplete/contenteditable/src/index.ts
@@ -93,4 +99,4 @@ clean:
 	$(RM) $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
 	$(RM) $(EXTENSION)/options/mailext-options-sync.js mailext-options-sync/index.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla mailext-options-sync
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser papaparse highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla mailext-options-sync
