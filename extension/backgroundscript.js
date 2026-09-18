@@ -337,6 +337,93 @@ messenger.tabs.onCreated.addListener(async function (tab) {
   }
 })
 
+// Thunderbird exposes no event for "the user changed the format of an
+// already-open compose window" (compose.onComposeStateChanged only reports
+// canSendNow/canSendLater, and the API considers the format of an existing
+// window immutable — even though the native Format menu does let the user
+// switch it). Without a way to observe it, a window that was HTML when the
+// preview got enabled keeps showing the preview after a switch to plain
+// text, with no way to turn it off since the toolbar button is unavailable
+// in plain-text mode (#100). So we poll instead.
+//
+// 2s is a compromise: getComposeDetails() is a cheap async IPC call and only
+// runs once per open compose window, so the cost is negligible, while the
+// delay stays short enough that the preview disappears "by itself" right
+// after the user leaves the Format menu.
+const PLAIN_TEXT_POLL_INTERVAL_MS = 2000
+// windowId -> last known isPlainText value
+const composeFormatState = new Map()
+let plainTextPollTimer = null
+
+async function pollComposeFormats() {
+  const openWindowIds = new Set()
+  let wins = []
+  try {
+    wins = await getOpenComposeWindows()
+  } catch (e) {
+    console.warn("Markdown Here Revival: could not enumerate compose windows:", e)
+    return
+  }
+  for (const win of wins) {
+    openWindowIds.add(win.id)
+    // Chaque fenêtre est isolée : une fenêtre fermée en pleine itération ne
+    // doit pas empêcher les autres d'être inspectées.
+    try {
+      const tabId = win.tabs?.[0]?.id
+      if (tabId === undefined) {
+        continue
+      }
+      const composeDetails = await messenger.compose.getComposeDetails(tabId)
+      const isPlainText = Boolean(composeDetails.isPlainText)
+      const wasPlainText = composeFormatState.get(win.id)
+      composeFormatState.set(win.id, isPlainText)
+      // Réagit aussi bien à une transition qu'à la toute première
+      // observation d'une fenêtre déjà en texte brut : le handler
+      // messenger.tabs.onCreated existant est censé déjà couvrir ce
+      // dernier cas (nouvelle fenêtre ouverte directement en texte brut,
+      // ex. Maj+clic sur "Écrire"), mais s'avère peu fiable en pratique
+      // (race condition probable avec l'injection de la preview) — ce
+      // poll sert donc aussi de filet de sécurité pour ce cas précis.
+      if (isPlainText === true && wasPlainText !== true) {
+        await messenger.runtime.sendMessage({
+          action: "cp.disableForPlainText",
+          windowId: win.id,
+        })
+      }
+    } catch (e) {
+      console.warn("Markdown Here Revival: compose format poll failed for window", win.id, e)
+    }
+  }
+  // Purge des fenêtres fermées : la Map ne peut pas grossir indéfiniment
+  // puisqu'elle est recalée sur les fenêtres réellement ouvertes à chaque tick.
+  for (const winId of composeFormatState.keys()) {
+    if (!openWindowIds.has(winId)) {
+      composeFormatState.delete(winId)
+    }
+  }
+}
+
+function startPlainTextPolling() {
+  // Idempotent : doStartup() peut être rejoué (réactivation de l'add-on,
+  // cycles injectMDPreview/unInjectMDPreview), on ne veut qu'une seule boucle.
+  if (plainTextPollTimer !== null) {
+    return
+  }
+  // Chaîne de setTimeout plutôt que setInterval : le tick suivant n'est armé
+  // qu'une fois le précédent terminé, donc pas de polls qui se chevauchent.
+  const scheduleNext = () => {
+    plainTextPollTimer = setTimeout(async () => {
+      try {
+        await pollComposeFormats()
+      } catch (e) {
+        console.error("Markdown Here Revival: compose format poll error:", e)
+      }
+      scheduleNext()
+    }, PLAIN_TEXT_POLL_INTERVAL_MS)
+  }
+  scheduleNext()
+}
+
 messenger.reply_prefs.onFormatChanged.addListener(async (name, useParagraphPref) => {
   await updateBodyTextOptionFromSettings(useParagraphPref)
 })
@@ -660,6 +747,7 @@ async function doStartup() {
   await injectMDPreview()
   const useParagraphPref = await messenger.reply_prefs.getUseParagraph()
   await updateBodyTextOptionFromSettings(useParagraphPref)
+  startPlainTextPolling()
 }
 // Run unconditionally whenever this background script executes: on a fresh
 // install, on update, on normal Thunderbird startup, AND when the user
