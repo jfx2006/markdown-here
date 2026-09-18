@@ -13,6 +13,9 @@
   window, sometimes making it overflow or disappear on resize. Now scales as a
   fraction of the window's width by default; the old fixed-width behavior is
   still available as an option. #94
+- Preview pane could get stuck visible with no way to disable it on a compose
+  window in plain text mode, since the toolbar toggle is unavailable in that
+  mode. #100
 
 ### New
 - Render `\`\`\`csv`/`\`\`\`tsv` fenced code blocks as tables (opt-in, off by
