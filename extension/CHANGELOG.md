@@ -25,6 +25,14 @@
 
 ### Fixed
 - Bump strict_max_version to support Thunderbird 155.
+- The "Start composer in markdown mode" option could silently reset itself
+  after reopening the Options page. #105
+- Toggling the live preview in one compose window could silently change the
+  default markdown mode for all future compose windows. #105
+- Compose preview stopped working after disabling and re-enabling the
+  add-on without restarting Thunderbird. #140
+- False "forgot to render" warning shown at send time when the preview was
+  active but the global default was off.
 
 ## [4.0.14]
 
