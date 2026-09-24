@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.17] (unreleased)
+## [4.0.17] - 2026-09-24
 
 4.0.16 was not published; its changes ship with this release.
 
