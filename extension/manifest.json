@@ -20,13 +20,11 @@
     "512": "images/md_fucsia.svg"
   },
   "permissions": [
-    "accountsRead",
     "compose",
     "compose.save",
     "menus",
     "messagesRead",
-    "storage",
-    "tabs"
+    "storage"
   ],
   "background": {
     "page": "background.html"

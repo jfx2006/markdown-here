@@ -164,8 +164,8 @@ import OptionsStore from "./options-storage.js"
     bootstrap.Tab.getInstance(triggerEl).show()
   }
 
-  function escapeHTML(strings, html) {
-    return `${DOMPurify.sanitize(html)}`
+  function sanitizedFragment(html) {
+    return DOMPurify.sanitize(html, { RETURN_DOM_FRAGMENT: true })
   }
 
   function handlePreviewLoad() {
@@ -218,7 +218,7 @@ import OptionsStore from "./options-storage.js"
           previewIframe.contentDocument.createTextNode(response.syntax_css),
         )
 
-        previewIframe.contentDocument.body.innerHTML = escapeHTML`${response.html}`
+        previewIframe.contentDocument.body.replaceChildren(sanitizedFragment(response.html))
         setPreviewScroll()
       } catch (reason) {
         console.log(`Error rendering preview. ${reason}`)
@@ -265,7 +265,7 @@ import OptionsStore from "./options-storage.js"
     const changes = await fetchExtFile("/CHANGELOG.md")
 
     const response = await markdownRender(changes)
-    changesElem.innerHTML = escapeHTML`${response}`
+    changesElem.replaceChildren(sanitizedFragment(response))
   }
 
   /**
@@ -415,7 +415,7 @@ import OptionsStore from "./options-storage.js"
       let message = getMessage(message_id, arg)
       if (message) {
         if (n.dataset.i18nHtml === "true") {
-          n.innerHTML = escapeHTML`${message}`
+          n.replaceChildren(sanitizedFragment(message))
         } else {
           n.textContent = message
         }

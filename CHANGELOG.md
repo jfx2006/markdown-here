@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.17] (unreleased)
+
+### Changed
+- Drop the unused `tabs` and `accountsRead` permissions.
+- No longer insert markup through `innerHTML` or `srcdoc` (options page,
+  compose preview), ahead of Thunderbird blocking them.
+- Tests and HTML fixtures are no longer part of the source archive.
+
 ## [4.0.16] (unreleased)
 
 ### Fixed

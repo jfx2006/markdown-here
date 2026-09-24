@@ -5,14 +5,7 @@
  */
 
 import DOMPurify from "../vendor/purify.es.mjs"
-import {
-  fetchExtFile,
-  getMainCSS,
-  getSyntaxCSS,
-  toRatio,
-  toWidthMode,
-  toWidthPx,
-} from "../async_utils.mjs"
+import { getMainCSS, getSyntaxCSS, toRatio, toWidthMode, toWidthPx } from "../async_utils.mjs"
 import OptionsStore from "../options/options-storage.js"
 import { CSSInliner } from "./css-inliner.js"
 import { MdhrMangle } from "../mdhr-mangle.js"
@@ -337,12 +330,34 @@ const p_iframe = document.getElementById("preview_frame")
 async function loadIFrame() {
   const main_css = await getMainCSS()
   const syntax_css = await getSyntaxCSS()
-  const html = await fetchExtFile("/compose_preview/preview_iframe.html")
-  const srcdoc = html
-    .replace("<!-- @SYNTAX_CSS@ -->", `<style id="MDHR_syntax_css">${syntax_css}</style>`)
-    .replace("<!-- @MAIN_CSS@ -->", `<style id="MDHR_main_css">${main_css}</style>`)
-  const doc = parseHTMLFromString(srcdoc)
-  p_iframe.srcdoc = `<!DOCTYPE html>\n${doc.documentElement.outerHTML}`
+  await new Promise((resolve) => {
+    p_iframe.addEventListener("load", resolve, { once: true })
+    p_iframe.src = "/compose_preview/preview_iframe.html"
+  })
+  const doc = p_iframe.contentDocument
+  // This document is serialized as the sent message (getMsgContent), so
+  // replace the CSS placeholders and drop every other comment (license
+  // header) instead of shipping them in the email.
+  const placeholders = {
+    "@SYNTAX_CSS@": ["MDHR_syntax_css", syntax_css],
+    "@MAIN_CSS@": ["MDHR_main_css", main_css],
+  }
+  const walker = doc.createTreeWalker(doc, NodeFilter.SHOW_COMMENT)
+  const comments = []
+  while (walker.nextNode()) {
+    comments.push(walker.currentNode)
+  }
+  for (const comment of comments) {
+    const placeholder = placeholders[comment.data.trim()]
+    if (placeholder) {
+      const style = doc.createElement("style")
+      style.id = placeholder[0]
+      style.textContent = placeholder[1]
+      comment.replaceWith(style)
+    } else {
+      comment.remove()
+    }
+  }
 }
 
 ;(async () => {
