@@ -163,13 +163,12 @@ import OptionsStore from "./options-storage.js"
     bootstrap.Tab.getInstance(triggerEl).show()
   }
 
-  // Configuration du Sanitizer pour le HTML produit par markdownRender (aperçu
-  // et changelog). La configuration par défaut de setHTML() retire class, id,
-  // style et <img>, ce qui casserait la coloration syntaxique (classes hljs),
-  // les alignements de tableaux et les images de l'aperçu. On part donc de la
-  // configuration par défaut et on n'ajoute que ce dont le rendu Markdown a
-  // besoin ; setHTML() retire de toute façon les éléments et attributs
-  // dangereux (script, iframe, gestionnaires d'événements, URLs javascript:).
+  // Sanitizer for markdownRender output (preview and changelog). The default
+  // setHTML() config drops class, id, style and <img>, which would break syntax
+  // highlighting (hljs classes), table alignment and preview images. Start from
+  // the default config and only allow what rendered Markdown needs; setHTML()
+  // still removes unsafe content (script, iframe, event handlers, javascript:
+  // URLs) regardless.
   function markdownSanitizer() {
     const sanitizer = new Sanitizer()
     for (const attr of ["class", "id", "style", "align"]) {
@@ -179,7 +178,7 @@ import OptionsStore from "./options-storage.js"
       name: "img",
       attributes: ["src", "alt", "width", "height"],
     })
-    // Cases à cocher des listes de tâches GFM.
+    // GFM task list checkboxes.
     sanitizer.allowElement({
       name: "input",
       attributes: ["type", "checked", "disabled"],
@@ -437,7 +436,7 @@ import OptionsStore from "./options-storage.js"
       let message = getMessage(message_id, arg)
       if (message) {
         if (n.dataset.i18nHtml === "true") {
-          // Messages de _locales : la configuration par défaut suffit (liens).
+          // _locales messages only contain links: the default config is enough.
           n.setHTML(message)
         } else {
           n.textContent = message
