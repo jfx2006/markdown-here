@@ -2,7 +2,7 @@
 
 ## [4.0.17] - 2026-09-24
 
-4.0.16 was not published; its changes ship with this release.
+4.0.16 was only published on GitLab; its changes reach ATN with this release.
 
 ### Notice
 - This is the last release supporting Thunderbird versions older than 153esr.

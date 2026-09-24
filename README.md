@@ -18,7 +18,48 @@ the author of Markdown Here have been unsuccessful.
 
 ## Compatibility
 
-This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/). *Markdown Here Revival 4.0.0* and higher require *Thunderbird 102.0* or *Thunderbird 115.0*. 
+This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
+The current release, *Markdown Here Revival 4.0.17*, supports *Thunderbird 128*
+up to *Thunderbird 156*. It is the last release supporting versions older than
+*Thunderbird 153esr*: starting with 4.1.0, Thunderbird 153 or later is required.
+
+| Markdown Here Revival | Thunderbird  | On ATN  |
+|-----------------------|--------------|---------|
+| 4.1.0 (upcoming)      | 153 – 156.x  |         |
+| 4.0.17                | 128 – 156.x  | pending |
+| 4.0.16                | 128 – 156.x  | no      |
+| 4.0.15                | 128 – 155.x  | no      |
+| 4.0.14                | 128 – 154.x  | no      |
+| 4.0.13                | 128 – 153.x  | no      |
+| 4.0.11 – 4.0.12       | 128 – 150.x  | no      |
+| 4.0.10                | 128 – 149.x  | no      |
+| 4.0.9 – 4.0.9.1       | 128 – 148.x  | yes     |
+| 4.0.8                 | 128 – 147.x  | yes     |
+| 4.0.6 – 4.0.7         | 128 – 140.x  | yes     |
+| 4.0.5                 | 128 – 140.x  | no      |
+| 4.0.4                 | 128 – 137.x  | yes     |
+| 4.0.3.2 – 4.0.3.3     | 128 – 135.x  | yes     |
+| 4.0.3.1               | 128 – 134.x  | yes     |
+| 4.0.0 – 4.0.3         | 128.x        | yes     |
+
+Releases not published on
+[ATN](https://addons.thunderbird.net/en-US/thunderbird/addon/markdown-here-revival/)
+can be downloaded from the
+[GitLab releases](https://gitlab.com/mdhr-extension/markdown-here-revival/-/releases)
+page.
+
+<details>
+<summary>Older releases</summary>
+
+| Markdown Here Revival | Thunderbird   |
+|-----------------------|---------------|
+| 3.999.x (4.0 betas)   | 115 – 128.15  |
+| 3.6.0                 | 115 – 128.x   |
+| 3.4.6 – 3.5.0.1       | 91 – 118.0    |
+| 3.4.0 – 3.4.5         | 91 – 113.0    |
+| 3.0.1 – 3.3.1         | 78.5 – 102.0  |
+
+</details>
 
 Support for browser-based email such as GMail, Outlook, or Yahoo Mail was
 removed to reduce the necessary ongoing maintenace burden from these platforms.
