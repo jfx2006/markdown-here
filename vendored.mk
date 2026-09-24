@@ -12,12 +12,6 @@ bootswatch: $(EXTENSION)/vendor/bootswatch.css
 $(EXTENSION)/vendor/bootswatch.css: node_modules/bootswatch/dist/darkly/bootstrap.css
 	$(CP) $< $@
 
-degausser: $(EXTENSION)/vendor/degausser.esm.js
-
-$(EXTENSION)/vendor/degausser.esm.js: node_modules/degausser/src/degausser.js
-	./node_modules/.bin/rollup --format es --file "$(EXTENSION)/vendor/degausser.esm.js" -p @rollup/plugin-node-resolve -p @rollup/plugin-commonjs -m inline $<
-
-
 dompurify: $(EXTENSION)/vendor/purify.es.mjs
 
 $(EXTENSION)/vendor/purify.es.mjs: node_modules/dompurify/dist/purify.es.mjs
@@ -99,4 +93,4 @@ clean:
 	$(RM) $(EXTENSION)/highlightjs/highlightjs.esm.js $(EXTENSION)/highlightjs/styles/*.css
 	$(RM) $(EXTENSION)/options/mailext-options-sync.js mailext-options-sync/index.js
 
-all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji degausser papaparse highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla mailext-options-sync
+all: marked marked-linkify-it marked-highlight marked-extended-tables marked-emoji papaparse highlightjs turndown textcomplete emoji_codes dompurify bootstrap bootswatch texzilla mailext-options-sync

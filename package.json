@@ -1,6 +1,6 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.17",
+  "version": "4.1.0",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build -n markdown-here-revival.xpi",
@@ -21,7 +21,6 @@
     "@textcomplete/utils": "^0.1.13",
     "bootstrap": "^5.3.8",
     "bootswatch": "^5.3.8",
-    "degausser": "^2.4.4",
     "dompurify": "^3.4.5",
     "emojibase-data": "^17.0.0",
     "eventemitter3": "^5.0.4",

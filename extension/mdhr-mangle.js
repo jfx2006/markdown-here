@@ -5,16 +5,12 @@
  */
 
 import TurndownService from "./vendor/turndown.esm.js"
-import { degausser } from "./vendor/degausser.esm.js"
 
 async function sha256Digest(data) {
   return messenger.runtime.sendMessage({ action: "sha256", data: data })
 }
 
 async function convertToText(elem) {
-  if (messenger.messengerUtilities?.convertToPlainText === undefined) {
-    return degausser(elem)
-  }
   return await messenger.messengerUtilities.convertToPlainText(elem.outerHTML, {
     flowed: false,
   })

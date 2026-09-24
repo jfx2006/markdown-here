@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.1.0] (unreleased)
+
+### Changed
+- Require Thunderbird 153esr or later. #154
+- HTML to plain text conversion always uses Thunderbird's built-in
+  `convertToPlainText`; the bundled degausser fallback is removed.
+- The options page inserts rendered markup with the built-in
+  `Element.setHTML()` sanitizer instead of DOMPurify.
+
 ## [4.0.17] - 2026-09-24
 
 4.0.16 was only published on GitLab; its changes reach ATN with this release.

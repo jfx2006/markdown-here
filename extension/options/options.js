@@ -10,7 +10,6 @@
 /* global  Utils:false bootstrap:false */
 
 import HotkeyHandler from "./shortcuts.js"
-import DOMPurify from "../vendor/purify.es.mjs"
 import { markdownRender, resetMarked } from "../markdown-render.js"
 
 import {
@@ -164,9 +163,30 @@ import OptionsStore from "./options-storage.js"
     bootstrap.Tab.getInstance(triggerEl).show()
   }
 
-  function sanitizedFragment(html) {
-    return DOMPurify.sanitize(html, { RETURN_DOM_FRAGMENT: true })
+  // Configuration du Sanitizer pour le HTML produit par markdownRender (aperçu
+  // et changelog). La configuration par défaut de setHTML() retire class, id,
+  // style et <img>, ce qui casserait la coloration syntaxique (classes hljs),
+  // les alignements de tableaux et les images de l'aperçu. On part donc de la
+  // configuration par défaut et on n'ajoute que ce dont le rendu Markdown a
+  // besoin ; setHTML() retire de toute façon les éléments et attributs
+  // dangereux (script, iframe, gestionnaires d'événements, URLs javascript:).
+  function markdownSanitizer() {
+    const sanitizer = new Sanitizer()
+    for (const attr of ["class", "id", "style", "align"]) {
+      sanitizer.allowAttribute(attr)
+    }
+    sanitizer.allowElement({
+      name: "img",
+      attributes: ["src", "alt", "width", "height"],
+    })
+    // Cases à cocher des listes de tâches GFM.
+    sanitizer.allowElement({
+      name: "input",
+      attributes: ["type", "checked", "disabled"],
+    })
+    return sanitizer
   }
+  const MARKDOWN_SANITIZER = markdownSanitizer()
 
   function handlePreviewLoad() {
     inputDirty = true
@@ -218,7 +238,9 @@ import OptionsStore from "./options-storage.js"
           previewIframe.contentDocument.createTextNode(response.syntax_css),
         )
 
-        previewIframe.contentDocument.body.replaceChildren(sanitizedFragment(response.html))
+        previewIframe.contentDocument.body.setHTML(response.html, {
+          sanitizer: MARKDOWN_SANITIZER,
+        })
         setPreviewScroll()
       } catch (reason) {
         console.log(`Error rendering preview. ${reason}`)
@@ -265,7 +287,7 @@ import OptionsStore from "./options-storage.js"
     const changes = await fetchExtFile("/CHANGELOG.md")
 
     const response = await markdownRender(changes)
-    changesElem.replaceChildren(sanitizedFragment(response))
+    changesElem.setHTML(response, { sanitizer: MARKDOWN_SANITIZER })
   }
 
   /**
@@ -415,7 +437,8 @@ import OptionsStore from "./options-storage.js"
       let message = getMessage(message_id, arg)
       if (message) {
         if (n.dataset.i18nHtml === "true") {
-          n.replaceChildren(sanitizedFragment(message))
+          // Messages de _locales : la configuration par défaut suffit (liens).
+          n.setHTML(message)
         } else {
           n.textContent = message
         }

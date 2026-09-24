@@ -38,10 +38,6 @@ vendored:
     path: src/index.js
     method: copy
 
-  degausser:
-    path: src/degausser.js
-    method: rollup
-
   papaparse:
     path: papaparse.js
     method: bash
