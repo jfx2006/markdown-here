@@ -37,7 +37,6 @@ export default [
     "extension/test/chai-dom.js",
     "extension/test/jquery.slim.js",
     "extension/test/mocha.js",
-    "extension/test/underscore.js",
   ]),
   {
     files: ["package.json", "extension/**/*.json"],

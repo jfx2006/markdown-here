@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 *   text=auto eol=lf
+
+# Excluded from the source archive submitted to ATN (tools/gen-src.sh uses
+# git archive). Tests and manual fixtures are not part of the XPI build.
+extension/test/ export-ignore
+tools/compose.html export-ignore
+tools/compose2.html export-ignore
+tools/compose3.html export-ignore
+tools/doctype.html export-ignore
