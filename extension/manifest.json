@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_app_name__",
-  "version": "4.0.16",
+  "version": "4.0.17",
   "description": "__MSG_app_slogan__",
   "homepage_url": "https://gitlab.com/jfx2006/markdown-here-revival",
   "browser_specific_settings": {
@@ -20,13 +20,11 @@
     "512": "images/md_fucsia.svg"
   },
   "permissions": [
-    "accountsRead",
     "compose",
     "compose.save",
     "menus",
     "messagesRead",
-    "storage",
-    "tabs"
+    "storage"
   ],
   "background": {
     "page": "background.html"
