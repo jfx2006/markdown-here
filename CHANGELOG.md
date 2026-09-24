@@ -8,6 +8,8 @@
   `convertToPlainText`; the bundled degausser fallback is removed.
 - The options page inserts rendered markup with the built-in
   `Element.setHTML()` sanitizer instead of DOMPurify.
+- The default CSS no longer uses CSS nesting for nested quote colors (same
+  rendering). Unmodified default CSS is updated automatically.
 
 ## [4.0.17] - 2026-09-24
 
