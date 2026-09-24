@@ -2,6 +2,11 @@
 
 ## [4.0.17] (unreleased)
 
+### Notice
+- This is the last release supporting Thunderbird versions older than 153esr.
+  Starting with 4.1.0, Markdown Here Revival will require Thunderbird 153 or
+  later. #154
+
 ### Changed
 - Drop the unused `tabs` and `accountsRead` permissions.
 - No longer insert markup through `innerHTML` or `srcdoc` (options page,
