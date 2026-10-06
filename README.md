@@ -25,7 +25,7 @@ up to *Thunderbird 156*. It is the last release supporting versions older than
 
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
-| 4.1.0 (upcoming)      | 153 – 156.x  |         |
+| 4.1.0 (upcoming)      | 153 – 157.x  |         |
 | 4.0.17                | 128 – 156.x  | pending |
 | 4.0.16                | 128 – 156.x  | no      |
 | 4.0.15                | 128 – 155.x  | no      |

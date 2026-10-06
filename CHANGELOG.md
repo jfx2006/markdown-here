@@ -11,6 +11,9 @@
 - The default CSS no longer uses CSS nesting for nested quote colors (same
   rendering). Unmodified default CSS is updated automatically.
 
+### Fixed
+- Bump strict_max_version to support Thunderbird 157.
+
 ## [4.0.17] - 2026-09-24
 
 4.0.16 was only published on GitLab; its changes reach ATN with this release.
