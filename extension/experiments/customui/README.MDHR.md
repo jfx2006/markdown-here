@@ -10,6 +10,8 @@ window.
 
 A "width_ratio" location option was added: for "LOCATION_COMPOSE_EDITOR" it
 sets the preview column width as a fraction (0..1) of its container, applied
-as a CSS percentage so the preview follows window resizing. It replaces the
-pixel-based "width" option for that location.
+as a CSS percentage so the preview follows window resizing.
+
+A "width_mode" location option ("ratio" | "fixed", default "ratio") selects
+between "width_ratio" and the pixel-based "width" option for that location.
 
