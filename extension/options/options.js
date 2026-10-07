@@ -112,6 +112,9 @@ import OptionsStore from "./options-storage.js"
 
       await OptionsStore.syncForm(form)
       form.addEventListener("options-sync:form-synced", await onOptionsSaved)
+      // Configure marked from the saved options before the first preview render,
+      // otherwise it runs without the highlight extension (no hljs classes).
+      await resetMarked()
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -137,13 +140,13 @@ import OptionsStore from "./options-storage.js"
   async function onOptionsSaved(e) {
     await handleUIMode()
     handleMathRenderer()
+    await resetMarked()
     await handleInput()
     handleDirectives()
     handleEmojiAutocomplete()
     await handleBodyText()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "cp.renderer-reset" })
-    await resetMarked()
   }
 
   function activatePillNav() {

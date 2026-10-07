@@ -13,6 +13,11 @@
 
 ### Fixed
 - Bump strict_max_version to support Thunderbird 157.
+- The selected syntax highlighting theme was not applied to the options page
+  preview until an option was changed.
+- Code blocks could show raw `<span>` markup instead of highlighting once
+  options had been changed during the session, including in the compose
+  preview and in the sent message.
 
 ## [4.0.17] - 2026-09-24
 
