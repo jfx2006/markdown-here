@@ -31,7 +31,7 @@ as www.thunderbird.net or https://en.wikipedia.org/wiki/Invader_Zim.
 ## Tables
 
 | Name  | Lunch order | Spicy  | Owes |
-|-------|-------------|--------|-----:|
+|-------|-------------|:------:|-----:|
 | Joan  | saag paneer | medium |  $11 |
 | Sally | vindaloo    | mild   |  $14 |
 | Erin  | lamb madras | HOT    |   $5 |
@@ -62,6 +62,20 @@ ${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 1. Numbered lists too!
 1. You don't even need to use
 1. the right numbers
+
+- [ ] Task lists
+- [x] with checkboxes
+
+## Inline HTML
+
+Raw HTML works too: <span style="color: red">red text</span>.
+
+## Images and quotes
+
+An image: ![Markdown Here logo](/images/icon24.png)
+
+> A block quote.
+> *With* **some** `markdown`.
 
 # Header 1
 ## Header 2

@@ -16,6 +16,11 @@ function colorationSyntaxique() {
    1. Numbered sub-list
       1. Numbered sub-sub-list
 2. [Link](https://www.google.com)
+3. Liste de tâches
+    - [ ] Décochée
+    - [x] Cochée
+
+Du HTML en ligne : <span style="color: red">texte en rouge</span>.
 
 
 Une image : ![logo de Markdown Here](/images/icon24.png)
