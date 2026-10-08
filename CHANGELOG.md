@@ -15,6 +15,9 @@
 - Bump strict_max_version to support Thunderbird 157.
 - The selected syntax highlighting theme was not applied to the options page
   preview until an option was changed.
+- The bundled PapaParse library embedded the build machine's file path in an
+  inline source map, so rebuilding from another directory produced a
+  different file.
 
 ## [4.0.17] - 2026-09-24
 
