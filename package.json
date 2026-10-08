@@ -4,13 +4,19 @@
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "web-ext build -n markdown-here-revival.xpi",
+    "vendor": "node tools/build.mjs vendored",
+    "vendor:clean": "node tools/build.mjs vendoredClean",
+    "prepare-all": "node tools/build.mjs all",
+    "clean": "node tools/build.mjs clean",
+    "ci": "node tools/build.mjs ci",
+    "check-clean": "node tools/build.mjs checkClean",
     "lint": "eslint .",
     "test:node": "mocha --require ./tools/node-test-setup.mjs extension/test/async_utils-test.js extension/test/options_migration-test.js extension/test/frontmatter-test.js extension/test/markdown-render-test.js extension/test/marked-csv-test.js",
     "check:build": "node tools/check-build.mjs",
-    "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f /home/rob/bin/thunderbird128 --keep-profile-changes",
-    "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testing-release -f /home/rob/bin/thunderbird-release --keep-profile-changes",
+    "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f thunderbird128 --keep-profile-changes",
+    "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testing-release -f thunderbird-release --keep-profile-changes",
     "testbeta": "web-ext run --verbose -f thunderbird-beta -p mdhr_test_profiles/testing-beta --keep-profile-changes",
-    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testing-daily -f /home/rob/bin/thunderbird-daily"
+    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testing-daily -f thunderbird-daily"
   },
   "type": "module",
   "private": true,
@@ -50,7 +56,6 @@
     "@rollup/plugin-commonjs": "^29.0.2",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/thunderbird-webext-browser": "^127.0.0",
-    "cpy-cli": "^7.0.0",
     "esbuild": "^0.28.0",
     "esbuild-plugin-replace-regex": "^0.0.2",
     "eslint": "^10.1.0",
@@ -63,7 +68,6 @@
     "mocha": "^12.0.3",
     "prettier": "^3.8.3",
     "rollup": "^4.17.2",
-    "touch": "^3.1.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.0",
     "web-ext": "^10.2.0"
