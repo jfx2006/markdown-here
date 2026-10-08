@@ -4,23 +4,33 @@
 
 ### Changed
 - Require Thunderbird 153esr or later. #154
-- HTML to plain text conversion always uses Thunderbird's built-in
-  `convertToPlainText`; the bundled degausser fallback is removed.
 - The options page inserts rendered markup with the built-in
   `Element.setHTML()` sanitizer instead of DOMPurify.
 - The default CSS no longer uses CSS nesting for nested quote colors (same
   rendering). Unmodified default CSS is updated automatically.
 
 ### Fixed
-- Bump strict_max_version to support Thunderbird 157.
 - The selected syntax highlighting theme was not applied to the options page
   preview until an option was changed.
-- The bundled PapaParse library embedded the build machine's file path in an
-  inline source map, so rebuilding from another directory produced a
-  different file.
 - Changing an option did not update open compose windows until their
   content was edited: the preview is now re-rendered with the new rendering
   options and CSS.
+
+## [4.0.18] - 2026-10-08
+
+### Changed
+- Require Thunderbird 140esr or later.
+- HTML to plain text conversion always uses Thunderbird's built-in
+  `convertToPlainText`; the bundled degausser fallback is removed.
+- The build no longer uses web-ext (the XPI is packaged by `tools/xpi.mjs`)
+  and unused development dependencies were dropped, so `npm audit` is clean
+  (ATN requirement).
+
+### Fixed
+- Bump strict_max_version to support Thunderbird 157.
+- The bundled PapaParse library embedded the build machine's file path in an
+  inline source map, so rebuilding from another directory produced a
+  different file.
 - Sending a large message could time out while the styles were inlined, and
   the email was then sent as raw Markdown. Inlining is much faster, and if the
   rendered email still cannot be produced, a prompt now asks whether to send
