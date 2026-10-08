@@ -144,8 +144,8 @@ Coming soon!
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Make sure to run `make all` to
-download vendored dependencies.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Make sure to run `npm run prepare-all` to
+install dependencies and download vendored code.
 
 ## Building
 
