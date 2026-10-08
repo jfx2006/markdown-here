@@ -37,8 +37,9 @@ Compose a new HTML message with the following content, then render it:
       1 blue, 2 purple, 3 green, 4 orange, 5 tan; level 6 stays tan.
 - [ ] Same result as 4.0.17 on the same content: the rendering must not change.
 - [ ] Send the message to yourself and open its source (Ctrl+U): each
-      `<blockquote>` carries its `border-inline-start-color` inline, with the
-      same colors.
+      `<blockquote>` carries its border color inline, with the same colors.
+      Level 1 has it in the `border-inline-start` shorthand, levels 2-5 in
+      `border-inline-start-color`.
 
 ### Migration of the stored CSS
 
@@ -57,7 +58,10 @@ Options page, preview tab:
 
 - [ ] Highlighted code blocks keep their colors.
 - [ ] Table column alignment (`:---:`, `---:`) is kept.
-- [ ] Images are displayed.
+- [ ] Images are displayed: add a line such as
+      `![logo](https://…/image.png)` (any reachable image) to the preview
+      text. Use an absolute URL: relative links get `https://`
+      prepended (urlSchemify), as in a real email.
 - [ ] GFM task lists (`- [ ]`, `- [x]`) show their checkboxes.
 - [ ] Inline raw HTML styles (`<span style="color: red">`) are kept.
 - [ ] TeX formulas are rendered.

@@ -70,9 +70,7 @@ ${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
 
 Raw HTML works too: <span style="color: red">red text</span>.
 
-## Images and quotes
-
-An image: ![Markdown Here logo](/images/icon24.png)
+## Quotes
 
 > A block quote.
 > *With* **some** `markdown`.
