@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.18] (unreleased)
+## [4.0.18] - 2026-10-08
 
 ### Changed
 - Require Thunderbird 140esr or later.
