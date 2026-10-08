@@ -223,44 +223,47 @@ All inter-component communication uses `messenger.runtime.sendMessage()`.
 Messages are objects with an `action` field. Preview-related messages are
 prefixed with `cp.` (compose preview).
 
-| Message | Direction | Purpose |
-|---------|-----------|---------|
-| `cp.render-preview` | compose → preview | Send editor HTML for rendering |
-| `cp.get-content` | background → preview | Get final rendered HTML at send time |
-| `cp.scroll-to` | compose → preview | Sync scroll position |
-| `cp.toggle-preview` | background → preview | Show/hide preview pane |
-| `cp.renderer-reset` | background → preview | Reload marked config after settings change |
-| `cp.disableForPlainText` | background → preview | Disable preview for plain-text compose |
-| `get-options` / `get-option` | any → background | Retrieve settings |
-| `fetch-emojis` | compose → background | Load emoji mappings |
-| `check-forgot-render` | background → compose | Check if content looks like markdown |
-| `set-composeaction-purple/bw` | preview → background | Update toolbar icon state |
+| Message                       | Direction            | Purpose                                    |
+| ----------------------------- | -------------------- | ------------------------------------------ |
+| `cp.render-preview`           | compose → preview    | Send editor HTML for rendering             |
+| `cp.get-content`              | background → preview | Get final rendered HTML at send time       |
+| `cp.scroll-to`                | compose → preview    | Sync scroll position                       |
+| `cp.toggle-preview`           | background → preview | Show/hide preview pane                     |
+| `cp.renderer-reset`           | background → preview | Reload marked config after settings change |
+| `cp.disableForPlainText`      | background → preview | Disable preview for plain-text compose     |
+| `get-options` / `get-option`  | any → background     | Retrieve settings                          |
+| `fetch-emojis`                | compose → background | Load emoji mappings                        |
+| `check-forgot-render`         | background → compose | Check if content looks like markdown       |
+| `set-composeaction-purple/bw` | preview → background | Update toolbar icon state                  |
 
 ## Build System
 
 ```
-make all          # Full build: deps + vendored libs + mailext-options-sync + XPI
-make build        # npm run build (web-ext package)
-make vendored     # Download and bundle third-party libs into extension/vendor/
-make clean        # Remove build artifacts
+npm run prepare-all   # Full build: deps + vendored libs + mailext-options-sync + XPI
+npm run build         # web-ext package (produces the .xpi)
+npm run vendor        # Download and bundle third-party libs into extension/vendor/
+npm run clean         # Remove build artifacts
 ```
 
-- `vendored.mk` + `tools/mk-vendored.py` handle extracting specific files
-  from npm packages into `extension/vendor/` and `extension/highlightjs/`.
-- `web-ext-config.js` configures the `web-ext` tool for Thunderbird.
+`tools/build.mjs` is the top-level task runner (no GNU Make/Bash dependency,
+so it's cross-platform). It calls into `tools/vendor.mjs`, whose `VENDORED`
+table lists each vendored library and how to extract or bundle it from its npm
+package into `extension/vendor/` (and a few other `extension/` subdirectories).
+
+- `web-ext-config.mjs` configures the `web-ext` tool for Thunderbird.
 - The `mailext-options-sync/` directory is a git subrepo from
   `https://gitlab.com/jfx2006/mailext-options-sync` — its TypeScript source
   is compiled via rollup into the JS file used by the extension.
 
 ## Key Third-Party Libraries
 
-| Library | Purpose |
-|---------|---------|
-| marked | Markdown parsing and rendering |
+| Library      | Purpose                             |
+| ------------ | ----------------------------------- |
+| marked       | Markdown parsing and rendering      |
 | highlight.js | Syntax highlighting for code blocks |
-| turndown | HTML-to-Markdown conversion |
-| degausser | HTML-to-text fallback |
-| DOMPurify | HTML sanitization |
-| TeXZilla | TeX formula → MathML/PNG |
-| textcomplete | Emoji autocomplete popup |
-| Bootstrap 5 | Options page UI framework |
+| turndown     | HTML-to-Markdown conversion         |
+| degausser    | HTML-to-text fallback               |
+| DOMPurify    | HTML sanitization                   |
+| TeXZilla     | TeX formula → MathML/PNG            |
+| textcomplete | Emoji autocomplete popup            |
+| Bootstrap 5  | Options page UI framework           |
