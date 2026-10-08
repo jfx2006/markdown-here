@@ -12,6 +12,10 @@ function loadVendor() {
   return import("./vendor.mjs")
 }
 
+function loadXpi() {
+  return import("./xpi.mjs")
+}
+
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(HERE, "..")
 
@@ -58,14 +62,19 @@ const tasks = {
     await vendorClean()
   },
 
-  build() {
-    npm(["run", "build"])
+  async xpi() {
+    const { buildXpi } = await loadXpi()
+    await buildXpi()
+  },
+
+  async build() {
+    await tasks.xpi()
   },
 
   async all() {
     tasks.install()
     await tasks.vendored()
-    tasks.build()
+    await tasks.build()
   },
 
   async clean() {
@@ -83,7 +92,7 @@ const tasks = {
     await tasks.clean()
     tasks.install()
     await tasks.vendored()
-    tasks.build()
+    await tasks.build()
     run(pythonCmd(), [path.join(HERE, "rel_notes.py")])
     run(pythonCmd(), [path.join(HERE, "version_env.py")])
   },

@@ -149,9 +149,14 @@ install dependencies and download vendored code.
 
 ## Building
 
-Use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/),
-mostly the same as you would for Firefox. A config file is included to make it
-use Thunderbird.
+Run `npm run build`. The XPI is written to
+`web-ext-artifacts/markdown-here-revival.xpi` (packaged by `tools/xpi.mjs`,
+no extra dependency).
+
+To run the extension in Thunderbird during development, use
+[web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)
+through `npx web-ext run` (or the `npm run test*` scripts). The included
+`web-ext-config.mjs` makes it use Thunderbird.
 
 
 ## Feedback
