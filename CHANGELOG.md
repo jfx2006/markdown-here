@@ -18,6 +18,9 @@
 - The bundled PapaParse library embedded the build machine's file path in an
   inline source map, so rebuilding from another directory produced a
   different file.
+- Changing an option did not update open compose windows until their
+  content was edited: the preview is now re-rendered with the new rendering
+  options and CSS.
 
 ## [4.0.17] - 2026-09-24
 
