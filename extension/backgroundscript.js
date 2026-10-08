@@ -299,16 +299,34 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
       }
       return {} // Preview inactive in this window
     }
-    const msgHTML = await withTimeout(
-      messenger.runtime.sendMessage({
-        action: "cp.get-content",
-        windowId: tab.windowId,
-      }),
-      5000,
-      "cp.get-content",
-    )
+    let msgHTML
+    try {
+      // Generous limit: rendering a large message takes a few seconds, and
+      // this is only a guard against a preview that never answers (#111).
+      msgHTML = await withTimeout(
+        messenger.runtime.sendMessage({
+          action: "cp.get-content",
+          windowId: tab.windowId,
+        }),
+        30000,
+        "cp.get-content",
+      )
+    } catch (e) {
+      console.error("Markdown Here Revival: could not get the rendered message:", e)
+    }
     if (!msgHTML) {
-      console.warn("Markdown Here Revival: No content from preview, sending original message")
+      // Never send the raw Markdown silently: let the user decide.
+      const message = `${getMessage("render_failed_prompt_info")}
+      ${getMessage("forgot_to_render_prompt_question")}`
+      const rv = await openNotification(
+        tab.windowId,
+        message,
+        messenger.notificationbar.PRIORITY_CRITICAL_HIGH,
+        [getMessage("forgot_to_render_send_button"), getMessage("forgot_to_render_back_button")],
+      )
+      if (rv !== "ok") {
+        return { cancel: true }
+      }
       return {}
     }
     const finalDetails = { body: msgHTML }

@@ -50,30 +50,61 @@ const ALLOW_CSS_PROPS = [
 
 export class CSSInliner {
   #defaultStyles
+  #allowedProps
   constructor() {
     this.#defaultStyles = {}
+    this.#allowedProps = null
   }
-  // inlineStylesForSingleElement(element, target): inlines the styles for a
-  // single element, but not it's children
-  //
-  // Params:
-  // element: The element that computed styles inlined
-  inlineStylesForSingleElement(element) {
-    const computedStyle = document.defaultView.getComputedStyle(element)
-    if (this.#defaultStyles[element.tagName] == null) {
-      this.#defaultStyles[element.tagName] = document.defaultView.getDefaultComputedStyle(element)
+
+  // Names of the computed style properties worth inlining. Every element
+  // exposes the same property list, so filter it once instead of matching
+  // ALLOW_CSS_PROPS against every property of every element.
+  #getAllowedProps(computedStyle) {
+    if (this.#allowedProps === null) {
+      this.#allowedProps = Array.from(computedStyle).filter((styleName) =>
+        ALLOW_CSS_PROPS.some((regex) => regex.test(styleName)),
+      )
     }
-    for (let i = 0; i < computedStyle.length; i++) {
-      const styleName = computedStyle[i]
-      if (ALLOW_CSS_PROPS.some((regex) => styleName.match(regex)?.length > 0)) {
+    return this.#allowedProps
+  }
+
+  // inlineStyles(elements): inlines the computed styles of each element (not
+  // of its children).
+  //
+  // All styles are read before any is written: writing an inline style
+  // invalidates the document styles, so interleaving reads and writes forces a
+  // full style recalculation for every element, which takes seconds on large
+  // messages (#111). Inlining computed values does not change the computed
+  // values of the other elements, so reading everything first is equivalent.
+  inlineStyles(elements) {
+    const view = elements[0]?.ownerDocument.defaultView
+    if (!view) {
+      return
+    }
+    const pending = []
+    for (const element of elements) {
+      const computedStyle = view.getComputedStyle(element)
+      if (this.#defaultStyles[element.tagName] == null) {
+        this.#defaultStyles[element.tagName] = view.getDefaultComputedStyle(element)
+      }
+      const defaultStyle = this.#defaultStyles[element.tagName]
+      const styles = []
+      for (const styleName of this.#getAllowedProps(computedStyle)) {
+        const value = computedStyle[styleName]
         // exclude default styles
-        if (this.#defaultStyles[element.tagName][styleName] !== computedStyle[styleName]) {
-          element.style[styleName] = computedStyle[styleName]
+        if (defaultStyle[styleName] !== value) {
+          styles.push([styleName, value])
         }
       }
+      pending.push([element, styles])
     }
-    if (element.style.length === 0) {
-      element.removeAttribute("style")
+    for (const [element, styles] of pending) {
+      for (const [styleName, value] of styles) {
+        element.style[styleName] = value
+      }
+      if (element.style.length === 0) {
+        element.removeAttribute("style")
+      }
     }
   }
 }
