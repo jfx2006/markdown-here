@@ -91,9 +91,10 @@ class PapaParse extends VendoredPackage {
     // would hoist it into a static `import ... from 'stream'`, which doesn't
     // resolve in a WebExtension context, so tell commonjs to leave it as a
     // runtime require instead (dead code for us).
+    // No source map: commonjs puts the absolute build path in it, which would
+    // leak into the XPI and make the file differ between build directories.
     const [name, rel] = this.onlyPath
     await rollupBuild(this.srcPath(rel), this.destPath(name), {
-      sourcemap: "inline",
       commonjsOptions: { ignore: ["stream"] },
     })
   }

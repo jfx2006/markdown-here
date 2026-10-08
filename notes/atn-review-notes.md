@@ -26,9 +26,9 @@ identically on Linux, macOS, and Windows.
 
 - Extract the source code from the uploaded tarball
 
-Install NPM dependencies, this runs `npm clean-install`
+Install NPM dependencies
 
-- npm run ci
+- npm ci
 
 Copy vendored dependencies into the extension directory
 
