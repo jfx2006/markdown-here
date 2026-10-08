@@ -5,7 +5,7 @@
  */
 
 // ----------------- Locale Maker ----------------------
-// Locale Maker requires "downloads" permission to save the generated locale in folders
+// Files are saved through download links, named <locale>_messages.json
 // localStorage.setItem('dark', 'true') for Dark theme
 
 class LocaleMaker {
@@ -185,7 +185,7 @@ class LocaleMaker {
     )
     const filename = this.select.value ? this.select.value + "/messages.json" : "messages.json"
     const saveData = JSON.stringify(data)
-    this.saveFile({ saveData, filename })
+    this.saveFile({ data: saveData, filename })
   }
 
   exportAll() {
@@ -195,37 +195,29 @@ class LocaleMaker {
 
     const defaultString = JSON.stringify(this.default)
     const data = JSON.parse(defaultString) // deep clone
-    const folder = !browser.downloads ? "" : "locale-maker/"
-    const filename = `${folder}${this.defaultLocale}/messages.json`
-    this.saveFile({ data, filename, saveAs: false }) // save default locale
+    const filename = `${this.defaultLocale}/messages.json`
+    this.saveFile({ data, filename }) // save default locale
 
     Object.entries(this.locales).forEach(([lang, thisLang]) => {
       let data = JSON.parse(defaultString) // deep clone
       Object.entries(thisLang).forEach(
         ([key, value]) => key !== "extensionName" && value && (data[key] = value)
       )
-      const filename = `${folder}${lang}/messages.json`
-      this.saveFile({ data, filename, saveAs: false })
+      const filename = `${lang}/messages.json`
+      this.saveFile({ data, filename })
     })
   }
 
-  saveFile({ data, filename, saveAs = true, type = "text/plain" }) {
-    if (!browser.downloads) {
-      const a = document.createElement("a")
-      a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(data)
-      a.setAttribute("download", filename)
-      a.dispatchEvent(new MouseEvent("click"))
-      return
-    }
-
-    data = JSON.stringify(data, null, 2)
-    const blob = new Blob([data], { type })
-    browser.downloads.download({
-      url: URL.createObjectURL(blob),
-      filename,
-      saveAs,
-      conflictAction: "uniquify",
-    })
+  // Saved through a download link: the downloads API would need an extra
+  // permission just for this translator tool.
+  saveFile({ data, filename, type = "text/plain" }) {
+    const text = typeof data === "string" ? data : JSON.stringify(data, null, 2)
+    const url = URL.createObjectURL(new Blob([text], { type }))
+    const a = document.createElement("a")
+    a.href = url
+    a.setAttribute("download", filename.replaceAll("/", "_"))
+    a.dispatchEvent(new MouseEvent("click"))
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
   }
 
   notify(message) {

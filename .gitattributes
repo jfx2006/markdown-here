@@ -8,3 +8,4 @@ tools/compose.html export-ignore
 tools/compose2.html export-ignore
 tools/compose3.html export-ignore
 tools/doctype.html export-ignore
+mailext-options-sync/test/ export-ignore
