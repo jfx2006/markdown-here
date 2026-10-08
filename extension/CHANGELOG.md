@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.18] (unreleased)
+
+### Changed
+- The build no longer uses web-ext (the XPI is packaged by `tools/xpi.mjs`)
+  and unused development dependencies were dropped, so `npm audit` is clean
+  (ATN requirement).
+- The `degausser` dependency is now shipped as a reviewed local package
+  (unmodified source in `local_packages/degausser/`).
+
+### Fixed
+- Bump strict_max_version to support Thunderbird 157.
+
 ## [4.0.17] - 2026-09-24
 
 4.0.16 was only published on GitLab; its changes reach ATN with this release.

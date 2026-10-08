@@ -1,9 +1,9 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.17",
+  "version": "4.0.18",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
-    "build": "web-ext build -n markdown-here-revival.xpi",
+    "build": "node tools/build.mjs xpi",
     "vendor": "node tools/build.mjs vendored",
     "vendor:clean": "node tools/build.mjs vendoredClean",
     "prepare-all": "node tools/build.mjs all",
@@ -11,10 +11,10 @@
     "ci": "node tools/build.mjs ci",
     "check-clean": "node tools/build.mjs checkClean",
     "lint": "eslint .",
-    "test128": "web-ext run --verbose -p mdhr_test_profiles/testing128 -f thunderbird128 --keep-profile-changes",
-    "testrelease": "web-ext run --verbose -p mdhr_test_profiles/testing-release -f thunderbird-release --keep-profile-changes",
-    "testbeta": "web-ext run --verbose -f thunderbird-beta -p mdhr_test_profiles/testing-beta --keep-profile-changes",
-    "testdaily": "web-ext run --verbose -p mdhr_test_profiles/testing-daily -f thunderbird-daily"
+    "test128": "npx web-ext run --verbose -p mdhr_test_profiles/testing128 -f thunderbird128 --keep-profile-changes",
+    "testrelease": "npx web-ext run --verbose -p mdhr_test_profiles/testing-release -f thunderbird-release --keep-profile-changes",
+    "testbeta": "npx web-ext run --verbose -f thunderbird-beta -p mdhr_test_profiles/testing-beta --keep-profile-changes",
+    "testdaily": "npx web-ext run --verbose -p mdhr_test_profiles/testing-daily -f thunderbird-daily"
   },
   "type": "module",
   "private": true,
@@ -27,7 +27,7 @@
     "@textcomplete/utils": "^0.1.13",
     "bootstrap": "^5.3.8",
     "bootswatch": "^5.3.8",
-    "degausser": "^2.4.4",
+    "degausser": "file:./local_packages/degausser",
     "dompurify": "^3.4.5",
     "emojibase-data": "^17.0.0",
     "eventemitter3": "^5.0.4",
@@ -44,7 +44,8 @@
   "overrides": {
     "marked-extended-tables": {
       "marked": ">=3 <18"
-    }
+    },
+    "shell-quote": "^1.12.0"
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
@@ -67,7 +68,6 @@
     "prettier": "^3.8.3",
     "rollup": "^4.17.2",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.0",
-    "web-ext": "^10.2.0"
+    "typescript-eslint": "^8.60.0"
   }
 }

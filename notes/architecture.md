@@ -240,7 +240,7 @@ prefixed with `cp.` (compose preview).
 
 ```
 npm run prepare-all   # Full build: deps + vendored libs + mailext-options-sync + XPI
-npm run build         # web-ext package (produces the .xpi)
+npm run build         # Package extension/ into web-ext-artifacts/markdown-here-revival.xpi
 npm run vendor        # Download and bundle third-party libs into extension/vendor/
 npm run clean         # Remove build artifacts
 ```
@@ -250,7 +250,10 @@ so it's cross-platform). It calls into `tools/vendor.mjs`, whose `VENDORED`
 table lists each vendored library and how to extract or bundle it from its npm
 package into `extension/vendor/` (and a few other `extension/` subdirectories).
 
-- `web-ext-config.mjs` configures the `web-ext` tool for Thunderbird.
+- `tools/xpi.mjs` packages the XPI with Node built-ins only (web-ext is no
+  longer a devDependency: its dependency tree fails ATN's `npm audit`). It
+  honours `ignoreFiles` from `web-ext-config.mjs` plus web-ext's default ignores.
+- `web-ext-config.mjs` configures `npx web-ext run` for Thunderbird.
 - The `mailext-options-sync/` directory is a git subrepo from
   `https://gitlab.com/jfx2006/mailext-options-sync` — its TypeScript source
   is compiled via rollup into the JS file used by the extension.
