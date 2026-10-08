@@ -19,7 +19,7 @@ the author of Markdown Here have been unsuccessful.
 ## Compatibility
 
 This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
-The current release, *Markdown Here Revival 4.0.18*, supports *Thunderbird 140*
+The current release, *Markdown Here Revival 4.0.19*, supports *Thunderbird 140*
 up to *Thunderbird 157*. The 4.0.x series is the last one supporting versions
 older than *Thunderbird 153esr*: starting with 4.1.0, Thunderbird 153 or later
 is required.
@@ -27,7 +27,8 @@ is required.
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
 | 4.1.0 (upcoming)      | 153 – 156.x  |         |
-| 4.0.18                | 140 – 157.x  | pending |
+| 4.0.19                | 140 – 157.x  | pending |
+| 4.0.18                | 140 – 157.x  | no      |
 | 4.0.17                | 128 – 156.x  | no      |
 | 4.0.16                | 128 – 156.x  | no      |
 | 4.0.15                | 128 – 155.x  | no      |
