@@ -55,17 +55,4 @@ vendored code is now ignored by git.
 
 Running `npm run prepare-all` will also run `npm run vendor`.
 
-### Local package: degausser
-
-`degausser` (MIT, HTML to plain text, used as fallback on Thunderbird
-versions without `messengerUtilities.convertToPlainText`) is not widely used,
-so its unmodified, non-minified source (version 2.4.4,
-https://github.com/flowpub/degausser) is included in the source archive under
-`local_packages/degausser/` and declared in `package.json` as
-`"degausser": "file:./local_packages/degausser"`. `npm ci` links it into
-`node_modules/`, and `npm run vendor` bundles `src/degausser.js` into
-`extension/vendor/degausser.esm.js`. Only its `package.json` differs from the
-npm tarball (upstream build/test `scripts` and `devDependencies` removed); see
-`local_packages/degausser/VENDORED.md`.
-
 Running `npm run clean` removes the vendored code (along with `node_modules`).

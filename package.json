@@ -27,7 +27,6 @@
     "@textcomplete/utils": "^0.1.13",
     "bootstrap": "^5.3.8",
     "bootswatch": "^5.3.8",
-    "degausser": "file:./local_packages/degausser",
     "dompurify": "^3.4.5",
     "emojibase-data": "^17.0.0",
     "eventemitter3": "^5.0.4",

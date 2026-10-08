@@ -25,7 +25,7 @@ extension/
 ├── backgroundscript.js            # Background script — orchestrates everything
 ├── composescript.js               # Content script injected into compose windows
 ├── markdown-render.js             # Core marked.js rendering pipeline
-├── mdhr-mangle.js                 # HTML ↔ Markdown conversion (uses turndown/degausser)
+├── mdhr-mangle.js                 # HTML ↔ Markdown conversion (uses turndown)
 ├── async_utils.mjs                # Utility functions
 ├── auto-emoji.js                  # Emoji autocomplete (textcomplete)
 ├── marked-*.js                    # Custom marked.js extensions (math, links, smart stuff)
@@ -54,7 +54,6 @@ extension/
 ├── vendor/                        # Vendored third-party libraries
 │   ├── marked.esm.js             # Markdown parser
 │   ├── turndown.esm.js           # HTML-to-Markdown
-│   ├── degausser.esm.js          # HTML-to-text
 │   ├── purify.es.mjs             # DOMPurify (sanitization)
 │   ├── TeXZilla.js               # TeX rendering
 │   ├── textcomplete.js           # Autocomplete
@@ -265,7 +264,6 @@ package into `extension/vendor/` (and a few other `extension/` subdirectories).
 | marked       | Markdown parsing and rendering      |
 | highlight.js | Syntax highlighting for code blocks |
 | turndown     | HTML-to-Markdown conversion         |
-| degausser    | HTML-to-text fallback               |
 | DOMPurify    | HTML sanitization                   |
 | TeXZilla     | TeX formula → MathML/PNG            |
 | textcomplete | Emoji autocomplete popup            |

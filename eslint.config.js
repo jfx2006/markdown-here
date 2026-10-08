@@ -20,7 +20,6 @@ export default [
   globalIgnores([
     ".ruff_cache/**",
     "CI/**",
-    "local_packages/**",
     "requirements/**",
     "mailext-options-sync/**",
     "test/**",

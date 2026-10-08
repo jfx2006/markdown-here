@@ -3,11 +3,12 @@
 ## [4.0.18] (unreleased)
 
 ### Changed
+- Require Thunderbird 140esr or later.
+- HTML to plain text conversion always uses Thunderbird's built-in
+  `convertToPlainText`; the bundled degausser fallback is removed.
 - The build no longer uses web-ext (the XPI is packaged by `tools/xpi.mjs`)
   and unused development dependencies were dropped, so `npm audit` is clean
   (ATN requirement).
-- The `degausser` dependency is now shipped as a reviewed local package
-  (unmodified source in `local_packages/degausser/`).
 
 ### Fixed
 - Bump strict_max_version to support Thunderbird 157.
