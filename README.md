@@ -19,14 +19,16 @@ the author of Markdown Here have been unsuccessful.
 ## Compatibility
 
 This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
-The current release, *Markdown Here Revival 4.0.17*, supports *Thunderbird 128*
-up to *Thunderbird 156*. It is the last release supporting versions older than
-*Thunderbird 153esr*: starting with 4.1.0, Thunderbird 153 or later is required.
+The current release, *Markdown Here Revival 4.0.18*, supports *Thunderbird 140*
+up to *Thunderbird 157*. The 4.0.x series is the last one supporting versions
+older than *Thunderbird 153esr*: starting with 4.1.0, Thunderbird 153 or later
+is required.
 
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
 | 4.1.0 (upcoming)      | 153 – 156.x  |         |
-| 4.0.17                | 128 – 156.x  | pending |
+| 4.0.18                | 140 – 157.x  | pending |
+| 4.0.17                | 128 – 156.x  | no      |
 | 4.0.16                | 128 – 156.x  | no      |
 | 4.0.15                | 128 – 155.x  | no      |
 | 4.0.14                | 128 – 154.x  | no      |
@@ -149,9 +151,14 @@ install dependencies and download vendored code.
 
 ## Building
 
-Use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/),
-mostly the same as you would for Firefox. A config file is included to make it
-use Thunderbird.
+Run `npm run build`. The XPI is written to
+`web-ext-artifacts/markdown-here-revival.xpi` (packaged by `tools/xpi.mjs`,
+no extra dependency).
+
+To run the extension in Thunderbird during development, use
+[web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)
+through `npx web-ext run` (or the `npm run test*` scripts). The included
+`web-ext-config.mjs` makes it use Thunderbird.
 
 
 ## Feedback

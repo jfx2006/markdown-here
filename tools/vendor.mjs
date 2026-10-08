@@ -165,7 +165,6 @@ const VENDORED = [
     "marked-extended-tables.esm.js": "src/index.js",
   }),
   new CopyPackage("marked-emoji", { "marked-emoji.esm.js": "src/index.js" }),
-  new RollupPackage("degausser", { "degausser.esm.js": "src/degausser.js" }),
   new PapaParse("papaparse", { "papaparse.esm.js": "papaparse.js" }),
   new HighlightJs(
     "highlightjs",

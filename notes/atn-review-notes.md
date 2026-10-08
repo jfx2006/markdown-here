@@ -7,7 +7,7 @@ automatically. It only works when composing in HTML mode.
 
 (Python should not be needed for reproducing build with "npm run prepare-all")
 
-- Node 22.x
+- Node 22.x (22.2 or later)
 - npm 10.x
 
 or build in Docker using CI/Dockerfile
@@ -38,7 +38,9 @@ Build the extension XPI file.
 
 - npm run build
 
-The XPI file will be in the `web-ext-artifacts/` directory.
+The XPI file will be `web-ext-artifacts/markdown-here-revival.xpi`. It is
+packaged by `tools/xpi.mjs` using only Node built-ins; the archive is
+reproducible (sorted entries, fixed timestamps).
 
 The above steps can be run with a single command if desired:
 
