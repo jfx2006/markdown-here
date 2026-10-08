@@ -57,9 +57,11 @@ function makeStylesExplicit(html_msg) {
   if (!cssInliner) {
     cssInliner = new CSSInliner()
   }
+  const elements = []
   while (treeWalker.nextNode()) {
-    cssInliner.inlineStylesForSingleElement(treeWalker.currentNode)
+    elements.push(treeWalker.currentNode)
   }
+  cssInliner.inlineStyles(elements)
 }
 
 function wrapExternal(doc) {

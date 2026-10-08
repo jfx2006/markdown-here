@@ -12,6 +12,10 @@
 
 ### Fixed
 - Bump strict_max_version to support Thunderbird 157.
+- Sending a large message could time out while the styles were inlined, and
+  the email was then sent as raw Markdown. Inlining is much faster, and if the
+  rendered email still cannot be produced, a prompt now asks whether to send
+  it anyway instead of sending the Markdown silently. #111
 
 ## [4.0.17] - 2026-09-24
 
