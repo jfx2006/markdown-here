@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.19] (unreleased)
+## [4.0.19] - 2026-10-08
 
 4.0.18 was only published on GitLab; its changes reach ATN with this release.
 
