@@ -58,10 +58,9 @@ Options page, preview tab:
 
 - [ ] Highlighted code blocks keep their colors.
 - [ ] Table column alignment (`:---:`, `---:`) is kept.
-- [ ] Images are displayed: add a line such as
-      `![logo](https://…/image.png)` (any reachable image) to the preview
-      text. Use an absolute URL: relative links get `https://`
-      prepended (urlSchemify), as in a real email.
+- [ ] Images are displayed (the sample loads the MDHR icon from GitLab, so
+      this needs network access; relative URLs get `https://` prepended by
+      urlSchemify, as in a real email).
 - [ ] GFM task lists (`- [ ]`, `- [x]`) show their checkboxes.
 - [ ] Inline raw HTML styles (`<span style="color: red">`) are kept.
 - [ ] TeX formulas are rendered.
