@@ -102,9 +102,9 @@ describe("Markdown-Render", function () {
       expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
+      // The width depends on the installed fonts (28 or 29 px seen so far).
       md = "$xx$"
-      target = '<p><img width="28" height="18" alt="xx'
-      expect((await markdownRender(md)).slice(0, target.length)).to.equal(target)
+      expect(await markdownRender(md)).to.match(/^<p><img width="\d+" height="18" alt="xx/)
     })
 
     // Test issue #112: Syntax Highlighting crashing rendering on bad language name: https://github.com/adam-p/markdown-here/issues/112
@@ -365,9 +365,9 @@ describe("Markdown-Render", function () {
       expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
 
       // Make sure we haven't broken multi-character forumlae
+      // The width depends on the installed fonts (28 or 29 px seen so far).
       md = "$xx$"
-      target = '<p><img width="28" height="18" alt="xx'
-      expect((await fullRender(md)).slice(0, target.length)).to.equal(target)
+      expect(await fullRender(md)).to.match(/^<p><img width="\d+" height="18" alt="xx/)
     })
   })
 })
