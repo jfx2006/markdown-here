@@ -61,6 +61,9 @@ Options page, preview tab:
 - [ ] Images are displayed: the sample shows the bundled MDHR icon (no
       network access needed). Other relative URLs get `https://` prepended
       by urlSchemify, as in a real email.
+- [ ] The English and French samples have the same sections; with every
+      option enabled, each feature of its section renders (emoji, bug link,
+      merged table cells, CSV table, math).
 - [ ] GFM task lists (`- [ ]`, `- [x]`) show their checkboxes.
 - [ ] Inline raw HTML styles (`<span style="color: red">`) are kept.
 - [ ] TeX formulas are rendered.

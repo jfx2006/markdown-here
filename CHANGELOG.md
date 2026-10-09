@@ -8,6 +8,9 @@
   `Element.setHTML()` sanitizer instead of DOMPurify.
 - The default CSS no longer uses CSS nesting for nested quote colors (same
   rendering). Unmodified default CSS is updated automatically.
+- The English and French samples of the options page preview have the same
+  content and show every supported Markdown feature, including the optional
+  ones (emoji, bug links, merged table cells, CSV tables, math).
 
 ### Fixed
 - The selected syntax highlighting theme was not applied to the options page
