@@ -16,6 +16,19 @@
   content was edited: the preview is now re-rendered with the new rendering
   options and CSS.
 
+## [4.0.19] - 2026-10-08
+
+4.0.18 was only published on GitLab; its changes reach ATN with this release.
+
+### Changed
+- TeXZilla is shipped as a reviewed local package (unmodified source), as
+  ATN requires for dependencies that are not widely used.
+
+### Fixed
+- The translation tool (Locale Maker) saved `undefined` or `[object Object]`
+  instead of the translated messages. It now saves through download links
+  and no longer relies on the `downloads` API.
+
 ## [4.0.18] - 2026-10-08
 
 ### Changed

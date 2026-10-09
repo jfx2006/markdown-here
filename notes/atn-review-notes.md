@@ -56,3 +56,11 @@ vendored code is now ignored by git.
 Running `npm run prepare-all` will also run `npm run vendor`.
 
 Running `npm run clean` removes the vendored code (along with `node_modules`).
+
+### Local package: texzilla
+
+`texzilla` (TeXZilla 1.0.2, MPL-2.0, https://github.com/fred-wang/TeXZilla) is
+not widely used, so its unmodified source is included under
+`local_packages/texzilla/` and declared in `package.json` as
+`"texzilla": "file:./local_packages/texzilla"`. See
+`local_packages/texzilla/VENDORED.md`.

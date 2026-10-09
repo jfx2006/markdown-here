@@ -29,6 +29,7 @@ export default [
     "extension/highlightjs/**",
     "extension/locale_maker/**",
     "extension/vendor/**",
+    "local_packages/**",
     "extension/experiments/notificationbar/**",
     "extension/experiments/customui/**",
     "extension/options/mailext-options-sync.js",
