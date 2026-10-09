@@ -18,6 +18,7 @@ import {
   getHljsStylesheet,
   getLanguage,
   getMessage,
+  wxGetUrl,
 } from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
 ;(async () => {
@@ -256,7 +257,10 @@ import OptionsStore from "./options-storage.js"
   async function setInitialText() {
     if (previewInput.value === "") {
       const preview_lang = await getLanguage()
-      previewInput.value = await fetchExtFile(`/_locales/${preview_lang}/preview.md`)
+      const sample = await fetchExtFile(`/_locales/${preview_lang}/preview.md`)
+      // The sample shows a bundled image: point it at the extension URL, since
+      // urlSchemify would turn the root-relative path into https://images/...
+      previewInput.value = sample.replaceAll("](/images/", `](${wxGetUrl("/images/")}`)
     }
   }
 

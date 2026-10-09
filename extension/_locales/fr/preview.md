@@ -23,7 +23,7 @@ function colorationSyntaxique() {
 Du HTML en ligne : <span style="color: red">texte en rouge</span>.
 
 
-Une image : ![logo de Markdown Here](https://gitlab.com/uploads/-/system/project/avatar/23345839/icon24.png)
+Une image : ![logo de Markdown Here](/images/icon24.png)
 
 > Bloc de citation.  
 > *Avec* **un peu de** `markdown`.

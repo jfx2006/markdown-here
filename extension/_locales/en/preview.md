@@ -72,7 +72,7 @@ Raw HTML works too: <span style="color: red">red text</span>.
 
 ## Images and quotes
 
-An image: ![Markdown Here logo](https://gitlab.com/uploads/-/system/project/avatar/23345839/icon24.png)
+An image: ![Markdown Here logo](/images/icon24.png)
 
 > A block quote.
 > *With* **some** `markdown`.

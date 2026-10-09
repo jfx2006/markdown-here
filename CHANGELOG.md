@@ -15,6 +15,8 @@
 - Changing an option did not update open compose windows until their
   content was edited: the preview is now re-rendered with the new rendering
   options and CSS.
+- The sample image of the options page preview was not displayed. It now
+  shows the icon bundled with the extension.
 
 ## [4.0.19] - 2026-10-08
 
