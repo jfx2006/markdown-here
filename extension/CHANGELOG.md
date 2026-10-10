@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.1.0] (unreleased)
+## [4.1.0] - 2026-10-10
 
 ### Changed
 - Require Thunderbird 153esr or later. #154
