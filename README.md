@@ -26,7 +26,7 @@ is required.
 
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
-| 4.1.0 (upcoming)      | 153 – 156.x  |         |
+| 4.1.0 (upcoming)      | 153 – 157.x  | no      |
 | 4.0.19                | 140 – 157.x  | pending |
 | 4.0.18                | 140 – 157.x  | no      |
 | 4.0.17                | 128 – 156.x  | no      |
