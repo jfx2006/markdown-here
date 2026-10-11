@@ -5,7 +5,6 @@
  */
 
 const ALLOW_CSS_PROPS = [
-  /^--.*$"/i,
   /^align.*$/i,
   /^background.*$/i,
   /^border.*$/i,

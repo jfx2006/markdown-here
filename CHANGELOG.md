@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.1.0] - 2026-10-10
+
+### Changed
+- Require Thunderbird 153esr or later. #154
+- The options page inserts rendered markup with the built-in
+  `Element.setHTML()` sanitizer instead of DOMPurify.
+- The default CSS no longer uses CSS nesting for nested quote colors (same
+  rendering). Unmodified default CSS is updated automatically.
+- The English and French samples of the options page preview have the same
+  content and show every supported Markdown feature, including the optional
+  ones (emoji, bug links, merged table cells, CSV tables, math).
+
+### Fixed
+- The selected syntax highlighting theme was not applied to the options page
+  preview until an option was changed.
+- Changing an option did not update open compose windows until their
+  content was edited: the preview is now re-rendered with the new rendering
+  options and CSS.
+- The sample image of the options page preview was not displayed. It now
+  shows the icon bundled with the extension.
+
 ## [4.0.19] - 2026-10-08
 
 4.0.18 was only published on GitLab; its changes reach ATN with this release.
@@ -25,6 +46,9 @@
 
 ### Fixed
 - Bump strict_max_version to support Thunderbird 157.
+- The bundled PapaParse library embedded the build machine's file path in an
+  inline source map, so rebuilding from another directory produced a
+  different file.
 - Sending a large message could time out while the styles were inlined, and
   the email was then sent as raw Markdown. Inlining is much faster, and if the
   rendered email still cannot be produced, a prompt now asks whether to send

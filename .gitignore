@@ -20,3 +20,7 @@ extension/highlightjs/styles/styles.json
 extension/vendor/*js
 extension/vendor/*.css
 extension/options/mailext-options-sync.js
+# webext-linter caches
+/.experiments-cache/
+/.lib-mozilla-hash-db-cache/
+/.schema-cache/

@@ -1,6 +1,6 @@
 {
   "name": "markdown-here-revival",
-  "version": "4.0.19",
+  "version": "4.1.0",
   "description": "Markdown emails for Mozilla Thunderbird",
   "scripts": {
     "build": "node tools/build.mjs xpi",
@@ -11,6 +11,8 @@
     "ci": "node tools/build.mjs ci",
     "check-clean": "node tools/build.mjs checkClean",
     "lint": "eslint .",
+    "test:node": "mocha --require ./tools/node-test-setup.mjs extension/test/async_utils-test.js extension/test/options_migration-test.js extension/test/frontmatter-test.js extension/test/markdown-render-test.js extension/test/marked-csv-test.js",
+    "check:build": "node tools/check-build.mjs",
     "test128": "npx web-ext run --verbose -p mdhr_test_profiles/testing128 -f thunderbird128 --keep-profile-changes",
     "testrelease": "npx web-ext run --verbose -p mdhr_test_profiles/testing-release -f thunderbird-release --keep-profile-changes",
     "testbeta": "npx web-ext run --verbose -f thunderbird-beta -p mdhr_test_profiles/testing-beta --keep-profile-changes",
@@ -64,6 +66,7 @@
     "eslint-plugin-no-unsanitized": "^4.1.5",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.6.0",
+    "mocha": "^12.0.3",
     "prettier": "^3.8.3",
     "rollup": "^4.17.2",
     "type-fest": "^5.10.0",

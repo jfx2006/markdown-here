@@ -22,11 +22,13 @@ const OLD_CSS_SUMS = [
   "2dfd2ecbf89f60805829a9ebbc7506324242dba94c21dced5419395cba646918",
   // 3.999.20
   "9a35df2a345ea9a92cdbe0b6660d47a0dc5a88b096890a34d1e4388ea813e59c",
+  // 4.0.3
+  "4ce7f019d49a86b7ec733997a70529dae901f069d011543debbdbb1f0e0a5798",
 ]
 
 // Checksum of the current version of default.css
-// 4.0.3
-const DEFAULT_CSS_SUM = "4ce7f019d49a86b7ec733997a70529dae901f069d011543debbdbb1f0e0a5798"
+// 4.1.0
+const DEFAULT_CSS_SUM = "37c59171351732bc2acf619680232c6c1be20f32d0ae51e1d16420c4f0e0a535"
 
 export function testCssSum(checksum) {
   // Checks the default.css checksum to ensure the above are correct

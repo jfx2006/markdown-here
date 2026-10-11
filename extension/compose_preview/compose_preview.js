@@ -21,6 +21,8 @@ const MDHR_RAW_CSS =
   "height:0;width:0;max-height:0;max-width:0;overflow:hidden;font-size:0;padding:0;margin:0;"
 
 let cssInliner
+// Last message received for rendering, kept to re-render it when the options change.
+let lastMsgHtml
 
 function escapeHTML(strings, html) {
   return `${DOMPurify.sanitize(html)}`
@@ -97,6 +99,7 @@ function deShadowRoot(doc) {
 
 async function renderMDEmail(msg_html) {
   /* cp.render-preview */
+  lastMsgHtml = msg_html
   const msgDocument = parseHTMLFromString(msg_html)
   const mdHtmlToText = new MdhrMangle(msgDocument)
   const mdText = await mdHtmlToText.preprocess()
@@ -110,6 +113,26 @@ async function renderMDEmail(msg_html) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
   }
   contentDiv.replaceChildren(...doc.body.childNodes)
+  return true
+}
+
+async function resetRenderer() {
+  /* cp.renderer-reset */
+  await resetMarked()
+  // The preview document is what gets sent, so its CSS must follow the options too.
+  const styles = {
+    MDHR_main_css: await getMainCSS(),
+    MDHR_syntax_css: await getSyntaxCSS(),
+  }
+  for (const [id, css] of Object.entries(styles)) {
+    const elem = p_iframe.contentDocument?.getElementById(id)
+    if (elem) {
+      elem.textContent = css
+    }
+  }
+  if (lastMsgHtml !== undefined) {
+    await renderMDEmail(lastMsgHtml)
+  }
   return true
 }
 
@@ -399,7 +422,7 @@ messenger.runtime.onMessage.addListener(function (request, sender, responseCallb
         }
         return renderMDEmail(request.doc_html)
       case "cp.renderer-reset":
-        return resetMarked()
+        return resetRenderer()
       case "cp.toggle-preview":
         if (request.windowId !== context.windowId) {
           return false

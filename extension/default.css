@@ -110,18 +110,22 @@ blockquote, q {
   color: #777;
   quotes: none;
   border-inline-start: 2px solid rgb(114, 159, 207);
-    & & {
-    border-inline-start-color: rgb(173, 127, 168);
-        & & {
-          border-inline-start-color: rgb(138, 226, 52);
-          & & {
-            border-inline-start-color: rgb(252, 175, 62);
-            & & {
-              border-inline-start-color: rgb(233, 185, 110);
-            }
-          }
-        }
-  }
+}
+
+:is(blockquote, q) :is(blockquote, q) {
+  border-inline-start-color: rgb(173, 127, 168);
+}
+
+:is(blockquote, q) :is(blockquote, q) :is(blockquote, q) {
+  border-inline-start-color: rgb(138, 226, 52);
+}
+
+:is(blockquote, q) :is(blockquote, q) :is(blockquote, q) :is(blockquote, q) {
+  border-inline-start-color: rgb(252, 175, 62);
+}
+
+:is(blockquote, q) :is(blockquote, q) :is(blockquote, q) :is(blockquote, q) :is(blockquote, q) {
+  border-inline-start-color: rgb(233, 185, 110);
 }
 
 

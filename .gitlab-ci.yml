@@ -122,6 +122,8 @@ mdhr-build:
     - pip install -r requirements/requirements.txt
   script:
     - node tools/build.mjs ci
+    - npm run test:node
+    - npm run check:build
     - python tools/get-glab-cli.py # Appends download URL to version.env
   artifacts:
     paths:

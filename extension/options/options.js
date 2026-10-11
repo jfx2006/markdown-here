@@ -10,7 +10,6 @@
 /* global  Utils:false bootstrap:false */
 
 import HotkeyHandler from "./shortcuts.js"
-import DOMPurify from "../vendor/purify.es.mjs"
 import { markdownRender, resetMarked } from "../markdown-render.js"
 
 import {
@@ -19,6 +18,7 @@ import {
   getHljsStylesheet,
   getLanguage,
   getMessage,
+  wxGetUrl,
 } from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
 ;(async () => {
@@ -113,6 +113,9 @@ import OptionsStore from "./options-storage.js"
 
       await OptionsStore.syncForm(form)
       form.addEventListener("options-sync:form-synced", await onOptionsSaved)
+      // Configure marked from the saved options before the first preview render,
+      // otherwise it runs without the highlight extension (no hljs classes).
+      await resetMarked()
     }
 
     form.addEventListener("hotkey", handleHotKey)
@@ -138,13 +141,13 @@ import OptionsStore from "./options-storage.js"
   async function onOptionsSaved(e) {
     await handleUIMode()
     handleMathRenderer()
+    await resetMarked()
     await handleInput()
     handleDirectives()
     handleEmojiAutocomplete()
     await handleBodyText()
     showSavedMsg()
     await messenger.runtime.sendMessage({ action: "cp.renderer-reset" })
-    await resetMarked()
   }
 
   function activatePillNav() {
@@ -164,9 +167,29 @@ import OptionsStore from "./options-storage.js"
     bootstrap.Tab.getInstance(triggerEl).show()
   }
 
-  function sanitizedFragment(html) {
-    return DOMPurify.sanitize(html, { RETURN_DOM_FRAGMENT: true })
+  // Sanitizer for markdownRender output (preview and changelog). The default
+  // setHTML() config drops class, id, style and <img>, which would break syntax
+  // highlighting (hljs classes), table alignment and preview images. Start from
+  // the default config and only allow what rendered Markdown needs; setHTML()
+  // still removes unsafe content (script, iframe, event handlers, javascript:
+  // URLs) regardless.
+  function markdownSanitizer() {
+    const sanitizer = new Sanitizer()
+    for (const attr of ["class", "id", "style", "align"]) {
+      sanitizer.allowAttribute(attr)
+    }
+    sanitizer.allowElement({
+      name: "img",
+      attributes: ["src", "alt", "width", "height"],
+    })
+    // GFM task list checkboxes.
+    sanitizer.allowElement({
+      name: "input",
+      attributes: ["type", "checked", "disabled"],
+    })
+    return sanitizer
   }
+  const MARKDOWN_SANITIZER = markdownSanitizer()
 
   function handlePreviewLoad() {
     inputDirty = true
@@ -218,7 +241,9 @@ import OptionsStore from "./options-storage.js"
           previewIframe.contentDocument.createTextNode(response.syntax_css),
         )
 
-        previewIframe.contentDocument.body.replaceChildren(sanitizedFragment(response.html))
+        previewIframe.contentDocument.body.setHTML(response.html, {
+          sanitizer: MARKDOWN_SANITIZER,
+        })
         setPreviewScroll()
       } catch (reason) {
         console.log(`Error rendering preview. ${reason}`)
@@ -232,7 +257,10 @@ import OptionsStore from "./options-storage.js"
   async function setInitialText() {
     if (previewInput.value === "") {
       const preview_lang = await getLanguage()
-      previewInput.value = await fetchExtFile(`/_locales/${preview_lang}/preview.md`)
+      const sample = await fetchExtFile(`/_locales/${preview_lang}/preview.md`)
+      // The sample shows a bundled image: point it at the extension URL, since
+      // urlSchemify would turn the root-relative path into https://images/...
+      previewInput.value = sample.replaceAll("](/images/", `](${wxGetUrl("/images/")}`)
     }
   }
 
@@ -265,7 +293,7 @@ import OptionsStore from "./options-storage.js"
     const changes = await fetchExtFile("/CHANGELOG.md")
 
     const response = await markdownRender(changes)
-    changesElem.replaceChildren(sanitizedFragment(response))
+    changesElem.setHTML(response, { sanitizer: MARKDOWN_SANITIZER })
   }
 
   /**
@@ -415,7 +443,8 @@ import OptionsStore from "./options-storage.js"
       let message = getMessage(message_id, arg)
       if (message) {
         if (n.dataset.i18nHtml === "true") {
-          n.replaceChildren(sanitizedFragment(message))
+          // _locales messages only contain links: the default config is enough.
+          n.setHTML(message)
         } else {
           n.textContent = message
         }
