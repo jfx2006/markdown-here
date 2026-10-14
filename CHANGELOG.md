@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.2] - 2026-10-14
 
 ### Changed
 - All translations reviewed and completed: the 9 strings missing in 11
