@@ -214,6 +214,11 @@ async function watchEditor(refreshPreview = false) {
     emojiDestroy()
     emojiDestroy = null
   }
+  // A restored body holds a copy of the emoji dropdown that was in the
+  // editor when the message was sent.
+  for (const elem of window.document.querySelectorAll("ul.textcomplete-dropdown")) {
+    elem.remove()
+  }
   await loadEmojiCompleter()
   if (refreshPreview && !previewHidden) {
     await sendHTMLToPreview()
