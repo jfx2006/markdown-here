@@ -5,20 +5,20 @@
     "hash": "edf09063590176700ead1a22bf3a5937"
   },
   "app_slogan": {
-    "message": "Mozilla 雷鸟的下限邮件",
+    "message": "适用于 Mozilla Thunderbird 的 Markdown 邮件",
     "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
   "__WET_GROUP__application": {
-    "message": "应用",
+    "message": "应用程序",
     "hash": "705a7139d345ac5faa9a3cfc7114e189"
   },
   "toggle_button_tooltip_enable": {
-    "message": "启用下标记预览",
+    "message": "启用 Markdown 预览",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "d9cb83c089cf43059f988f5bb25d6ad9"
   },
   "toggle_button_tooltip_disable": {
-    "message": "禁用下标记预览",
+    "message": "禁用 Markdown 预览",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
@@ -46,17 +46,17 @@
     "hash": "16a5bc1e5d6a2e5bbb1b35ca483971e8"
   },
   "forgot_to_render_prompt_close_hover": {
-    "message": "忽略这条通知",
+    "message": "关闭此通知",
     "description": "Text that shows when the user hovers over the 'X' that will close the prompt",
     "hash": "48f8b404a3afd15f165abe500bf625c0"
   },
   "forgot_to_render_prompt_info": {
-    "message": "你好像用Markdown写了这封电邮，但却忘了让它变得更漂亮。",
+    "message": "您似乎用 Markdown 撰写了这封邮件，但忘记了转换。",
     "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "7a6bf5503a66dfc42914e6fec5a668ba"
   },
   "forgot_to_render_prompt_question": {
-    "message": "坚持发送?",
+    "message": "仍要发送吗？",
     "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "5ceefbf6f6675554ec47ed2fac4edc4d"
   },
@@ -65,8 +65,13 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "render_failed_prompt_info": {
+    "message": "Markdown Here Revival 无法将此邮件转换为 HTML。",
+    "description": "Informational part of the prompt shown when the rendered email could not be produced at send time",
+    "hash": "79a93a1f3ce6c17232c7baf9db66f66"
+  },
   "set_math_api_url": {
-    "message": "在设置中设置数学渲染的 API URL 。",
+    "message": "请在设置中指定数学公式渲染所用的 API URL。",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
@@ -76,7 +81,7 @@
     "hash": "6ca043613138c5e1b2e3b20df003c175"
   },
   "edit_as_new_markdown_message": {
-    "message": "作为新Markdown消息编辑",
+    "message": "作为新的 Markdown 消息编辑",
     "description": "Context menu item displayed from message list",
     "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
   },
@@ -107,90 +112,130 @@
     "hash": "a827c951ef7fe2da75ebc58baf88287f"
   },
   "options_page__mdhr_classic_mode": {
-    "message": "使用前 4.0 (经典) 模式",
+    "message": "使用 4.0 之前的（经典）模式",
     "description": "Label for selecting classic UI",
     "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
   },
   "options_page__mdhr_modern_mode": {
-    "message": "使用活预览( 现代) 模式",
+    "message": "使用实时预览（现代）模式",
     "description": "Label for selecting modern UI",
     "hash": "fd781763933043b55578498058686099"
   },
   "options_page__forgot_to_render_label2": {
-    "message": "启用已忘记的对接检查",
+    "message": "启用“忘记转换”检查",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
     "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "当你发送电子邮件时,这个检查内容 看看它看起来像你写的马克唐,\n但是在发送前忘了渲染(即点击\"Markdown Toggle\").\n如果您的电子邮件发送能力受到干扰, 这可能需要禁用 。",
+    "message": "发送邮件时，检查内容是否看起来是用 Markdown 撰写的，\n但在发送前忘记了转换（即点击“Markdown Toggle”）。\n如果此功能妨碍您正常发送邮件，可以将其禁用。",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "1c100cda3b6f6da50138458b785b47cb"
   },
   "options_page__composer_start_markdown_mode": {
-    "message": "以标记下模式启动作曲",
+    "message": "以 Markdown 模式启动撰写窗口",
     "hash": "97a0a3d24c0345f5347393de128d07d0"
   },
+  "options_page__preview_width_mode_label": {
+    "message": "预览窗格宽度",
+    "description": "Label for the preview pane width mode radio group",
+    "hash": "79b7c5f8aaf20a9172692a2df1cd1477"
+  },
+  "options_page__preview_width_mode_ratio_label": {
+    "message": "跟随窗口大小（推荐）",
+    "description": "Preview pane width tracks the compose window size",
+    "hash": "b6236755e2c48df7ff239f04ba7faf44"
+  },
+  "options_page__preview_width_mode_fixed_label": {
+    "message": "固定宽度，通过拖动分隔条设置",
+    "description": "Preview pane keeps a fixed pixel width",
+    "hash": "86e26f48c46cc9d9925ab0b7120c08c1"
+  },
+  "options_page__use_bodytext_format_label": {
+    "message": "在撰写窗口中使用正文文本格式",
+    "description": "Label for the checkbox that enables the Body Text format",
+    "hash": "78e166d9680f679279761ef5fece57b4"
+  },
+  "use_paragraph_setting_label": {
+    "message": "默认使用段落而非正文文本格式",
+    "description": "This string must match the Fluent string 'default-format-label' in preferences.ftl",
+    "hash": "be5dec78355a838f277d53827641742d"
+  },
+  "options_page__use_bodytext_format_description": {
+    "message": "在 Thunderbird 设置中禁用“$PREF_STRING$”时，此附加组件效果最佳。启用此选项即可应用推荐设置。",
+    "description": "Description of the 'Use Body Text Format' option.",
+    "placeholders": {
+      "pref_string": {
+        "content": "$1"
+      }
+    },
+    "hash": "1fbfb494b370bdad538bb648f9818abf"
+  },
   "options_page__features_title": {
-    "message": "标记下特征",
+    "message": "Markdown 功能",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",
     "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
   "options_page__gfm_line_breaks_enabled_label": {
-    "message": "<b>启用GFM换行。</b>",
+    "message": "启用 GFM 换行",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
   "options_page__smart_replacements_enabled_label": {
-    "message": "启用“ 智能” 打印替换",
+    "message": "启用“智能”排版替换",
     "description": "Label for enabling the smart replacements feature",
     "hash": "d53c8006f33df32034b4e13dec238738"
   },
   "options_page__smart_replacements_2": {
-    "message": "智能替换包括:unicode引文、en和em-dash、椭圆和箭头替换",
+    "message": "智能替换包括：Unicode 引号、短破折号和长破折号、省略号以及箭头替换",
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__emoji_shortcode_enabled_label": {
-    "message": "启用: emoji : (吉苏布风格) 短码",
+    "message": "启用 :emoji: 短代码（GitHub 风格）",
     "description": "Label for enabling emoji shortcodes",
     "hash": "b20f1c09d205160478c354cfd2aefc59"
   },
   "options_page__emoji_autocomplete_enabled_label": {
-    "message": "启用 Emoji 自动弹出",
+    "message": "启用表情符号自动补全弹窗",
     "description": "Label for enabling an auto-complete popup for emoji shortcodes",
     "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
+  "options_page__csv_table_enabled_label": {
+    "message": "将 CSV 代码块渲染为表格",
+    "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables",
+    "hash": "b5a6678449c84f0d5dd7207c9ba6504b"
+  },
   "options_page__hotkey_title": {
-    "message": "快捷键",
+    "message": "热键（即键盘快捷键）",
     "description": "A section title",
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
   "options_page__tex_math_title": {
-    "message": "TeX数学公式支持",
+    "message": "TeX 数学公式支持",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
   "options_page__tex_math_texzilla_label": {
-    "message": "TeXZilla和 HTML Canvas 渲染",
+    "message": "TeXZilla 与 HTML Canvas 渲染",
     "description": "Label for tex math rendering option",
     "hash": "c210e3a6960c6d788491ac424f16c7a3"
   },
   "options_page__tex_math_texzilla_label-Title": {
-    "message": "数学公式与 TeXZilla.js 一起使用浏览器画布渲染. 没有发送网络请求 。",
+    "message": "数学公式由 TeXZilla.js 使用浏览器画布渲染，不会发送任何网络请求。",
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
   "options_page__tex_math_codecogs_label": {
-    "message": "使用 CodeCogs 公式渲染 API 的数学渲染",
+    "message": "使用 CodeCogs Equation Rendering API 渲染数学公式",
     "description": "Label for CodeCogs math rendering option",
     "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
   "options_page__tex_math_codecogs_customization_1": {
-    "message": "要生成公式的图像,会向 CodeCogs 发送请求. 这实际上意味着你和CodeCogs分享你的公式. 这也意味着您消息的收件人会向 CodeCogs 请求将图像渲染出来.",
+    "message": "为生成公式图像，会向 CodeCogs 发送请求。这实际上意味着您会将公式分享给 CodeCogs。同时也意味着邮件收件人需要向 CodeCogs 发送请求才能显示该图像。",
     "description": "one of the CodeCogs TeX math privacy concerns",
     "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
   "options_page__tex_math_codecogs_customization_2": {
-    "message": "关于定制选项,请参见这项服务的$LINK$CodeCogs文档$CLOSELINK$。",
+    "message": "有关渲染的自定义选项，请参阅此服务的 $LINK$CodeCogs 文档$CLOSELINK$。",
     "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -203,7 +248,7 @@
     "hash": "d108daece31e555fb937bda04f5d6c32"
   },
   "options_page__tex_math_codecogs_customization_3": {
-    "message": "创建 TeX 公式的好资源是 $LINK$CodeCogs 方程式编辑器$ 闭关元.",
+    "message": "$LINK$CodeCogs Equation Editor$CLOSELINK$ 是创建 TeX 公式的好帮手。",
     "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -216,12 +261,12 @@
     "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "创建错误的链接或像 QQ12345 这样的发行跟踪器 。 以下字段用于模板链接的URL和文本.",
+    "message": "创建指向缺陷或问题跟踪器的链接，例如 `#12345`。下方字段用作链接 URL 和文本的模板。",
     "description": "Description of bug/issue link feature.",
     "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
-    "message": "启用臭虫/ 发行链接",
+    "message": "启用缺陷/问题链接",
     "description": "Enable Bug or Issue linking",
     "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
   },
@@ -236,39 +281,43 @@
     "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
-    "message": "怎么样",
+    "message": "使用方法",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__howto": {
-    "message": "怎么样",
+    "message": "使用方法",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__basic_usage": {
     "message": "基本用法",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
+  "options_page__disable_paragraph_format": {
+    "message": "在 Thunderbird 设置中禁用段落格式。",
+    "hash": "5d59148c324e0ca1ceacfab5bdcdcd4"
+  },
   "options_page__start_new_message_toggle": {
-    "message": "启动新邮件消息 。 切换作曲者在格式工具栏上使用动作按钮来标记下限模式.",
+    "message": "新建一封邮件。使用格式工具栏上的操作按钮将撰写窗口切换到 Markdown 模式。",
     "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
-    "message": "在你的电邮里输入一些Markdown内容.<br/>试试这个: <code>_Hello_ `Markdown` **Here**!</code>",
+    "message": "在邮件中输入一些 Markdown。试试这个：",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "\" 马可倒地 \" *在这里*_Reval_!",
+    "message": "`Markdown` **Here** _Revival_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
   "options_page__compose_live_preview": {
-    "message": "实时预览在您写信件时更新 。",
+    "message": "实时预览会随着您的输入而更新。",
     "hash": "549af642c5b973f9b4c4c304eb004475"
   },
   "options_page__compose_send_message": {
-    "message": "传话!",
+    "message": "发送您的消息！",
     "hash": "4ab42a8334e6c82218c00d007d10fae5"
   },
   "options_page__toggle_hotkey": {
-    "message": "或用正觉:",
+    "message": "或使用热键：",
     "description": "A step suggestion in the basic usage instructions",
     "hash": "64f745514a24fa38ae148ef25745c835"
   },
@@ -278,15 +327,15 @@
     "hash": "d3acbfafa858245f2345f00786324790"
   },
   "options_page__resources_cheatsheet_link": {
-    "message": "如果你刚开始接触Markdown， <a href=\"https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet\" target=\"_blank\">Markdown Here Cheatsheet</a> 是本不错的入门手册.",
+    "message": "Markdown Here 速查表",
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
-    "message": "标记下这里复活维基",
+    "message": "Markdown Here Revival 维基",
     "hash": "31514a95d56ddc2d8df5c4d15439d17f"
   },
   "options_page__tips_tricks_link": {
-    "message": "提示和诡计",
+    "message": "提示与技巧",
     "hash": "c17546aca51dff7b1014d20502cb526"
   },
   "__WET_GROUP__theme": {
@@ -294,12 +343,12 @@
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
   "options_page__primary_css_title": {
-    "message": "基本渲染CSS",
+    "message": "主样式 CSS",
     "description": "section title",
     "hash": "1381af5b005843fe11ee6884b0093683"
   },
   "options_page__syntax_highlighting_css_title": {
-    "message": "语法高亮CSS",
+    "message": "语法高亮 CSS",
     "description": "section title",
     "hash": "697181e7fed87c2b2c17dab7b3e1cf25"
   },
@@ -326,12 +375,12 @@
     "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
   },
   "options_page__create_gitlab_issue": {
-    "message": "在 GitLab 上创建新版本",
+    "message": "在 GitLab 上新建议题",
     "description": "Text linking to Gitlab issue creation page",
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
   "options_page__issue_debug_info": {
-    "message": "以下调试信息可用:",
+    "message": "可提供以下调试信息：",
     "description": "header for some extension debug information",
     "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
   },
@@ -341,26 +390,26 @@
     "hash": "17b6a865f4e197dcff670c9ac12517a1"
   },
   "options_page__changelog_title": {
-    "message": "更改日志",
+    "message": "更新日志",
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
-    "message": "已保存",
+    "message": "更改已保存",
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
   "options_page__invalid_hotkey": {
-    "message": "无效的热键 !",
+    "message": "无效的热键！",
     "description": "message that shows when an invalid hotkey combination was entered",
     "hash": "54331fedbb67ec446035ce5b0b51b92"
   },
   "options_page__reset_button": {
-    "message": "重设",
+    "message": "重置",
     "description": "used for resetting certain options to the default",
     "hash": "d25968a7dfc21f95043a86dd5373b81"
   },
   "__WET_LOCALE__": {
-    "message": "内",
+    "message": "zh_CN",
     "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
   }
 }

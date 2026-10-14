@@ -23,7 +23,7 @@
     "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
   "upgrade_notification_text": {
-    "message": "$APPNAME$ aktualisiert",
+    "message": "$APPNAME$ wurde aktualisiert",
     "description": "Text on the notification shown when Markdown Here has been updated",
     "placeholders": {
       "appname": {
@@ -33,7 +33,7 @@
     "hash": "76796ecd460f742236be591169ce278b"
   },
   "update_notes_button": {
-    "message": "Anmerkungen aktualisieren",
+    "message": "Versionshinweise",
     "hash": "fef3aae852e44ea637393db11e0da28a"
   },
   "cancel_button": {
@@ -46,12 +46,12 @@
     "hash": "16a5bc1e5d6a2e5bbb1b35ca483971e8"
   },
   "forgot_to_render_prompt_close_hover": {
-    "message": "Benachrichtigung schließen",
+    "message": "Diese Benachrichtigung schließen",
     "description": "Text that shows when the user hovers over the 'X' that will close the prompt",
     "hash": "48f8b404a3afd15f165abe500bf625c0"
   },
   "forgot_to_render_prompt_info": {
-    "message": "Es sieht so aus als wäre diese E-Mail in Markdown geschrieben, aber noch nicht gerendert.",
+    "message": "Sie haben diese E-Mail anscheinend in Markdown geschrieben, aber vergessen, sie zu formatieren.",
     "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "7a6bf5503a66dfc42914e6fec5a668ba"
   },
@@ -65,27 +65,32 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "render_failed_prompt_info": {
+    "message": "Markdown Here Revival konnte diese E-Mail nicht in HTML umwandeln.",
+    "description": "Informational part of the prompt shown when the rendered email could not be produced at send time",
+    "hash": "79a93a1f3ce6c17232c7baf9db66f66"
+  },
   "set_math_api_url": {
-    "message": "Legen Sie eine API-URL für Math-Rendering in Einstellungen fest.",
+    "message": "Legen Sie in den Einstellungen eine API-URL für die Darstellung mathematischer Formeln fest.",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
   "reset_preview": {
-    "message": "Zurück zur Übersicht",
+    "message": "Vorschau zurücksetzen",
     "description": "Context menu item displayed on the compose action that resets the live preview to a usable state.",
     "hash": "6ca043613138c5e1b2e3b20df003c175"
   },
   "edit_as_new_markdown_message": {
-    "message": "Neue Markdown-Nachricht bearbeiten",
+    "message": "Als neue Markdown-Nachricht bearbeiten",
     "description": "Context menu item displayed from message list",
     "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
   },
   "__WET_GROUP__settings": {
-    "message": "Erweiterungseinstellungen Seiten",
+    "message": "Einstellungsseiten der Erweiterung",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
   },
   "options_page__page_title": {
-    "message": "$APPNAME$ Optionen",
+    "message": "Optionen für $APPNAME$",
     "placeholders": {
       "appname": {
         "content": "$1"
@@ -107,28 +112,63 @@
     "hash": "a827c951ef7fe2da75ebc58baf88287f"
   },
   "options_page__mdhr_classic_mode": {
-    "message": "Pre-4.0 (klassisch) Modus verwenden",
+    "message": "Modus vor Version 4.0 (klassisch) verwenden",
     "description": "Label for selecting classic UI",
     "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
   },
   "options_page__mdhr_modern_mode": {
-    "message": "Live-Vorschau (modern) Modus verwenden",
+    "message": "Live-Vorschau-Modus (modern) verwenden",
     "description": "Label for selecting modern UI",
     "hash": "fd781763933043b55578498058686099"
   },
   "options_page__forgot_to_render_label2": {
-    "message": "Ermöglichen Sie Vergessen-zu-Render-Check",
+    "message": "Prüfung auf vergessene Umwandlung aktivieren",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
     "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "Wenn Sie eine E-Mail senden, prüft dies den Inhalt, um zu sehen, ob es aussieht, als hätten Sie es in Markdown geschrieben.\naber vergessen, es zu machen (d.h., klicken Sie auf 'Markdown Toggle') vor dem Senden.\nDies muss möglicherweise deaktiviert werden, wenn es Ihre Fähigkeit beeinträchtigt, E-Mail zu senden.",
+    "message": "Beim Senden einer E-Mail wird geprüft, ob der Inhalt so aussieht, als hätten Sie ihn in Markdown geschrieben,\naber vergessen, ihn vor dem Senden umzuwandeln (d. h. auf „Markdown Toggle“ zu klicken).\nDeaktivieren Sie diese Prüfung, falls sie Sie beim Senden von E-Mails behindert.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "1c100cda3b6f6da50138458b785b47cb"
   },
   "options_page__composer_start_markdown_mode": {
-    "message": "Starten Sie den Komponisten im Markdown-Modus",
+    "message": "Verfassen-Fenster im Markdown-Modus starten",
     "hash": "97a0a3d24c0345f5347393de128d07d0"
+  },
+  "options_page__preview_width_mode_label": {
+    "message": "Breite des Vorschaubereichs",
+    "description": "Label for the preview pane width mode radio group",
+    "hash": "79b7c5f8aaf20a9172692a2df1cd1477"
+  },
+  "options_page__preview_width_mode_ratio_label": {
+    "message": "An die Fenstergröße anpassen (empfohlen)",
+    "description": "Preview pane width tracks the compose window size",
+    "hash": "b6236755e2c48df7ff239f04ba7faf44"
+  },
+  "options_page__preview_width_mode_fixed_label": {
+    "message": "Feste Breite, durch Ziehen des Trennbalkens einstellbar",
+    "description": "Preview pane keeps a fixed pixel width",
+    "hash": "86e26f48c46cc9d9925ab0b7120c08c1"
+  },
+  "options_page__use_bodytext_format_label": {
+    "message": "Format „Normaler Text“ im Verfassen-Fenster verwenden",
+    "description": "Label for the checkbox that enables the Body Text format",
+    "hash": "78e166d9680f679279761ef5fece57b4"
+  },
+  "use_paragraph_setting_label": {
+    "message": "Format \"Absatz\" anstatt \"Normaler Text\" verwenden",
+    "description": "This string must match the Fluent string 'default-format-label' in preferences.ftl",
+    "hash": "be5dec78355a838f277d53827641742d"
+  },
+  "options_page__use_bodytext_format_description": {
+    "message": "Dieses Add-on funktioniert am besten, wenn „$PREF_STRING$“ in den Thunderbird-Einstellungen deaktiviert ist. Aktivieren Sie diese Option, um die empfohlene Einstellung zu übernehmen.",
+    "description": "Description of the 'Use Body Text Format' option.",
+    "placeholders": {
+      "pref_string": {
+        "content": "$1"
+      }
+    },
+    "hash": "1fbfb494b370bdad538bb648f9818abf"
   },
   "options_page__features_title": {
     "message": "Markdown-Funktionen",
@@ -136,61 +176,66 @@
     "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
   "options_page__gfm_line_breaks_enabled_label": {
-    "message": "Aktivieren der GFM Zeilenumbrüche.",
+    "message": "GFM-Zeilenumbrüche aktivieren.",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
   "options_page__smart_replacements_enabled_label": {
-    "message": "Ermöglichen Sie 'smart' typografische Ersatz",
+    "message": "„Intelligente“ typografische Ersetzungen aktivieren",
     "description": "Label for enabling the smart replacements feature",
     "hash": "d53c8006f33df32034b4e13dec238738"
   },
   "options_page__smart_replacements_2": {
-    "message": "Zu den intelligenten Ersetzungen gehören: Unicode-Zitate, en- und em-dash, Ellipsen und Pfeilerwechsel",
+    "message": "Zu den intelligenten Ersetzungen gehören: typografische Anführungszeichen, Halbgeviert- und Geviertstriche, Auslassungspunkte und Pfeile",
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__emoji_shortcode_enabled_label": {
-    "message": "Enable :emoji: (Github-Stil) Kurzcodes",
+    "message": ":emoji:-Kurzcodes (GitHub-Stil) aktivieren",
     "description": "Label for enabling emoji shortcodes",
     "hash": "b20f1c09d205160478c354cfd2aefc59"
   },
   "options_page__emoji_autocomplete_enabled_label": {
-    "message": "Emoji autokomplete Popup aktivieren",
+    "message": "Popup zur automatischen Emoji-Vervollständigung aktivieren",
     "description": "Label for enabling an auto-complete popup for emoji shortcodes",
     "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
+  "options_page__csv_table_enabled_label": {
+    "message": "CSV-Codeblöcke als Tabellen darstellen",
+    "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables",
+    "hash": "b5a6678449c84f0d5dd7207c9ba6504b"
+  },
   "options_page__hotkey_title": {
-    "message": "Hotkey (aka Tastenkombination)",
+    "message": "Tastenkombination (Tastaturkürzel)",
     "description": "A section title",
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
   "options_page__tex_math_title": {
-    "message": "TeX für mathematische Formeln",
+    "message": "Unterstützung für mathematische TeX-Formeln",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
   "options_page__tex_math_texzilla_label": {
-    "message": "TeXZilla und HTML Leinwandwiedergabe",
+    "message": "Darstellung mit TeXZilla und HTML-Canvas",
     "description": "Label for tex math rendering option",
     "hash": "c210e3a6960c6d788491ac424f16c7a3"
   },
   "options_page__tex_math_texzilla_label-Title": {
-    "message": "Math Formeln werden mit TeXZilla.js mit der Browser-Kanäle gemacht. Es wird keine Netzwerkanforderung gesendet.",
+    "message": "Mathematische Formeln werden mit TeXZilla.js über das Canvas-Element des Browsers dargestellt. Es wird keine Netzwerkanfrage gesendet.",
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
   "options_page__tex_math_codecogs_label": {
-    "message": "Mathe Rendering mit CodeCogs Gleichung Rendering API",
+    "message": "Formeldarstellung über die CodeCogs Equation Rendering API",
     "description": "Label for CodeCogs math rendering option",
     "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
   "options_page__tex_math_codecogs_customization_1": {
-    "message": "Um das Bild für die Formel zu erzeugen, wird eine Anfrage an CodeCogs gesendet. Das bedeutet effektiv, dass Sie Ihre Formel mit CodeCogs teilen. Es bedeutet auch, dass die Empfänger Ihrer Nachricht eine Anfrage an CodeCogs stellen, um das Bild zu übertragen.",
+    "message": "Um das Bild der Formel zu erzeugen, wird eine Anfrage an CodeCogs gesendet. Sie teilen Ihre Formel also mit CodeCogs. Außerdem senden auch die Empfänger Ihrer Nachricht eine Anfrage an CodeCogs, damit das Bild dargestellt wird.",
     "description": "one of the CodeCogs TeX math privacy concerns",
     "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
   "options_page__tex_math_codecogs_customization_2": {
-    "message": "Für Anpassungsoptionen, siehe die $LINK$CodeCogs Dokumentation$CLOSELINK$ für diesen Service.",
+    "message": "Anpassungsmöglichkeiten für die Darstellung finden Sie in der $LINK$CodeCogs-Dokumentation$CLOSELINK$ zu diesem Dienst.",
     "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -203,7 +248,7 @@
     "hash": "d108daece31e555fb937bda04f5d6c32"
   },
   "options_page__tex_math_codecogs_customization_3": {
-    "message": "Eine gute Ressource für die Erstellung von TeX Formeln ist der $LINK$CodeCogs Equation Editor$ CLOSELINK$.",
+    "message": "Eine gute Hilfe beim Erstellen von TeX-Formeln ist der $LINK$CodeCogs Equation Editor$CLOSELINK$.",
     "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -216,51 +261,55 @@
     "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "Erstellen Sie Links zu Bug oder Ausgabe-Trackern wie `#12345`. Die nachstehenden Felder werden verwendet, um die URL und den Text der Links einzuschablonen.",
+    "message": "Erstellt Links zu Bug- oder Issue-Trackern wie `#12345`. Mit den Feldern unten legen Sie die Vorlage für URL und Text der Links fest.",
     "description": "Description of bug/issue link feature.",
     "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
-    "message": "Fehler/Issue Links aktivieren",
+    "message": "Bug-/Issue-Links aktivieren",
     "description": "Enable Bug or Issue linking",
     "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
   },
   "options_page__buglink_url": {
-    "message": "Link zur Seite",
+    "message": "Link-URL",
     "description": "Template field for creating bug/issue links",
     "hash": "1df9e2c05db77316a3a97275017967b7"
   },
   "options_page__buglink_text": {
-    "message": "Text",
+    "message": "Linktext",
     "description": "Template for bug/issue link text",
     "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
-    "message": "Wie man",
+    "message": "Anleitung",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__howto": {
-    "message": "Wie man",
+    "message": "Anleitung",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__basic_usage": {
     "message": "Grundlegende Verwendung",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
+  "options_page__disable_paragraph_format": {
+    "message": "Deaktivieren Sie das Format „Absatz“ in den Thunderbird-Einstellungen.",
+    "hash": "5d59148c324e0ca1ceacfab5bdcdcd4"
+  },
   "options_page__start_new_message_toggle": {
-    "message": "Starten Sie eine neue E-Mail-Nachricht. Den Komponisten mit dem Action-Button auf der Format-Toolbar zum Markdown-Modus wechseln.",
+    "message": "Verfassen Sie eine neue E-Mail. Schalten Sie das Verfassen-Fenster mit der Aktionsschaltfläche in der Formatierungsleiste in den Markdown-Modus.",
     "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
-    "message": "Markdown schreiben. Zum Beispiel:",
+    "message": "Geben Sie etwas Markdown in die E-Mail ein. Probieren Sie Folgendes:",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "_Hallo_ `Markdown` **Here** _Revival_!",
+    "message": "`Markdown` **Here** _Revival_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
   "options_page__compose_live_preview": {
-    "message": "Die Live-Vorschau aktualisiert, wie Sie Ihre Nachricht schreiben.",
+    "message": "Die Live-Vorschau wird beim Schreiben Ihrer Nachricht aktualisiert.",
     "hash": "549af642c5b973f9b4c4c304eb004475"
   },
   "options_page__compose_send_message": {
@@ -268,7 +317,7 @@
     "hash": "4ab42a8334e6c82218c00d007d10fae5"
   },
   "options_page__toggle_hotkey": {
-    "message": "Oder verwenden Sie den Hotkey:",
+    "message": "Oder verwenden Sie die Tastenkombination:",
     "description": "A step suggestion in the basic usage instructions",
     "hash": "64f745514a24fa38ae148ef25745c835"
   },
@@ -278,11 +327,11 @@
     "hash": "d3acbfafa858245f2345f00786324790"
   },
   "options_page__resources_cheatsheet_link": {
-    "message": "Markdown hier Cheatsheet",
+    "message": "Spickzettel für Markdown Here",
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
-    "message": "Markdown hier Revival wiki",
+    "message": "Wiki zu Markdown Here Revival",
     "hash": "31514a95d56ddc2d8df5c4d15439d17f"
   },
   "options_page__tips_tricks_link": {
@@ -290,21 +339,21 @@
     "hash": "c17546aca51dff7b1014d20502cb526"
   },
   "__WET_GROUP__theme": {
-    "message": "Thema",
+    "message": "Design",
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
   "options_page__primary_css_title": {
-    "message": "Grundlegendes Styling-CSS",
+    "message": "CSS für die Grundgestaltung",
     "description": "section title",
     "hash": "1381af5b005843fe11ee6884b0093683"
   },
   "options_page__syntax_highlighting_css_title": {
-    "message": "CSS für Syntax-Highlighting",
+    "message": "CSS für die Syntaxhervorhebung",
     "description": "section title",
     "hash": "697181e7fed87c2b2c17dab7b3e1cf25"
   },
   "options_page__syntax_highlighting_theme_label": {
-    "message": "Schema",
+    "message": "Design",
     "description": "label for the syntax highlighting theme combo box",
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
@@ -314,11 +363,11 @@
     "hash": "b2ce6f78ea0a002ab97efea02562c3c0"
   },
   "__WET_GROUP__about": {
-    "message": "Über uns",
+    "message": "Über",
     "hash": "da73d37076fcb711ec18ea36c7efb1d5"
   },
   "options_page__about": {
-    "message": "Über uns",
+    "message": "Über",
     "hash": "da73d37076fcb711ec18ea36c7efb1d5"
   },
   "options_page__report_bugs_title": {
@@ -326,22 +375,22 @@
     "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
   },
   "options_page__create_gitlab_issue": {
-    "message": "Neue Ausgabe auf GitLab erstellen",
+    "message": "Neues Issue auf GitLab erstellen",
     "description": "Text linking to Gitlab issue creation page",
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
   "options_page__issue_debug_info": {
-    "message": "Folgende Debug-Infos können verwendet werden:",
+    "message": "Folgende Debug-Informationen können verwendet werden:",
     "description": "header for some extension debug information",
     "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
   },
   "options_page__debug_copy_clipboard": {
-    "message": "Kopieren in der Zwischenablage",
+    "message": "In die Zwischenablage kopieren",
     "description": "button for copying debug information to the clipboard",
     "hash": "17b6a865f4e197dcff670c9ac12517a1"
   },
   "options_page__changelog_title": {
-    "message": "Änderungen",
+    "message": "Änderungsprotokoll",
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
@@ -350,17 +399,17 @@
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
   "options_page__invalid_hotkey": {
-    "message": "Ungültiger Hotkey!",
+    "message": "Ungültige Tastenkombination!",
     "description": "message that shows when an invalid hotkey combination was entered",
     "hash": "54331fedbb67ec446035ce5b0b51b92"
   },
   "options_page__reset_button": {
-    "message": "Zurück zur Übersicht",
+    "message": "Zurücksetzen",
     "description": "used for resetting certain options to the default",
     "hash": "d25968a7dfc21f95043a86dd5373b81"
   },
   "__WET_LOCALE__": {
-    "message": "en",
+    "message": "de",
     "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
   }
 }

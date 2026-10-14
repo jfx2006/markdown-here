@@ -1,51 +1,111 @@
+这只是一个示例。您可以直接在这里试写自己的文本。更改任何选项后，预览都会随之更新。
+
+# Markdown
+
+……其实就是普通的文本，*简单明了*。您只需**自然地输入**，结果就很美观，而且不必点击任何格式按钮。下面的部分功能取决于某个选项，它们标有 *(选项)*。
+
+## 文本
+
+*斜体*、**粗体**、***粗斜体***、~~删除线~~ 和 `行内代码`。
+单个换行
+会原样保留 *(选项，默认启用)*。
+
+智能排版 *(选项，默认启用)*："双引号"、'单引号'、短破折号 -- 长破折号 --- 省略号... 以及箭头 --> <-- ==>。
+
+表情符号短代码 *(选项，默认启用)*：:wave: :+1: :tada: :rocket:
+
+## 链接
+
+链接可以是[显式链接](https://www.thunderbird.net)、[引用式链接][cheatsheet]，也可以是自动链接，例如 https://en.wikipedia.org/wiki/Invader_Zim 。
+
+缺陷链接 *(选项，默认禁用)*：#123
+
+[cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet
+
+## 列表
+
+* 无序列表
+  * 可以嵌套
+    * 很有趣！
+  * 而且超级简单
+* 还有更多更多！
+
+1. 有序列表也行！
+1. 您甚至不需要
+1. 写对编号
+
+- [ ] 任务列表
+- [x] 带复选框
+
+## 引用
+
+> 一个引用块。
+> *带有*一些 **Markdown** `格式`。
+>
+> > 嵌套的引用
+> >
+> > > 再嵌套一层。
+
+## 代码
+
 ```javascript
-function syntaxHighlighting() {
-  var n = 33;
-  var s = "hello, こんにちは";
-  console.log(s);
-}
+// 您这辈子需要的全部代码
+var hw = "你好，世界！"
+alert(hw);
 ```
 
-* plain
-* *emphasis*
-  * **strong emphasis**
-    * ~~strikethrough~~
-* `inline code`
+```
+普通代码块
+没有语法高亮
+```
 
-1. Numbered list
-   1. Numbered sub-list
-      1. Numbered sub-sub-list
-2. [Link](https://www.google.com)
+## 表格
 
+| 姓名  | 午餐订单    | 辣度   | 应付 |
+|-------|-------------|:------:|-----:|
+| 琼    | 菠菜奶酪    | 中辣   | 11 € |
+| 莎莉  | 咖喱猪肉    | 微辣   | 14 € |
+| 艾琳  | 马德拉斯羊肉 | 特辣   |  5 € |
 
-An image: ![Markdown Here logo](/images/icon24.png)
+合并单元格与列宽：`||` 将单元格与下一列合并，以 `^|` 结尾的单元格与上方单元格合并，在分隔行中写入百分比可设置列宽。
 
+| 团队         |  Q1 |  Q2 |
+|:-----40%-----|----:|----:|
+| 合计         ||  42 |
+| 邮件         |  12 |  18 |
+|             ^|   7 |   5 |
 
-> Block quote.  
-> *With* **some** `markdown`.
+CSV 和 TSV 代码块 *(选项，默认禁用；否则显示为代码)*：
 
-If **TeX Math** support is enabled, this is the quadratic equation:
-${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+```csv
+水果;颜色;价格
+苹果;红色;1.20
+香蕉;黄色;0.80
+```
 
-# Header 1
-## Header 2
-### Header 3
-#### Header 4
-##### Header 5
-###### Header 6
-  
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| column 3 is   | right-aligned | $$1600 |
-| column 2 is   | centered      |   $$12 |
-| zebra stripes | are neat      |    $$1 |
+## 数学公式
 
-Here's a horizontal rule:
+*(选项，默认禁用)* 我的数学已经生疏到几乎记不起*一元二次方程求根公式*了：${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+
+$$e^{i\pi} + 1 = 0$$
+
+## 图片和内嵌 HTML
+
+一张图片：![Markdown Here 标志](/images/icon24.png)
+
+原始 HTML 同样可用：<span style="color: red">红色文本</span>。
+
+## 标题
+
+# 标题 1
+## 标题 2
+### 标题 3
+#### 标题 4
+##### 标题 5
+###### 标题 6
+
+这是一条水平分隔线
 
 ---
 
-```
-code block
-with no highlighting
-```
-
+完。

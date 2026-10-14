@@ -13,12 +13,12 @@
     "hash": "705a7139d345ac5faa9a3cfc7114e189"
   },
   "toggle_button_tooltip_enable": {
-    "message": "Activer l'aperçu de balisage",
+    "message": "Activer l'aperçu Markdown",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "d9cb83c089cf43059f988f5bb25d6ad9"
   },
   "toggle_button_tooltip_disable": {
-    "message": "Désactiver l'aperçu du balisage",
+    "message": "Désactiver l'aperçu Markdown",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
@@ -51,12 +51,12 @@
     "hash": "48f8b404a3afd15f165abe500bf625c0"
   },
   "forgot_to_render_prompt_info": {
-    "message": "Il semble que vous ayez écrit ce courriel en Markdown, mais que vous ayez oublié de le rendre attrayant.",
+    "message": "Ce courriel semble écrit en Markdown, mais il n'a pas été mis en forme.",
     "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "7a6bf5503a66dfc42914e6fec5a668ba"
   },
   "forgot_to_render_prompt_question": {
-    "message": "L'envoyer tout de même?",
+    "message": "L'envoyer quand même ?",
     "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "5ceefbf6f6675554ec47ed2fac4edc4d"
   },
@@ -66,10 +66,11 @@
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
   "render_failed_prompt_info": {
-    "message": "Markdown Here Revival n'a pas pu convertir ce courriel en HTML."
+    "message": "Markdown Here Revival n'a pas pu convertir ce courriel en HTML.",
+    "hash": "79a93a1f3ce6c17232c7baf9db66f66"
   },
   "set_math_api_url": {
-    "message": "Définir une URL d'API pour le rendu Math dans Paramètres.",
+    "message": "Définissez une URL d'API pour le rendu des formules mathématiques dans les paramètres.",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
@@ -84,7 +85,7 @@
     "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
   },
   "__WET_GROUP__settings": {
-    "message": "Paramètres d'extension Pages",
+    "message": "Pages de paramètres de l'extension",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
   },
   "options_page__page_title": {
@@ -115,35 +116,58 @@
     "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
   },
   "options_page__mdhr_modern_mode": {
-    "message": "Utiliser le mode de prévisualisation en direct (moderne)",
+    "message": "Utiliser le mode aperçu en direct (moderne)",
     "description": "Label for selecting modern UI",
     "hash": "fd781763933043b55578498058686099"
   },
   "options_page__forgot_to_render_label2": {
-    "message": "Activer la vérification de l'oubli de la soumission",
+    "message": "Détecter le Markdown non mis en forme avant l'envoi",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
     "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "Lorsque vous envoyez un courriel, ceci vérifie si son contenu semble avoir été écrit en Markdown,\nmais que vous auriez oublié de le rendre (c.-à-d. cliquer sur « Markdown Toggle ») avant l'envoi.\nCette option peut être désactivée si elle vous empêche d'envoyer vos courriels.",
+    "message": "Lors de l'envoi d'un courriel, cette option vérifie si son contenu semble écrit en Markdown,\nmais n'a pas été mis en forme (c.-à-d. sans cliquer sur « Markdown Toggle ») avant l'envoi.\nDésactivez-la si elle vous empêche d'envoyer vos courriels.",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "1c100cda3b6f6da50138458b785b47cb"
   },
   "options_page__composer_start_markdown_mode": {
-    "message": "Démarrer le compositeur en mode balisage",
+    "message": "Ouvrir la fenêtre de rédaction en mode Markdown",
     "hash": "97a0a3d24c0345f5347393de128d07d0"
   },
   "options_page__preview_width_mode_label": {
-    "message": "Largeur du panneau de preview"
+    "message": "Largeur du panneau d'aperçu",
+    "hash": "79b7c5f8aaf20a9172692a2df1cd1477"
   },
   "options_page__preview_width_mode_ratio_label": {
-    "message": "Suit la taille de la fenêtre (recommandé)"
+    "message": "Suivre la taille de la fenêtre (recommandé)",
+    "hash": "b6236755e2c48df7ff239f04ba7faf44"
   },
   "options_page__preview_width_mode_fixed_label": {
-    "message": "Largeur fixe, réglée en faisant glisser le séparateur"
+    "message": "Largeur fixe, réglée en faisant glisser le séparateur",
+    "hash": "86e26f48c46cc9d9925ab0b7120c08c1"
+  },
+  "options_page__use_bodytext_format_label": {
+    "message": "Utiliser le format texte principal dans la fenêtre de rédaction",
+    "description": "Label for the checkbox that enables the Body Text format",
+    "hash": "78e166d9680f679279761ef5fece57b4"
+  },
+  "use_paragraph_setting_label": {
+    "message": "Utiliser le format paragraphe à la place du format texte principal par défaut",
+    "description": "This string must match the Fluent string 'default-format-label' in preferences.ftl",
+    "hash": "be5dec78355a838f277d53827641742d"
+  },
+  "options_page__use_bodytext_format_description": {
+    "message": "Ce module fonctionne mieux lorsque « $PREF_STRING$ » est désactivé dans les paramètres de Thunderbird. Activez cette option pour appliquer le réglage recommandé.",
+    "description": "Description of the 'Use Body Text Format' option.",
+    "placeholders": {
+      "pref_string": {
+        "content": "$1"
+      }
+    },
+    "hash": "1fbfb494b370bdad538bb648f9818abf"
   },
   "options_page__features_title": {
-    "message": "Caractéristiques du marquage",
+    "message": "Fonctionnalités Markdown",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",
     "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
@@ -158,22 +182,22 @@
     "hash": "d53c8006f33df32034b4e13dec238738"
   },
   "options_page__smart_replacements_2": {
-    "message": "Les remplacements intelligents comprennent : guillemets unicode, en- et em-dash, ellipses et remplacements de flèches",
+    "message": "Les remplacements intelligents comprennent : guillemets typographiques, tirets demi-cadratin et cadratin, points de suspension et flèches",
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__emoji_shortcode_enabled_label": {
-    "message": "Activer les codes courts « :emoji: » (façon GitHub)",
+    "message": "Activer les codes courts :emoji: (façon GitHub)",
     "description": "Label for enabling emoji shortcodes",
     "hash": "b20f1c09d205160478c354cfd2aefc59"
   },
   "options_page__emoji_autocomplete_enabled_label": {
-    "message": "Activer le popup Emoji automatique",
+    "message": "Activer la suggestion automatique d'émojis",
     "description": "Label for enabling an auto-complete popup for emoji shortcodes",
     "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
   "options_page__csv_table_enabled_label": {
-    "message": "Afficher les blocs de code CSV sous forme de tableau",
+    "message": "Afficher les blocs de code CSV sous forme de tableaux",
     "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables",
     "hash": "b5a6678449c84f0d5dd7207c9ba6504b"
   },
@@ -183,31 +207,31 @@
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
   "options_page__tex_math_title": {
-    "message": "Support des formules mathématiques TeX",
+    "message": "Prise en charge des formules mathématiques TeX",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
   "options_page__tex_math_texzilla_label": {
-    "message": "rendu TeXZilla et HTML Canvas",
+    "message": "Rendu avec TeXZilla et HTML Canvas",
     "description": "Label for tex math rendering option",
     "hash": "c210e3a6960c6d788491ac424f16c7a3"
   },
   "options_page__tex_math_texzilla_label-Title": {
-    "message": "Les formules mathématiques sont rendues avec TeXZilla.js en utilisant la toile du navigateur. Aucune demande de réseau n'est envoyée.",
+    "message": "Les formules mathématiques sont rendues par TeXZilla.js dans un canvas du navigateur. Aucune requête réseau n'est envoyée.",
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
   "options_page__tex_math_codecogs_label": {
-    "message": "Rendre les mathématiques à l'aide de l'API CodeCogs Equation",
+    "message": "Rendu des formules avec l'API CodeCogs Equation Rendering",
     "description": "Label for CodeCogs math rendering option",
     "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
   "options_page__tex_math_codecogs_customization_1": {
-    "message": "Pour générer l'image de la formule, une requête est envoyée à CodeCogs. Cela signifie effectivement que vous partagez votre formule avec CodeCogs. Cela signifie également que les destinataires de votre message feront une demande à CodeCogs pour que l'image soit rendue.",
+    "message": "Pour générer l'image d'une formule, une requête est envoyée à CodeCogs : vous partagez donc votre formule avec CodeCogs. Les destinataires de votre message enverront eux aussi une requête à CodeCogs pour afficher l'image.",
     "description": "one of the CodeCogs TeX math privacy concerns",
     "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
   "options_page__tex_math_codecogs_customization_2": {
-    "message": "Pour les options de personnalisation des rendus, consultez la documentation $LINK$CodeCogs$CLOSELINK$ pour ce service.",
+    "message": "Pour les options de personnalisation du rendu, consultez la $LINK$documentation de CodeCogs$CLOSELINK$ pour ce service.",
     "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -220,7 +244,7 @@
     "hash": "d108daece31e555fb937bda04f5d6c32"
   },
   "options_page__tex_math_codecogs_customization_3": {
-    "message": "Une bonne ressource pour créer des formules TeX est le $LINK$CodeCogs Equation Editor$ CLOSELINK$.",
+    "message": "Le $LINK$CodeCogs Equation Editor$CLOSELINK$ est une bonne ressource pour écrire des formules TeX.",
     "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -233,22 +257,22 @@
     "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "Créer des liens vers des trackers de bogues ou de problèmes comme `#12345`. Les champs ci-dessous sont utilisés pour modéliser l'URL et le texte des liens.",
+    "message": "Crée des liens vers des outils de suivi de bogues ou de tickets, comme `#12345`. Les champs ci-dessous servent de modèle pour l'URL et le texte des liens.",
     "description": "Description of bug/issue link feature.",
     "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
-    "message": "Activer les liens Bug/Issue",
+    "message": "Activer les liens vers les bogues et tickets",
     "description": "Enable Bug or Issue linking",
     "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
   },
   "options_page__buglink_url": {
-    "message": "Lien URL",
+    "message": "URL du lien",
     "description": "Template field for creating bug/issue links",
     "hash": "1df9e2c05db77316a3a97275017967b7"
   },
   "options_page__buglink_text": {
-    "message": "Lien texte",
+    "message": "Texte du lien",
     "description": "Template for bug/issue link text",
     "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
@@ -264,12 +288,16 @@
     "message": "Utilisation de base",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
+  "options_page__disable_paragraph_format": {
+    "message": "Désactivez le format paragraphe dans les paramètres de Thunderbird.",
+    "hash": "5d59148c324e0ca1ceacfab5bdcdcd4"
+  },
   "options_page__start_new_message_toggle": {
-    "message": "Démarrer un nouveau courriel. Basculez le compositeur en mode balisage avec le bouton action de la barre d'outils format.",
+    "message": "Rédigez un nouveau courriel. Passez la fenêtre de rédaction en mode Markdown avec le bouton d'action de la barre de mise en forme.",
     "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
-    "message": "Écrivez un peu de Markdown dans le courriel. Essayez ceci:",
+    "message": "Écrivez un peu de Markdown dans le courriel. Essayez ceci :",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
@@ -277,7 +305,7 @@
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
   "options_page__compose_live_preview": {
-    "message": "Les mises à jour d'aperçu en direct lorsque vous écrivez votre message.",
+    "message": "L'aperçu en direct se met à jour pendant que vous écrivez votre message.",
     "hash": "549af642c5b973f9b4c4c304eb004475"
   },
   "options_page__compose_send_message": {
@@ -290,12 +318,12 @@
     "hash": "64f745514a24fa38ae148ef25745c835"
   },
   "options_page__resources_title": {
-    "message": "Ressources et Liens",
+    "message": "Ressources et liens",
     "description": "A section title",
     "hash": "d3acbfafa858245f2345f00786324790"
   },
   "options_page__resources_cheatsheet_link": {
-    "message": "l'aide mémoire Markdown Here",
+    "message": "Aide-mémoire Markdown Here",
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
@@ -311,7 +339,7 @@
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
   "options_page__primary_css_title": {
-    "message": "Styles de base CSS",
+    "message": "CSS de mise en forme principale",
     "description": "section title",
     "hash": "1381af5b005843fe11ee6884b0093683"
   },
@@ -348,7 +376,7 @@
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
   "options_page__issue_debug_info": {
-    "message": "Les informations de débogage suivantes peuvent être utilisées:",
+    "message": "Vous pouvez joindre les informations de débogage suivantes :",
     "description": "header for some extension debug information",
     "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
   },
@@ -362,7 +390,7 @@
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
-    "message": "Modifications sauvegardées",
+    "message": "Modifications enregistrées",
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
@@ -377,7 +405,7 @@
     "hash": "d25968a7dfc21f95043a86dd5373b81"
   },
   "__WET_LOCALE__": {
-    "message": "en",
+    "message": "fr",
     "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
   }
 }
