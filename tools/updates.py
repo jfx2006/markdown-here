@@ -12,8 +12,8 @@ UPDATES_FILE = TOP / "updates.json"
 VERSION_ENV = TOP / "version.env"
 RELEASE_FILE = TOP / "web-ext-artifacts/markdown-here-revival.xpi"
 ADDON_ID = "markdown-here-revival@xul.calypsoblue.org"
-UPDATES_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
-XPI_URL = "https://gitlab.com/jfx2006/markdown-here-revival/-/releases/v{version}/downloads/markdown_here_revival-{version}.xpi"
+UPDATES_URL = "https://gitlab.com/mdhr-extension/markdown-here-revival/-/releases/permalink/latest/downloads/updates.json"
+XPI_URL = "https://gitlab.com/mdhr-extension/markdown-here-revival/-/releases/v{version}/downloads/markdown_here_revival-{version}.xpi"
 
 
 def hash_file(path):

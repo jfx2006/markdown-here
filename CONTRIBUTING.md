@@ -1,6 +1,6 @@
 # Contributing
 
-* Project page: https://gitlab.com/jfx2006/markdown-here-revival
+* Project page: https://gitlab.com/mdhr-extension/markdown-here-revival
 
 ## Code contributions
 
