@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.1.1] - 2026-10-14
+
+### Fixed
+- Bump strict_max_version to support Thunderbird 158.
+
 ## [4.1.0] - 2026-10-10
 
 ### Changed
