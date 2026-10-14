@@ -18,6 +18,12 @@
   error), the compose window kept the rendered HTML instead of the Markdown
   source and the preview stopped updating. The Markdown source and the
   preview are now restored. #162
+- A link or emphasis that Thunderbird added inside Markdown code (inline
+  `code` or a ``` block), such as an auto-linked URL, was rendered as
+  Markdown syntax (`[text](url)`) in the code. It is now kept as plain text.
+  #163
+- A message starting with an indented code block lost the indentation of
+  its first line. #163
 
 ## [4.1.1] - 2026-10-14
 

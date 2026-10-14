@@ -157,13 +157,33 @@ describe("MdhrMangle", function () {
     expect(await get(html)).to.equal(target)
   })
 
-  // Busted due to https://github.com/adam-p/markdown-here/issues/104
-  it("should NOT correctly handle pre-rendered links in code blocks (busted due to issue #104)", async function() {
+  // Code indented by four spaces is not detected (adam-p/markdown-here#104),
+  // so a link in it is still converted. Its indentation must survive the
+  // trimming done by convertToPlainText().
+  it("should keep pre-rendered links in indented code blocks as Markdown links", async function() {
     const html = '&nbsp;&nbsp;&nbsp;&nbsp;<a href="aaa">bbb</a><br>'
 
     // Real target
     // const target = '    bbb';
     const target = "    [bbb](aaa)"
+    expect(await get(html)).to.equal(target)
+  })
+
+  it("should keep the indentation of a message starting with indented code", async function() {
+    const html = "&nbsp;&nbsp;&nbsp;&nbsp;code<br>text"
+    const target = "    code\ntext"
+    expect(await get(html)).to.equal(target)
+  })
+
+  it("should convert links after a closed inline code span", async function() {
+    const html = 'a `b` <a href="c">d</a>'
+    const target = "a `b` [d](c)"
+    expect(await get(html)).to.equal(target)
+  })
+
+  it("should convert links after a closed code block", async function() {
+    const html = '```<br>code<br>```<br><a href="aaa">bbb</a>'
+    const target = "```\ncode\n```\n[bbb](aaa)"
     expect(await get(html)).to.equal(target)
   })
 
