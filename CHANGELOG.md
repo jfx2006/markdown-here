@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+- The "Translate" link and the Locale Maker page of the options. Translations
+  are contributed directly to `extension/_locales/` (see CONTRIBUTING.md).
+
 ## [4.1.1] - 2026-10-14
 
 ### Fixed

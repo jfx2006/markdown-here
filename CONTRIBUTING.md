@@ -25,10 +25,20 @@ It's open source, that sort of thing is silly.
 
 ## Translation
 
-There is a [separate repository](https://gitlab.com/jfx2006/mdhr-i18n)
-for i18n strings. See that repo's README.md file. The short version is,
-use [WET](https://github.com/Lusito/web-ext-translator) to make your changes
-and either send a pull request or create an issue and upload a ZIP file.
+Translations live in the extension itself, one folder per locale in
+`extension/_locales/` (WebExtension locale codes, e.g. `pt_BR`):
+
+* `messages.json`: interface strings, in the
+  [WebExtension i18n format](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization);
+* `preview.md`: the Markdown sample shown in the options page preview.
+
+English (`en`) is the reference. To add or fix a translation:
+
+1. For a new locale, copy both files from `extension/_locales/en/`.
+2. Translate the `message` values and the text of `preview.md`. Keep the keys,
+   the `description` fields and the `$PLACEHOLDER$` tokens unchanged. Leave the
+   `hash` fields as they are: maintainers update them.
+3. Open a merge request, or open an issue and attach the files.
 
 ## Conthributors
 

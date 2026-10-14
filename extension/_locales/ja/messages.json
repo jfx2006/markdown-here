@@ -340,21 +340,6 @@
     "description": "button for copying debug information to the clipboard",
     "hash": "17b6a865f4e197dcff670c9ac12517a1"
   },
-  "options_page__translate": {
-    "message": "ログイン",
-    "description": "Used in a link to open Locale Maker",
-    "hash": "a8d574720117a40a83469771b9a4825d"
-  },
-  "options_page__localemaker_1": {
-    "message": "Locale Maker は、Firefox 用の FireMonkey エクステンションからブラント的にコピーされます。",
-    "description": "Description of Locale Maker source.",
-    "hash": "22a4387b17e1ba4776709abc0543afa4"
-  },
-  "options_page__localemaker_2": {
-    "message": "誠に有難うございます。",
-    "description": "Credit to Locale Maker author.",
-    "hash": "fa17dd5843873b9c6fe69dfbedb640a3"
-  },
   "options_page__changelog_title": {
     "message": "変更履歴",
     "hash": "d1f539e046abe83e76dcf2163f9a143c"

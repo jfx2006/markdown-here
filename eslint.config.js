@@ -27,7 +27,6 @@ export default [
   ]),
   globalIgnores([
     "extension/highlightjs/**",
-    "extension/locale_maker/**",
     "extension/vendor/**",
     "local_packages/**",
     "extension/experiments/notificationbar/**",
