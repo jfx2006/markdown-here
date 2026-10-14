@@ -1,49 +1,111 @@
+これは単なるサンプルです。ここで自由にテキストを書いて試すことができます。オプションを変更すると、プレビューが更新されます。
+
+# Markdown
+
+...は、実はごく普通のテキストで、*シンプルそのもの*です。**自然に入力する**だけで見栄えのよい結果になり、書式ボタンをクリックする必要もありません。以下の機能の一部はオプションで切り替えられます。それらには *(オプション)* と記しています。
+
+## テキスト
+
+*斜体*、**太字**、***太字の斜体***、~~取り消し線~~、`インラインコード`。
+1 回の改行は
+そのまま保持されます *(オプション、既定で有効)*。
+
+スマートタイポグラフィ *(オプション、既定で有効)*: "二重引用符"、'一重引用符'、en ダッシュ -- em ダッシュ --- 三点リーダー... と矢印 --> <-- ==>。
+
+絵文字ショートコード *(オプション、既定で有効)*: :wave: :+1: :tada: :rocket:
+
+## リンク
+
+リンクは [明示的なもの](https://www.thunderbird.net)、[参照形式のもの][cheatsheet]、または https://en.wikipedia.org/wiki/Invader_Zim のような自動リンクが使えます。
+
+バグへのリンク *(オプション、既定で無効)*: #123
+
+[cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet
+
+## リスト
+
+* 箇条書きリスト
+  * 入れ子にもできて
+    * 楽しい！
+  * しかもとても簡単
+* まだまだあります！
+
+1. 番号付きリストも！
+1. 番号を正しく
+1. 振る必要さえありません
+
+- [ ] タスクリスト
+- [x] チェックボックス付き
+
+## 引用
+
+> ブロック引用です。
+> `Markdown` を **少し** *含みます*。
+>
+> > 入れ子の引用
+> >
+> > > さらにもう 1 段階。
+
+## コード
+
 ```javascript
-function syntaxHighlighting() {
-  var n = 33;
-  var s = "hello, こんにちは";
-  console.log(s);
-}
+// これさえあれば、もう他のコードは要りません
+var hw = "こんにちは、世界！"
+alert(hw);
 ```
 
-* plain
-* *emphasis*
-  * **strong emphasis**
-    * ~~strikethrough~~
-* `inline code`
+```
+プレーンなコードブロック
+シンタックスハイライトなし
+```
 
-1. Numbered list
-2. [Link](https://www.google.com)
+## 表
 
+| 名前   | ランチの注文 | 辛さ | 支払い |
+|--------|--------------|:------:|-----:|
+| ジョーン | サグパニール | 中辛 | 11 € |
+| サリー | ビンダルー   | 甘口 | 14 € |
+| エリン | ラムマドラス | 激辛 |  5 € |
 
-An image: ![Markdown Here logo](/images/icon24.png)
+セルの結合と列幅: `||` はセルを次の列と結合し、`^|` で終わるセルは上のセルと結合します。また、区切り行にパーセンテージを書くと列幅を指定できます。
 
+| チーム       |  Q1 |  Q2 |
+|:-----40%-----|----:|----:|
+| 合計         ||  42 |
+| メール       |  12 |  18 |
+|             ^|   7 |   5 |
 
-> Block quote.  
-> *With* **some** `markdown`.
+CSV と TSV のブロック *(オプション、既定で無効。無効時はコードとして表示)*:
 
-If **TeX Math** support is enabled, this is the quadratic equation:
-${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+```csv
+果物;色;価格
+りんご;赤;120
+バナナ;黄;80
+```
 
-# Header 1
-## Header 2
-### Header 3
-#### Header 4
-##### Header 5
-###### Header 6
-  
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| column 3 is   | right-aligned | $$1600 |
-| column 2 is   | centered      |   $$12 |
-| zebra stripes | are neat      |    $$1 |
+## 数式
 
-Here's a horizontal rule:
+*(オプション、既定で無効)* 数学はすっかり錆びついていて、_二次方程式の解の公式_ もやっと思い出せるくらいです: ${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+
+$$e^{i\pi} + 1 = 0$$
+
+## 画像とインライン HTML
+
+画像: ![Markdown Here のロゴ](/images/icon24.png)
+
+生の HTML も使えます: <span style="color: red">赤いテキスト</span>。
+
+## 見出し
+
+# 見出し 1
+## 見出し 2
+### 見出し 3
+#### 見出し 4
+##### 見出し 5
+###### 見出し 6
+
+これは水平線です
 
 ---
 
-```
-code block
-with no highlighting
-```
-
+おしまい。

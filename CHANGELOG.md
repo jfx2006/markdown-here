@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Changed
+- All translations reviewed and completed: the 9 strings missing in 11
+  languages are translated, many wrong machine translations are fixed, and
+  Thunderbird's own wording is used for its settings. The options page
+  preview sample is translated in every language.
+
 ### Removed
 - The "Translate" link and the Locale Maker page of the options. Translations
   are contributed directly to `extension/_locales/` (see CONTRIBUTING.md).

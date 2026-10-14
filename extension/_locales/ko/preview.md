@@ -1,49 +1,111 @@
+이것은 예시일 뿐입니다. 바로 여기에서 직접 텍스트를 입력해 볼 수 있습니다. 옵션을 변경하면 미리 보기가 업데이트됩니다.
+
+# Markdown
+
+...은 사실 평범한 텍스트일 뿐입니다. *간단하고 명료하죠*. **자연스럽게 입력**하기만 하면 보기 좋은 결과가 나오고, 서식 버튼을 클릭할 필요도 없습니다. 아래 기능 중 일부는 옵션에 따라 달라지며, 해당 기능에는 *(옵션)* 표시가 붙어 있습니다.
+
+## 텍스트
+
+*기울임꼴*, **굵게**, ***굵은 기울임꼴***, ~~취소선~~, `인라인 코드`.
+한 번의 줄 바꿈은
+그대로 유지됩니다 *(옵션, 기본값: 사용)*.
+
+스마트 타이포그래피 *(옵션, 기본값: 사용)*: "큰따옴표", '작은따옴표', en 대시 -- em 대시 --- 말줄임표... 그리고 화살표 --> <-- ==>.
+
+이모지 단축 코드 *(옵션, 기본값: 사용)*: :wave: :+1: :tada: :rocket:
+
+## 링크
+
+링크는 [명시적 링크](https://www.thunderbird.net), [참조 링크][cheatsheet], 또는 https://en.wikipedia.org/wiki/Invader_Zim 같은 자동 링크로 만들 수 있습니다.
+
+버그 링크 *(옵션, 기본값: 사용 안 함)*: #123
+
+[cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet
+
+## 목록
+
+* 글머리 기호 목록
+  * 중첩된 글머리 기호도
+    * 재미있습니다!
+  * 게다가 아주 쉽습니다
+* 더, 더, 더!
+
+1. 번호 매기기 목록도 됩니다!
+1. 번호를 올바르게
+1. 쓸 필요조차 없습니다
+
+- [ ] 작업 목록
+- [x] 체크박스 포함
+
+## 인용
+
+> 인용 블록입니다.
+> *약간의* **서식**과 `markdown` 포함.
+>
+> > 중첩된 인용
+> >
+> > > 그리고 한 단계 더.
+
+## 코드
+
 ```javascript
-function syntaxHighlighting() {
-  var n = 33;
-  var s = "hello, こんにちは";
-  console.log(s);
-}
+// 앞으로 필요한 코드는 이것뿐입니다
+var hw = "안녕하세요, 세계!"
+alert(hw);
 ```
 
-* plain
-* *emphasis*
-  * **strong emphasis**
-    * ~~strikethrough~~
-* `inline code`
+```
+일반 코드 블록
+구문 강조 없음
+```
 
-1. Numbered list
-2. [Link](https://www.google.com)
+## 표
 
+| 이름 | 점심 주문     | 매운 정도 | 낼 돈 |
+|-------|-------------|:------:|-----:|
+| 조앤  | 사그 파니르   | 중간   | 11 € |
+| 샐리  | 빈달루        | 순한 맛 | 14 € |
+| 에린  | 램 마드라스   | 매운 맛 |  5 € |
 
-An image: ![Markdown Here logo](/images/icon24.png)
+셀 병합과 열 너비: `||`는 셀을 다음 열과 병합하고, `^|`로 끝나는 셀은 위 셀과 병합하며, 구분 행에 백분율을 쓰면 열 너비가 지정됩니다.
 
+| 팀           |  1분기 |  2분기 |
+|:-----40%-----|----:|----:|
+| 합계         ||  42 |
+| 메일         |  12 |  18 |
+|             ^|   7 |   5 |
 
-> Block quote.  
-> *With* **some** `markdown`.
+CSV 및 TSV 블록 *(옵션, 기본값: 사용 안 함, 사용하지 않으면 코드로 표시)*:
 
-If **TeX Math** support is enabled, this is the quadratic equation:
-${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+```csv
+과일;색;가격
+사과;빨강;1.20
+바나나;노랑;0.80
+```
 
-# Header 1
-## Header 2
-### Header 3
-#### Header 4
-##### Header 5
-###### Header 6
-  
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| column 3 is   | right-aligned | $$1600 |
-| column 2 is   | centered      |   $$12 |
-| zebra stripes | are neat      |    $$1 |
+## 수식
 
-Here's a horizontal rule:
+*(옵션, 기본값: 사용 안 함)* 수학을 너무 오래 안 해서 *근의 공식*도 겨우 기억날 정도입니다: ${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+
+$$e^{i\pi} + 1 = 0$$
+
+## 이미지와 인라인 HTML
+
+이미지: ![Markdown Here 로고](/images/icon24.png)
+
+원시 HTML도 사용할 수 있습니다: <span style="color: red">빨간 텍스트</span>.
+
+## 제목
+
+# 제목 1
+## 제목 2
+### 제목 3
+#### 제목 4
+##### 제목 5
+###### 제목 6
+
+수평선입니다
 
 ---
 
-```
-code block
-with no highlighting
-```
-
+끝.

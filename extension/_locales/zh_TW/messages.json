@@ -5,7 +5,7 @@
     "hash": "edf09063590176700ead1a22bf3a5937"
   },
   "app_slogan": {
-    "message": "为 Mozilla 雷鳥 下載郵件",
+    "message": "適用於 Mozilla Thunderbird 的 Markdown 郵件",
     "hash": "7aa2f8c03f41e6629904f5833dac94a7"
   },
   "__WET_GROUP__application": {
@@ -13,12 +13,12 @@
     "hash": "705a7139d345ac5faa9a3cfc7114e189"
   },
   "toggle_button_tooltip_enable": {
-    "message": "開啟下載預覽",
+    "message": "啟用 Markdown 預覽",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "d9cb83c089cf43059f988f5bb25d6ad9"
   },
   "toggle_button_tooltip_disable": {
-    "message": "關閉平分預覽",
+    "message": "停用 Markdown 預覽",
     "description": "text shown when user hovers mouse over Markdown Toggle button",
     "hash": "6569e1487fed213bcf1513bb93fb12fc"
   },
@@ -33,7 +33,7 @@
     "hash": "76796ecd460f742236be591169ce278b"
   },
   "update_notes_button": {
-    "message": "更新注",
+    "message": "更新說明",
     "hash": "fef3aae852e44ea637393db11e0da28a"
   },
   "cancel_button": {
@@ -46,17 +46,17 @@
     "hash": "16a5bc1e5d6a2e5bbb1b35ca483971e8"
   },
   "forgot_to_render_prompt_close_hover": {
-    "message": "忽略這項通知",
+    "message": "關閉此通知",
     "description": "Text that shows when the user hovers over the 'X' that will close the prompt",
     "hash": "48f8b404a3afd15f165abe500bf625c0"
   },
   "forgot_to_render_prompt_info": {
-    "message": "你好像用Markdown寫了這封電郵，但卻忘了讓它變得更漂亮。",
+    "message": "您似乎以 Markdown 撰寫了這封郵件，但忘了轉換。",
     "description": "Informational part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "7a6bf5503a66dfc42914e6fec5a668ba"
   },
   "forgot_to_render_prompt_question": {
-    "message": "仍要傳送？",
+    "message": "仍要傳送嗎？",
     "description": "Question part of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "5ceefbf6f6675554ec47ed2fac4edc4d"
   },
@@ -65,23 +65,28 @@
     "description": "Text on the Send (continue) button of the prompt that's shown when it's detected that a user may have forgotten to render the Markdown in their email",
     "hash": "f654735fe65fdb8b2c7bd00ce5c4096d"
   },
+  "render_failed_prompt_info": {
+    "message": "Markdown Here Revival 無法將這封郵件轉換為 HTML。",
+    "description": "Informational part of the prompt shown when the rendered email could not be produced at send time",
+    "hash": "79a93a1f3ce6c17232c7baf9db66f66"
+  },
   "set_math_api_url": {
-    "message": "在設定中設定數學渲染的 API 網址 。",
+    "message": "請在設定中指定數學公式繪製所用的 API 網址。",
     "description": "A message displayed when math rendering is set to use Gchart but an invalid URL is set.",
     "hash": "265f98a913e4f279878a79f3dabbb39c"
   },
   "reset_preview": {
-    "message": "重置預覽",
+    "message": "重設預覽",
     "description": "Context menu item displayed on the compose action that resets the live preview to a usable state.",
     "hash": "6ca043613138c5e1b2e3b20df003c175"
   },
   "edit_as_new_markdown_message": {
-    "message": "以新Markdown 訊息編輯",
+    "message": "編輯為新的 Markdown 訊息",
     "description": "Context menu item displayed from message list",
     "hash": "6c44fa4651ec2a7ba8c69cbb5d6f7602"
   },
   "__WET_GROUP__settings": {
-    "message": "延伸設定頁面",
+    "message": "擴充套件設定頁面",
     "hash": "ce17411c17caa2a7736b05051cd1b2e2"
   },
   "options_page__page_title": {
@@ -94,11 +99,11 @@
     "hash": "fefb9554fa7cc03466d11dd0e706bb2e"
   },
   "__WET_GROUP__options": {
-    "message": "選擇",
+    "message": "選項",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
   "options_page__options_title": {
-    "message": "选项",
+    "message": "選項",
     "hash": "531dad0078a72193602b18495f0ad4e9"
   },
   "options_page__interface_mode": {
@@ -107,90 +112,130 @@
     "hash": "a827c951ef7fe2da75ebc58baf88287f"
   },
   "options_page__mdhr_classic_mode": {
-    "message": "使用前 4. 0 (经典) 模式",
+    "message": "使用 4.0 以前的（經典）模式",
     "description": "Label for selecting classic UI",
     "hash": "ca33d5b7a452b6e1fdd82d32b42b844f"
   },
   "options_page__mdhr_modern_mode": {
-    "message": "使用活取預覽( 现代) 模式",
+    "message": "使用即時預覽（現代）模式",
     "description": "Label for selecting modern UI",
     "hash": "fd781763933043b55578498058686099"
   },
   "options_page__forgot_to_render_label2": {
-    "message": "啟用已遺忘到授權檢查",
+    "message": "啟用「忘記轉換」檢查",
     "description": "Label for the checkbox that enables the forgot-to-render feature",
     "hash": "303a6d031665e54b24debeb7fd5827b7"
   },
   "options_page__forgot_to_render_2": {
-    "message": "當你發出一封電子郵件時 它檢查了內容 看看它是不是被你寫入了Markdown\n在發出前已忘了做成 (即按下 “ Markdown Toggle ” ) 。\n如果這會影響您發送電子郵件的能力, 就可能需要關閉 。",
+    "message": "傳送郵件時，檢查內容是否看起來是以 Markdown 撰寫，\n但在傳送前忘了轉換（也就是點擊「Markdown Toggle」）。\n若此功能妨礙您傳送郵件，可以將其停用。",
     "description": "Descriptive text explaining the 'forgot-to-render' feature.",
     "hash": "1c100cda3b6f6da50138458b785b47cb"
   },
   "options_page__composer_start_markdown_mode": {
-    "message": "在平分模式下開始作曲",
+    "message": "以 Markdown 模式開啟撰寫視窗",
     "hash": "97a0a3d24c0345f5347393de128d07d0"
   },
+  "options_page__preview_width_mode_label": {
+    "message": "預覽窗格寬度",
+    "description": "Label for the preview pane width mode radio group",
+    "hash": "79b7c5f8aaf20a9172692a2df1cd1477"
+  },
+  "options_page__preview_width_mode_ratio_label": {
+    "message": "跟隨視窗大小（建議）",
+    "description": "Preview pane width tracks the compose window size",
+    "hash": "b6236755e2c48df7ff239f04ba7faf44"
+  },
+  "options_page__preview_width_mode_fixed_label": {
+    "message": "固定寬度，拖曳分隔線來設定",
+    "description": "Preview pane keeps a fixed pixel width",
+    "hash": "86e26f48c46cc9d9925ab0b7120c08c1"
+  },
+  "options_page__use_bodytext_format_label": {
+    "message": "在撰寫視窗中使用內文格式",
+    "description": "Label for the checkbox that enables the Body Text format",
+    "hash": "78e166d9680f679279761ef5fece57b4"
+  },
+  "use_paragraph_setting_label": {
+    "message": "預設使用段落模式而非內文",
+    "description": "This string must match the Fluent string 'default-format-label' in preferences.ftl",
+    "hash": "be5dec78355a838f277d53827641742d"
+  },
+  "options_page__use_bodytext_format_description": {
+    "message": "在 Thunderbird 設定中停用「$PREF_STRING$」時，此附加元件的效果最好。啟用此選項即可套用建議設定。",
+    "description": "Description of the 'Use Body Text Format' option.",
+    "placeholders": {
+      "pref_string": {
+        "content": "$1"
+      }
+    },
+    "hash": "1fbfb494b370bdad538bb648f9818abf"
+  },
   "options_page__features_title": {
-    "message": "馬克下特性",
+    "message": "Markdown 功能",
     "description": "Heading for a set of options to enable or disable various features of the Markdown rendering",
     "hash": "e04d60a1956f82aa35a56aac12b6aaf3"
   },
   "options_page__gfm_line_breaks_enabled_label": {
-    "message": "<b>啟用GFM換行。</b>",
+    "message": "啟用 GFM 換行",
     "description": "Label for the checkbox that enables the support of 'Github-flavored Markdown' line breaks.",
     "hash": "5ac5728cb528e8d8edaa61ca7fbd6255"
   },
   "options_page__smart_replacements_enabled_label": {
-    "message": "啟用「 smart」 排印取代",
+    "message": "啟用「智慧」排版取代",
     "description": "Label for enabling the smart replacements feature",
     "hash": "d53c8006f33df32034b4e13dec238738"
   },
   "options_page__smart_replacements_2": {
-    "message": "有智慧取而代之的有:unicode引文、en和em-dash、椭圆和箭頭取而代之;",
+    "message": "智慧取代包含：Unicode 引號、短破折號與長破折號、刪節號以及箭頭取代",
     "description": "An explanation of what smart replacements are",
     "hash": "5f91244199941f295456a0c754f51ddf"
   },
   "options_page__emoji_shortcode_enabled_label": {
-    "message": "啟用: emoji : (吉斯布式) 短碼",
+    "message": "啟用 :emoji: 短代碼（GitHub 風格）",
     "description": "Label for enabling emoji shortcodes",
     "hash": "b20f1c09d205160478c354cfd2aefc59"
   },
   "options_page__emoji_autocomplete_enabled_label": {
-    "message": "啟用 Emoji自動完成彈出",
+    "message": "啟用表情符號自動完成彈出視窗",
     "description": "Label for enabling an auto-complete popup for emoji shortcodes",
     "hash": "c3f3aa4d8b7861ec6924305a7ae2e055"
   },
+  "options_page__csv_table_enabled_label": {
+    "message": "將 CSV 程式碼區塊顯示為表格",
+    "description": "Label for enabling rendering of csv/tsv code blocks as HTML tables",
+    "hash": "b5a6678449c84f0d5dd7207c9ba6504b"
+  },
   "options_page__hotkey_title": {
-    "message": "快捷鍵",
+    "message": "熱鍵（鍵盤快速鍵）",
     "description": "A section title",
     "hash": "50ef7c2fb35b7df36ea871c4b23d151a"
   },
   "options_page__tex_math_title": {
-    "message": "TeX數學公式支援",
+    "message": "TeX 數學公式支援",
     "hash": "8c09b9f03c93800e4f601e57c374eec5"
   },
   "options_page__tex_math_texzilla_label": {
-    "message": "特克西拉和 HTML Canvas 渲染",
+    "message": "TeXZilla 與 HTML Canvas 繪製",
     "description": "Label for tex math rendering option",
     "hash": "c210e3a6960c6d788491ac424f16c7a3"
   },
   "options_page__tex_math_texzilla_label-Title": {
-    "message": "數學公式由 TeXZilla.js 用瀏覽器畫布提供 。 沒有傳出網路要求 。",
+    "message": "數學公式由 TeXZilla.js 透過瀏覽器的 Canvas 繪製，不會傳送任何網路請求。",
     "description": "description how math is rendered when TexZilla option is selected",
     "hash": "ead94268f19cef4441fc69f97689d9b6"
   },
   "options_page__tex_math_codecogs_label": {
-    "message": "使用 CodeCogs 方程式渲染 API 的數學渲染",
+    "message": "使用 CodeCogs Equation Rendering API 繪製數學公式",
     "description": "Label for CodeCogs math rendering option",
     "hash": "cd4b796d4e49c47a088f617a627362d8"
   },
   "options_page__tex_math_codecogs_customization_1": {
-    "message": "要產生公式的影像, 需要向 CodeCogs 傳送要求 。 也就是說 你和CodeCogs分享你的配方 這也意味著您的訊息接收者會向 CodeCogs 提出要傳送影像的要求 。",
+    "message": "為了產生公式圖片，會向 CodeCogs 傳送請求。這實際上代表您會與 CodeCogs 分享您的公式，也代表郵件收件者需要向 CodeCogs 傳送請求才能顯示圖片。",
     "description": "one of the CodeCogs TeX math privacy concerns",
     "hash": "23d26e0ef10e5ea0c7139101b74a41c8"
   },
   "options_page__tex_math_codecogs_customization_2": {
-    "message": "設定定制選項, 請參考此服務的 $LINK$CodeCogs 文件$CLOSELINK$ 。",
+    "message": "關於繪製的自訂選項，請參考此服務的 $LINK$CodeCogs 文件$CLOSELINK$。",
     "description": "Link to CodeCogs documentation - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -203,7 +248,7 @@
     "hash": "d108daece31e555fb937bda04f5d6c32"
   },
   "options_page__tex_math_codecogs_customization_3": {
-    "message": "建立 TeX 公式的好資源是 $LINK$CodeCogs 方程式編輯器$ 關門",
+    "message": "$LINK$CodeCogs Equation Editor$CLOSELINK$ 是建立 TeX 公式的好工具。",
     "description": "More info about CodeCogs - do not translate $PLACEHOLDERS$",
     "placeholders": {
       "link": {
@@ -216,95 +261,99 @@
     "hash": "2e8aa3d8baaa90e12a7b9c89f9859ba0"
   },
   "options_page__buglink_description": {
-    "message": "建立與 bug 或 QQ12345 等追蹤器的連結 。 以下字段用于樣本網址和連結的文字 。",
+    "message": "建立連到錯誤或議題追蹤系統的鏈結，例如 `#12345`。下方欄位用來作為鏈結網址與文字的範本。",
     "description": "Description of bug/issue link feature.",
     "hash": "7569aed609aa4c28943b4f66218c3f16"
   },
   "options_page__buglink_enabled_label": {
-    "message": "開啟臭蟲/ 出錯連結",
+    "message": "啟用錯誤/議題鏈結",
     "description": "Enable Bug or Issue linking",
     "hash": "ff6080e1ffeb0eefb573565c4cdd4134"
   },
   "options_page__buglink_url": {
-    "message": "連接網址",
+    "message": "鏈結網址",
     "description": "Template field for creating bug/issue links",
     "hash": "1df9e2c05db77316a3a97275017967b7"
   },
   "options_page__buglink_text": {
-    "message": "連接文字",
+    "message": "鏈結文字",
     "description": "Template for bug/issue link text",
     "hash": "6d3723ccc9b4bf5a55cb0ca849b9438e"
   },
   "__WET_GROUP__usage": {
-    "message": "如何做",
+    "message": "使用方式",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__howto": {
-    "message": "如何做",
+    "message": "使用方式",
     "hash": "71ec48cc2984647ec331a3bcee3a9610"
   },
   "options_page__basic_usage": {
     "message": "基本用法",
     "hash": "1725d6ca5bc388ea2f5286d5f59eca84"
   },
+  "options_page__disable_paragraph_format": {
+    "message": "在 Thunderbird 設定中停用段落格式。",
+    "hash": "5d59148c324e0ca1ceacfab5bdcdcd4"
+  },
   "options_page__start_new_message_toggle": {
-    "message": "啟動新的電子郵件 。 在格式工具列上用動作按鍵切換作曲者以標出下載模式 。",
+    "message": "撰寫新郵件。使用格式工具列上的動作按鈕，將撰寫視窗切換為 Markdown 模式。",
     "hash": "a3cf8f8bcf6c08e2ba178c9a999bda2a"
   },
   "options_page__type_some_markdown": {
-    "message": "在你的電郵裡輸入一些Markdown內容.<br/>試試這個: <code>_Hello_ `Markdown` **Here**!</code>",
+    "message": "在郵件中輸入一些 Markdown，試試看：",
     "hash": "f0db9e92b6eead27204d516a3034a2fc"
   },
   "options_page__short_markdown_example": {
-    "message": "\" 馬克倒地 \" 有活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活活",
+    "message": "`Markdown` **Here** _Revival_!",
     "hash": "67f19cc4f24de8f9b404819ab7633356"
   },
   "options_page__compose_live_preview": {
-    "message": "在您寫出您的消息時, 有直播預覽更新 。",
+    "message": "即時預覽會隨著您的撰寫而更新。",
     "hash": "549af642c5b973f9b4c4c304eb004475"
   },
   "options_page__compose_send_message": {
-    "message": "有話快說!",
+    "message": "傳送您的訊息！",
     "hash": "4ab42a8334e6c82218c00d007d10fae5"
   },
   "options_page__toggle_hotkey": {
-    "message": "或取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取取出.",
+    "message": "或使用熱鍵：",
     "description": "A step suggestion in the basic usage instructions",
     "hash": "64f745514a24fa38ae148ef25745c835"
   },
   "options_page__resources_title": {
-    "message": "資源和鍊結",
+    "message": "資源與鏈結",
     "description": "A section title",
     "hash": "d3acbfafa858245f2345f00786324790"
   },
   "options_page__resources_cheatsheet_link": {
-    "message": "如果你剛開始接觸Markdown， <a href=\"https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet\" target=\"_blank\">Markdown Here Cheatsheet</a> 是本不錯的入門手冊。",
+    "message": "Markdown Here 速查表",
     "hash": "ddb4af27f215d4704f3f31878374c20f"
   },
   "options_page__mdhr_wiki": {
-    "message": "在這裏打下標記 Revival wiki",
+    "message": "Markdown Here Revival Wiki",
     "hash": "31514a95d56ddc2d8df5c4d15439d17f"
   },
   "options_page__tips_tricks_link": {
-    "message": "提示和花招",
+    "message": "秘訣與技巧",
     "hash": "c17546aca51dff7b1014d20502cb526"
   },
   "__WET_GROUP__theme": {
-    "message": "主題",
+    "message": "佈景主題",
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
   "options_page__primary_css_title": {
-    "message": "基本渲染CSS",
+    "message": "主要樣式 CSS",
     "description": "section title",
     "hash": "1381af5b005843fe11ee6884b0093683"
   },
   "options_page__syntax_highlighting_css_title": {
-    "message": "語法高亮CSS",
+    "message": "語法突顯 CSS",
     "description": "section title",
     "hash": "697181e7fed87c2b2c17dab7b3e1cf25"
   },
   "options_page__syntax_highlighting_theme_label": {
-    "message": "主題",
+    "message": "佈景主題",
     "description": "label for the syntax highlighting theme combo box",
     "hash": "9da24ca7508eb181c632829fd698be9a"
   },
@@ -314,29 +363,29 @@
     "hash": "b2ce6f78ea0a002ab97efea02562c3c0"
   },
   "__WET_GROUP__about": {
-    "message": "关于",
+    "message": "關於",
     "hash": "da73d37076fcb711ec18ea36c7efb1d5"
   },
   "options_page__about": {
-    "message": "关于",
+    "message": "關於",
     "hash": "da73d37076fcb711ec18ea36c7efb1d5"
   },
   "options_page__report_bugs_title": {
-    "message": "報告錯誤",
+    "message": "回報錯誤",
     "hash": "9f1ec9f89229e160f8f9dd23cc4f9709"
   },
   "options_page__create_gitlab_issue": {
-    "message": "在 GitLab 上建立新一期",
+    "message": "在 GitLab 上建立新議題",
     "description": "Text linking to Gitlab issue creation page",
     "hash": "43410ee226a64717592bd271c54ac2e0"
   },
   "options_page__issue_debug_info": {
-    "message": "以下调试信息可以被使用 :",
+    "message": "可提供以下除錯資訊：",
     "description": "header for some extension debug information",
     "hash": "5a0b6bc6650dcc7ba9cab037516e48e6"
   },
   "options_page__debug_copy_clipboard": {
-    "message": "复制到剪貼簿",
+    "message": "複製到剪貼簿",
     "description": "button for copying debug information to the clipboard",
     "hash": "17b6a865f4e197dcff670c9ac12517a1"
   },
@@ -345,22 +394,22 @@
     "hash": "d1f539e046abe83e76dcf2163f9a143c"
   },
   "options_page__changes_saved": {
-    "message": "已儲存",
+    "message": "已儲存變更",
     "description": "message that shows when user changes have been saved",
     "hash": "d99c431e6bd557568398d89c7e83914b"
   },
   "options_page__invalid_hotkey": {
-    "message": "無效取暖!",
+    "message": "無效的熱鍵！",
     "description": "message that shows when an invalid hotkey combination was entered",
     "hash": "54331fedbb67ec446035ce5b0b51b92"
   },
   "options_page__reset_button": {
-    "message": "重置",
+    "message": "重設",
     "description": "used for resetting certain options to the default",
     "hash": "d25968a7dfc21f95043a86dd5373b81"
   },
   "__WET_LOCALE__": {
-    "message": "en",
+    "message": "zh_TW",
     "hash": "e2d59e95a3a41434b5a59d9ac0897d74"
   }
 }

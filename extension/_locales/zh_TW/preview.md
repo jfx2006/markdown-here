@@ -1,51 +1,111 @@
+這只是一個範例。您可以直接在這裡試寫自己的文字。變更任何選項後，預覽都會隨之更新。
+
+# Markdown
+
+……其實就是一般的文字，*簡單明瞭*。您只要**自然地輸入**，結果就很美觀，而且不必點擊任何格式按鈕。下方的部分功能取決於某個選項，它們標有 *(選項)*。
+
+## 文字
+
+*斜體*、**粗體**、***粗斜體***、~~刪除線~~ 和 `行內程式碼`。
+單一換行
+會原樣保留 *(選項，預設啟用)*。
+
+智慧排版 *(選項，預設啟用)*："雙引號"、'單引號'、短破折號 -- 長破折號 --- 刪節號... 以及箭頭 --> <-- ==>。
+
+表情符號短代碼 *(選項，預設啟用)*：:wave: :+1: :tada: :rocket:
+
+## 鏈結
+
+鏈結可以是[明確鏈結](https://www.thunderbird.net)、[參照式鏈結][cheatsheet]，也可以是自動鏈結，例如 https://en.wikipedia.org/wiki/Invader_Zim 。
+
+錯誤鏈結 *(選項，預設停用)*：#123
+
+[cheatsheet]: https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet
+
+## 清單
+
+* 項目符號清單
+  * 可以巢狀
+    * 很有趣！
+  * 而且超簡單
+* 還有更多更多！
+
+1. 編號清單也可以！
+1. 您甚至不需要
+1. 寫對編號
+
+- [ ] 待辦清單
+- [x] 附核取方塊
+
+## 引言
+
+> 一段引言區塊。
+> *帶有*一些 **Markdown** `格式`。
+>
+> > 巢狀引言
+> >
+> > > 再多一層。
+
+## 程式碼
+
 ```javascript
-function syntaxHighlighting() {
-  var n = 33;
-  var s = "hello, こんにちは";
-  console.log(s);
-}
+// 您這輩子需要的所有程式碼
+var hw = "哈囉，世界！"
+alert(hw);
 ```
 
-* plain
-* *emphasis*
-  * **strong emphasis**
-    * ~~strikethrough~~
-* `inline code`
+```
+一般程式碼區塊
+沒有語法突顯
+```
 
-1. Numbered list
-   1. Numbered sub-list
-      1. Numbered sub-sub-list
-2. [Link](https://www.google.com)
+## 表格
 
+| 姓名  | 午餐點餐    | 辣度   | 應付 |
+|-------|-------------|:------:|-----:|
+| 瓊安  | 菠菜起司    | 中辣   | 11 € |
+| 莎莉  | 溫達盧咖哩  | 小辣   | 14 € |
+| 艾琳  | 馬德拉斯羊肉 | 大辣   |  5 € |
 
-An image: ![Markdown Here logo](/images/icon24.png)
+合併儲存格與欄寬：`||` 會將儲存格與下一欄合併，以 `^|` 結尾的儲存格會與上方儲存格合併，在分隔列中寫入百分比可設定欄寬。
 
+| 團隊         |  Q1 |  Q2 |
+|:-----40%-----|----:|----:|
+| 合計         ||  42 |
+| 郵件         |  12 |  18 |
+|             ^|   7 |   5 |
 
-> Block quote.  
-> *With* **some** `markdown`.
+CSV 與 TSV 區塊 *(選項，預設停用；否則顯示為程式碼)*：
 
-If **TeX Math** support is enabled, this is the quadratic equation:
-${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+```csv
+水果;顏色;價格
+蘋果;紅色;1.20
+香蕉;黃色;0.80
+```
 
-# Header 1
-## Header 2
-### Header 3
-#### Header 4
-##### Header 5
-###### Header 6
-  
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| column 3 is   | right-aligned | $$1600 |
-| column 2 is   | centered      |   $$12 |
-| zebra stripes | are neat      |    $$1 |
+## 數學公式
 
-Here's a horizontal rule:
+*(選項，預設停用)* 我的數學已經生疏到幾乎記不起*一元二次方程式的公式解*了：${-b \pm \sqrt{b^2 - 4ac} \over 2a}$
+
+$$e^{i\pi} + 1 = 0$$
+
+## 圖片與行內 HTML
+
+一張圖片：![Markdown Here 標誌](/images/icon24.png)
+
+原始 HTML 一樣可用：<span style="color: red">紅色文字</span>。
+
+## 標題
+
+# 標題 1
+## 標題 2
+### 標題 3
+#### 標題 4
+##### 標題 5
+###### 標題 6
+
+這是一條水平線
 
 ---
 
-```
-code block
-with no highlighting
-```
-
+完。
