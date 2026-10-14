@@ -331,15 +331,42 @@ messenger.compose.onBeforeSend.addListener(async function (tab, details) {
     }
     const finalDetails = { body: msgHTML }
     await withTimeout(
-      messenger.runtime.sendMessage({ action: "disable-mutation-listener" }),
+      messenger.tabs.sendMessage(tab.id, { action: "disable-mutation-listener" }),
       2000,
       "disable-mutation-listener",
     ).catch(() => {}) // non-critical, ignore timeout
+    // Thunderbird writes the rendered HTML into the editor before its own
+    // checks (spelling, empty subject, attachment reminder...). Keep the
+    // Markdown source so that it can be put back if the send is aborted (#162).
+    markdownSourceBeforeSend.set(tab.id, details.body)
     return { cancel: false, details: finalDetails }
   } catch (e) {
     console.error("Markdown Here Revival: onBeforeSend error:", e)
     return {} // Allow send to proceed without modifications
   }
+})
+
+// tabId -> editor HTML (Markdown source) replaced by the rendered message
+const markdownSourceBeforeSend = new Map()
+
+messenger.compose.onAfterSend.addListener(async function (tab, sendInfo) {
+  const source = markdownSourceBeforeSend.get(tab.id)
+  markdownSourceBeforeSend.delete(tab.id)
+  if (source === undefined || !sendInfo.error) {
+    return
+  }
+  // The send was aborted or failed and the compose window is still open:
+  // give the user back the Markdown source and a working preview.
+  try {
+    await messenger.compose.setComposeDetails(tab.id, { body: source })
+    await messenger.tabs.sendMessage(tab.id, { action: "enable-mutation-listener" })
+  } catch (e) {
+    console.error("Markdown Here Revival: could not restore the Markdown source:", e)
+  }
+})
+
+messenger.tabs.onRemoved.addListener((tabId) => {
+  markdownSourceBeforeSend.delete(tabId)
 })
 
 messenger.tabs.onCreated.addListener(async function (tab) {

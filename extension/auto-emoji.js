@@ -62,12 +62,12 @@ const autoEmoji = (function () {
       textcomplete.dropdown.el.popover = "auto"
     }
 
-    const domElem = document.querySelector("ul.dropdown-menu.textcomplete-dropdown")
-    if (!domElem) {
-      document.body.appendChild(textcomplete.el)
+    if (!document.body.contains(textcomplete.dropdown.el)) {
+      document.body.appendChild(textcomplete.dropdown.el)
     }
     const destroy = function () {
       textcomplete.destroy()
+      textcomplete = null
     }
 
     return destroy
