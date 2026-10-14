@@ -30,6 +30,9 @@ function requestHandler(request, sender, sendResponse) {
     return Promise.resolve(window.document.documentElement.outerHTML)
   } else if (request.action === "disable-mutation-listener") {
     MsgMutationObserver.disconnect()
+  } else if (request.action === "enable-mutation-listener") {
+    // The body was replaced (aborted send, #162): watch the new one.
+    return watchEditor(true)
   }
   return Promise.resolve("okay")
 }
@@ -195,14 +198,27 @@ async function loadEmojiCompleter() {
   }
 }
 
-;(async () => {
+// Thunderbird's setComposeDetails() replaces the <body> element itself, so
+// the observer and the emoji completer must be attached again afterwards.
+async function watchEditor(refreshPreview = false) {
   const mutation_config = {
     attributes: true,
     childList: true,
     subtree: true,
     characterData: true,
   }
+  MsgMutationObserver?.disconnect()
   MsgMutationObserver = new MutationObserver(editorMutationCb)
   MsgMutationObserver.observe(window.document.body, mutation_config)
+  if (emojiDestroy) {
+    emojiDestroy()
+    emojiDestroy = null
+  }
   await loadEmojiCompleter()
-})()
+  if (refreshPreview && !previewHidden) {
+    await sendHTMLToPreview()
+  }
+  return "okay"
+}
+
+watchEditor().then(() => {})

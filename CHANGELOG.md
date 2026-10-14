@@ -6,6 +6,13 @@
 - The "Translate" link and the Locale Maker page of the options. Translations
   are contributed directly to `extension/_locales/` (see CONTRIBUTING.md).
 
+### Fixed
+- When a send was aborted after the message had been rendered (spelling check
+  cancelled, empty subject, attachment reminder, invalid recipient, send
+  error), the compose window kept the rendered HTML instead of the Markdown
+  source and the preview stopped updating. The Markdown source and the
+  preview are now restored. #162
+
 ## [4.1.1] - 2026-10-14
 
 ### Fixed
