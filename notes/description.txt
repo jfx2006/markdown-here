@@ -44,4 +44,4 @@ render the formula as as image. The rendering URL is customizable.
 This is an open source project. Visit Markdown Here Revival's GitLab page
 for full instructions, more information, bug reports, or to contribute.
 
-https://gitlab.com/jfx2006/markdown-here-revival
+https://gitlab.com/mdhr-extension/markdown-here-revival

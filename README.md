@@ -1,6 +1,6 @@
 # <img src="extension/images/md_fucsia.svg" alt="MDHR Logo" height="24" width="24" align="bottom"> Markdown Here Revival
 
-[![Latest Release](https://gitlab.com/jfx2006/markdown-here-revival/-/badges/release.svg)](https://gitlab.com/jfx2006/markdown-here-revival/-/releases)
+[![Latest Release](https://gitlab.com/mdhr-extension/markdown-here-revival/-/badges/release.svg)](https://gitlab.com/mdhr-extension/markdown-here-revival/-/releases)
 
 *Markdown Here Revival* is a fork of [Markdown Here](https://markdown-here.com/), 
 the popular browser extension in order to specifically target modern Thunderbird versions.
@@ -164,8 +164,8 @@ through `npx web-ext run` (or the `npm run test*` scripts). The included
 
 ## Feedback
 
-See the [issues list](https://gitlab.com/jfx2006/markdown-here-revival/-/issues)
-and the [Wiki](https://gitlab.com/jfx2006/markdown-here-revival/-/wikis/home).
+See the [issues list](https://gitlab.com/mdhr-extension/markdown-here-revival/-/issues)
+and the [Wiki](https://gitlab.com/mdhr-extension/markdown-here-revival/-/wikis/home).
 All ideas, bugs, plans, complaints, and dreams will end up in one of those two places.
 
 ## License
