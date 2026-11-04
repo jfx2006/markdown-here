@@ -13,6 +13,7 @@
   are contributed directly to `extension/_locales/` (see CONTRIBUTING.md).
 
 ### Fixed
+- Bump strict_max_version to support Thunderbird 159.
 - When a send was aborted after the message had been rendered (spelling check
   cancelled, empty subject, attachment reminder, invalid recipient, send
   error), the compose window kept the rendered HTML instead of the Markdown
