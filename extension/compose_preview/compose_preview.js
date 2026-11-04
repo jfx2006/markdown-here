@@ -396,75 +396,54 @@ async function loadIFrame() {
 })()
 await resetMarked()
 
-messenger.runtime.onMessage.addListener(function (request, sender, responseCallback) {
-  if (
-    (typeof sender.tab === "undefined" ||
-      typeof sender.tab.id === "undefined" ||
-      sender.tab.id < 0) &&
-    request.windowId === undefined
-  ) {
+// The window hosting this preview never changes.
+const previewContext = await messenger.ex_customui.getContext()
+
+// Actions sent by the compose script of the window to render.
+const FROM_COMPOSE_TAB = new Set(["cp.render-preview", "cp.scroll-to"])
+
+// Messages reach the preview of every open window, and the sender gets the
+// first answer. A preview must stay silent, not answer false, when the
+// message is for another window: a stray false made the preview look hidden
+// or the rendered message empty at send time (#164).
+function isForThisPreview(request, sender) {
+  if (previewContext.windowType !== "messageCompose") {
     return false
   }
-  if (!request.action) {
+  if (request.action === "cp.renderer-reset") {
+    return true
+  }
+  const windowId = FROM_COMPOSE_TAB.has(request.action) ? sender.tab?.windowId : request.windowId
+  return windowId === previewContext.windowId
+}
+
+messenger.runtime.onMessage.addListener(function (request, sender) {
+  if (!request.action?.startsWith("cp.") || !isForThisPreview(request, sender)) {
     return false
   }
-  if (!request.action.startsWith("cp.")) {
-    return false
-  }
-  return messenger.ex_customui.getContext().then((context) => {
-    if (context.windowType !== "messageCompose") {
+  switch (request.action) {
+    case "cp.render-preview":
+      return renderMDEmail(request.doc_html)
+    case "cp.renderer-reset":
+      return resetRenderer()
+    case "cp.toggle-preview":
+      return togglePreview(request.windowId)
+    case "cp.disableForPlainText":
+      return disableForPlainText(request.windowId)
+    case "cp.get-content":
+      return getMsgContent()
+    case "cp.get-hidden":
+      return messenger.ex_customui.getContext().then((ctx) => ctx.hidden)
+    case "cp.scroll-to":
+      return scrollTo(request.payload)
+    case "cp.toggle-classic-preview":
+      return toggleClassicPreview()
+    case "cp.set-classic-mode":
+      return setClassicMode()
+    case "cp.set-modern-mode":
+      return setModernMode()
+    default:
+      console.log(`Compose Preview: invalid action: ${request.action}`)
       return false
-    }
-    switch (request.action) {
-      case "cp.render-preview":
-        if (sender.tab.windowId !== context.windowId) {
-          return false
-        }
-        return renderMDEmail(request.doc_html)
-      case "cp.renderer-reset":
-        return resetRenderer()
-      case "cp.toggle-preview":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return togglePreview(request.windowId)
-      case "cp.disableForPlainText":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return disableForPlainText(request.windowId)
-      case "cp.get-content":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return getMsgContent()
-      case "cp.get-hidden":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return messenger.ex_customui.getContext().then((ctx) => ctx.hidden)
-      case "cp.scroll-to":
-        if (sender.tab.windowId !== context.windowId) {
-          return false
-        }
-        return scrollTo(request.payload)
-      case "cp.toggle-classic-preview":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return toggleClassicPreview()
-      case "cp.set-classic-mode":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return setClassicMode()
-      case "cp.set-modern-mode":
-        if (request.windowId !== context.windowId) {
-          return false
-        }
-        return setModernMode()
-      default:
-        console.log(`Compose Preview: invalid action: ${request.action}`)
-    }
-  })
+  }
 })

@@ -24,6 +24,9 @@
   #163
 - A message starting with an indented code block lost the indentation of
   its first line. #163
+- With several compose windows open, sending could wrongly report that the
+  email could not be converted to HTML: the preview of another window
+  answered in place of the right one. #164
 
 ## [4.1.1] - 2026-10-14
 
