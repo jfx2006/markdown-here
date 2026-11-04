@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.2] - 2026-11-05
 
 ### Changed
 - All translations reviewed and completed: the 9 strings missing in 11
@@ -13,6 +13,7 @@
   are contributed directly to `extension/_locales/` (see CONTRIBUTING.md).
 
 ### Fixed
+- Bump strict_max_version to support Thunderbird 159.
 - When a send was aborted after the message had been rendered (spelling check
   cancelled, empty subject, attachment reminder, invalid recipient, send
   error), the compose window kept the rendered HTML instead of the Markdown
