@@ -25,7 +25,7 @@ can keep using the 4.0.x series (4.0.19), which only gets security fixes.
 
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
-| 4.1.3                 | 153 – 160.x  |         |
+| 4.1.3                 | 153 – 160.x  | pending |
 | 4.1.2                 | 153 – 159.x  | denied  |
 | 4.1.1                 | 153 – 158.x  | no      |
 | 4.1.0                 | 153 – 157.x  | no      |
