@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [4.1.3] - 2026-11-16
 
 ### Security
 - Update DOMPurify to 3.4.18 (CVE-2026-116802, CVE-2026-116803,
