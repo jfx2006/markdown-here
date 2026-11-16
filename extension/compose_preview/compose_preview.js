@@ -220,8 +220,8 @@ function getMdhrRaw(msg_doc) {
   rawHolder.classList.add("mdhr-raw")
   rawHolder.setAttribute("style", MDHR_RAW_CSS)
   rawHolder.setAttribute("aria-hidden", "true")
-  // Keep the holder empty: innerText wrote the literal text "&#8203;", which
-  // showed up in plain-text messages. Only the title attribute carries data.
+  // Empty on purpose: only the title attribute carries data, and any text
+  // would show up in the plain-text part.
   const encoded = strToBase64(content)
   rawHolder.title = `${MDHR_RAW_PREFIX}${encoded}`
   return rawHolder
