@@ -97,9 +97,8 @@ function deShadowRoot(doc) {
   }
 }
 
-async function renderMDEmail(msg_html) {
-  /* cp.render-preview */
-  lastMsgHtml = msg_html
+// Renders the Markdown of the editor HTML, returns the document to display.
+async function renderMarkdownDoc(msg_html) {
   const msgDocument = parseHTMLFromString(msg_html)
   const mdHtmlToText = new MdhrMangle(msgDocument)
   const mdText = await mdHtmlToText.preprocess()
@@ -108,7 +107,13 @@ async function renderMDEmail(msg_html) {
 
   let doc = addDoctype(unsanitized_html)
   doc = parseHTMLFromString(escapeHTML`${doc}`)
-  doc = wrapExternal(doc)
+  return wrapExternal(doc)
+}
+
+async function renderMDEmail(msg_html) {
+  /* cp.render-preview */
+  lastMsgHtml = msg_html
+  const doc = await renderMarkdownDoc(msg_html)
   if (!contentDiv) {
     contentDiv = p_iframe.contentDocument.body.querySelector("body > div.markdown-here-wrapper")
   }
@@ -221,8 +226,28 @@ function getMdhrRaw(msg_doc) {
   return rawHolder
 }
 
+// The message is built in a hidden copy of the preview document: building it
+// strips the Thunderbird and Markdown styles, which turned the displayed
+// preview white at send time, and for good when the send was aborted (#165).
 async function getMsgContent() {
-  const html_msg = p_iframe.contentDocument
+  const sendFrame = document.createElement("iframe")
+  sendFrame.id = "send_frame"
+  sendFrame.setAttribute("sandbox", "allow-same-origin")
+  document.body.append(sendFrame)
+  try {
+    await loadIFrame(sendFrame)
+    const wrapper = sendFrame.contentDocument.querySelector("body > div.markdown-here-wrapper")
+    if (lastMsgHtml !== undefined) {
+      const doc = await renderMarkdownDoc(lastMsgHtml)
+      wrapper.replaceChildren(...doc.body.childNodes)
+    }
+    return await buildMsgContent(sendFrame.contentDocument)
+  } finally {
+    sendFrame.remove()
+  }
+}
+
+async function buildMsgContent(html_msg) {
   removeMDPreviewStyles(html_msg)
   deShadowRoot(html_msg)
   // Remove raw dumps carried over from quoted/forwarded history so they
@@ -352,14 +377,14 @@ function parseHTMLFromString(string) {
 let contentDiv
 const p_iframe = document.getElementById("preview_frame")
 
-async function loadIFrame() {
+async function loadIFrame(iframe) {
   const main_css = await getMainCSS()
   const syntax_css = await getSyntaxCSS()
   await new Promise((resolve) => {
-    p_iframe.addEventListener("load", resolve, { once: true })
-    p_iframe.src = "/compose_preview/preview_iframe.html"
+    iframe.addEventListener("load", resolve, { once: true })
+    iframe.src = "/compose_preview/preview_iframe.html"
   })
-  const doc = p_iframe.contentDocument
+  const doc = iframe.contentDocument
   // This document is serialized as the sent message (getMsgContent), so
   // replace the CSS placeholders and drop every other comment (license
   // header) instead of shipping them in the email.
@@ -386,7 +411,7 @@ async function loadIFrame() {
 }
 
 ;(async () => {
-  loadIFrame()
+  loadIFrame(p_iframe)
     .then(async () => {
       await previewFrameLoaded()
     })
