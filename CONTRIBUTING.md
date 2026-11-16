@@ -40,6 +40,44 @@ English (`en`) is the reference. To add or fix a translation:
    `hash` fields as they are: maintainers update them.
 3. Open a merge request, or open an issue and attach the files.
 
+## Supporting a new Thunderbird version
+
+`strict_max_version` in the manifest declares the last Thunderbird version the
+add-on supports, so each Thunderbird release needs a bump. Merge requests for
+it are welcome (see commit 374d4bc for an example). Such a merge request
+changes:
+
+* `strict_max_version` in `extension/manifest.json`, e.g. `"161.*"`;
+* the changelog: an entry under `## [Unreleased]` / `### Fixed`, e.g.
+  `- Bump strict_max_version to support Thunderbird 161.`, in both
+  `CHANGELOG.md` and `extension/CHANGELOG.md`. The two files must stay
+  identical, or the `check:build` CI job fails.
+
+Leave `README.md` alone: it describes the published releases, and maintainers
+update it when releasing.
+
+To test, build the XPI (Node 22) and install it from the Add-ons Manager of the
+new Thunderbird version:
+
+```sh
+npm ci
+npm run vendor
+npm run build   # web-ext-artifacts/markdown-here-revival.xpi
+```
+
+Test the packed XPI: `web-ext run` alone once reported a compatibility problem
+that did not exist with the packed XPI. Then check that:
+
+* the preview renders while typing, in a new message and in a reply;
+* sending works, and the received message is formatted;
+* the options page opens and its preview works.
+
+Say in the merge request what you tested and on which Thunderbird version. If
+something else breaks, the merge request is still useful as an early warning:
+breakage usually comes from the experiment APIs the preview relies on, and
+shows up as a preview that does not appear. A merged bump is published with
+the next release, which is also reviewed on ATN.
+
 ## Conthributors
 
 * [JFX](https://gitlab.com/jfx2006) - Fork owner and Thunderbird core developer
