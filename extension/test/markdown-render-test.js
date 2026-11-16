@@ -86,6 +86,19 @@ describe("Markdown-Render", function () {
       expect(await markdownRender(md)).to.equal(target)
     })
 
+    it("should only send CodeCogs formulae over https", async function () {
+      const userprefs = {
+        "math-renderer-enabled": true,
+        "math-renderer": "codecogs",
+        "math-value":
+          '<img src="HTTP://latex.codecogs.com/png.image?{urlmathcode}" alt="{mathcode}">',
+      }
+      await resetMarked(userprefs)
+      expect(await markdownRender("$x+y$")).to.equal(
+        '<p><img src="https://latex.codecogs.com/png.image?x%2By" alt="x+y"></p>\n',
+      )
+    })
+
     it("should render single-character math formulae via texzilla", async function () {
       // TeXZilla rendering needs a canvas, so it cannot run without a DOM (Node).
       if (typeof document === "undefined") {

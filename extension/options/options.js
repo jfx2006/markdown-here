@@ -21,6 +21,7 @@ import {
   wxGetUrl,
 } from "../async_utils.mjs"
 import OptionsStore from "./options-storage.js"
+import { upgradeInsecureUrls } from "../marked-math.js"
 ;(async () => {
   const hotkeyHandler = new HotkeyHandler("hotkey-input")
   const form = document.getElementById("mdh-options-form")
@@ -125,6 +126,16 @@ import OptionsStore from "./options-storage.js"
     for (const btn of document.getElementsByClassName("reset-button")) {
       btn.addEventListener("click", onResetButtonClicked, false)
     }
+
+    // The formula is sent to the URL of this template: never keep http://.
+    const mathValue = document.getElementById("math-value")
+    mathValue.addEventListener("change", () => {
+      const secure = upgradeInsecureUrls(mathValue.value)
+      if (secure !== mathValue.value) {
+        mathValue.value = secure
+        mathValue.dispatchEvent(new Event("input", { bubbles: true }))
+      }
+    })
 
     previewIframe.addEventListener("load", handlePreviewLoad)
     previewInput.addEventListener("input", handleInput, false)

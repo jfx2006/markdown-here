@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Security
+- Update DOMPurify to 3.4.18 (CVE-2026-116802, CVE-2026-116803,
+  CVE-2026-116804).
+- The CodeCogs math formulae were sent to the image URL of the template even
+  over http://. The URL is now upgraded to https://, both when the template
+  is entered in the options and when a formula is rendered.
+
 ### Fixed
 - Bump strict_max_version to support Thunderbird 160.
 - At send time, the preview lost the Thunderbird and Markdown styles (white
