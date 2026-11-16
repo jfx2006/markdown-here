@@ -13,6 +13,13 @@ const inlineStartRule = /(?<=\s|^)\$(?!\$)/
 const inlineRule = /^(\$)([^$\n]|[^$\n][\s\S]*?[^$])\1(?!\$)/
 const blockRule = /^(\$\$)([^$]|[^$][\s\S]*?[^$])\1(?!\$)/
 
+// The CodeCogs template comes from the options: the formula is sent to the
+// image URL it holds, so upgrade any http:// URL instead of sending the
+// formula unencrypted.
+export function upgradeInsecureUrls(template) {
+  return template.replace(/\bhttp:\/\//gi, "https://")
+}
+
 export function markedMath(options = {}) {
   const mathRenderer = createRenderer(options)
   return {
@@ -36,7 +43,7 @@ function createRenderer(options) {
   }
 
   async function mathifyGChart(math_code) {
-    return options.math_url
+    return upgradeInsecureUrls(options.math_url)
       .replace(/\{mathcode\}/gi, math_code)
       .replace(/\{urlmathcode\}/gi, encodeURIComponent(math_code))
   }
