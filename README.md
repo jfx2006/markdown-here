@@ -19,18 +19,19 @@ the author of Markdown Here have been unsuccessful.
 ## Compatibility
 
 This is a mail extension for [Mozilla Thunderbird](https://thunderbird.net/).
-The current release, *Markdown Here Revival 4.1.2*, supports *Thunderbird 153*
-up to *Thunderbird 159*. Users of older versions, down to *Thunderbird 140*,
+The current release, *Markdown Here Revival 4.1.3*, supports *Thunderbird 153*
+up to *Thunderbird 160*. Users of older versions, down to *Thunderbird 140*,
 can keep using the 4.0.x series (4.0.19), which only gets security fixes.
 
 | Markdown Here Revival | Thunderbird  | On ATN  |
 |-----------------------|--------------|---------|
-| 4.1.2                 | 153 – 159.x  | pending |
+| 4.1.3                 | 153 – 160.x  |         |
+| 4.1.2                 | 153 – 159.x  | denied  |
 | 4.1.1                 | 153 – 158.x  | no      |
 | 4.1.0                 | 153 – 157.x  | no      |
 | 4.0.19                | 140 – 157.x  | yes     |
 | 4.0.18                | 140 – 157.x  | no      |
-| 4.0.17                | 128 – 156.x  | no      |
+| 4.0.17                | 128 – 156.x  | denied  |
 | 4.0.16                | 128 – 156.x  | no      |
 | 4.0.15                | 128 – 155.x  | no      |
 | 4.0.14                | 128 – 154.x  | no      |
@@ -46,7 +47,8 @@ can keep using the 4.0.x series (4.0.19), which only gets security fixes.
 | 4.0.3.1               | 128 – 134.x  | yes     |
 | 4.0.0 – 4.0.3         | 128.x        | yes     |
 
-Releases not published on
+On ATN: *yes* published, *pending* under review, *denied* rejected by the
+review, *no* not submitted. Releases not published on
 [ATN](https://addons.thunderbird.net/en-US/thunderbird/addon/markdown-here-revival/)
 can be downloaded from the
 [GitLab releases](https://gitlab.com/mdhr-extension/markdown-here-revival/-/releases)
