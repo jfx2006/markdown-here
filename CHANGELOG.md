@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Bump strict_max_version to support Thunderbird 160.
+
 ## [4.1.2] - 2026-11-05
 
 ### Changed
