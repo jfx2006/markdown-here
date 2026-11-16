@@ -50,7 +50,9 @@ const ALLOW_CSS_PROPS = [
 export class CSSInliner {
   #defaultStyles
   #allowedProps
+  #view
   constructor() {
+    this.#view = null
     this.#defaultStyles = {}
     this.#allowedProps = null
   }
@@ -79,6 +81,13 @@ export class CSSInliner {
     const view = elements[0]?.ownerDocument.defaultView
     if (!view) {
       return
+    }
+    // The default styles come from the window of the document: once the
+    // preview document is replaced (#165), they no longer match, and every
+    // property, default colors included, was inlined.
+    if (view !== this.#view) {
+      this.#view = view
+      this.#defaultStyles = {}
     }
     const pending = []
     for (const element of elements) {

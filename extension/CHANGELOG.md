@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- At send time, the preview lost the Thunderbird and Markdown styles (white
+  background in dark mode), and kept them lost when the send was aborted,
+  until the window was reopened. #165
+
 ## [4.1.2] - 2026-11-05
 
 ### Changed
